@@ -25,10 +25,16 @@ class VideoCard extends StatelessWidget {
           //     MaterialPageRoute(
           //         builder: (context) => PlaylistDetail(info: info)));
           // AppStorage().openMedia(info);
-          await AppStorage().playboy.stop().then((value) {
+          await AppStorage().closeMedia().then((value) {
             if (!context.mounted) return;
             Navigator.of(context, rootNavigator: true).push(
-                MaterialPageRoute(builder: (context) => MPlayer(info: info)));
+              MaterialPageRoute(
+                builder: (context) => MPlayer(
+                  info: info,
+                  currentMedia: false,
+                ),
+              ),
+            );
           });
         },
         borderRadius: BorderRadius.circular(20),

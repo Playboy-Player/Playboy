@@ -194,9 +194,14 @@ class _FilePageState extends State<FilePage> {
               )));
     } else {
       if (!context.mounted) return;
-      Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
+      Navigator.of(context, rootNavigator: true).push(
+        MaterialPageRoute(
           builder: (context) => MPlayer(
-              info: PlayItem(source: source, cover: null, title: source))));
+            info: PlayItem(source: source, cover: null, title: source),
+            currentMedia: false,
+          ),
+        ),
+      );
     }
   }
 }

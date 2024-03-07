@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -6,6 +5,7 @@ import 'package:path/path.dart' as p;
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/pages/media/video_fullscreen.dart';
+import 'package:playboy/widgets/uni_image.dart';
 import 'package:squiggly_slider/slider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:media_kit/media_kit.dart';
@@ -18,11 +18,13 @@ class MPlayer extends StatefulWidget {
     // required this.coverSource,
     // required this.audioOnly,
     required this.info,
+    required this.currentMedia,
   });
   // final String source;
   // final String? coverSource;
   // final bool audioOnly;
   final PlayItem info;
+  final bool currentMedia;
 
   @override
   MPlayerState createState() => MPlayerState();
@@ -45,12 +47,13 @@ class MPlayerState extends State<MPlayer> {
 
   @override
   void initState() {
-    super.initState();
-    // videoMode = !widget.audioOnly;
-    final video = Media(widget.info.source);
-    AppStorage().playboy.stop();
     // TODO: 支持字幕功能
-    AppStorage().playboy.setSubtitleTrack(SubtitleTrack.no());
+    // AppStorage().playboy.setSubtitleTrack(SubtitleTrack.no());
+    super.initState();
+    if (widget.currentMedia) {
+      return;
+    }
+    final video = Media(widget.info.source);
     AppStorage().playboy.open(video);
     AppStorage().playboy.setVolume(AppStorage().settings.volume);
     AppStorage().position = Duration.zero;
@@ -106,21 +109,11 @@ class MPlayerState extends State<MPlayer> {
             height: 25,
             child: Row(
               children: [
-                StreamBuilder(
-                    stream: AppStorage().playboy.stream.position,
-                    builder: (context, snapshot) {
-                      return Text(snapshot.hasData
-                          ? '${snapshot.data!.inSeconds ~/ 3600}:${(snapshot.data!.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(snapshot.data!.inSeconds % 60).toString().padLeft(2, '0')}'
-                          : '0:00:00');
-                    }),
+                Text(
+                    '${AppStorage().position.inSeconds ~/ 3600}:${(AppStorage().position.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().position.inSeconds % 60).toString().padLeft(2, '0')}'),
                 Expanded(child: _buildSeekbar()),
-                StreamBuilder(
-                    stream: AppStorage().playboy.stream.duration,
-                    builder: (context, snapshot) {
-                      return Text(snapshot.hasData
-                          ? '${snapshot.data!.inSeconds ~/ 3600}:${(snapshot.data!.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(snapshot.data!.inSeconds % 60).toString().padLeft(2, '0')}'
-                          : '0:00:00');
-                    }),
+                Text(
+                    '${AppStorage().duration.inSeconds ~/ 3600}:${(AppStorage().duration.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().duration.inSeconds % 60).toString().padLeft(2, '0')}')
               ],
             ),
           ),
@@ -155,7 +148,7 @@ class MPlayerState extends State<MPlayer> {
                 windowManager.startDragging();
               },
               child: Text(
-                p.basenameWithoutExtension(widget.info.source),
+                AppStorage().playingTitle,
               ))
           : const SizedBox(),
       actions: [
@@ -244,7 +237,10 @@ class MPlayerState extends State<MPlayer> {
                             borderRadius: BorderRadius.circular(20),
                             image: DecorationImage(
                               image:
-                                  FileImage(File(AppStorage().playingCover!)),
+                                  // FileImage(File(AppStorage().playingCover!)),
+                                  UniImageProvider(
+                                          url: AppStorage().playingCover!)
+                                      .getImage(),
                               fit: BoxFit.cover,
                             ),
                           ),

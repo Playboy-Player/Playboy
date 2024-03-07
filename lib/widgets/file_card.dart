@@ -22,10 +22,14 @@ class FileCard extends StatelessWidget {
         onTap: () {
           if (extension(source) == '.mp4') {
             if (!context.mounted) return;
-            Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
+            Navigator.of(context, rootNavigator: true).push(
+              MaterialPageRoute(
                 builder: (context) => MPlayer(
-                    info:
-                        PlayItem(source: source, cover: null, title: source))));
+                  info: PlayItem(source: source, cover: null, title: source),
+                  currentMedia: false,
+                ),
+              ),
+            );
           }
         },
         borderRadius: BorderRadius.circular(20),

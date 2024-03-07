@@ -80,14 +80,16 @@ class AppStorage extends ChangeNotifier {
     notifyListeners();
   }
 
-  // void closeMedia() {
-  //   playingCover = null;
-  //   playingTitle = 'Not Playing';
-  //   AppStorage().playboy.stop();
-  //   if (playboy.platform is NativePlayer) {
-  //     (playboy.platform as NativePlayer).setProperty('audio-files', '');
-  //   }
-  // }
+  Future<void> closeMedia() async {
+    AppStorage().playboy.stop();
+    if (AppStorage().playboy.platform is NativePlayer) {
+      (AppStorage().playboy.platform as NativePlayer)
+          .setProperty('audio-files', '');
+    }
+    AppStorage().playingTitle = 'Not Playing';
+    AppStorage().playingCover = null;
+    AppStorage().updateStatus();
+  }
 
   // void openMedia(PlayItem media) {
   //   if (playing) {

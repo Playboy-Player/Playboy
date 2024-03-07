@@ -3,9 +3,11 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/biliapi/models/video_info.dart';
 import 'package:playboy/backend/biliapi/models/video_stream_response.dart';
+import 'package:playboy/backend/constants.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/backend/web_helper.dart';
 import 'package:playboy/pages/media/video_fullscreen.dart';
+import 'package:playboy/widgets/uni_image.dart';
 import 'package:squiggly_slider/slider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:media_kit/media_kit.dart';
@@ -51,8 +53,7 @@ class BiliPlayerState extends State<BiliPlayer> {
     AppStorage().position = Duration.zero;
     AppStorage().duration = Duration.zero;
     AppStorage().playingTitle = widget.videoInfo.title;
-    // TODO: dynamic color
-    // AppStorage().playingCover = widget.info.cover;
+    AppStorage().playingCover = widget.videoInfo.coverUrl;
   }
 
   @override
@@ -479,9 +480,9 @@ class BiliPlayerState extends State<BiliPlayer> {
           onPressed: () {
             setState(() {
               WebHelper().download(widget.playInfo.audio[0].baseUrl!,
-                  './build/downloads/${widget.videoInfo.title}.audio.m4s');
+                  '${Constants.dataPath}downloads/${widget.videoInfo.title}.audio.m4s');
               WebHelper().download(widget.playInfo.video[0].baseUrl!,
-                  './build/downloads/${widget.videoInfo.title}.video.m4s');
+                  '${Constants.dataPath}downloads/${widget.videoInfo.title}.video.m4s');
             });
           },
         ),
@@ -556,7 +557,8 @@ class BiliPlayerState extends State<BiliPlayer> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       image: DecorationImage(
-                        image: NetworkImage(widget.videoInfo.coverUrl),
+                        image: UniImageProvider(url: AppStorage().playingCover!)
+                            .getImage(),
                         fit: BoxFit.cover,
                       ),
                     ),

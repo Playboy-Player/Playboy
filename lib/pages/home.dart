@@ -3,12 +3,15 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:playboy/pages/media/m_player.dart';
 import 'package:playboy/pages/media/music_page.dart';
 import 'package:playboy/pages/playlist/playlist_page.dart';
 import 'package:playboy/pages/search/search_page.dart';
 import 'package:playboy/pages/settings/settings_page.dart';
 import 'package:playboy/pages/media/video_page.dart';
+import 'package:playboy/widgets/uni_image.dart';
 import 'package:provider/provider.dart';
 import 'package:squiggly_slider/slider.dart';
 import 'package:window_manager/window_manager.dart';
@@ -71,7 +74,7 @@ class _HomeState extends State<Home> {
   int currentPageIndex = 0;
   //更新页面用标记
   // int mark = 0;
-  bool showMediaCard = false;
+  bool showMediaCard = true;
 
   @override
   Widget build(BuildContext context) {
@@ -392,12 +395,28 @@ class _HomeState extends State<Home> {
                   ? _buildMediaCard(colorScheme)
                   : FutureBuilder(
                       future: ColorScheme.fromImageProvider(
-                          provider:
-                              FileImage(File(AppStorage().playingCover!))),
+                        provider:
+                            UniImageProvider(url: AppStorage().playingCover!)
+                                .getImage(),
+                      ),
                       builder: (BuildContext context,
                           AsyncSnapshot<ColorScheme> snapshot) {
                         if (snapshot.hasData && snapshot.data != null) {
-                          return _buildMediaCard(snapshot.data!);
+                          return InkWell(
+                            onTap: () {
+                              if (!context.mounted) return;
+                              Navigator.of(context, rootNavigator: true).push(
+                                MaterialPageRoute(
+                                  builder: (context) => MPlayer(
+                                    info: PlayItem(
+                                        source: '', cover: null, title: ''),
+                                    currentMedia: true,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: _buildMediaCard(snapshot.data!),
+                          );
                         } else {
                           return _buildMediaCard(colorScheme);
                         }
@@ -430,8 +449,8 @@ class _HomeState extends State<Home> {
                         // focalRadius: 1,
                         colors: [
                           Colors.black.withOpacity(0.6),
-                          // Colors.black.withOpacity(0)
-                          Colors.transparent
+                          Colors.black.withOpacity(0.1)
+                          // Colors.transparent
                         ],
                         // stops: [0, 0.6],
                         // tileMode: TileMode.mirror,
@@ -439,13 +458,14 @@ class _HomeState extends State<Home> {
                     },
                     blendMode: BlendMode.dstIn,
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Image.file(
-                        File(AppStorage().playingCover!),
-                        width: double.maxFinite,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                        borderRadius: BorderRadius.circular(20),
+                        child:
+                            // Image.file(
+                            //   File(AppStorage().playingCover!),
+                            //   width: double.maxFinite,
+                            //   fit: BoxFit.cover,
+                            // ),
+                            UniImage(url: AppStorage().playingCover!)),
                   ),
             Column(
               children: [
@@ -621,15 +641,7 @@ class _HomeState extends State<Home> {
                             color: colorScheme.primaryContainer,
                             // iconSize: 30,
                             onPressed: () {
-                              AppStorage().playboy.stop();
-                              if (AppStorage().playboy.platform
-                                  is NativePlayer) {
-                                (AppStorage().playboy.platform as NativePlayer)
-                                    .setProperty('audio-files', '');
-                              }
-                              AppStorage().playingTitle = 'Not Playing';
-                              AppStorage().playingCover = null;
-                              AppStorage().updateStatus();
+                              AppStorage().closeMedia();
                             },
                             icon: const Icon(
                               Icons.stop,
