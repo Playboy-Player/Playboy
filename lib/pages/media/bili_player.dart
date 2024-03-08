@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/biliapi/models/video_info.dart';
 import 'package:playboy/backend/biliapi/models/video_stream_response.dart';
-import 'package:playboy/backend/constants.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/backend/web_helper.dart';
 import 'package:playboy/pages/media/video_fullscreen.dart';
@@ -12,6 +11,7 @@ import 'package:squiggly_slider/slider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
+// import 'package:process_run/shell.dart';
 
 class BiliPlayer extends StatefulWidget {
   const BiliPlayer(
@@ -66,321 +66,6 @@ class BiliPlayerState extends State<BiliPlayer> {
     super.dispose();
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   late final colorScheme = Theme.of(context).colorScheme;
-  //   late final backgroundColor = Color.alphaBlend(
-  //       colorScheme.primary.withOpacity(0.08), colorScheme.surface);
-  //   return Scaffold(
-  //     backgroundColor: backgroundColor,
-  //     appBar: AppBar(
-  //       toolbarHeight: 50,
-  //       flexibleSpace: GestureDetector(
-  //         behavior: HitTestBehavior.translucent,
-  //         onPanStart: (details) {
-  //           windowManager.startDragging();
-  //         },
-  //       ),
-  //       // toolbarHeight: videoMode ? null : 70,
-  //       backgroundColor: backgroundColor,
-  //       scrolledUnderElevation: 0,
-  //       title: videoMode
-  //           ? GestureDetector(
-  //               behavior: HitTestBehavior.translucent,
-  //               onPanStart: (details) {
-  //                 windowManager.startDragging();
-  //               },
-  //               child: Text(
-  //                 widget.videoInfo.title,
-  //               ))
-  //           : const SizedBox(),
-  //       actions: [
-  //         IconButton(
-  //           isSelected: menuExpanded,
-  //           icon: const Icon(Icons.view_sidebar_outlined),
-  //           selectedIcon: const Icon(Icons.view_sidebar),
-  //           onPressed: () {
-  //             setState(() {
-  //               menuExpanded = !menuExpanded;
-  //             });
-  //           },
-  //         ),
-  //         IconButton(
-  //             hoverColor: Colors.transparent,
-  //             iconSize: 20,
-  //             onPressed: () {
-  //               windowManager.minimize();
-  //             },
-  //             icon: const Icon(Icons.minimize)),
-  //         IconButton(
-  //             hoverColor: Colors.transparent,
-  //             iconSize: 20,
-  //             onPressed: () async {
-  //               if (await windowManager.isMaximized()) {
-  //                 windowManager.unmaximize();
-  //               } else {
-  //                 windowManager.maximize();
-  //               }
-  //             },
-  //             icon: const Icon(Icons.crop_square)),
-  //         IconButton(
-  //             hoverColor: Colors.transparent,
-  //             iconSize: 20,
-  //             onPressed: () {
-  //               windowManager.close();
-  //             },
-  //             icon: const Icon(Icons.close)),
-  //         const SizedBox(
-  //           width: 10,
-  //         )
-  //       ],
-  //     ),
-  //     // Use a FutureBuilder to display a loading spinner while waiting for the
-  //     // VideoPlayerController to finish initializing.
-  //     body: Column(
-  //       children: [
-  //         Expanded(
-  //           child: Row(
-  //             children: [
-  //               Expanded(
-  //                 // flex: 3,
-  //                 child: Container(
-  //                   padding: const EdgeInsets.symmetric(horizontal: 10),
-  //                   child: ClipRRect(
-  //                       borderRadius:
-  //                           const BorderRadius.all(Radius.circular(25)),
-  //                       child: videoMode
-  //                           ? Container(
-  //                               color: Colors.black,
-  //                               child: Center(
-  //                                 child: Video(
-  //                                   controller: controller,
-  //                                   controls: NoVideoControls,
-  //                                 ),
-  //                               )
-  //                               // const Center(
-  //                               //     child: CircularProgressIndicator(),
-  //                               //   )
-  //                               ,
-  //                             )
-  //                           : Container(
-  //                               padding: const EdgeInsets.only(
-  //                                   top: 50, left: 50, right: 50, bottom: 75),
-  //                               alignment: Alignment.center,
-  //                               child: AspectRatio(
-  //                                 aspectRatio: 1,
-  //                                 child: DecoratedBox(
-  //                                   decoration: BoxDecoration(
-  //                                     borderRadius: BorderRadius.circular(16),
-  //                                     image: DecorationImage(
-  //                                       image: NetworkImage(
-  //                                           widget.videoInfo.coverUrl),
-  //                                       fit: BoxFit.cover,
-  //                                     ),
-  //                                   ),
-  //                                 ),
-  //                               ),
-  //                             )),
-  //                 ),
-  //               ),
-  //               menuExpanded
-  //                   ? Padding(
-  //                       // flex: 2,
-  //                       padding: const EdgeInsets.only(right: 10),
-  //                       child: SizedBox(
-  //                         width: videoMode
-  //                             ? 300
-  //                             : MediaQuery.of(context).size.width * 0.4,
-  //                         child: ClipRRect(
-  //                             borderRadius:
-  //                                 const BorderRadius.all(Radius.circular(25)),
-  //                             child: DefaultTabController(
-  //                               initialIndex: 0,
-  //                               length: 2,
-  //                               child: Scaffold(
-  //                                 backgroundColor: videoMode
-  //                                     ? colorScheme.background
-  //                                     : backgroundColor,
-  //                                 appBar: const TabBar(
-  //                                   tabs: <Widget>[
-  //                                     Tab(
-  //                                       icon: Icon(Icons.lyrics),
-  //                                     ),
-  //                                     Tab(
-  //                                       icon: Icon(Icons.menu),
-  //                                     ),
-  //                                   ],
-  //                                 ),
-  //                                 body: const TabBarView(
-  //                                   children: <Widget>[
-  //                                     Center(
-  //                                       child: Text("No lyrics"),
-  //                                     ),
-  //                                     Center(
-  //                                       child: Text("Playlist"),
-  //                                     ),
-  //                                   ],
-  //                                 ),
-  //                               ),
-  //                             )),
-  //                       ))
-  //                   : const SizedBox(),
-  //             ],
-  //           ),
-  //         ),
-  //         SizedBox(
-  //           width: videoMode
-  //               ? MediaQuery.of(context).size.width - 40
-  //               : MediaQuery.of(context).size.width - 80,
-  //           height: 25,
-  //           child: SliderTheme(
-  //               data: SliderThemeData(
-  //                 // trackHeight: videoMode ? 8 : null,
-  //                 overlayShape: SliderComponentShape.noOverlay,
-  //               ),
-  //               child: StreamBuilder(
-  //                   stream: player.stream.position,
-  //                   builder: (context, snapshot) {
-  //                     return SquigglySlider(
-  //                       squiggleAmplitude: videoMode ? 0 : 2,
-  //                       squiggleWavelength: 5,
-  //                       squiggleSpeed: 0.05,
-  //                       max: player.state.duration.inMilliseconds.toDouble(),
-  //                       value: seeking
-  //                           ? seekingPos
-  //                           : (snapshot.hasData
-  //                               ? min(
-  //                                   snapshot.data!.inMilliseconds.toDouble(),
-  //                                   player.state.duration.inMilliseconds
-  //                                       .toDouble())
-  //                               : 0),
-  //                       onChanged: (value) {
-  //                         // player.seek(Duration(milliseconds: value.toInt()));
-  //                         setState(() {
-  //                           seekingPos = value;
-  //                         });
-  //                       },
-  //                       onChangeStart: (value) {
-  //                         setState(() {
-  //                           seeking = true;
-  //                         });
-  //                       },
-  //                       onChangeEnd: (value) {
-  //                         player
-  //                             .seek(Duration(milliseconds: value.toInt()))
-  //                             .then((value) => {
-  //                                   setState(() {
-  //                                     seeking = false;
-  //                                   })
-  //                                 });
-  //                       },
-  //                     );
-  //                   })),
-  //         ),
-  //         SizedBox(
-  //           height: videoMode ? 60 : 100,
-  //           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-  //             IconButton(
-  //                 onPressed: () {
-  //                   setState(() {
-  //                     shuffle = !shuffle;
-  //                   });
-  //                 },
-  //                 icon: shuffle
-  //                     ? const Icon(Icons.shuffle_on)
-  //                     : const Icon(Icons.shuffle)),
-  //             const SizedBox(
-  //               width: 10,
-  //             ),
-  //             IconButton(
-  //                 onPressed: () {
-  //                   if (player.state.playlistMode == PlaylistMode.single) {
-  //                     player.setPlaylistMode(PlaylistMode.none);
-  //                   } else {
-  //                     player.setPlaylistMode(PlaylistMode.single);
-  //                   }
-  //                   setState(() {});
-  //                 },
-  //                 icon: player.state.playlistMode == PlaylistMode.single
-  //                     ? const Icon(Icons.repeat_one_on)
-  //                     : const Icon(Icons.repeat_one)),
-  //             const SizedBox(
-  //               width: 10,
-  //             ),
-  //             IconButton.filledTonal(
-  //                 iconSize: 30,
-  //                 onPressed: () {},
-  //                 icon: const Icon(Icons.skip_previous_outlined)),
-  //             const SizedBox(
-  //               width: 10,
-  //             ),
-  //             IconButton.filled(
-  //               style: IconButton.styleFrom(
-  //                 // backgroundColor: colorScheme.tertiary,
-  //                 shape: RoundedRectangleBorder(
-  //                     borderRadius: BorderRadius.circular(20)),
-  //               ),
-  //               iconSize: 40,
-  //               // color: colorScheme.onTertiary,
-  //               onPressed: () {
-  //                 setState(() {
-  //                   player.playOrPause();
-  //                 });
-  //               },
-  //               icon: StreamBuilder(
-  //                 stream: player.stream.playing,
-  //                 builder: (context, playing) => Icon(
-  //                   playing.data == true
-  //                       ? Icons.pause_circle_outline
-  //                       : Icons.play_arrow_outlined,
-  //                 ),
-  //               ),
-  //             ),
-  //             const SizedBox(
-  //               width: 10,
-  //             ),
-  //             IconButton.filledTonal(
-  //                 iconSize: 30,
-  //                 onPressed: () {},
-  //                 icon: const Icon(Icons.skip_next_outlined)),
-  //             const SizedBox(
-  //               width: 10,
-  //             ),
-  //             IconButton(
-  //               icon: videoMode
-  //                   ? const Icon(Icons.music_note_outlined)
-  //                   : const Icon(Icons.music_video_outlined),
-  //               onPressed: () {
-  //                 setState(() {
-  //                   videoMode = !videoMode;
-  //                 });
-  //               },
-  //             ),
-  //             const SizedBox(
-  //               width: 10,
-  //             ),
-  //             IconButton(
-  //                 onPressed: () async {
-  //                   windowManager.setFullScreen(true);
-
-  //                   if (!mounted) return;
-  //                   Navigator.push(
-  //                       context,
-  //                       MaterialPageRoute(
-  //                           builder: (context) => FullscreenPlayPage(
-  //                                 controller: controller,
-  //                               )));
-  //                 },
-  //                 icon: const Icon(Icons.fullscreen)),
-  //           ]),
-  //         ),
-  //         const SizedBox(
-  //           height: 10,
-  //         )
-  //       ],
-  //     ),
-  //   );
-  // }
   @override
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
@@ -477,13 +162,17 @@ class BiliPlayerState extends State<BiliPlayer> {
       actions: [
         IconButton(
           icon: const Icon(Icons.download),
-          onPressed: () {
-            setState(() {
-              WebHelper().download(widget.playInfo.audio[0].baseUrl!,
-                  '${Constants.dataPath}downloads/${widget.videoInfo.title}.audio.m4s');
-              WebHelper().download(widget.playInfo.video[0].baseUrl!,
-                  '${Constants.dataPath}downloads/${widget.videoInfo.title}.video.m4s');
-            });
+          onPressed: () async {
+            String audioPath = '${AppStorage().dataPath}downloads/audio.m4s';
+            String videoPath = '${AppStorage().dataPath}downloads/video.m4s';
+            String coverPath = '${AppStorage().dataPath}downloads/cover.jpg';
+            WebHelper().download(widget.playInfo.audio[0].baseUrl!, audioPath);
+            WebHelper().download(widget.playInfo.video[0].baseUrl!, videoPath);
+            WebHelper().download(widget.playInfo.video[0].baseUrl!, coverPath);
+            // var shell = Shell();
+            // await shell.run(r'''
+            // D:\tools\DownKyi-1.0.8-1.win-x64\ffmpeg\ffmpeg.exe -i D:\Projects\playboy\playboy\build\playboy\downloads\audio.m4s -i D:\Projects\playboy\playboy\build\playboy\downloads\video.m4s -c:v copy -c:a copy -f mp4 D:\Projects\playboy\playboy\build\playboy\downloads\out.mp4
+            // ''');
           },
         ),
         IconButton(

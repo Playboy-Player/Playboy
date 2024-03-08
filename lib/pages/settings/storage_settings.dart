@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class StorageSettingsPage extends StatefulWidget {
   const StorageSettingsPage({super.key});
@@ -15,24 +18,24 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
     return Scaffold(
         body: CustomScrollView(
       slivers: [
-        SliverToBoxAdapter(
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            child: const Text(
-              '扫描选项',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-            ),
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: ListTile(
-            onTap: () {
-              AppStorage().updateStatus();
-            },
-            leading: const Icon(Icons.refresh),
-            title: const Text('重新扫描媒体库'),
-          ),
-        ),
+        // SliverToBoxAdapter(
+        //   child: Container(
+        //     padding: const EdgeInsets.all(12),
+        //     child: const Text(
+        //       '扫描选项',
+        //       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+        //     ),
+        //   ),
+        // ),
+        // SliverToBoxAdapter(
+        //   child: ListTile(
+        //     onTap: () {
+        //       AppStorage().updateStatus();
+        //     },
+        //     leading: const Icon(Icons.refresh),
+        //     title: const Text('重新扫描媒体库'),
+        //   ),
+        // ),
         SliverToBoxAdapter(
           child: Container(
             padding: const EdgeInsets.all(12),
@@ -224,23 +227,25 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
         ),
         SliverToBoxAdapter(
           child: ListTile(
-            onTap: () {},
-            leading: const Icon(Icons.upload),
-            title: const Text('导出数据'),
+            onTap: () {
+              launchUrl(Uri.directory(AppStorage().dataPath));
+            },
+            leading: const Icon(Icons.folder),
+            title: const Text('打开应用数据文件夹'),
+            subtitle: Text(AppStorage().dataPath),
           ),
         ),
         SliverToBoxAdapter(
           child: ListTile(
-            onTap: () {},
-            leading: const Icon(Icons.download),
-            title: const Text('导入数据'),
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: ListTile(
-            onTap: () {},
+            onTap: () {
+              var f = File('${AppStorage().dataPath}/config/settings.json');
+              if (f.existsSync()) {
+                f.deleteSync();
+              }
+            },
             leading: const Icon(Icons.restore),
             title: const Text('恢复默认设置'),
+            subtitle: const Text('不可恢复,重启后生效'),
           ),
         ),
       ],
@@ -268,6 +273,13 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                 child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                IconButton(
+                    onPressed: () {
+                      launchUrl(Uri.directory(path));
+                    },
+                    icon: const Icon(
+                      Icons.folder_outlined,
+                    )),
                 IconButton(
                     onPressed: () {
                       AppStorage().settings.musicPaths.remove(path);
@@ -309,6 +321,13 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                 child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                IconButton(
+                    onPressed: () {
+                      launchUrl(Uri.directory(path));
+                    },
+                    icon: const Icon(
+                      Icons.folder_outlined,
+                    )),
                 IconButton(
                     onPressed: () {
                       AppStorage().settings.videoPaths.remove(path);

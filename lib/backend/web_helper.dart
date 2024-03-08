@@ -5,6 +5,7 @@ import 'package:cookie_jar/cookie_jar.dart';
 import 'package:playboy/backend/constants.dart';
 // import 'package:path_provider/path_provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:playboy/backend/storage.dart';
 
 class WebHelper {
   static late final Dio dio;
@@ -25,7 +26,7 @@ class WebHelper {
   }
 
   Future<void> init() async {
-    var cookiePath = '${Constants.dataPath}cookies';
+    var cookiePath = '${AppStorage().dataPath}/cookies';
     cookieManager =
         CookieManager(PersistCookieJar(storage: FileStorage(cookiePath)));
     dio.interceptors.add(cookieManager);

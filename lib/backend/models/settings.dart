@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:playboy/backend/constants.dart';
 part 'settings.g.dart';
 
 @JsonSerializable()
@@ -57,8 +56,8 @@ class AppSettings {
     this.tryLook = true,
     this.videoPaths = const [],
     this.musicPaths = const [],
-    this.screenshotPath = '${Constants.dataPath}screenshots/',
-    this.downloadPath = '${Constants.dataPath}downloads/',
+    this.screenshotPath = '',
+    this.downloadPath = '',
   });
 
   factory AppSettings.fromJson(Map<String, dynamic> json) =>

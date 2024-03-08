@@ -70,7 +70,13 @@ class _VideoPageState extends State<VideoPage> {
                   highlightElevation: 0,
                   backgroundColor: colorScheme.surface,
                   hoverColor: backgroundColor,
-                  onPressed: () {},
+                  onPressed: () async {
+                    // TODO: 重新扫描
+                    // playitems.clear();
+                    // playitems.addAll(await LibraryHelper.getPlayItemList(
+                    //     AppStorage().settings.videoPaths));
+                    // setState(() {});
+                  },
                   icon: const Icon(Icons.library_add_outlined),
                   label: const Text('添加'),
                 ),

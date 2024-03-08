@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -388,7 +387,6 @@ class _HomeState extends State<Home> {
                 ],
               ),
             ),
-      // TODO: global control
       floatingActionButton: tabletUI
           ? showMediaCard
               ? AppStorage().playingCover == null
@@ -449,8 +447,8 @@ class _HomeState extends State<Home> {
                         // focalRadius: 1,
                         colors: [
                           Colors.black.withOpacity(0.6),
-                          Colors.black.withOpacity(0.1)
-                          // Colors.transparent
+                          // Colors.black.withOpacity(0.1)
+                          Colors.transparent
                         ],
                         // stops: [0, 0.6],
                         // tileMode: TileMode.mirror,

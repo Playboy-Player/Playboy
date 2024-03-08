@@ -23,7 +23,7 @@ dependencies:
   crypto: ^3.0.3
   # webview_cookie_manager: ^2.0.6
 
-  # path_provider: ^2.1.1
+  path_provider: ^2.1.1
   json_annotation: ^4.8.1
   provider: ^6.1.1
   path: ^1.8.3
@@ -34,7 +34,9 @@ dependencies:
   
   media_kit: ^1.1.10
   media_kit_video: ^1.2.4
-  media_kit_libs_video: ^1.0.4  
+  media_kit_libs_video: ^1.0.4
+  process_run: ^0.14.2
+  url_launcher: ^6.2.5
 
 
 dev_dependencies:

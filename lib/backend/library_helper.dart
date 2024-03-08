@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:media_kit/media_kit.dart';
-import 'package:playboy/backend/constants.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:path/path.dart';
+import 'package:playboy/backend/storage.dart';
 
 class LibraryHelper {
   static Media convertToMedia(PlayItem playItem) {
@@ -55,7 +55,7 @@ class LibraryHelper {
 
   static Future<List<PlaylistItem>> loadPlaylists() async {
     var playlists = <PlaylistItem>[];
-    var dir = Directory('${Constants.dataPath}playlists/');
+    var dir = Directory('${AppStorage().dataPath}playlists/');
     if (!dir.existsSync()) {
       dir.createSync(recursive: true);
     }
@@ -69,7 +69,7 @@ class LibraryHelper {
   }
 
   static void savePlaylist(PlaylistItem pl) {
-    var fp = File('${Constants.dataPath}playlists/${pl.title}.json');
+    var fp = File('${AppStorage().dataPath}playlists/${pl.title}.json');
     if (!fp.existsSync()) {
       fp.createSync(recursive: true);
     }

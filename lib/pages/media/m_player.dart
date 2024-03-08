@@ -444,6 +444,7 @@ class MPlayerState extends State<MPlayer> {
             // AppStorage().playing = AppStorage().playboy.state.playing;
           });
         },
+        // TODO: fix
         icon: StreamBuilder(
           stream: AppStorage().playboy.stream.playing,
           builder: (context, playing) => Icon(

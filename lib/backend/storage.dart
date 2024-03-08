@@ -3,10 +3,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:playboy/backend/constants.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:playboy/backend/models/settings.dart';
 
-// TODO: redirect app path
 class AppStorage extends ChangeNotifier {
   late AppSettings settings;
   // late List<PlaylistItem> playlists;
@@ -31,6 +30,8 @@ class AppStorage extends ChangeNotifier {
   bool seeking = false;
   double seekingPos = 0;
 
+  String dataPath = '';
+
   static final AppStorage _instance = AppStorage._internal();
   factory AppStorage() => _instance;
   AppStorage._internal() {
@@ -49,13 +50,26 @@ class AppStorage extends ChangeNotifier {
     });
   }
 
-  void init() {
+  void init() async {
+    dataPath = (await getApplicationSupportDirectory()).path;
     loadSettings();
+    bool needsUpdate = false;
+    if (settings.downloadPath == '') {
+      settings.downloadPath = '$dataPath/downloads';
+      needsUpdate = true;
+    }
+    if (settings.screenshotPath == '') {
+      settings.screenshotPath = '$dataPath/screenshots';
+      needsUpdate = true;
+    }
+    if (needsUpdate) {
+      saveSettings();
+    }
     playboy.setVolume(AppStorage().settings.volume);
   }
 
   void loadSettings() async {
-    var settingsPath = "${Constants.dataPath}config/settings.json";
+    var settingsPath = "$dataPath/config/settings.json";
     var fp = File(settingsPath);
     if (!fp.existsSync()) {
       fp.createSync(recursive: true);
@@ -68,7 +82,7 @@ class AppStorage extends ChangeNotifier {
   }
 
   void saveSettings() async {
-    var settingsPath = "${Constants.dataPath}config/settings.json";
+    var settingsPath = "$dataPath/config/settings.json";
     var fp = File(settingsPath);
     var data = settings.toJson();
     var str = jsonEncode(data);
