@@ -135,11 +135,9 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
               child: Row(
                 children: [
                   const CircleAvatar(
-                    // backgroundImage: AssetImage('res/images/user.jpg'),
                     radius: 45,
-                    // backgroundImage: AssetImage('res/images/user.jpg'),
                     child: Icon(
-                      Icons.account_circle_outlined,
+                      Icons.person,
                       size: 50,
                     ),
                   ),

@@ -62,8 +62,8 @@ class PlaylistState extends State<PlaylistPage> {
             collapsedHeight: 65,
             actions: [
               Padding(
-                padding: const EdgeInsets.only(top: 10, right: 10),
-                child: FloatingActionButton.extended(
+                padding: const EdgeInsets.only(top: 10),
+                child: FloatingActionButton(
                   heroTag: 'new_list',
                   elevation: 0,
                   hoverElevation: 0,
@@ -122,8 +122,26 @@ class PlaylistState extends State<PlaylistPage> {
                       ),
                     );
                   },
-                  icon: const Icon(Icons.playlist_add_outlined),
-                  label: const Text('新建'),
+                  child: const Icon(Icons.playlist_add),
+                  // label: const Text('新建'),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 10, right: 10),
+                child: FloatingActionButton.extended(
+                  isExtended: MediaQuery.of(context).size.width > 500,
+                  heroTag: 'view_list',
+                  // tooltip: '切换显示视图',
+                  elevation: 0,
+                  hoverElevation: 0,
+                  highlightElevation: 0,
+                  backgroundColor: colorScheme.surface,
+                  hoverColor: backgroundColor,
+                  onPressed: () {},
+                  // icon: const Icon(Icons.view_agenda_outlined),
+                  // label: const Text('列表视图'),
+                  icon: const Icon(Icons.calendar_view_month),
+                  label: const Text('网格'),
                 ),
               ),
             ],
@@ -172,7 +190,51 @@ class PlaylistState extends State<PlaylistPage> {
                         ),
                         delegate: SliverChildBuilderDelegate(
                           (BuildContext context, int index) {
-                            return PlaylistCard(info: playlists[index]);
+                            MenuController menuController = MenuController();
+                            return GestureDetector(
+                              onSecondaryTapDown: (details) {
+                                menuController.open(
+                                    position: details.localPosition);
+                              },
+                              child: MenuAnchor(
+                                anchorTapClosesMenu: true,
+                                controller: menuController,
+                                style: MenuStyle(
+                                  // surfaceTintColor:
+                                  //     const MaterialStatePropertyAll(
+                                  //         Colors.transparent),
+                                  shape: MaterialStatePropertyAll(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                ),
+                                menuChildren: [
+                                  const MenuItemButton(
+                                    leadingIcon:
+                                        Icon(Icons.play_arrow_outlined),
+                                    child: Text('播放'),
+                                  ),
+                                  const MenuItemButton(
+                                    leadingIcon:
+                                        Icon(Icons.drive_file_rename_outline),
+                                    child: Text('编辑'),
+                                  ),
+                                  MenuItemButton(
+                                    leadingIcon:
+                                        const Icon(Icons.delete_outline),
+                                    child: const Text('删除'),
+                                    onPressed: () {
+                                      LibraryHelper.deletePlaylist(
+                                          playlists[index]);
+                                      playlists.removeAt(index);
+                                      setState(() {});
+                                    },
+                                  )
+                                ],
+                                child: PlaylistCard(info: playlists[index]),
+                              ),
+                            );
                           },
                           childCount: playlists.length,
                         ),

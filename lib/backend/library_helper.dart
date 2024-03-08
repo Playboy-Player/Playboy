@@ -76,4 +76,11 @@ class LibraryHelper {
     var data = pl.toJson();
     fp.writeAsString(jsonEncode(data));
   }
+
+  static void deletePlaylist(PlaylistItem pl) {
+    var fp = File('${AppStorage().dataPath}playlists/${pl.title}.json');
+    if (fp.existsSync()) {
+      fp.deleteSync();
+    }
+  }
 }

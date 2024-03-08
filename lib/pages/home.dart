@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:path/path.dart';
+import 'package:playboy/backend/constants.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/pages/media/m_player.dart';
@@ -98,12 +99,12 @@ class _HomeState extends State<Home> {
               windowManager.startDragging();
             },
             child: const Row(children: [
-              Icon(Symbols.flutter_rounded),
+              Icon(Constants.appIcon),
               SizedBox(
-                width: 6,
+                width: 10,
               ),
               Text(
-                'Playboy Preview',
+                Constants.appName,
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
               )
             ])),

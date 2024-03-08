@@ -39,6 +39,7 @@ class _SearchPage extends State<SearchPage> {
               Container(
                 padding: const EdgeInsets.only(top: 10, right: 10),
                 child: FloatingActionButton.extended(
+                  isExtended: MediaQuery.of(context).size.width > 500,
                   heroTag: 'filter',
                   elevation: 0,
                   hoverElevation: 0,

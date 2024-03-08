@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:playboy/backend/biliapi/models/video_info.dart';
 import 'package:playboy/backend/biliapi/models/video_stream_response.dart';
 import 'package:playboy/backend/storage.dart';
@@ -177,8 +178,14 @@ class BiliPlayerState extends State<BiliPlayer> {
         ),
         IconButton(
           isSelected: menuExpanded,
-          icon: const Icon(Icons.view_sidebar_outlined),
-          selectedIcon: const Icon(Icons.view_sidebar),
+          icon: const Icon(
+            Symbols.right_panel_open,
+            weight: 550,
+          ),
+          selectedIcon: const Icon(
+            Symbols.right_panel_close,
+            weight: 550,
+          ),
           onPressed: () {
             setState(() {
               menuExpanded = !menuExpanded;

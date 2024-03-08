@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:path/path.dart' as p;
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
@@ -154,8 +155,14 @@ class MPlayerState extends State<MPlayer> {
       actions: [
         IconButton(
           isSelected: menuExpanded,
-          icon: const Icon(Icons.view_sidebar_outlined),
-          selectedIcon: const Icon(Icons.view_sidebar),
+          icon: const Icon(
+            Symbols.right_panel_open,
+            weight: 550,
+          ),
+          selectedIcon: const Icon(
+            Symbols.right_panel_close,
+            weight: 550,
+          ),
           onPressed: () {
             setState(() {
               menuExpanded = !menuExpanded;
@@ -444,14 +451,10 @@ class MPlayerState extends State<MPlayer> {
             // AppStorage().playing = AppStorage().playboy.state.playing;
           });
         },
-        // TODO: fix
-        icon: StreamBuilder(
-          stream: AppStorage().playboy.stream.playing,
-          builder: (context, playing) => Icon(
-            playing.data == true
-                ? Icons.pause_circle_outline
-                : Icons.play_arrow_outlined,
-          ),
+        icon: Icon(
+          AppStorage().playing
+              ? Icons.pause_circle_outline
+              : Icons.play_arrow_outlined,
         ),
       ),
       const SizedBox(

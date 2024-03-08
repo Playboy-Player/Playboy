@@ -17,6 +17,7 @@ class MusicPage extends StatefulWidget {
 class _MusicPageState extends State<MusicPage> {
   List<PlayItem> playitems = [];
   bool loaded = false;
+  bool gridview = true;
 
   @override
   void initState() {
@@ -62,17 +63,49 @@ class _MusicPageState extends State<MusicPage> {
             expandedHeight: 80,
             actions: [
               Container(
-                padding: const EdgeInsets.only(top: 10, right: 10),
-                child: FloatingActionButton.extended(
-                  heroTag: 'add_music',
+                padding: const EdgeInsets.only(top: 10),
+                child: FloatingActionButton(
+                  heroTag: 'scan_music',
+                  // tooltip: '重新扫描',
                   elevation: 0,
                   hoverElevation: 0,
                   highlightElevation: 0,
                   backgroundColor: colorScheme.surface,
                   hoverColor: backgroundColor,
-                  onPressed: () {},
-                  icon: const Icon(Icons.library_add_outlined),
-                  label: const Text('添加'),
+                  onPressed: () async {
+                    setState(() {
+                      loaded = false;
+                    });
+                    playitems.clear();
+                    playitems.addAll(await LibraryHelper.getPlayItemList(
+                        AppStorage().settings.musicPaths));
+                    setState(() {
+                      loaded = true;
+                    });
+                  },
+                  child: const Icon(Icons.scanner),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.only(top: 10, right: 10),
+                child: FloatingActionButton.extended(
+                  isExtended: MediaQuery.of(context).size.width > 500,
+                  heroTag: 'view_music',
+                  // tooltip: '切换显示视图',
+                  elevation: 0,
+                  hoverElevation: 0,
+                  highlightElevation: 0,
+                  backgroundColor: colorScheme.surface,
+                  hoverColor: backgroundColor,
+                  onPressed: () async {
+                    setState(() {
+                      gridview = !gridview;
+                    });
+                  },
+                  icon: Icon(gridview
+                      ? Icons.calendar_view_month
+                      : Icons.view_agenda_outlined),
+                  label: Text(gridview ? '网格' : '列表'),
                 ),
               ),
             ],
@@ -114,18 +147,32 @@ class _MusicPageState extends State<MusicPage> {
                     )
                   : SliverPadding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      sliver: SliverGrid(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: cols,
-                          childAspectRatio: 5 / 6,
-                        ),
-                        delegate: SliverChildBuilderDelegate(
-                          (BuildContext context, int index) {
-                            return MusicCard(info: playitems[index]);
-                          },
-                          childCount: playitems.length,
-                        ),
-                      ),
+                      sliver: gridview
+                          ? SliverGrid(
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: cols,
+                                childAspectRatio: 5 / 6,
+                              ),
+                              delegate: SliverChildBuilderDelegate(
+                                (BuildContext context, int index) {
+                                  return MusicCard(info: playitems[index]);
+                                },
+                                childCount: playitems.length,
+                              ),
+                            )
+                          : SliverList(
+                              delegate: SliverChildBuilderDelegate(
+                                (context, index) {
+                                  return SizedBox(
+                                    height: 70,
+                                    child:
+                                        MusicListCard(info: playitems[index]),
+                                  );
+                                },
+                                childCount: playitems.length,
+                              ),
+                            ),
                     ))
               : const SliverToBoxAdapter(
                   child: Center(

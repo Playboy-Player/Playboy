@@ -17,107 +17,60 @@ class PlaylistDetailState extends State<PlaylistDetail> {
     late final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.info.title),
-        ),
-        body: ListView.builder(
-          // children: [
-          // Padding(
-          //   padding: const EdgeInsets.all(24),
-          //   child: Row(
-          //     // mainAxisAlignment: MainAxisAlignment.center,
-          //     // crossAxisAlignment: CrossAxisAlignment.end,
-          //     children: [
-          //       SizedBox(
-          //         width: 140,
-          //         child: AspectRatio(
-          //           aspectRatio: 1,
-          //           child: widget.pl.cover == null
-          //               ? Container(
-          //                   width: double.infinity,
-          //                   decoration: BoxDecoration(
-          //                     borderRadius: BorderRadius.circular(20),
-          //                     color: colorScheme.tertiaryContainer,
-          //                   ),
-          //                   child: Icon(
-          //                     Icons.playlist_play_rounded,
-          //                     color: colorScheme.onTertiaryContainer,
-          //                     size: 80,
-          //                   ),
-          //                 )
-          //               : SizedBox(
-          //                   width: double.infinity,
-          //                   child: ClipRRect(
-          //                     borderRadius: BorderRadius.circular(20),
-          //                     child: Image.file(File(widget.pl.cover!)),
-          //                   ),
-          //                 ),
-          //         ),
-          //       ),
-          //       const SizedBox(
-          //         width: 20,
-          //       ),
-          //       Expanded(
-          //         child: Text(
-          //           widget.pl.title,
-          //           style: const TextStyle(
-          //               fontSize: 26, fontWeight: FontWeight.w500),
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
-          // ],
-          itemBuilder: (context, index) {
-            if (index == 0) {
-              return Padding(
-                padding: const EdgeInsets.all(24),
-                child: Row(
-                  // mainAxisAlignment: MainAxisAlignment.center,
-                  // crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    SizedBox(
-                      width: 140,
-                      child: AspectRatio(
-                        aspectRatio: 1,
-                        child: widget.info.cover == null
-                            ? Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: colorScheme.tertiaryContainer,
-                                ),
-                                child: Icon(
-                                  Icons.playlist_play_rounded,
-                                  color: colorScheme.onTertiaryContainer,
-                                  size: 80,
-                                ),
-                              )
-                            : SizedBox(
-                                width: double.infinity,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Image.file(File(widget.info.cover!)),
-                                ),
+      appBar: AppBar(
+        title: Text(widget.info.title),
+      ),
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Row(
+                // mainAxisAlignment: MainAxisAlignment.center,
+                // crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  SizedBox(
+                    width: 140,
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: widget.info.cover == null
+                          ? Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: colorScheme.tertiaryContainer,
                               ),
-                      ),
+                              child: Icon(
+                                Icons.playlist_play_rounded,
+                                color: colorScheme.onTertiaryContainer,
+                                size: 80,
+                              ),
+                            )
+                          : SizedBox(
+                              width: double.infinity,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: Image.file(File(widget.info.cover!)),
+                              ),
+                            ),
                     ),
-                    const SizedBox(
-                      width: 20,
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    child: Text(
+                      widget.info.title,
+                      style: const TextStyle(
+                          fontSize: 26, fontWeight: FontWeight.w500),
                     ),
-                    Expanded(
-                      child: Text(
-                        widget.info.title,
-                        style: const TextStyle(
-                            fontSize: 26, fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }
-            return null;
-          },
-        ));
+                  ),
+                ],
+              ),
+            ),
+          )
+        ],
+      ),
+    );
   }
 }

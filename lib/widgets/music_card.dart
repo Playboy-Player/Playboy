@@ -87,3 +87,127 @@ class MusicCard extends StatelessWidget {
     );
   }
 }
+
+class MusicListCard extends StatelessWidget {
+  const MusicListCard({super.key, required this.info});
+  final PlayItem info;
+
+  @override
+  Widget build(BuildContext context) {
+    late final colorScheme = Theme.of(context).colorScheme;
+    return InkWell(
+      borderRadius: BorderRadius.circular(20),
+      onTap: () async {
+        await AppStorage().closeMedia().then((value) {
+          if (!context.mounted) return;
+          Navigator.of(context, rootNavigator: true).push(
+            MaterialPageRoute(
+              builder: (context) => MPlayer(
+                info: info,
+                currentMedia: false,
+              ),
+            ),
+          );
+          // TODO: 黑屏bug
+          // final audio = Media(info.source);
+          // AppStorage().playboy.open(audio);
+          // AppStorage().playboy.setVolume(AppStorage().settings.volume);
+          // AppStorage().position = Duration.zero;
+          // AppStorage().duration = Duration.zero;
+          // AppStorage().playingTitle =
+          //     basenameWithoutExtension(info.source);
+          // AppStorage().playingCover = info.cover;
+        });
+      },
+      child: Row(
+        children: [
+          Padding(
+              padding: const EdgeInsets.all(6),
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: info.cover == null
+                    ? Ink(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          color: colorScheme.tertiaryContainer,
+                        ),
+                        child: Icon(
+                          Icons.music_note,
+                          color: colorScheme.onTertiaryContainer,
+                          size: 80,
+                        ),
+                      )
+                    : Ink(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          color: colorScheme.tertiaryContainer,
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: FileImage(
+                              File(info.cover!),
+                            ),
+                          ),
+                        ),
+                        // child: Icon(
+                        //   Icons.playlist_play_rounded,
+                        //   color: colorScheme.onTertiaryContainer,
+                        //   size: 80,
+                        // ),
+                      ),
+              )),
+          const SizedBox(
+            width: 10,
+          ),
+          Expanded(
+              child: Text(
+            info.title,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          )),
+          Align(
+            alignment: Alignment.centerRight,
+            child: IconButton.filledTonal(
+              onPressed: () async {
+                await AppStorage().closeMedia().then((value) {
+                  if (!context.mounted) return;
+                  Navigator.of(context, rootNavigator: true).push(
+                    MaterialPageRoute(
+                      builder: (context) => MPlayer(
+                        info: info,
+                        currentMedia: false,
+                      ),
+                    ),
+                  );
+                  // TODO: 黑屏bug
+                  // final audio = Media(info.source);
+                  // AppStorage().playboy.open(audio);
+                  // AppStorage().playboy.setVolume(AppStorage().settings.volume);
+                  // AppStorage().position = Duration.zero;
+                  // AppStorage().duration = Duration.zero;
+                  // AppStorage().playingTitle =
+                  //     basenameWithoutExtension(info.source);
+                  // AppStorage().playingCover = info.cover;
+                });
+              },
+              icon: const Icon(Icons.play_arrow),
+            ),
+          ),
+          const SizedBox(
+            width: 6,
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: IconButton.filledTonal(
+              onPressed: () {},
+              icon: const Icon(Icons.add),
+            ),
+          ),
+          const SizedBox(
+            width: 6,
+          ),
+        ],
+      ),
+    );
+  }
+}

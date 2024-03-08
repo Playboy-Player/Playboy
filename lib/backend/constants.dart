@@ -1,6 +1,10 @@
+import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
+
 class Constants {
-  static const String appName = 'Playboy';
-  static const String version = '1.0';
+  static const IconData appIcon = Symbols.person_play;
+  static const String appName = 'Playboy Preview';
+  static const String version = 'pre-1.3';
 
   static const String mainBase = "https://www.bilibili.com";
   static const String apiBase = "https://api.bilibili.com";

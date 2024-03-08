@@ -61,6 +61,7 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
               AppStorage().saveSettings();
               // AppStorage().updateStatus();
             }),
+        // TODO: 退出时继续播放
         Container(
           padding: const EdgeInsets.all(12),
           child: const Text(

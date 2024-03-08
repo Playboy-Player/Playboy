@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/biliapi/bilibili_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
@@ -56,6 +57,7 @@ class _FilePageState extends State<FilePage> {
               Container(
                 padding: const EdgeInsets.only(top: 10, right: 10),
                 child: FloatingActionButton.extended(
+                  isExtended: MediaQuery.of(context).size.width > 500,
                   heroTag: 'open_file',
                   elevation: 0,
                   hoverElevation: 0,
@@ -69,6 +71,7 @@ class _FilePageState extends State<FilePage> {
                       useRootNavigator: false,
                       context: context,
                       builder: (BuildContext context) => AlertDialog(
+                        actionsAlignment: MainAxisAlignment.center,
                         surfaceTintColor: Colors.transparent,
                         title: const Text('打开链接'),
                         content: TextField(
@@ -89,6 +92,17 @@ class _FilePageState extends State<FilePage> {
                           },
                         ),
                         actions: <Widget>[
+                          TextButton(
+                            onPressed: () async {
+                              var res = await FilePicker.platform
+                                  .pickFiles(type: FileType.media);
+                              if (res != null) {
+                                String link = res.files.single.path!;
+                                _openLink(link, false);
+                              }
+                            },
+                            child: const Text('选取文件'),
+                          ),
                           TextButton(
                             onPressed: () {
                               Navigator.pop(context);
@@ -117,6 +131,64 @@ class _FilePageState extends State<FilePage> {
           ),
           SliverList(
               delegate: SliverChildListDelegate([
+            // _buildOption(Icons.file_present_outlined, '打开文件链接', () {
+            //   editingController.clear();
+            //   showDialog(
+            //     barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
+            //     useRootNavigator: false,
+            //     context: context,
+            //     builder: (BuildContext context) => AlertDialog(
+            //       surfaceTintColor: Colors.transparent,
+            //       title: const Text('打开链接'),
+            //       content: TextField(
+            //         autofocus: true,
+            //         maxLines: 1,
+            //         controller: editingController,
+            //         decoration: const InputDecoration(
+            //           prefixIcon: Icon(Icons.link),
+            //           border: OutlineInputBorder(),
+            //           labelText: '文件地址/BV号',
+            //         ),
+            //         onSubmitted: (value) async {
+            //           if (value.startsWith('BV')) {
+            //             _openLink(value, true);
+            //           } else {
+            //             _openLink(value, false);
+            //           }
+            //         },
+            //       ),
+            //       actions: <Widget>[
+            //         TextButton(
+            //           onPressed: () async {
+            //             var res = await FilePicker.platform
+            //                 .pickFiles(type: FileType.media);
+            //             if (res != null) {
+            //               String link = res.files.single.path!;
+            //               _openLink(link, false);
+            //             }
+            //           },
+            //           child: const Text('选取'),
+            //         ),
+            //         TextButton(
+            //           onPressed: () {
+            //             Navigator.pop(context);
+            //           },
+            //           child: const Text('取消'),
+            //         ),
+            //         TextButton(
+            //           onPressed: () async {
+            //             if (editingController.text.startsWith('BV')) {
+            //               _openLink(editingController.text, true);
+            //             } else {
+            //               _openLink(editingController.text, false);
+            //             }
+            //           },
+            //           child: const Text('确定'),
+            //         ),
+            //       ],
+            //     ),
+            //   );
+            // }),
             _buildOption(Icons.download, '下载管理', () {
               Navigator.push(
                   context,
@@ -183,6 +255,7 @@ class _FilePageState extends State<FilePage> {
   }
 
   void _openLink(String source, bool isBv) async {
+    AppStorage().closeMedia();
     if (isBv) {
       final info = await BilibiliHelper.getVideoInfo(source);
       final playInfo = await BilibiliHelper.getVideoStream(source, info.cid);
