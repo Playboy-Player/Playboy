@@ -7,7 +7,7 @@ import 'pages/home.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:media_kit/media_kit.dart';
 
-void main() async {
+void main(List<String> arguments) async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
   WindowOptions windowOptions = const WindowOptions(
@@ -33,9 +33,16 @@ void main() async {
   //   systemNavigationBarDividerColor: Colors.transparent,
   //   statusBarColor: Colors.transparent,
   // ));
+  String initMedia = '';
+  if (arguments.isNotEmpty) {
+    initMedia = arguments[0];
+  }
 
   runApp(
     ChangeNotifierProvider(
-        create: (context) => AppStorage(), child: const MikuMiku()),
+        create: (context) => AppStorage(),
+        child: MikuMiku(
+          initMedia: initMedia,
+        )),
   );
 }

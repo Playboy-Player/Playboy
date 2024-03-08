@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:path/path.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/pages/media/m_player.dart';
@@ -19,7 +20,8 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'file/file_page.dart';
 
 class MikuMiku extends StatelessWidget {
-  const MikuMiku({super.key});
+  const MikuMiku({super.key, required this.initMedia});
+  final String initMedia;
 
   @override
   Widget build(BuildContext context) {
@@ -32,29 +34,27 @@ class MikuMiku extends StatelessWidget {
           title: 'Playboy',
           theme: ThemeData(
             fontFamily: "SourceHanSans",
-            // brightness: Brightness.light,
             colorScheme: ColorScheme.fromSeed(
                 seedColor: themeColor, brightness: Brightness.light),
             useMaterial3: true,
-            // scaffoldBackgroundColor:
-            //     AppStorage().settings.enableBackgroundColor
-            //         ? themeColor.shade50
-            //         : null,
-            // appBarTheme: AppStorage().settings.enableBackgroundColor
-            //     ? AppBarTheme(backgroundColor: themeColor.shade50)
-            //     : null,
           ),
           darkTheme: ThemeData(
             fontFamily: "SourceHanSans",
-            // brightness: Brightness.dark,
             colorScheme: ColorScheme.fromSeed(
                 seedColor: themeColor, brightness: Brightness.dark),
             useMaterial3: true,
           ),
           themeMode: value.settings.themeMode,
-          home: Home(
-            mk: mk,
-          ),
+          home: initMedia == ''
+              ? Home(
+                  mk: mk,
+                )
+              : MPlayer(
+                  info: PlayItem(
+                      source: initMedia,
+                      cover: null,
+                      title: basenameWithoutExtension(initMedia)),
+                  currentMedia: false),
         );
       },
     );
