@@ -33,10 +33,10 @@ class MPlayer extends StatefulWidget {
 
 class MPlayerState extends State<MPlayer> {
   // late final player = Player();
-  late final controller = VideoController(AppStorage().playboy);
+  late final VideoController controller;
 
   bool menuExpanded = false;
-  bool videoMode = true;
+  bool videoMode = !AppStorage().settings.defaultMusicMode;
   // bool loop = false;
   // bool shuffle = false;
 
@@ -51,12 +51,17 @@ class MPlayerState extends State<MPlayer> {
     // TODO: 支持字幕功能
     // AppStorage().playboy.setSubtitleTrack(SubtitleTrack.no());
     super.initState();
+    controller = VideoController(AppStorage().playboy);
     if (widget.currentMedia) {
       return;
     }
     final video = Media(widget.info.source);
-    AppStorage().playboy.open(video);
-    AppStorage().playboy.setVolume(AppStorage().settings.volume);
+    if (!AppStorage().settings.rememberStatus) {
+      AppStorage().playboy.setVolume(100);
+      AppStorage().settings.volume = 100;
+      AppStorage().playboy.setRate(1);
+    }
+    AppStorage().playboy.open(video, play: AppStorage().settings.autoPlay);
     AppStorage().position = Duration.zero;
     AppStorage().duration = Duration.zero;
     AppStorage().playingTitle = p.basenameWithoutExtension(widget.info.source);
@@ -65,7 +70,15 @@ class MPlayerState extends State<MPlayer> {
 
   @override
   void dispose() {
-    // AppStorage().playboy.stop();
+    if (!AppStorage().settings.playAfterExit) {
+      AppStorage().playboy.stop();
+      if (AppStorage().playboy.platform is NativePlayer) {
+        (AppStorage().playboy.platform as NativePlayer)
+            .setProperty('audio-files', '');
+      }
+      AppStorage().playingTitle = 'Not Playing';
+      AppStorage().playingCover = null;
+    }
     super.dispose();
   }
 
@@ -264,7 +277,8 @@ class MPlayerState extends State<MPlayer> {
         overlayShape: SliderComponentShape.noOverlay,
       ),
       child: SquigglySlider(
-        squiggleAmplitude: videoMode ? 0 : 2,
+        squiggleAmplitude:
+            !AppStorage().settings.wavySlider || videoMode ? 0 : 2,
         squiggleWavelength: 5,
         squiggleSpeed: 0.05,
         max: AppStorage().duration.inMilliseconds.toDouble(),

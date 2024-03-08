@@ -26,10 +26,10 @@ class BiliPlayer extends StatefulWidget {
 
 class BiliPlayerState extends State<BiliPlayer> {
   late final player = AppStorage().playboy;
-  late final controller = VideoController(player);
+  late final VideoController controller;
 
   bool menuExpanded = false;
-  bool videoMode = true;
+  bool videoMode = !AppStorage().settings.defaultMusicMode;
   // bool loop = false;
   // bool shuffle = false;
   // bool fullScreen = false;
@@ -40,6 +40,7 @@ class BiliPlayerState extends State<BiliPlayer> {
   @override
   void initState() {
     super.initState();
+    controller = VideoController(AppStorage().playboy);
     final video = Media(widget.playInfo.video[0].baseUrl!, httpHeaders: {
       'referer': 'https://www.bilibili.com',
       'user-agent':
@@ -49,8 +50,13 @@ class BiliPlayerState extends State<BiliPlayer> {
       (player.platform as NativePlayer)
           .setProperty('audio-files', widget.playInfo.audio[0].baseUrl!);
     }
+    if (!AppStorage().settings.rememberStatus) {
+      AppStorage().playboy.setVolume(100);
+      AppStorage().settings.volume = 100;
+      AppStorage().playboy.setRate(1);
+    }
     player.open(video);
-    AppStorage().playboy.setVolume(AppStorage().settings.volume);
+    // AppStorage().playboy.setVolume(AppStorage().settings.volume);
     AppStorage().position = Duration.zero;
     AppStorage().duration = Duration.zero;
     AppStorage().playingTitle = widget.videoInfo.title;
@@ -59,11 +65,15 @@ class BiliPlayerState extends State<BiliPlayer> {
 
   @override
   void dispose() {
-    // player.dispose();
-    // player.stop();
-    // if (player.platform is NativePlayer) {
-    //   (player.platform as NativePlayer).setProperty('audio-files', '');
-    // }
+    if (!AppStorage().settings.playAfterExit) {
+      AppStorage().playboy.stop();
+      if (AppStorage().playboy.platform is NativePlayer) {
+        (AppStorage().playboy.platform as NativePlayer)
+            .setProperty('audio-files', '');
+      }
+      AppStorage().playingTitle = 'Not Playing';
+      AppStorage().playingCover = null;
+    }
     super.dispose();
   }
 
@@ -271,7 +281,8 @@ class BiliPlayerState extends State<BiliPlayer> {
         overlayShape: SliderComponentShape.noOverlay,
       ),
       child: SquigglySlider(
-        squiggleAmplitude: videoMode ? 0 : 2,
+        squiggleAmplitude:
+            !AppStorage().settings.wavySlider || videoMode ? 0 : 2,
         squiggleWavelength: 5,
         squiggleSpeed: 0.05,
         max: AppStorage().duration.inMilliseconds.toDouble(),

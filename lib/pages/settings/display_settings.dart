@@ -18,26 +18,49 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
         // ),
         body: ListView(
       children: [
-        // Container(
-        //   padding: const EdgeInsets.symmetric(horizontal: 16),
-        //   child: const Text('主题设置'),
-        // ),
-        // SwitchListTile(
-        //     title: const Text('更鲜艳的背景颜色'),
-        //     subtitle: const Text('仅浅色模式有效'),
-        //     value: AppStorage().settings.enableBackgroundColor,
-        //     onChanged: (bool value) {
-        //       setState(() {
-        //         AppStorage().settings.enableBackgroundColor = value;
-        //       });
-        //       AppStorage().saveSettings();
-        //       AppStorage().updateStatus();
-        //     }),
         Container(
           padding: const EdgeInsets.all(12),
-          child: const Text(
+          child: Text(
+            '界面',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+        ),
+        SwitchListTile(
+          title: const Text('启用波浪样式进度条'),
+          subtitle: const Text('视频模式下无效'),
+          value: AppStorage().settings.wavySlider,
+          onChanged: (bool value) {
+            setState(() {
+              AppStorage().settings.wavySlider = value;
+            });
+            AppStorage().saveSettings();
+            AppStorage().updateStatus();
+          },
+        ),
+        // TODO: ui settings
+        // const ListTile(
+        //   leading: Icon(Icons.home_filled),
+        //   title: Text('初始页面'),
+        // ),
+        // const ListTile(
+        //   title: Text('音乐库默认视图'),
+        // ),
+        // const ListTile(
+        //   title: Text('视频库默认视图'),
+        // ),
+        Container(
+          padding: const EdgeInsets.all(12),
+          child: Text(
             '主题模式',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
         ),
         SwitchListTile(
@@ -76,12 +99,17 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
                   }
                   AppStorage().saveSettings();
                   AppStorage().updateStatus();
-                }),
+                },
+              ),
         Container(
           padding: const EdgeInsets.all(12),
-          child: const Text(
+          child: Text(
             '颜色',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
         ),
         RadioListTile(
@@ -160,7 +188,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
               });
               AppStorage().saveSettings();
               AppStorage().updateStatus();
-            })
+            }),
       ],
     ));
   }

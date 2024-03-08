@@ -553,7 +553,8 @@ class _HomeState extends State<Home> {
                               activeTrackColor: colorScheme.primaryContainer,
                             ),
                             child: SquigglySlider(
-                              squiggleAmplitude: 1.4,
+                              squiggleAmplitude:
+                                  AppStorage().settings.wavySlider ? 1.4 : 0,
                               squiggleWavelength: 4,
                               squiggleSpeed: 0.05,
                               max: AppStorage()

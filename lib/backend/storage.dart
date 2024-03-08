@@ -65,7 +65,8 @@ class AppStorage extends ChangeNotifier {
     if (needsUpdate) {
       saveSettings();
     }
-    playboy.setVolume(AppStorage().settings.volume);
+    playboy.setVolume(settings.volume);
+    playboy.setRate(settings.speed);
   }
 
   void loadSettings() async {

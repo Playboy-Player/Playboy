@@ -16,21 +16,26 @@ class ExperimentSettingsState extends State<ExperimentSettings> {
         children: [
           Container(
             padding: const EdgeInsets.all(12),
-            child: const Text(
+            child: Text(
               '实验性功能',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ),
           ),
           SwitchListTile(
-              title: const Text('启用 try_look 标识'),
-              value: AppStorage().settings.tryLook,
-              onChanged: (bool value) {
-                setState(() {
-                  AppStorage().settings.tryLook = value;
-                });
-                AppStorage().saveSettings();
-                // AppStorage().updateStatus();
-              }),
+            title: const Text('启用 try_look 标识'),
+            value: AppStorage().settings.tryLook,
+            onChanged: (bool value) {
+              setState(() {
+                AppStorage().settings.tryLook = value;
+              });
+              AppStorage().saveSettings();
+              // AppStorage().updateStatus();
+            },
+          ),
         ],
       ),
     );

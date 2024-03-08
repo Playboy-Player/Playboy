@@ -41,9 +41,13 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
             padding: const EdgeInsets.all(12),
             child: Row(
               children: [
-                const Text(
+                Text(
                   '音乐库路径',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
                 IconButton(
                     onPressed: () async {
@@ -75,9 +79,13 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
             padding: const EdgeInsets.all(12),
             child: Row(
               children: [
-                const Text(
+                Text(
                   '视频库路径',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
                 IconButton(
                     onPressed: () async {
@@ -107,9 +115,13 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
         SliverToBoxAdapter(
           child: Container(
             padding: const EdgeInsets.all(12),
-            child: const Text(
+            child: Text(
               '截图路径',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ),
           ),
         ),
@@ -120,7 +132,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
               elevation: 0,
               shape: RoundedRectangleBorder(
                 side: BorderSide(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.onBackground,
                 ),
                 borderRadius: const BorderRadius.all(Radius.circular(20)),
               ),
@@ -163,9 +175,13 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
         SliverToBoxAdapter(
           child: Container(
             padding: const EdgeInsets.all(12),
-            child: const Text(
+            child: Text(
               '下载路径',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ),
           ),
         ),
@@ -176,7 +192,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
               elevation: 0,
               shape: RoundedRectangleBorder(
                 side: BorderSide(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.onBackground,
                 ),
                 borderRadius: const BorderRadius.all(Radius.circular(20)),
               ),
@@ -219,9 +235,13 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
         SliverToBoxAdapter(
           child: Container(
             padding: const EdgeInsets.all(12),
-            child: const Text(
+            child: Text(
               '应用数据',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ),
           ),
         ),
@@ -257,7 +277,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
       elevation: 0,
       shape: RoundedRectangleBorder(
         side: BorderSide(
-          color: Theme.of(context).colorScheme.primary,
+          color: Theme.of(context).colorScheme.onBackground,
         ),
         borderRadius: const BorderRadius.all(Radius.circular(20)),
       ),
@@ -305,7 +325,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
       elevation: 0,
       shape: RoundedRectangleBorder(
         side: BorderSide(
-          color: Theme.of(context).colorScheme.primary,
+          color: Theme.of(context).colorScheme.onBackground,
         ),
         borderRadius: const BorderRadius.all(Radius.circular(20)),
       ),

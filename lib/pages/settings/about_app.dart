@@ -15,9 +15,13 @@ class _AboutPageState extends State<AboutPage> {
       children: [
         Container(
           padding: const EdgeInsets.all(12),
-          child: const Text(
+          child: Text(
             '关于',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
         ),
         const Card(

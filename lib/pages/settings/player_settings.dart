@@ -16,9 +16,13 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
       children: [
         Container(
           padding: const EdgeInsets.all(12),
-          child: const Text(
+          child: Text(
             '播放设置',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
         ),
         SwitchListTile(
@@ -53,6 +57,7 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
             }),
         SwitchListTile(
             title: const Text('记忆播放器状态'),
+            subtitle: const Text('音量和倍速'),
             value: AppStorage().settings.rememberStatus,
             onChanged: (bool value) {
               setState(() {
@@ -61,12 +66,26 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
               AppStorage().saveSettings();
               // AppStorage().updateStatus();
             }),
-        // TODO: 退出时继续播放
+        SwitchListTile(
+            title: const Text('退出播放界面后继续播放'),
+            subtitle: const Text('可通过全局播放控件停止'),
+            value: AppStorage().settings.playAfterExit,
+            onChanged: (bool value) {
+              setState(() {
+                AppStorage().settings.playAfterExit = value;
+              });
+              AppStorage().saveSettings();
+              // AppStorage().updateStatus();
+            }),
         Container(
           padding: const EdgeInsets.all(12),
-          child: const Text(
-            '高级参数',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+          child: Text(
+            '参数设置',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
         ),
       ],

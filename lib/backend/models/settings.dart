@@ -12,11 +12,15 @@ class AppSettings {
   bool logined;
 
   //Display Settings;
+  bool wavySlider;
+  int initPage;
+  bool musicLibListview;
+  bool videoLibListview;
   ThemeMode themeMode;
   int themeCode;
 
-  bool autoRotation;
-  bool globalCopyable;
+  // bool autoRotation;
+  // bool globalCopyable;
 
   //Player Settings
   bool autoPlay;
@@ -30,6 +34,7 @@ class AppSettings {
   double speed;
   bool rememberStatus;
   bool tryLook;
+  bool playAfterExit;
 
   //Storage Settings
   List<String> videoPaths;
@@ -43,8 +48,12 @@ class AppSettings {
     this.themeMode = ThemeMode.system,
     this.themeCode = 0,
     this.logined = false,
-    this.autoRotation = false,
-    this.globalCopyable = false,
+    this.wavySlider = false,
+    this.initPage = 0,
+    this.musicLibListview = true,
+    this.videoLibListview = true,
+    // this.autoRotation = false,
+    // this.globalCopyable = false,
     this.autoPlay = true,
     this.autoDownload = false,
     this.defaultMusicMode = false,
@@ -54,6 +63,7 @@ class AppSettings {
     this.speed = 1,
     this.rememberStatus = true,
     this.tryLook = true,
+    this.playAfterExit = true,
     this.videoPaths = const [],
     this.musicPaths = const [],
     this.screenshotPath = '',
