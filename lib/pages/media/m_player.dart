@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/pages/media/video_fullscreen.dart';
+import 'package:playboy/widgets/music_card.dart';
 import 'package:playboy/widgets/uni_image.dart';
 import 'package:squiggly_slider/slider.dart';
 import 'package:window_manager/window_manager.dart';
@@ -56,6 +57,7 @@ class MPlayerState extends State<MPlayer> {
       return;
     }
     final video = Media(widget.info.source);
+    AppStorage().currentPlaylist.items.add(widget.info);
     if (!AppStorage().settings.rememberStatus) {
       AppStorage().playboy.setVolume(100);
       AppStorage().settings.volume = 100;
@@ -330,13 +332,20 @@ class MPlayerState extends State<MPlayer> {
                 ),
               ],
             ),
-            body: const TabBarView(
+            body: TabBarView(
               children: <Widget>[
-                Center(
-                  child: Text("No lyrics"),
+                const Center(
+                  child: Text("ly"),
                 ),
-                Center(
-                  child: Text("Playlist"),
+                ListView.builder(
+                  itemBuilder: (BuildContext context, int index) {
+                    return SizedBox(
+                      height: 60,
+                      child: MusicListCard(
+                          info: AppStorage().currentPlaylist.items[index]),
+                    );
+                  },
+                  itemCount: AppStorage().currentPlaylist.items.length,
                 ),
               ],
             ),
@@ -386,12 +395,14 @@ class MPlayerState extends State<MPlayer> {
                   onChanged: (value) {
                     // player.seek(Duration(milliseconds: value.toInt()));
                     setState(() {
-                      AppStorage().settings.volume = value;
-                      AppStorage().saveSettings();
                       if (!AppStorage().settings.silent) {
                         AppStorage().playboy.setVolume(value);
                       }
                     });
+                  },
+                  onChangeEnd: (value) {
+                    AppStorage().settings.volume = value;
+                    AppStorage().saveSettings();
                   },
                 ),
               ),
@@ -530,6 +541,10 @@ class MPlayerState extends State<MPlayer> {
                     setState(() {
                       AppStorage().playboy.setRate(value);
                     });
+                  },
+                  onChangeEnd: (value) {
+                    AppStorage().settings.speed = value;
+                    AppStorage().saveSettings();
                   },
                 )),
           ),

@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/models/settings.dart';
 
@@ -19,6 +18,9 @@ class AppStorage extends ChangeNotifier {
   final searchPage = GlobalKey<NavigatorState>();
 
   List<PlaylistItem> playlists = [];
+  PlaylistItem currentPlaylist =
+      PlaylistItem(items: [], title: 'Current Playing #2rf8eu', cover: null);
+  int playingIndex = 0;
 
   Player playboy = Player();
   String? playingCover;

@@ -118,21 +118,11 @@ class BiliPlayerState extends State<BiliPlayer> {
             height: 25,
             child: Row(
               children: [
-                StreamBuilder(
-                    stream: AppStorage().playboy.stream.position,
-                    builder: (context, snapshot) {
-                      return Text(snapshot.hasData
-                          ? '${snapshot.data!.inSeconds ~/ 3600}:${(snapshot.data!.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(snapshot.data!.inSeconds % 60).toString().padLeft(2, '0')}'
-                          : '0:00:00');
-                    }),
+                Text(
+                    '${AppStorage().position.inSeconds ~/ 3600}:${(AppStorage().position.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().position.inSeconds % 60).toString().padLeft(2, '0')}'),
                 Expanded(child: _buildSeekbar()),
-                StreamBuilder(
-                    stream: AppStorage().playboy.stream.duration,
-                    builder: (context, snapshot) {
-                      return Text(snapshot.hasData
-                          ? '${snapshot.data!.inSeconds ~/ 3600}:${(snapshot.data!.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(snapshot.data!.inSeconds % 60).toString().padLeft(2, '0')}'
-                          : '0:00:00');
-                    }),
+                Text(
+                    '${AppStorage().duration.inSeconds ~/ 3600}:${(AppStorage().duration.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().duration.inSeconds % 60).toString().padLeft(2, '0')}')
               ],
             ),
           ),
@@ -390,12 +380,14 @@ class BiliPlayerState extends State<BiliPlayer> {
                   onChanged: (value) {
                     // player.seek(Duration(milliseconds: value.toInt()));
                     setState(() {
-                      AppStorage().settings.volume = value;
-                      AppStorage().saveSettings();
                       if (!AppStorage().settings.silent) {
                         AppStorage().playboy.setVolume(value);
                       }
                     });
+                  },
+                  onChangeEnd: (value) {
+                    AppStorage().settings.volume = value;
+                    AppStorage().saveSettings();
                   },
                 ),
               ),
@@ -469,13 +461,10 @@ class BiliPlayerState extends State<BiliPlayer> {
             // AppStorage().playing = AppStorage().playboy.state.playing;
           });
         },
-        icon: StreamBuilder(
-          stream: AppStorage().playboy.stream.playing,
-          builder: (context, playing) => Icon(
-            playing.data == true
-                ? Icons.pause_circle_outline
-                : Icons.play_arrow_outlined,
-          ),
+        icon: Icon(
+          AppStorage().playing
+              ? Icons.pause_circle_outline
+              : Icons.play_arrow_outlined,
         ),
       ),
       const SizedBox(
@@ -537,6 +526,10 @@ class BiliPlayerState extends State<BiliPlayer> {
                     setState(() {
                       AppStorage().playboy.setRate(value);
                     });
+                  },
+                  onChangeEnd: (value) {
+                    AppStorage().settings.speed = value;
+                    AppStorage().saveSettings();
                   },
                 )),
           ),
