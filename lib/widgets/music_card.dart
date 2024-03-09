@@ -1,11 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-// import 'package:media_kit/media_kit.dart';
-// import 'package:path/path.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
-import 'package:playboy/pages/media/m_player.dart';
 
 class MusicCard extends StatelessWidget {
   const MusicCard({super.key, required this.info});
@@ -27,24 +24,7 @@ class MusicCard extends StatelessWidget {
             child: InkWell(
               onTap: () async {
                 await AppStorage().closeMedia().then((value) {
-                  if (!context.mounted) return;
-                  Navigator.of(context, rootNavigator: true).push(
-                    MaterialPageRoute(
-                      builder: (context) => MPlayer(
-                        info: info,
-                        currentMedia: false,
-                      ),
-                    ),
-                  );
-                  // TODO: 黑屏bug
-                  // final audio = Media(info.source);
-                  // AppStorage().playboy.open(audio);
-                  // AppStorage().playboy.setVolume(AppStorage().settings.volume);
-                  // AppStorage().position = Duration.zero;
-                  // AppStorage().duration = Duration.zero;
-                  // AppStorage().playingTitle =
-                  //     basenameWithoutExtension(info.source);
-                  // AppStorage().playingCover = info.cover;
+                  AppStorage().openMedia(info);
                 });
               },
               borderRadius: BorderRadius.circular(20),
@@ -99,24 +79,7 @@ class MusicListCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(20),
       onTap: () async {
         await AppStorage().closeMedia().then((value) {
-          if (!context.mounted) return;
-          Navigator.of(context, rootNavigator: true).push(
-            MaterialPageRoute(
-              builder: (context) => MPlayer(
-                info: info,
-                currentMedia: false,
-              ),
-            ),
-          );
-          // TODO: 黑屏bug
-          // final audio = Media(info.source);
-          // AppStorage().playboy.open(audio);
-          // AppStorage().playboy.setVolume(AppStorage().settings.volume);
-          // AppStorage().position = Duration.zero;
-          // AppStorage().duration = Duration.zero;
-          // AppStorage().playingTitle =
-          //     basenameWithoutExtension(info.source);
-          // AppStorage().playingCover = info.cover;
+          AppStorage().openMedia(info);
         });
       },
       child: Row(
@@ -170,24 +133,7 @@ class MusicListCard extends StatelessWidget {
             child: IconButton.filledTonal(
               onPressed: () async {
                 await AppStorage().closeMedia().then((value) {
-                  if (!context.mounted) return;
-                  Navigator.of(context, rootNavigator: true).push(
-                    MaterialPageRoute(
-                      builder: (context) => MPlayer(
-                        info: info,
-                        currentMedia: false,
-                      ),
-                    ),
-                  );
-                  // TODO: 黑屏bug
-                  // final audio = Media(info.source);
-                  // AppStorage().playboy.open(audio);
-                  // AppStorage().playboy.setVolume(AppStorage().settings.volume);
-                  // AppStorage().position = Duration.zero;
-                  // AppStorage().duration = Duration.zero;
-                  // AppStorage().playingTitle =
-                  //     basenameWithoutExtension(info.source);
-                  // AppStorage().playingCover = info.cover;
+                  AppStorage().openMedia(info);
                 });
               },
               icon: const Icon(Icons.play_arrow),

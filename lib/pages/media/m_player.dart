@@ -2,8 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:path/path.dart' as p;
-import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/pages/media/video_fullscreen.dart';
 import 'package:playboy/widgets/music_card.dart';
@@ -16,70 +14,27 @@ import 'package:media_kit_video/media_kit_video.dart';
 class MPlayer extends StatefulWidget {
   const MPlayer({
     super.key,
-    // required this.source,
-    // required this.coverSource,
-    // required this.audioOnly,
-    required this.info,
-    required this.currentMedia,
   });
-  // final String source;
-  // final String? coverSource;
-  // final bool audioOnly;
-  final PlayItem info;
-  final bool currentMedia;
 
   @override
   MPlayerState createState() => MPlayerState();
 }
 
 class MPlayerState extends State<MPlayer> {
-  // late final player = Player();
-  late final VideoController controller;
+  VideoController controller = AppStorage().controller;
 
   bool menuExpanded = false;
   bool videoMode = !AppStorage().settings.defaultMusicMode;
-  // bool loop = false;
-  // bool shuffle = false;
-
-  // bool seeking = false;
-  // double seekingPos = 0;
-
-  // bool silent = false;
-  // double volume = 100;
 
   @override
   void initState() {
-    // TODO: 支持字幕功能
-    // AppStorage().playboy.setSubtitleTrack(SubtitleTrack.no());
     super.initState();
-    controller = VideoController(AppStorage().playboy);
-    if (widget.currentMedia) {
-      return;
-    }
-    final video = Media(widget.info.source);
-    AppStorage().currentPlaylist.items.add(widget.info);
-    if (!AppStorage().settings.rememberStatus) {
-      AppStorage().playboy.setVolume(100);
-      AppStorage().settings.volume = 100;
-      AppStorage().playboy.setRate(1);
-    }
-    AppStorage().playboy.open(video, play: AppStorage().settings.autoPlay);
-    AppStorage().position = Duration.zero;
-    AppStorage().duration = Duration.zero;
-    AppStorage().playingTitle = p.basenameWithoutExtension(widget.info.source);
-    AppStorage().playingCover = widget.info.cover;
   }
 
   @override
   void dispose() {
     if (!AppStorage().settings.playAfterExit) {
-      AppStorage().playboy.stop();
-      if (AppStorage().playboy.platform is NativePlayer) {
-        (AppStorage().playboy.platform as NativePlayer)
-            .setProperty('audio-files', '');
-      }
-      AppStorage().playingTitle = 'Not Playing';
-      AppStorage().playingCover = null;
+      AppStorage().closeMedia();
     }
     super.dispose();
   }

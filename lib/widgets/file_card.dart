@@ -24,12 +24,12 @@ class FileCard extends StatelessWidget {
           if (extension(source) == '.mp4') {
             AppStorage().closeMedia();
             if (!context.mounted) return;
+            AppStorage().openMedia(
+                PlayItem(source: source, cover: null, title: source));
+
             Navigator.of(context, rootNavigator: true).push(
               MaterialPageRoute(
-                builder: (context) => MPlayer(
-                  info: PlayItem(source: source, cover: null, title: source),
-                  currentMedia: false,
-                ),
+                builder: (context) => MPlayer(),
               ),
             );
           }

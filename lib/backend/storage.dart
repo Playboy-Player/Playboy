@@ -3,7 +3,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:media_kit_video/media_kit_video.dart';
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/models/settings.dart';
 
@@ -22,7 +25,9 @@ class AppStorage extends ChangeNotifier {
       PlaylistItem(items: [], title: 'Current Playing #2rf8eu', cover: null);
   int playingIndex = 0;
 
-  Player playboy = Player();
+  late final Player playboy;
+  late final VideoController controller;
+
   String? playingCover;
   String playingTitle = 'Not Playing';
   Duration position = const Duration();
@@ -41,6 +46,8 @@ class AppStorage extends ChangeNotifier {
   factory AppStorage() => _instance;
   AppStorage._internal() {
     settings = AppSettings();
+    playboy = Player();
+    controller = VideoController(playboy);
     playboy.stream.position.listen((event) {
       position = event;
       notifyListeners();
@@ -109,18 +116,25 @@ class AppStorage extends ChangeNotifier {
     }
     AppStorage().playingTitle = 'Not Playing';
     AppStorage().playingCover = null;
-    AppStorage().updateStatus();
   }
 
-  // void openMedia(PlayItem media) {
-  //   if (playing) {
-  //     closeMedia();
-  //   }
-  //   AppStorage().duration = Duration.zero;
-  //   AppStorage().position = Duration.zero;
-  //   final video = Media(media.source);
-  //   playboy.open(video);
-  //   playingCover = media.cover;
-  //   playingTitle = basenameWithoutExtension(media.title);
-  // }
+  void openMedia(PlayItem media) {
+    // TODO: 支持字幕功能
+    // AppStorage().playboy.setSubtitleTrack(SubtitleTrack.no());
+    if (!AppStorage().settings.rememberStatus) {
+      AppStorage().playboy.setVolume(100);
+      AppStorage().playboy.setRate(1);
+      AppStorage().settings.volume = 100;
+      AppStorage().settings.speed = 1;
+      AppStorage().saveSettings();
+    }
+    AppStorage().duration = Duration.zero;
+    AppStorage().position = Duration.zero;
+    final video = Media(media.source);
+    AppStorage().playboy.open(video, play: AppStorage().settings.autoPlay);
+    AppStorage().position = Duration.zero;
+    AppStorage().duration = Duration.zero;
+    AppStorage().playingTitle = basenameWithoutExtension(media.title);
+    AppStorage().playingCover = media.cover;
+  }
 }

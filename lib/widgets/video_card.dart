@@ -20,19 +20,12 @@ class VideoCard extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () async {
-          // Navigator.push(
-          //     context,
-          //     MaterialPageRoute(
-          //         builder: (context) => PlaylistDetail(info: info)));
-          // AppStorage().openMedia(info);
           await AppStorage().closeMedia().then((value) {
             if (!context.mounted) return;
+            AppStorage().openMedia(info);
             Navigator.of(context, rootNavigator: true).push(
               MaterialPageRoute(
-                builder: (context) => MPlayer(
-                  info: info,
-                  currentMedia: false,
-                ),
+                builder: (context) => MPlayer(),
               ),
             );
           });
@@ -106,12 +99,10 @@ class VideoListCard extends StatelessWidget {
       onTap: () async {
         await AppStorage().closeMedia().then((value) {
           if (!context.mounted) return;
+          AppStorage().openMedia(info);
           Navigator.of(context, rootNavigator: true).push(
             MaterialPageRoute(
-              builder: (context) => MPlayer(
-                info: info,
-                currentMedia: false,
-              ),
+              builder: (context) => MPlayer(),
             ),
           );
         });
@@ -168,12 +159,11 @@ class VideoListCard extends StatelessWidget {
               onPressed: () async {
                 await AppStorage().closeMedia().then((value) {
                   if (!context.mounted) return;
+                  AppStorage().openMedia(info);
+
                   Navigator.of(context, rootNavigator: true).push(
                     MaterialPageRoute(
-                      builder: (context) => MPlayer(
-                        info: info,
-                        currentMedia: false,
-                      ),
+                      builder: (context) => MPlayer(),
                     ),
                   );
                 });

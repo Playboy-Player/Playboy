@@ -2,9 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:path/path.dart';
 import 'package:playboy/backend/constants.dart';
-import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/pages/media/m_player.dart';
 import 'package:playboy/pages/media/music_page.dart';
@@ -50,12 +48,7 @@ class MikuMiku extends StatelessWidget {
               ? Home(
                   mk: mk,
                 )
-              : MPlayer(
-                  info: PlayItem(
-                      source: initMedia,
-                      cover: null,
-                      title: basenameWithoutExtension(initMedia)),
-                  currentMedia: false),
+              : MPlayer(),
         );
       },
     );
@@ -72,8 +65,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int currentPageIndex = 0;
-  //更新页面用标记
-  // int mark = 0;
   bool showMediaCard = true;
 
   @override
@@ -406,11 +397,7 @@ class _HomeState extends State<Home> {
                               if (!context.mounted) return;
                               Navigator.of(context, rootNavigator: true).push(
                                 MaterialPageRoute(
-                                  builder: (context) => MPlayer(
-                                    info: PlayItem(
-                                        source: '', cover: null, title: ''),
-                                    currentMedia: true,
-                                  ),
+                                  builder: (context) => MPlayer(),
                                 ),
                               );
                             },
