@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/pages/media/m_player.dart';
@@ -187,7 +188,9 @@ class VideoListCard extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: IconButton.filledTonal(
-              onPressed: () {},
+              onPressed: () {
+                // LibraryHelper.addItemToFirstList(info);
+              },
               icon: const Icon(Icons.add),
             ),
           ),

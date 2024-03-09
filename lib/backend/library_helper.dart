@@ -55,7 +55,7 @@ class LibraryHelper {
 
   static Future<List<PlaylistItem>> loadPlaylists() async {
     var playlists = <PlaylistItem>[];
-    var dir = Directory('${AppStorage().dataPath}playlists/');
+    var dir = Directory('${AppStorage().dataPath}/playlists/');
     if (!dir.existsSync()) {
       dir.createSync(recursive: true);
     }
@@ -69,7 +69,7 @@ class LibraryHelper {
   }
 
   static void savePlaylist(PlaylistItem pl) {
-    var fp = File('${AppStorage().dataPath}playlists/${pl.title}.json');
+    var fp = File('${AppStorage().dataPath}/playlists/${pl.title}.json');
     if (!fp.existsSync()) {
       fp.createSync(recursive: true);
     }
@@ -78,9 +78,26 @@ class LibraryHelper {
   }
 
   static void deletePlaylist(PlaylistItem pl) {
-    var fp = File('${AppStorage().dataPath}playlists/${pl.title}.json');
+    var fp = File('${AppStorage().dataPath}/playlists/${pl.title}.json');
     if (fp.existsSync()) {
       fp.deleteSync();
     }
+  }
+
+  static void addItemToPlaylist(PlaylistItem pl, PlayItem p) {
+    pl.items.add(p);
+    savePlaylist(pl);
+  }
+
+  static void removeItemFromPlaylist(PlaylistItem pl, PlayItem p) {
+    pl.items.remove(p);
+    savePlaylist(pl);
+  }
+
+  // TODO: del
+  static void addItemToFirstList(PlayItem p) {
+    var pl = AppStorage().playlists[0];
+    pl.items.add(p);
+    savePlaylist(pl);
   }
 }

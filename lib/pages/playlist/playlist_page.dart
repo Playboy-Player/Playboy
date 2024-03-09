@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
+import 'package:playboy/backend/storage.dart';
 import 'package:playboy/widgets/playlist_card.dart';
 
 class PlaylistPage extends StatefulWidget {
@@ -15,7 +16,7 @@ class PlaylistPage extends StatefulWidget {
 
 class PlaylistState extends State<PlaylistPage> {
   final TextEditingController editingController = TextEditingController();
-  List<PlaylistItem> playlists = [];
+  // List<PlaylistItem> playlists = [];
   bool loaded = false;
 
   @override
@@ -25,7 +26,7 @@ class PlaylistState extends State<PlaylistPage> {
   }
 
   void _init() async {
-    playlists.addAll(await LibraryHelper.loadPlaylists());
+    AppStorage().playlists.addAll(await LibraryHelper.loadPlaylists());
     if (!mounted) return;
     setState(() {
       loaded = true;
@@ -92,7 +93,7 @@ class PlaylistState extends State<PlaylistPage> {
                                 items: [], title: value, cover: null);
                             LibraryHelper.savePlaylist(pl);
                             setState(() {
-                              playlists.add(pl);
+                              AppStorage().playlists.add(pl);
                             });
                             Navigator.pop(context);
                           },
@@ -112,7 +113,7 @@ class PlaylistState extends State<PlaylistPage> {
                                   cover: null);
                               LibraryHelper.savePlaylist(pl);
                               setState(() {
-                                playlists.add(pl);
+                                AppStorage().playlists.add(pl);
                               });
                               Navigator.pop(context);
                             },
@@ -147,7 +148,7 @@ class PlaylistState extends State<PlaylistPage> {
             ],
           ),
           loaded
-              ? (playlists.isEmpty
+              ? (AppStorage().playlists.isEmpty
                   ? SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -200,9 +201,9 @@ class PlaylistState extends State<PlaylistPage> {
                                 anchorTapClosesMenu: true,
                                 controller: menuController,
                                 style: MenuStyle(
-                                  // surfaceTintColor:
-                                  //     const MaterialStatePropertyAll(
-                                  //         Colors.transparent),
+                                  surfaceTintColor:
+                                      const MaterialStatePropertyAll(
+                                          Colors.transparent),
                                   shape: MaterialStatePropertyAll(
                                     RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10),
@@ -213,30 +214,41 @@ class PlaylistState extends State<PlaylistPage> {
                                   const MenuItemButton(
                                     leadingIcon:
                                         Icon(Icons.play_arrow_outlined),
-                                    child: Text('播放'),
+                                    child: Text('顺序播放'),
+                                  ),
+                                  const MenuItemButton(
+                                    leadingIcon: Icon(Icons.shuffle),
+                                    child: Text('随机播放'),
+                                  ),
+                                  const MenuItemButton(
+                                    leadingIcon: Icon(Icons.add),
+                                    child: Text('追加到当前列表'),
                                   ),
                                   const MenuItemButton(
                                     leadingIcon:
                                         Icon(Icons.drive_file_rename_outline),
-                                    child: Text('编辑'),
+                                    child: Text('重命名'),
                                   ),
                                   MenuItemButton(
-                                    leadingIcon:
-                                        const Icon(Icons.delete_outline),
+                                    leadingIcon: const Icon(
+                                      Icons.delete_outline,
+                                      color: Colors.red,
+                                    ),
                                     child: const Text('删除'),
                                     onPressed: () {
                                       LibraryHelper.deletePlaylist(
-                                          playlists[index]);
-                                      playlists.removeAt(index);
+                                          AppStorage().playlists[index]);
+                                      AppStorage().playlists.removeAt(index);
                                       setState(() {});
                                     },
                                   )
                                 ],
-                                child: PlaylistCard(info: playlists[index]),
+                                child: PlaylistCard(
+                                    info: AppStorage().playlists[index]),
                               ),
                             );
                           },
-                          childCount: playlists.length,
+                          childCount: AppStorage().playlists.length,
                         ),
                       ),
                     ))

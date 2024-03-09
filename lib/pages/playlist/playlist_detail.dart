@@ -1,7 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
+import 'package:playboy/backend/storage.dart';
+import 'package:playboy/widgets/video_card.dart';
 
 class PlaylistDetail extends StatefulWidget {
   const PlaylistDetail({super.key, required this.info});
@@ -19,6 +22,24 @@ class PlaylistDetailState extends State<PlaylistDetail> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.info.title),
+        scrolledUnderElevation: 0,
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.select_all),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.edit_outlined),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.delete_outline),
+          ),
+          const SizedBox(
+            width: 10,
+          )
+        ],
       ),
       body: CustomScrollView(
         slivers: [
@@ -66,6 +87,20 @@ class PlaylistDetailState extends State<PlaylistDetail> {
                     ),
                   ),
                 ],
+              ),
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  return SizedBox(
+                    height: 80,
+                    child: VideoListCard(info: widget.info.items[index]),
+                  );
+                },
+                childCount: widget.info.items.length,
               ),
             ),
           )

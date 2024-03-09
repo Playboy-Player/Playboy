@@ -10,7 +10,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  # webview_flutter:
 
   material_symbols_icons: ^4.2719.1
   squiggly_slider: ^1.0.3
@@ -21,7 +20,6 @@ dependencies:
   cookie_jar: ^4.0.8
   connectivity_plus: ^5.0.1
   crypto: ^3.0.3
-  # webview_cookie_manager: ^2.0.6
 
   path_provider: ^2.1.1
   json_annotation: ^4.8.1
@@ -31,12 +29,12 @@ dependencies:
 
   window_manager: ^0.3.8
   tray_manager: ^0.2.1
+  process_run: ^0.14.2
+  url_launcher: ^6.2.5
   
   media_kit: ^1.1.10
   media_kit_video: ^1.2.4
   media_kit_libs_video: ^1.0.4
-  process_run: ^0.14.2
-  url_launcher: ^6.2.5
 
 
 dev_dependencies:

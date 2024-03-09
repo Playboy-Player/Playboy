@@ -66,7 +66,7 @@ class _MusicPageState extends State<MusicPage> {
                 padding: const EdgeInsets.only(top: 10),
                 child: FloatingActionButton(
                   heroTag: 'scan_music',
-                  // tooltip: '重新扫描',
+                  tooltip: '重新扫描',
                   elevation: 0,
                   hoverElevation: 0,
                   highlightElevation: 0,
@@ -91,7 +91,7 @@ class _MusicPageState extends State<MusicPage> {
                 child: FloatingActionButton.extended(
                   isExtended: MediaQuery.of(context).size.width > 500,
                   heroTag: 'view_music',
-                  // tooltip: '切换显示视图',
+                  tooltip: '切换显示视图',
                   elevation: 0,
                   hoverElevation: 0,
                   highlightElevation: 0,

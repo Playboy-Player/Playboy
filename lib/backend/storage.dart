@@ -4,11 +4,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:playboy/backend/library_helper.dart';
+import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/models/settings.dart';
 
 class AppStorage extends ChangeNotifier {
   late AppSettings settings;
-  // late List<PlaylistItem> playlists;
   // late List<PlayItem> musicLibrary;
   // late List<PlayItem> videoLibrary;
   final playlistPage = GlobalKey<NavigatorState>();
@@ -16,6 +17,8 @@ class AppStorage extends ChangeNotifier {
   final videoPage = GlobalKey<NavigatorState>();
   final filePage = GlobalKey<NavigatorState>();
   final searchPage = GlobalKey<NavigatorState>();
+
+  List<PlaylistItem> playlists = [];
 
   Player playboy = Player();
   String? playingCover;
@@ -67,6 +70,7 @@ class AppStorage extends ChangeNotifier {
     }
     playboy.setVolume(settings.volume);
     playboy.setRate(settings.speed);
+    // playlists.addAll(await LibraryHelper.loadPlaylists());
   }
 
   void loadSettings() async {

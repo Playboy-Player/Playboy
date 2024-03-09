@@ -59,151 +59,80 @@ class _FilePageState extends State<FilePage> {
                 child: FloatingActionButton.extended(
                   isExtended: MediaQuery.of(context).size.width > 500,
                   heroTag: 'open_file',
+                  tooltip: '打开系统文件管理器',
                   elevation: 0,
                   hoverElevation: 0,
                   highlightElevation: 0,
                   backgroundColor: colorScheme.surface,
                   hoverColor: backgroundColor,
-                  onPressed: () {
-                    editingController.clear();
-                    showDialog(
-                      barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
-                      useRootNavigator: false,
-                      context: context,
-                      builder: (BuildContext context) => AlertDialog(
-                        actionsAlignment: MainAxisAlignment.center,
-                        surfaceTintColor: Colors.transparent,
-                        title: const Text('打开链接'),
-                        content: TextField(
-                          autofocus: true,
-                          maxLines: 1,
-                          controller: editingController,
-                          decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.link),
-                            border: OutlineInputBorder(),
-                            labelText: '文件地址/BV号',
-                          ),
-                          onSubmitted: (value) async {
-                            if (value.startsWith('BV')) {
-                              _openLink(value, true);
-                            } else {
-                              _openLink(value, false);
-                            }
-                          },
-                        ),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () async {
-                              var res = await FilePicker.platform
-                                  .pickFiles(type: FileType.media);
-                              if (res != null) {
-                                String link = res.files.single.path!;
-                                _openLink(link, false);
-                              }
-                            },
-                            child: const Text('选取文件'),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text('取消'),
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              if (editingController.text.startsWith('BV')) {
-                                _openLink(editingController.text, true);
-                              } else {
-                                _openLink(editingController.text, false);
-                              }
-                            },
-                            child: const Text('确定'),
-                          ),
-                        ],
-                      ),
-                    );
+                  onPressed: () async {
+                    var res = await FilePicker.platform
+                        .pickFiles(type: FileType.media);
+                    if (res != null) {
+                      String link = res.files.single.path!;
+                      _openLink(link, false);
+                    }
                   },
-                  icon: const Icon(Icons.file_present_outlined),
-                  label: const Text('打开'),
+                  icon: const Icon(Icons.insert_drive_file_outlined),
+                  label: const Text('选取文件'),
                 ),
               ),
             ],
           ),
           SliverList(
               delegate: SliverChildListDelegate([
-            // _buildOption(Icons.file_present_outlined, '打开文件链接', () {
-            //   editingController.clear();
-            //   showDialog(
-            //     barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
-            //     useRootNavigator: false,
-            //     context: context,
-            //     builder: (BuildContext context) => AlertDialog(
-            //       surfaceTintColor: Colors.transparent,
-            //       title: const Text('打开链接'),
-            //       content: TextField(
-            //         autofocus: true,
-            //         maxLines: 1,
-            //         controller: editingController,
-            //         decoration: const InputDecoration(
-            //           prefixIcon: Icon(Icons.link),
-            //           border: OutlineInputBorder(),
-            //           labelText: '文件地址/BV号',
-            //         ),
-            //         onSubmitted: (value) async {
-            //           if (value.startsWith('BV')) {
-            //             _openLink(value, true);
-            //           } else {
-            //             _openLink(value, false);
-            //           }
-            //         },
-            //       ),
-            //       actions: <Widget>[
-            //         TextButton(
-            //           onPressed: () async {
-            //             var res = await FilePicker.platform
-            //                 .pickFiles(type: FileType.media);
-            //             if (res != null) {
-            //               String link = res.files.single.path!;
-            //               _openLink(link, false);
-            //             }
-            //           },
-            //           child: const Text('选取'),
-            //         ),
-            //         TextButton(
-            //           onPressed: () {
-            //             Navigator.pop(context);
-            //           },
-            //           child: const Text('取消'),
-            //         ),
-            //         TextButton(
-            //           onPressed: () async {
-            //             if (editingController.text.startsWith('BV')) {
-            //               _openLink(editingController.text, true);
-            //             } else {
-            //               _openLink(editingController.text, false);
-            //             }
-            //           },
-            //           child: const Text('确定'),
-            //         ),
-            //       ],
-            //     ),
-            //   );
-            // }),
+            _buildOption(Icons.movie_filter_outlined, '打开视频链接', () {
+              editingController.clear();
+              showDialog(
+                barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
+                useRootNavigator: false,
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  surfaceTintColor: Colors.transparent,
+                  title: const Text('打开视频链接'),
+                  content: TextField(
+                    autofocus: true,
+                    maxLines: 1,
+                    controller: editingController,
+                    decoration: const InputDecoration(
+                      prefixIcon: Icon(Icons.link),
+                      border: OutlineInputBorder(),
+                      labelText: '本地或网络地址',
+                    ),
+                    onSubmitted: (value) async {
+                      if (value.startsWith('BV')) {
+                        _openLink(value, true);
+                      } else {
+                        _openLink(value, false);
+                      }
+                    },
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('取消'),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        if (editingController.text.startsWith('BV')) {
+                          _openLink(editingController.text, true);
+                        } else {
+                          _openLink(editingController.text, false);
+                        }
+                      },
+                      child: const Text('确定'),
+                    ),
+                  ],
+                ),
+              );
+            }),
             _buildOption(Icons.download, '下载管理', () {
               Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => const DownloadPage()));
-            }),
-            _buildOption(Icons.folder_copy_outlined, '连接文件服务器', () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const ConnectServer()));
-            }),
-            _buildOption(Icons.cast_connected_outlined, '局域网共享', () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const FileSharing()));
             }),
           ])),
           SliverToBoxAdapter(
