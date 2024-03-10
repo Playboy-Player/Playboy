@@ -187,20 +187,28 @@ class _FilePageState extends State<FilePage> {
       final info = await BilibiliHelper.getVideoInfo(source);
       final playInfo = await BilibiliHelper.getVideoStream(source, info.cid);
       if (!context.mounted) return;
-      Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
-          builder: (context) => BiliPlayer(
-                videoInfo: info,
-                playInfo: playInfo,
-              )));
+      Navigator.of(context, rootNavigator: true)
+          .push(MaterialPageRoute(
+              builder: (context) => BiliPlayer(
+                    videoInfo: info,
+                    playInfo: playInfo,
+                  )))
+          .then((value) {
+        AppStorage().updateStatus();
+      });
     } else {
       if (!context.mounted) return;
       AppStorage()
           .openMedia(PlayItem(source: source, cover: null, title: source));
-      Navigator.of(context, rootNavigator: true).push(
+      Navigator.of(context, rootNavigator: true)
+          .push(
         MaterialPageRoute(
-          builder: (context) => MPlayer(),
+          builder: (context) => const MPlayer(),
         ),
-      );
+      )
+          .then((value) {
+        AppStorage().updateStatus();
+      });
     }
   }
 }

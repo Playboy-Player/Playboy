@@ -23,11 +23,15 @@ class VideoCard extends StatelessWidget {
           await AppStorage().closeMedia().then((value) {
             if (!context.mounted) return;
             AppStorage().openMedia(info);
-            Navigator.of(context, rootNavigator: true).push(
+            Navigator.of(context, rootNavigator: true)
+                .push(
               MaterialPageRoute(
-                builder: (context) => MPlayer(),
+                builder: (context) => const MPlayer(),
               ),
-            );
+            )
+                .then((value) {
+              AppStorage().updateStatus();
+            });
           });
         },
         borderRadius: BorderRadius.circular(20),
@@ -100,11 +104,15 @@ class VideoListCard extends StatelessWidget {
         await AppStorage().closeMedia().then((value) {
           if (!context.mounted) return;
           AppStorage().openMedia(info);
-          Navigator.of(context, rootNavigator: true).push(
+          Navigator.of(context, rootNavigator: true)
+              .push(
             MaterialPageRoute(
-              builder: (context) => MPlayer(),
+              builder: (context) => const MPlayer(),
             ),
-          );
+          )
+              .then((value) {
+            AppStorage().updateStatus();
+          });
         });
       },
       child: Row(
@@ -163,7 +171,7 @@ class VideoListCard extends StatelessWidget {
 
                   Navigator.of(context, rootNavigator: true).push(
                     MaterialPageRoute(
-                      builder: (context) => MPlayer(),
+                      builder: (context) => const MPlayer(),
                     ),
                   );
                 });

@@ -50,19 +50,16 @@ class AppStorage extends ChangeNotifier {
     controller = VideoController(playboy);
     playboy.stream.position.listen((event) {
       position = event;
-      notifyListeners();
     });
     playboy.stream.playing.listen((event) {
       playing = event;
-      notifyListeners();
     });
     playboy.stream.duration.listen((event) {
       duration = event;
-      notifyListeners();
     });
   }
 
-  void init() async {
+  Future<void> init() async {
     dataPath = (await getApplicationSupportDirectory()).path;
     loadSettings();
     bool needsUpdate = false;

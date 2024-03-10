@@ -66,13 +66,7 @@ class BiliPlayerState extends State<BiliPlayer> {
   @override
   void dispose() {
     if (!AppStorage().settings.playAfterExit) {
-      AppStorage().playboy.stop();
-      if (AppStorage().playboy.platform is NativePlayer) {
-        (AppStorage().playboy.platform as NativePlayer)
-            .setProperty('audio-files', '');
-      }
-      AppStorage().playingTitle = 'Not Playing';
-      AppStorage().playingCover = null;
+      AppStorage().closeMedia();
     }
     super.dispose();
   }
@@ -118,8 +112,17 @@ class BiliPlayerState extends State<BiliPlayer> {
             height: 25,
             child: Row(
               children: [
-                Text(
-                    '${AppStorage().position.inSeconds ~/ 3600}:${(AppStorage().position.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().position.inSeconds % 60).toString().padLeft(2, '0')}'),
+                StreamBuilder(
+                    stream: AppStorage().playboy.stream.position,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Text(
+                            '${snapshot.data!.inSeconds ~/ 3600}:${(snapshot.data!.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(snapshot.data!.inSeconds % 60).toString().padLeft(2, '0')}');
+                      } else {
+                        return Text(
+                            '${AppStorage().position.inSeconds ~/ 3600}:${(AppStorage().position.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().position.inSeconds % 60).toString().padLeft(2, '0')}');
+                      }
+                    }),
                 Expanded(child: _buildSeekbar()),
                 Text(
                     '${AppStorage().duration.inSeconds ~/ 3600}:${(AppStorage().duration.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().duration.inSeconds % 60).toString().padLeft(2, '0')}')
@@ -270,36 +273,44 @@ class BiliPlayerState extends State<BiliPlayer> {
         thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
         overlayShape: SliderComponentShape.noOverlay,
       ),
-      child: SquigglySlider(
-        squiggleAmplitude:
-            !AppStorage().settings.wavySlider || videoMode ? 0 : 2,
-        squiggleWavelength: 5,
-        squiggleSpeed: 0.05,
-        max: AppStorage().duration.inMilliseconds.toDouble(),
-        value: AppStorage().seeking
-            ? AppStorage().seekingPos
-            : min(AppStorage().position.inMilliseconds.toDouble(),
-                AppStorage().duration.inMilliseconds.toDouble()),
-        onChanged: (value) {
-          // player.seek(Duration(milliseconds: value.toInt()));
-          setState(() {
-            AppStorage().seekingPos = value;
-          });
-        },
-        onChangeStart: (value) {
-          setState(() {
-            AppStorage().seeking = true;
-          });
-        },
-        onChangeEnd: (value) {
-          AppStorage()
-              .playboy
-              .seek(Duration(milliseconds: value.toInt()))
-              .then((value) => {
-                    setState(() {
-                      AppStorage().seeking = false;
-                    })
-                  });
+      child: StreamBuilder(
+        stream: AppStorage().playboy.stream.position,
+        builder: (BuildContext context, AsyncSnapshot<Duration> snapshot) {
+          return SquigglySlider(
+            squiggleAmplitude:
+                !AppStorage().settings.wavySlider || videoMode ? 0 : 2,
+            squiggleWavelength: 5,
+            squiggleSpeed: 0.05,
+            max: AppStorage().duration.inMilliseconds.toDouble(),
+            value: AppStorage().seeking
+                ? AppStorage().seekingPos
+                : min(
+                    snapshot.hasData
+                        ? snapshot.data!.inMilliseconds.toDouble()
+                        : AppStorage().position.inMilliseconds.toDouble(),
+                    AppStorage().duration.inMilliseconds.toDouble()),
+            onChanged: (value) {
+              // player.seek(Duration(milliseconds: value.toInt()));
+              setState(() {
+                AppStorage().seekingPos = value;
+              });
+            },
+            onChangeStart: (value) {
+              setState(() {
+                AppStorage().seeking = true;
+              });
+            },
+            onChangeEnd: (value) {
+              AppStorage()
+                  .playboy
+                  .seek(Duration(milliseconds: value.toInt()))
+                  .then((value) => {
+                        setState(() {
+                          AppStorage().seeking = false;
+                        })
+                      });
+            },
+          );
         },
       ),
     );
@@ -349,18 +360,12 @@ class BiliPlayerState extends State<BiliPlayer> {
             IconButton(
                 onPressed: () {
                   setState(() {
-                    if (AppStorage().settings.silent) {
-                      AppStorage().settings.silent = false;
-                      AppStorage()
-                          .playboy
-                          .setVolume(AppStorage().settings.volume);
-                    } else {
-                      AppStorage().settings.silent = true;
-                      AppStorage().playboy.setVolume(0);
-                    }
+                    AppStorage().playboy.setVolume(0);
                   });
+                  AppStorage().settings.volume = 0;
+                  AppStorage().saveSettings();
                 },
-                icon: Icon(AppStorage().settings.silent
+                icon: Icon(AppStorage().playboy.state.volume == 0
                     ? Icons.volume_off
                     : Icons.volume_up)),
             SizedBox(
@@ -376,16 +381,14 @@ class BiliPlayerState extends State<BiliPlayer> {
                 ),
                 child: Slider(
                   max: 100,
-                  value: AppStorage().settings.volume,
+                  value: AppStorage().playboy.state.volume,
                   onChanged: (value) {
-                    // player.seek(Duration(milliseconds: value.toInt()));
                     setState(() {
-                      if (!AppStorage().settings.silent) {
-                        AppStorage().playboy.setVolume(value);
-                      }
+                      AppStorage().playboy.setVolume(value);
                     });
                   },
                   onChangeEnd: (value) {
+                    setState(() {});
                     AppStorage().settings.volume = value;
                     AppStorage().saveSettings();
                   },
@@ -498,9 +501,7 @@ class BiliPlayerState extends State<BiliPlayer> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => FullscreenPlayPage(
-                          controller: controller,
-                        )));
+                    builder: (context) => const FullscreenPlayPage()));
           },
           icon: const Icon(Icons.fullscreen)),
       Expanded(
@@ -537,6 +538,8 @@ class BiliPlayerState extends State<BiliPlayer> {
               onPressed: () {
                 setState(() {
                   AppStorage().playboy.setRate(1);
+                  AppStorage().settings.speed = 1;
+                  AppStorage().saveSettings();
                 });
               },
               icon: Icon(AppStorage().playboy.state.rate == 1

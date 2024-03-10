@@ -26,7 +26,7 @@ void main(List<String> arguments) async {
   });
   MediaKit.ensureInitialized();
 
-  AppStorage().init();
+  await AppStorage().init();
   await WebHelper().init();
 
   // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);

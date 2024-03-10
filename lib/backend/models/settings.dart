@@ -30,7 +30,6 @@ class AppSettings {
   int continueToPlay;
   // int defaultQuality;
   double volume;
-  bool silent;
   double speed;
   bool rememberStatus;
   bool tryLook;
@@ -59,7 +58,6 @@ class AppSettings {
     this.defaultMusicMode = false,
     this.continueToPlay = 0,
     this.volume = 100,
-    this.silent = false,
     this.speed = 1,
     this.rememberStatus = true,
     this.tryLook = true,

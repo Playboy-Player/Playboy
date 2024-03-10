@@ -48,7 +48,7 @@ class MikuMiku extends StatelessWidget {
               ? Home(
                   mk: mk,
                 )
-              : MPlayer(),
+              : const MPlayer(),
         );
       },
     );
@@ -397,7 +397,7 @@ class _HomeState extends State<Home> {
                               if (!context.mounted) return;
                               Navigator.of(context, rootNavigator: true).push(
                                 MaterialPageRoute(
-                                  builder: (context) => MPlayer(),
+                                  builder: (context) => const MPlayer(),
                                 ),
                               );
                             },
@@ -539,46 +539,58 @@ class _HomeState extends State<Home> {
                               thumbColor: colorScheme.primaryContainer,
                               activeTrackColor: colorScheme.primaryContainer,
                             ),
-                            child: SquigglySlider(
-                              squiggleAmplitude:
-                                  AppStorage().settings.wavySlider ? 1.4 : 0,
-                              squiggleWavelength: 4,
-                              squiggleSpeed: 0.05,
-                              max: AppStorage()
-                                  .duration
-                                  .inMilliseconds
-                                  .toDouble(),
-                              value: AppStorage().seeking
-                                  ? AppStorage().seekingPos
-                                  : min(
-                                      AppStorage()
-                                          .position
-                                          .inMilliseconds
-                                          .toDouble(),
-                                      AppStorage()
-                                          .duration
-                                          .inMilliseconds
-                                          .toDouble()),
-                              onChanged: (value) {
-                                // player.seek(Duration(milliseconds: value.toInt()));
-                                setState(() {
-                                  AppStorage().seekingPos = value;
-                                });
-                              },
-                              onChangeStart: (value) {
-                                setState(() {
-                                  AppStorage().seeking = true;
-                                });
-                              },
-                              onChangeEnd: (value) {
-                                AppStorage()
-                                    .playboy
-                                    .seek(Duration(milliseconds: value.toInt()))
-                                    .then((value) => {
-                                          setState(() {
-                                            AppStorage().seeking = false;
-                                          })
-                                        });
+                            child: StreamBuilder(
+                              stream: AppStorage().playboy.stream.position,
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<Duration> snapshot) {
+                                return SquigglySlider(
+                                  squiggleAmplitude:
+                                      AppStorage().settings.wavySlider
+                                          ? 1.4
+                                          : 0,
+                                  squiggleWavelength: 4,
+                                  squiggleSpeed: 0.05,
+                                  max: AppStorage()
+                                      .duration
+                                      .inMilliseconds
+                                      .toDouble(),
+                                  value: AppStorage().seeking
+                                      ? AppStorage().seekingPos
+                                      : min(
+                                          snapshot.hasData
+                                              ? snapshot.data!.inMilliseconds
+                                                  .toDouble()
+                                              : AppStorage()
+                                                  .position
+                                                  .inMilliseconds
+                                                  .toDouble(),
+                                          AppStorage()
+                                              .duration
+                                              .inMilliseconds
+                                              .toDouble()),
+                                  onChanged: (value) {
+                                    // player.seek(Duration(milliseconds: value.toInt()));
+                                    setState(() {
+                                      AppStorage().seekingPos = value;
+                                    });
+                                  },
+                                  onChangeStart: (value) {
+                                    setState(() {
+                                      AppStorage().seeking = true;
+                                    });
+                                  },
+                                  onChangeEnd: (value) {
+                                    AppStorage()
+                                        .playboy
+                                        .seek(Duration(
+                                            milliseconds: value.toInt()))
+                                        .then((value) => {
+                                              setState(() {
+                                                AppStorage().seeking = false;
+                                              })
+                                            });
+                                  },
+                                );
                               },
                             ),
                           ),
@@ -629,6 +641,7 @@ class _HomeState extends State<Home> {
                             // iconSize: 30,
                             onPressed: () {
                               AppStorage().closeMedia();
+                              setState(() {});
                             },
                             icon: const Icon(
                               Icons.stop,

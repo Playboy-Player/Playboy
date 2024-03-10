@@ -26,6 +26,7 @@ class MusicCard extends StatelessWidget {
                 await AppStorage().closeMedia().then((value) {
                   AppStorage().openMedia(info);
                 });
+                AppStorage().updateStatus();
               },
               borderRadius: BorderRadius.circular(20),
               child: info.cover == null
@@ -81,6 +82,7 @@ class MusicListCard extends StatelessWidget {
         await AppStorage().closeMedia().then((value) {
           AppStorage().openMedia(info);
         });
+        AppStorage().updateStatus();
       },
       child: Row(
         children: [

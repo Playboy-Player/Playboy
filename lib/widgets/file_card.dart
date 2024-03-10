@@ -27,11 +27,15 @@ class FileCard extends StatelessWidget {
             AppStorage().openMedia(
                 PlayItem(source: source, cover: null, title: source));
 
-            Navigator.of(context, rootNavigator: true).push(
+            Navigator.of(context, rootNavigator: true)
+                .push(
               MaterialPageRoute(
-                builder: (context) => MPlayer(),
+                builder: (context) => const MPlayer(),
               ),
-            );
+            )
+                .then((value) {
+              AppStorage().updateStatus();
+            });
           }
         },
         borderRadius: BorderRadius.circular(20),
