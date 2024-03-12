@@ -381,33 +381,33 @@ class _HomeState extends State<Home> {
             ),
       floatingActionButton: tabletUI
           ? showMediaCard
-              ? AppStorage().playingCover == null
-                  ? _buildMediaCard(colorScheme)
-                  : FutureBuilder(
-                      future: ColorScheme.fromImageProvider(
-                        provider:
-                            UniImageProvider(url: AppStorage().playingCover!)
-                                .getImage(),
+              ? InkWell(
+                  onTap: () {
+                    if (!context.mounted) return;
+                    Navigator.of(context, rootNavigator: true).push(
+                      MaterialPageRoute(
+                        builder: (context) => const MPlayer(),
                       ),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<ColorScheme> snapshot) {
-                        if (snapshot.hasData && snapshot.data != null) {
-                          return InkWell(
-                            onTap: () {
-                              if (!context.mounted) return;
-                              Navigator.of(context, rootNavigator: true).push(
-                                MaterialPageRoute(
-                                  builder: (context) => const MPlayer(),
-                                ),
-                              );
-                            },
-                            child: _buildMediaCard(snapshot.data!),
-                          );
-                        } else {
-                          return _buildMediaCard(colorScheme);
-                        }
-                      },
-                    )
+                    );
+                  },
+                  child: AppStorage().playingCover == null
+                      ? _buildMediaCard(colorScheme)
+                      : FutureBuilder(
+                          future: ColorScheme.fromImageProvider(
+                            provider: UniImageProvider(
+                                    url: AppStorage().playingCover!)
+                                .getImage(),
+                          ),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<ColorScheme> snapshot) {
+                            if (snapshot.hasData && snapshot.data != null) {
+                              return _buildMediaCard(snapshot.data!);
+                            } else {
+                              return _buildMediaCard(colorScheme);
+                            }
+                          },
+                        ),
+                )
               : null
           : null,
       // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

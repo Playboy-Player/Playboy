@@ -294,6 +294,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_launcher_icons:
+    dependency: "direct dev"
+    description:
+      name: flutter_launcher_icons
+      sha256: "526faf84284b86a4cb36d20a5e45147747b7563d921373d4ee0559c54fcdbcea"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.13.1"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -528,14 +536,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.2.4"
-  menu_base:
-    dependency: transitive
-    description:
-      name: menu_base
-      sha256: "820368014a171bd1241030278e6c2617354f492f5c703d7b7d4570a6b8b84405"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.1.1"
   meta:
     dependency: transitive
     description:
@@ -696,14 +696,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.5.1"
-  process_run:
-    dependency: "direct main"
-    description:
-      name: process_run
-      sha256: "8d9c6198b98fbbfb511edd42e7364e24d85c163e47398919871b952dc86a423e"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.14.2"
   provider:
     dependency: "direct main"
     description:
@@ -808,14 +800,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.4"
-  shortid:
-    dependency: transitive
-    description:
-      name: shortid
-      sha256: d0b40e3dbb50497dad107e19c54ca7de0d1a274eb9b4404991e443dadb9ebedb
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.1.2"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -925,14 +909,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.1"
-  tray_manager:
-    dependency: "direct main"
-    description:
-      name: tray_manager
-      sha256: "4ab709d70a4374af172f8c39e018db33a4271265549c6fc9d269a65e5f4b0225"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.2.1"
   typed_data:
     dependency: transitive
     description:

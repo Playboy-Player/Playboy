@@ -24,6 +24,7 @@ class BiliPlayer extends StatefulWidget {
   BiliPlayerState createState() => BiliPlayerState();
 }
 
+// TODO: play button bug
 class BiliPlayerState extends State<BiliPlayer> {
   late final player = AppStorage().playboy;
   late final VideoController controller;
@@ -164,21 +165,21 @@ class BiliPlayerState extends State<BiliPlayer> {
               ))
           : const SizedBox(),
       actions: [
-        IconButton(
-          icon: const Icon(Icons.download),
-          onPressed: () async {
-            String audioPath = '${AppStorage().dataPath}downloads/audio.m4s';
-            String videoPath = '${AppStorage().dataPath}downloads/video.m4s';
-            String coverPath = '${AppStorage().dataPath}downloads/cover.jpg';
-            WebHelper().download(widget.playInfo.audio[0].baseUrl!, audioPath);
-            WebHelper().download(widget.playInfo.video[0].baseUrl!, videoPath);
-            WebHelper().download(widget.playInfo.video[0].baseUrl!, coverPath);
-            // var shell = Shell();
-            // await shell.run(r'''
-            // D:\tools\DownKyi-1.0.8-1.win-x64\ffmpeg\ffmpeg.exe -i D:\Projects\playboy\playboy\build\playboy\downloads\audio.m4s -i D:\Projects\playboy\playboy\build\playboy\downloads\video.m4s -c:v copy -c:a copy -f mp4 D:\Projects\playboy\playboy\build\playboy\downloads\out.mp4
-            // ''');
-          },
-        ),
+        // IconButton(
+        //   icon: const Icon(Icons.download),
+        //   onPressed: () async {
+        //     String audioPath = '${AppStorage().dataPath}downloads/audio.m4s';
+        //     String videoPath = '${AppStorage().dataPath}downloads/video.m4s';
+        //     String coverPath = '${AppStorage().dataPath}downloads/cover.jpg';
+        //     WebHelper().download(widget.playInfo.audio[0].baseUrl!, audioPath);
+        //     WebHelper().download(widget.playInfo.video[0].baseUrl!, videoPath);
+        //     WebHelper().download(widget.playInfo.video[0].baseUrl!, coverPath);
+        //     var shell = Shell();
+        //     await shell.run(r'''
+        //     D:\tools\DownKyi-1.0.8-1.win-x64\ffmpeg\ffmpeg.exe -i D:\Projects\playboy\playboy\build\playboy\downloads\audio.m4s -i D:\Projects\playboy\playboy\build\playboy\downloads\video.m4s -c:v copy -c:a copy -f mp4 D:\Projects\playboy\playboy\build\playboy\downloads\out.mp4
+        //     ''');
+        //   },
+        // ),
         IconButton(
           isSelected: menuExpanded,
           icon: const Icon(

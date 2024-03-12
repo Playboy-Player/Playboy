@@ -6,6 +6,7 @@ import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/models/settings.dart';
@@ -61,7 +62,7 @@ class AppStorage extends ChangeNotifier {
 
   Future<void> init() async {
     dataPath = (await getApplicationSupportDirectory()).path;
-    loadSettings();
+    await loadSettings();
     bool needsUpdate = false;
     if (settings.downloadPath == '') {
       settings.downloadPath = '$dataPath/downloads';
@@ -72,32 +73,32 @@ class AppStorage extends ChangeNotifier {
       needsUpdate = true;
     }
     if (needsUpdate) {
-      saveSettings();
+      await saveSettings();
     }
     playboy.setVolume(settings.volume);
     playboy.setRate(settings.speed);
     // playlists.addAll(await LibraryHelper.loadPlaylists());
   }
 
-  void loadSettings() async {
+  Future<void> loadSettings() async {
     var settingsPath = "$dataPath/config/settings.json";
     var fp = File(settingsPath);
-    if (!fp.existsSync()) {
-      fp.createSync(recursive: true);
+    if (!await fp.exists()) {
+      await fp.create(recursive: true);
       var data = AppSettings().toJson();
       var str = jsonEncode(data);
-      fp.writeAsStringSync(str);
+      await fp.writeAsString(str);
     }
-    settings = AppSettings.fromJson(jsonDecode(fp.readAsStringSync()));
+    settings = AppSettings.fromJson(jsonDecode(await fp.readAsString()));
     // notifyListeners();
   }
 
-  void saveSettings() async {
+  Future<void> saveSettings() async {
     var settingsPath = "$dataPath/config/settings.json";
     var fp = File(settingsPath);
     var data = settings.toJson();
     var str = jsonEncode(data);
-    fp.writeAsStringSync(str);
+    await fp.writeAsString(str);
     // notifyListeners();
   }
 
@@ -106,32 +107,54 @@ class AppStorage extends ChangeNotifier {
   }
 
   Future<void> closeMedia() async {
-    AppStorage().playboy.stop();
-    if (AppStorage().playboy.platform is NativePlayer) {
-      (AppStorage().playboy.platform as NativePlayer)
-          .setProperty('audio-files', '');
+    playboy.stop();
+    if (playboy.platform is NativePlayer) {
+      (playboy.platform as NativePlayer).setProperty('audio-files', '');
     }
-    AppStorage().playingTitle = 'Not Playing';
-    AppStorage().playingCover = null;
+    playingTitle = 'Not Playing';
+    playingCover = null;
+    currentPlaylist =
+        PlaylistItem(items: [], title: 'Current Playing #2rf8eu', cover: null);
   }
 
   void openMedia(PlayItem media) {
     // TODO: 支持字幕功能
     // AppStorage().playboy.setSubtitleTrack(SubtitleTrack.no());
-    if (!AppStorage().settings.rememberStatus) {
-      AppStorage().playboy.setVolume(100);
-      AppStorage().playboy.setRate(1);
-      AppStorage().settings.volume = 100;
-      AppStorage().settings.speed = 1;
-      AppStorage().saveSettings();
+    if (!settings.rememberStatus) {
+      playboy.setVolume(100);
+      playboy.setRate(1);
+      settings.volume = 100;
+      settings.speed = 1;
+      saveSettings();
     }
-    AppStorage().duration = Duration.zero;
-    AppStorage().position = Duration.zero;
+    duration = Duration.zero;
+    position = Duration.zero;
     final video = Media(media.source);
-    AppStorage().playboy.open(video, play: AppStorage().settings.autoPlay);
-    AppStorage().position = Duration.zero;
-    AppStorage().duration = Duration.zero;
-    AppStorage().playingTitle = basenameWithoutExtension(media.title);
-    AppStorage().playingCover = media.cover;
+    playboy.open(video, play: settings.autoPlay);
+    position = Duration.zero;
+    duration = Duration.zero;
+    playingTitle = basenameWithoutExtension(media.title);
+    playingCover = media.cover;
+  }
+
+  void openPlaylist(PlaylistItem pl) {
+    if (pl.items.isEmpty) {
+      return;
+    }
+    if (!settings.rememberStatus) {
+      playboy.setVolume(100);
+      playboy.setRate(1);
+      settings.volume = 100;
+      settings.speed = 1;
+      saveSettings();
+    }
+    duration = Duration.zero;
+    position = Duration.zero;
+    playboy.open(LibraryHelper.convertToPlaylist(pl),
+        play: AppStorage().settings.autoPlay);
+    position = Duration.zero;
+    duration = Duration.zero;
+    playingTitle = basenameWithoutExtension(pl.items[0].title);
+    playingCover = pl.items[0].cover;
   }
 }

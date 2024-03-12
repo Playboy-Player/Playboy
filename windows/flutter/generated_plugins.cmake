@@ -8,7 +8,6 @@ list(APPEND FLUTTER_PLUGIN_LIST
   media_kit_video
   screen_brightness_windows
   screen_retriever
-  tray_manager
   url_launcher_windows
   window_manager
 )

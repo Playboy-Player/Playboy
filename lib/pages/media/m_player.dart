@@ -315,11 +315,15 @@ class MPlayerState extends State<MPlayer> {
                   itemBuilder: (BuildContext context, int index) {
                     return SizedBox(
                       height: 60,
-                      child: MusicListCard(
-                          info: AppStorage().currentPlaylist.items[index]),
+                      child: Text(AppStorage()
+                          .playboy
+                          .state
+                          .playlist
+                          .medias[index]
+                          .uri),
                     );
                   },
-                  itemCount: AppStorage().currentPlaylist.items.length,
+                  itemCount: AppStorage().playboy.state.playlist.medias.length,
                 ),
               ],
             ),
@@ -406,7 +410,9 @@ class MPlayerState extends State<MPlayer> {
       ),
       IconButton.filledTonal(
           iconSize: 30,
-          onPressed: () {},
+          onPressed: () {
+            AppStorage().playboy.previous();
+          },
           icon: const Icon(Icons.skip_previous_outlined)),
       const SizedBox(
         width: 10,
@@ -453,7 +459,9 @@ class MPlayerState extends State<MPlayer> {
       ),
       IconButton.filledTonal(
           iconSize: 30,
-          onPressed: () {},
+          onPressed: () {
+            AppStorage().playboy.next();
+          },
           icon: const Icon(Icons.skip_next_outlined)),
       const SizedBox(
         width: 10,

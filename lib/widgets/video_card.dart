@@ -12,6 +12,7 @@ class VideoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
+    // TODO: dynamic color
     return Card(
       // surfaceTintColor: Colors.transparent,
       elevation: 1.6,
@@ -129,9 +130,9 @@ class VideoListCard extends StatelessWidget {
                           color: colorScheme.tertiaryContainer,
                         ),
                         child: Icon(
-                          Icons.music_note,
+                          Icons.movie_filter,
                           color: colorScheme.onTertiaryContainer,
-                          size: 80,
+                          size: 40,
                         ),
                       )
                     : Ink(

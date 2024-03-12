@@ -8,14 +8,10 @@ import 'package:path/path.dart';
 import 'package:playboy/backend/storage.dart';
 
 class LibraryHelper {
-  static Media convertToMedia(PlayItem playItem) {
-    return Media(playItem.source);
-  }
-
   static Playlist convertToPlaylist(PlaylistItem playlistItem) {
     List<Media> res = [];
     for (var item in playlistItem.items) {
-      res.add(convertToMedia(item));
+      res.add(Media(item.source));
     }
     return Playlist(res);
   }
@@ -50,6 +46,17 @@ class LibraryHelper {
       return PlayItem(source: source, cover: null, title: title);
     } else {
       return PlayItem(source: source, cover: cover, title: title);
+    }
+  }
+
+  static Future<PlayItem> getItemFromFile(String src) async {
+    var coverPath = '${dirname(src)}/cover.jpg';
+    if (await File(coverPath).exists()) {
+      return PlayItem(
+          source: src, cover: coverPath, title: basenameWithoutExtension(src));
+    } else {
+      return PlayItem(
+          source: src, cover: null, title: basenameWithoutExtension(src));
     }
   }
 

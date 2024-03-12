@@ -67,3 +67,80 @@ class PlaylistCard extends StatelessWidget {
     );
   }
 }
+
+class PlaylistListCard extends StatelessWidget {
+  const PlaylistListCard({super.key, required this.info});
+  final PlaylistItem info;
+
+  @override
+  Widget build(BuildContext context) {
+    late final colorScheme = Theme.of(context).colorScheme;
+    return InkWell(
+      borderRadius: BorderRadius.circular(20),
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => PlaylistDetail(info: info)));
+      },
+      child: Row(
+        children: [
+          Padding(
+              padding: const EdgeInsets.all(6),
+              child: AspectRatio(
+                aspectRatio: 10 / 9,
+                child: info.cover == null
+                    ? Ink(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          color: colorScheme.tertiaryContainer,
+                        ),
+                        child: Icon(
+                          Icons.playlist_play_rounded,
+                          color: colorScheme.onTertiaryContainer,
+                          size: 40,
+                        ),
+                      )
+                    : Ink(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          color: colorScheme.tertiaryContainer,
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: FileImage(
+                              File(info.cover!),
+                            ),
+                          ),
+                        ),
+                        // child: Icon(
+                        //   Icons.playlist_play_rounded,
+                        //   color: colorScheme.onTertiaryContainer,
+                        //   size: 80,
+                        // ),
+                      ),
+              )),
+          const SizedBox(
+            width: 10,
+          ),
+          Expanded(
+              child: Text(
+            info.title,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          )),
+          Align(
+            alignment: Alignment.centerRight,
+            child: IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.more),
+            ),
+          ),
+          const SizedBox(
+            width: 6,
+          ),
+        ],
+      ),
+    );
+  }
+}

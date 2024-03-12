@@ -100,7 +100,7 @@ class MusicListCard extends StatelessWidget {
                         child: Icon(
                           Icons.music_note,
                           color: colorScheme.onTertiaryContainer,
-                          size: 80,
+                          size: 40,
                         ),
                       )
                     : Ink(

@@ -16,8 +16,8 @@ class PlaylistPage extends StatefulWidget {
 
 class PlaylistState extends State<PlaylistPage> {
   final TextEditingController editingController = TextEditingController();
-  // List<PlaylistItem> playlists = [];
   bool loaded = false;
+  bool gridview = true;
 
   @override
   void initState() {
@@ -132,17 +132,21 @@ class PlaylistState extends State<PlaylistPage> {
                 child: FloatingActionButton.extended(
                   isExtended: MediaQuery.of(context).size.width > 500,
                   heroTag: 'view_list',
-                  // tooltip: '切换显示视图',
+                  tooltip: '切换显示视图',
                   elevation: 0,
                   hoverElevation: 0,
                   highlightElevation: 0,
                   backgroundColor: colorScheme.surface,
                   hoverColor: backgroundColor,
-                  onPressed: () {},
-                  // icon: const Icon(Icons.view_agenda_outlined),
-                  // label: const Text('列表视图'),
-                  icon: const Icon(Icons.calendar_view_month),
-                  label: const Text('网格'),
+                  onPressed: () {
+                    setState(() {
+                      gridview = !gridview;
+                    });
+                  },
+                  icon: Icon(gridview
+                      ? Icons.calendar_view_month
+                      : Icons.view_agenda_outlined),
+                  label: Text(gridview ? '网格' : '列表'),
                 ),
               ),
             ],
@@ -184,73 +188,96 @@ class PlaylistState extends State<PlaylistPage> {
                     )
                   : SliverPadding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      sliver: SliverGrid(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: cols,
-                          childAspectRatio: 10 / 9,
-                        ),
-                        delegate: SliverChildBuilderDelegate(
-                          (BuildContext context, int index) {
-                            MenuController menuController = MenuController();
-                            return GestureDetector(
-                              onSecondaryTapDown: (details) {
-                                menuController.open(
-                                    position: details.localPosition);
-                              },
-                              child: MenuAnchor(
-                                anchorTapClosesMenu: true,
-                                controller: menuController,
-                                style: MenuStyle(
-                                  surfaceTintColor:
-                                      const MaterialStatePropertyAll(
-                                          Colors.transparent),
-                                  shape: MaterialStatePropertyAll(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                ),
-                                menuChildren: [
-                                  const MenuItemButton(
-                                    leadingIcon:
-                                        Icon(Icons.play_arrow_outlined),
-                                    child: Text('顺序播放'),
-                                  ),
-                                  const MenuItemButton(
-                                    leadingIcon: Icon(Icons.shuffle),
-                                    child: Text('随机播放'),
-                                  ),
-                                  const MenuItemButton(
-                                    leadingIcon: Icon(Icons.add),
-                                    child: Text('追加到当前列表'),
-                                  ),
-                                  const MenuItemButton(
-                                    leadingIcon:
-                                        Icon(Icons.drive_file_rename_outline),
-                                    child: Text('重命名'),
-                                  ),
-                                  MenuItemButton(
-                                    leadingIcon: const Icon(
-                                      Icons.delete_outline,
-                                      color: Colors.red,
-                                    ),
-                                    child: const Text('删除'),
-                                    onPressed: () {
-                                      LibraryHelper.deletePlaylist(
-                                          AppStorage().playlists[index]);
-                                      AppStorage().playlists.removeAt(index);
-                                      setState(() {});
-                                    },
-                                  )
-                                ],
-                                child: PlaylistCard(
-                                    info: AppStorage().playlists[index]),
+                      sliver: gridview
+                          ? SliverGrid(
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: cols,
+                                childAspectRatio: 10 / 9,
                               ),
-                            );
-                          },
-                          childCount: AppStorage().playlists.length,
-                        ),
-                      ),
+                              delegate: SliverChildBuilderDelegate(
+                                (BuildContext context, int index) {
+                                  MenuController menuController =
+                                      MenuController();
+                                  return GestureDetector(
+                                    onSecondaryTapDown: (details) {
+                                      menuController.open(
+                                          position: details.localPosition);
+                                    },
+                                    child: MenuAnchor(
+                                      anchorTapClosesMenu: true,
+                                      controller: menuController,
+                                      style: MenuStyle(
+                                        surfaceTintColor:
+                                            const MaterialStatePropertyAll(
+                                                Colors.transparent),
+                                        shape: MaterialStatePropertyAll(
+                                          RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                        ),
+                                      ),
+                                      menuChildren: [
+                                        MenuItemButton(
+                                          leadingIcon: const Icon(
+                                              Icons.play_arrow_outlined),
+                                          child: const Text('顺序播放'),
+                                          onPressed: () {
+                                            AppStorage().currentPlaylist =
+                                                AppStorage().playlists[index];
+                                            AppStorage().openPlaylist(
+                                                AppStorage().playlists[index]);
+                                            AppStorage().updateStatus();
+                                          },
+                                        ),
+                                        const MenuItemButton(
+                                          leadingIcon: Icon(Icons.shuffle),
+                                          child: Text('随机播放'),
+                                        ),
+                                        const MenuItemButton(
+                                          leadingIcon: Icon(Icons.add),
+                                          child: Text('追加到当前列表'),
+                                        ),
+                                        const MenuItemButton(
+                                          leadingIcon: Icon(
+                                              Icons.drive_file_rename_outline),
+                                          child: Text('重命名'),
+                                        ),
+                                        MenuItemButton(
+                                          leadingIcon: const Icon(
+                                            Icons.delete_outline,
+                                            color: Colors.red,
+                                          ),
+                                          child: const Text('删除'),
+                                          onPressed: () {
+                                            LibraryHelper.deletePlaylist(
+                                                AppStorage().playlists[index]);
+                                            AppStorage()
+                                                .playlists
+                                                .removeAt(index);
+                                            setState(() {});
+                                          },
+                                        )
+                                      ],
+                                      child: PlaylistCard(
+                                          info: AppStorage().playlists[index]),
+                                    ),
+                                  );
+                                },
+                                childCount: AppStorage().playlists.length,
+                              ),
+                            )
+                          : SliverList.builder(
+                              itemBuilder: (context, index) {
+                                return SizedBox(
+                                  height: 80,
+                                  child: PlaylistListCard(
+                                      info: AppStorage().playlists[index]),
+                                );
+                              },
+                              itemCount: AppStorage().playlists.length,
+                            ),
                     ))
               : const SliverToBoxAdapter(
                   child: Center(

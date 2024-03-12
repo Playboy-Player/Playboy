@@ -64,8 +64,8 @@ class _FilePageState extends State<FilePage> {
                   backgroundColor: colorScheme.surface,
                   hoverColor: backgroundColor,
                   onPressed: () async {
-                    var res = await FilePicker.platform
-                        .pickFiles(type: FileType.media);
+                    var res = await FilePicker.platform.pickFiles(
+                        type: FileType.media, lockParentWindow: true);
                     if (res != null) {
                       String link = res.files.single.path!;
                       _openLink(link, false);
@@ -79,7 +79,7 @@ class _FilePageState extends State<FilePage> {
           ),
           SliverList(
               delegate: SliverChildListDelegate([
-            _buildOption(Icons.movie_filter_outlined, '打开视频链接', () {
+            _buildOption(Icons.open_in_new, '打开视频地址', () {
               editingController.clear();
               showDialog(
                 barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
@@ -87,7 +87,7 @@ class _FilePageState extends State<FilePage> {
                 context: context,
                 builder: (BuildContext context) => AlertDialog(
                   surfaceTintColor: Colors.transparent,
-                  title: const Text('打开视频链接'),
+                  title: const Text('打开视频地址'),
                   content: TextField(
                     autofocus: true,
                     maxLines: 1,
@@ -126,7 +126,7 @@ class _FilePageState extends State<FilePage> {
                 ),
               );
             }),
-            _buildOption(Icons.download, '下载管理', () {
+            _buildOption(Icons.download, '从网络下载', () {
               Navigator.push(
                   context,
                   MaterialPageRoute(

@@ -124,7 +124,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
               AppStorage().updateStatus();
             }),
         RadioListTile(
-            title: const Text('Red'),
+            title: const Text('Orange'),
             value: 1,
             groupValue: AppStorage().settings.themeCode,
             onChanged: (int? value) {
@@ -135,7 +135,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
               AppStorage().updateStatus();
             }),
         RadioListTile(
-            title: const Text('Deep Purple'),
+            title: const Text('Amber'),
             value: 2,
             groupValue: AppStorage().settings.themeCode,
             onChanged: (int? value) {
@@ -146,7 +146,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
               AppStorage().updateStatus();
             }),
         RadioListTile(
-            title: const Text('Indigo'),
+            title: const Text('Teal'),
             value: 3,
             groupValue: AppStorage().settings.themeCode,
             onChanged: (int? value) {
@@ -157,7 +157,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
               AppStorage().updateStatus();
             }),
         RadioListTile(
-            title: const Text('Teal'),
+            title: const Text('Blue'),
             value: 4,
             groupValue: AppStorage().settings.themeCode,
             onChanged: (int? value) {
@@ -168,7 +168,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
               AppStorage().updateStatus();
             }),
         RadioListTile(
-            title: const Text('Blue'),
+            title: const Text('Indigo'),
             value: 5,
             groupValue: AppStorage().settings.themeCode,
             onChanged: (int? value) {
@@ -179,7 +179,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
               AppStorage().updateStatus();
             }),
         RadioListTile(
-            title: const Text('BlueGrey'),
+            title: const Text('Purple'),
             value: 6,
             groupValue: AppStorage().settings.themeCode,
             onChanged: (int? value) {

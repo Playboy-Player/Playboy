@@ -11,7 +11,7 @@ class DownloadPageState extends State<DownloadPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('下载管理')),
+      appBar: AppBar(title: const Text('从网络下载')),
     );
   }
 }

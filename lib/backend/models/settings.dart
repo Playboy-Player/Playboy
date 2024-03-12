@@ -77,17 +77,17 @@ class AppSettings {
       case 0:
         return Colors.pink;
       case 1:
-        return Colors.red;
+        return Colors.orange;
       case 2:
-        return Colors.deepPurple;
+        return Colors.amber;
       case 3:
-        return Colors.indigo;
-      case 4:
         return Colors.teal;
-      case 5:
+      case 4:
         return Colors.blue;
+      case 5:
+        return Colors.indigo;
       case 6:
-        return Colors.blueGrey;
+        return Colors.purple;
     }
     return Colors.pink;
   }
