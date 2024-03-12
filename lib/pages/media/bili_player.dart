@@ -252,13 +252,12 @@ class BiliPlayerState extends State<BiliPlayer> {
                     top: 50, left: 50, right: 50, bottom: 75),
                 alignment: Alignment.center,
                 child: AspectRatio(
-                  aspectRatio: 1,
+                  aspectRatio: 14 / 9,
                   child: DecoratedBox(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       image: DecorationImage(
-                        image: UniImageProvider(url: AppStorage().playingCover!)
-                            .getImage(),
+                        image: NetworkImage(widget.videoInfo.coverUrl),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -465,11 +464,23 @@ class BiliPlayerState extends State<BiliPlayer> {
             // AppStorage().playing = AppStorage().playboy.state.playing;
           });
         },
-        icon: Icon(
-          AppStorage().playing
-              ? Icons.pause_circle_outline
-              : Icons.play_arrow_outlined,
-        ),
+        icon: StreamBuilder(
+            stream: AppStorage().playboy.stream.playing,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Icon(
+                  snapshot.data!
+                      ? Icons.pause_circle_outline
+                      : Icons.play_arrow_outlined,
+                );
+              } else {
+                return Icon(
+                  AppStorage().playing
+                      ? Icons.pause_circle_outline
+                      : Icons.play_arrow_outlined,
+                );
+              }
+            }),
       ),
       const SizedBox(
         width: 10,

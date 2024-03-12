@@ -100,11 +100,4 @@ class LibraryHelper {
     pl.items.remove(p);
     savePlaylist(pl);
   }
-
-  // TODO: del
-  static void addItemToFirstList(PlayItem p) {
-    var pl = AppStorage().playlists[0];
-    pl.items.add(p);
-    savePlaylist(pl);
-  }
 }

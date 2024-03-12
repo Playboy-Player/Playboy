@@ -2,9 +2,13 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:path/path.dart' as p;
+import 'package:playboy/backend/library_helper.dart';
+import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/pages/media/video_fullscreen.dart';
 import 'package:playboy/widgets/music_card.dart';
+import 'package:playboy/widgets/player_list.dart';
 import 'package:playboy/widgets/uni_image.dart';
 import 'package:squiggly_slider/slider.dart';
 import 'package:window_manager/window_manager.dart';
@@ -309,22 +313,75 @@ class MPlayerState extends State<MPlayer> {
             body: TabBarView(
               children: <Widget>[
                 const Center(
-                  child: Text("ly"),
+                  child: Text("lyrics"),
                 ),
-                ListView.builder(
-                  itemBuilder: (BuildContext context, int index) {
-                    return SizedBox(
-                      height: 60,
-                      child: Text(AppStorage()
-                          .playboy
-                          .state
-                          .playlist
-                          .medias[index]
-                          .uri),
-                    );
-                  },
-                  itemCount: AppStorage().playboy.state.playlist.medias.length,
-                ),
+                StreamBuilder(
+                    stream: AppStorage().playboy.stream.playlist,
+                    builder: (context, snapshot) {
+                      return ListView.builder(
+                        itemBuilder: (BuildContext context, int index) {
+                          var src = AppStorage()
+                              .playboy
+                              .state
+                              .playlist
+                              .medias[index]
+                              .uri;
+                          return SizedBox(
+                            height: 46,
+                            child: Row(
+                              children: [
+                                const SizedBox(
+                                  width: 4,
+                                ),
+                                Expanded(
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(20),
+                                    onTap: () {
+                                      AppStorage().playboy.jump(index);
+                                    },
+                                    child: PlayerListCard(
+                                      info: PlayItem(
+                                        source: src,
+                                        cover: null,
+                                        title: p.basenameWithoutExtension(src),
+                                      ),
+                                      isPlaying:
+                                          index == AppStorage().playingIndex,
+                                    ),
+                                  ),
+                                ),
+                                IconButton(
+                                    onPressed: () {
+                                      var len = AppStorage()
+                                          .playboy
+                                          .state
+                                          .playlist
+                                          .medias
+                                          .length;
+                                      if (index == AppStorage().playingIndex) {
+                                        if (len == 1) {
+                                          AppStorage().closeMedia();
+                                        } else if (len - 1 == index) {
+                                          AppStorage().playboy.previous();
+                                        } else {
+                                          AppStorage().playboy.next();
+                                        }
+                                      }
+                                      AppStorage().playboy.remove(index);
+                                      setState(() {});
+                                    },
+                                    icon: const Icon(Icons.close)),
+                                const SizedBox(
+                                  width: 4,
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        itemCount:
+                            AppStorage().playboy.state.playlist.medias.length,
+                      );
+                    }),
               ],
             ),
           ),
@@ -384,6 +441,7 @@ class MPlayerState extends State<MPlayer> {
           onPressed: () {
             setState(() {
               AppStorage().shuffle = !AppStorage().shuffle;
+              AppStorage().playboy.setShuffle(AppStorage().shuffle);
             });
           },
           icon: AppStorage().shuffle
@@ -424,35 +482,28 @@ class MPlayerState extends State<MPlayer> {
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         ),
         iconSize: 40,
-        // color: colorScheme.onTertiary,
-        // onPressed: () {
-        //   setState(() {
-        //     // AppStorage().playboy.playOrPause();
-        //     if (AppStorage().playing) {
-        //       AppStorage().playboy.pause();
-        //       AppStorage().playing = false;
-        //     } else {
-        //       AppStorage().playboy.play();
-        //       AppStorage().playing = true;
-        //     }
-        //   });
-        // },
-        // icon: Icon(
-        //   AppStorage().playing
-        //       ? Icons.pause_circle_outline
-        //       : Icons.play_arrow_outlined,
-        // ),
         onPressed: () {
           setState(() {
             AppStorage().playboy.playOrPause();
-            // AppStorage().playing = AppStorage().playboy.state.playing;
           });
         },
-        icon: Icon(
-          AppStorage().playing
-              ? Icons.pause_circle_outline
-              : Icons.play_arrow_outlined,
-        ),
+        icon: StreamBuilder(
+            stream: AppStorage().playboy.stream.playing,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Icon(
+                  snapshot.data!
+                      ? Icons.pause_circle_outline
+                      : Icons.play_arrow_outlined,
+                );
+              } else {
+                return Icon(
+                  AppStorage().playing
+                      ? Icons.pause_circle_outline
+                      : Icons.play_arrow_outlined,
+                );
+              }
+            }),
       ),
       const SizedBox(
         width: 10,

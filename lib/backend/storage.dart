@@ -22,8 +22,6 @@ class AppStorage extends ChangeNotifier {
   final searchPage = GlobalKey<NavigatorState>();
 
   List<PlaylistItem> playlists = [];
-  PlaylistItem currentPlaylist =
-      PlaylistItem(items: [], title: 'Current Playing #2rf8eu', cover: null);
   int playingIndex = 0;
 
   late final Player playboy;
@@ -57,6 +55,27 @@ class AppStorage extends ChangeNotifier {
     });
     playboy.stream.duration.listen((event) {
       duration = event;
+    });
+    playboy.stream.playlist.listen((event) {
+      playingIndex = event.index;
+      if (event.medias.isNotEmpty) {
+        var src = event.medias[playingIndex].uri;
+        if (src.startsWith('http')) {
+          return;
+        } else {
+          playingTitle = basenameWithoutExtension(src);
+          var coverPath = '${dirname(src)}/cover.jpg';
+          if (File(coverPath).existsSync()) {
+            playingCover = coverPath;
+          } else {
+            playingCover = null;
+          }
+        }
+      } else {
+        playingTitle = 'Not Playing';
+        playingCover = null;
+      }
+      notifyListeners();
     });
   }
 
@@ -113,8 +132,7 @@ class AppStorage extends ChangeNotifier {
     }
     playingTitle = 'Not Playing';
     playingCover = null;
-    currentPlaylist =
-        PlaylistItem(items: [], title: 'Current Playing #2rf8eu', cover: null);
+    shuffle = false;
   }
 
   void openMedia(PlayItem media) {
@@ -135,6 +153,7 @@ class AppStorage extends ChangeNotifier {
     duration = Duration.zero;
     playingTitle = basenameWithoutExtension(media.title);
     playingCover = media.cover;
+    shuffle = false;
   }
 
   void openPlaylist(PlaylistItem pl) {
@@ -156,5 +175,6 @@ class AppStorage extends ChangeNotifier {
     duration = Duration.zero;
     playingTitle = basenameWithoutExtension(pl.items[0].title);
     playingCover = pl.items[0].cover;
+    shuffle = false;
   }
 }

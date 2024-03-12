@@ -239,11 +239,23 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
             // AppStorage().playing = AppStorage().playboy.state.playing;
           });
         },
-        icon: Icon(
-          AppStorage().playing
-              ? Icons.pause_circle_outline
-              : Icons.play_arrow_outlined,
-        ),
+        icon: StreamBuilder(
+            stream: AppStorage().playboy.stream.playing,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Icon(
+                  snapshot.data!
+                      ? Icons.pause_circle_outline
+                      : Icons.play_arrow_outlined,
+                );
+              } else {
+                return Icon(
+                  AppStorage().playing
+                      ? Icons.pause_circle_outline
+                      : Icons.play_arrow_outlined,
+                );
+              }
+            }),
       ),
       const SizedBox(
         width: 10,

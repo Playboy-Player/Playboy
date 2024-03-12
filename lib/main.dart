@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 // import 'package:flutter/services.dart';
 import 'package:playboy/backend/storage.dart';
@@ -38,10 +39,7 @@ void main(List<String> arguments) async {
   String initMedia = '';
   if (arguments.isNotEmpty) {
     initMedia = arguments[0];
-    AppStorage().openMedia(PlayItem(
-        source: initMedia,
-        cover: null,
-        title: basenameWithoutExtension(initMedia)));
+    AppStorage().openMedia(await LibraryHelper.getItemFromFile(initMedia));
   }
 
   runApp(

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
+import 'package:playboy/backend/storage.dart';
 import 'package:playboy/widgets/video_card.dart';
 
 class PlaylistDetail extends StatefulWidget {
@@ -23,8 +24,11 @@ class PlaylistDetailState extends State<PlaylistDetail> {
         scrolledUnderElevation: 0,
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.select_all),
+            onPressed: () {
+              AppStorage().closeMedia();
+              AppStorage().openPlaylist(widget.info);
+            },
+            icon: const Icon(Icons.play_arrow_outlined),
           ),
           IconButton(
             onPressed: () {},

@@ -222,21 +222,16 @@ class PlaylistState extends State<PlaylistPage> {
                                         MenuItemButton(
                                           leadingIcon: const Icon(
                                               Icons.play_arrow_outlined),
-                                          child: const Text('顺序播放'),
+                                          child: const Text('播放'),
                                           onPressed: () {
-                                            AppStorage().currentPlaylist =
-                                                AppStorage().playlists[index];
+                                            AppStorage().closeMedia();
                                             AppStorage().openPlaylist(
                                                 AppStorage().playlists[index]);
-                                            AppStorage().updateStatus();
                                           },
                                         ),
                                         const MenuItemButton(
-                                          leadingIcon: Icon(Icons.shuffle),
-                                          child: Text('随机播放'),
-                                        ),
-                                        const MenuItemButton(
-                                          leadingIcon: Icon(Icons.add),
+                                          leadingIcon:
+                                              Icon(Icons.add_circle_outline),
                                           child: Text('追加到当前列表'),
                                         ),
                                         const MenuItemButton(
