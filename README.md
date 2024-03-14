@@ -2,22 +2,25 @@
 
 使用 Flutter 开发的媒体播放器, 界面使用 Material You 设计风格.
 
-## 界面展示
-
 ![](https://ziadoua.github.io/m3-Markdown-Badges/badges/LicenceCCBYNC/licenceccbync3.svg)
 ![](https://ziadoua.github.io/m3-Markdown-Badges/badges/Windows/windows3.svg)
 ![](https://ziadoua.github.io/m3-Markdown-Badges/badges/Linux/linux3.svg)
 ![](https://ziadoua.github.io/m3-Markdown-Badges/badges/Android/android3.svg)
 
+## 界面展示
+
 <center class="half">
   <img src="./screenshots/screenshot4.png" width="300"/>
-  <img src="./screenshots/screenshot5.png" width="300"/>
-  <img src="./screenshots/screenshot6.png" width="300"/>
+  <img src="./screenshots/screenshot1.png" width="300"/>
 </center>
 
 <center class="half">
-  <img src="./screenshots/screenshot1.png" width="300"/>
+  <img src="./screenshots/screenshot5.png" width="300"/>
   <img src="./screenshots/screenshot2.png" width="300"/>
+</center>
+
+<center class="half">
+  <img src="./screenshots/screenshot6.png" width="300"/>
   <img src="./screenshots/screenshot3.png" width="300"/>
 </center>
 
