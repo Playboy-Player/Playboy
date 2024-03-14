@@ -7,22 +7,34 @@
 ![](https://ziadoua.github.io/m3-Markdown-Badges/badges/Linux/linux3.svg)
 ![](https://ziadoua.github.io/m3-Markdown-Badges/badges/Android/android3.svg)
 
-## 界面展示
+## 界面截图
 
-<center class="half">
-  <img src="./screenshots/screenshot4.png" width="300"/>
-  <img src="./screenshots/screenshot1.png" width="300"/>
-</center>
-
-<center class="half">
-  <img src="./screenshots/screenshot5.png" width="300"/>
-  <img src="./screenshots/screenshot2.png" width="300"/>
-</center>
-
-<center class="half">
-  <img src="./screenshots/screenshot6.png" width="300"/>
-  <img src="./screenshots/screenshot3.png" width="300"/>
-</center>
+<table>
+  <tr>
+    <td>
+      <img src='./screenshots/screenshot4.png'>
+    </td>
+    <td>
+      <img src='./screenshots/screenshot1.png'>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img src='./screenshots/screenshot5.png'>
+    </td>
+    <td>
+      <img src='./screenshots/screenshot2.png'>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img src='./screenshots/screenshot6.png'>
+    </td>
+    <td>
+      <img src='./screenshots/screenshot3.png'>
+    </td>
+  </tr>
+</table>
 
 ## 功能 & 开发进度
 
@@ -54,6 +66,8 @@ Doctor summary (to see all details, run flutter doctor -v):
 ## 致谢
 
 [media-kit](https://github.com/media-kit/media-kit)
+
+[dio](https://github.com/cfug/dio)
 
 [bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect)
 
