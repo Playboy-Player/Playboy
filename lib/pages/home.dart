@@ -476,12 +476,15 @@ class _HomeState extends State<Home> {
                               ),
                               maxLines: 1,
                             ),
-                            Text(
-                              'playboy',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: colorScheme.primaryContainer,
-                              ),
+                            // Text(
+                            //   'playboy',
+                            //   style: TextStyle(
+                            //     fontSize: 12,
+                            //     color: colorScheme.primaryContainer,
+                            //   ),
+                            // )
+                            const SizedBox(
+                              height: 8,
                             )
                           ],
                         ),

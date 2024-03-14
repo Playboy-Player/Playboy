@@ -53,7 +53,7 @@ class _FilePageState extends State<FilePage> {
             expandedHeight: 80,
             actions: [
               Container(
-                padding: const EdgeInsets.only(top: 10, right: 10),
+                padding: const EdgeInsets.only(top: 10, right: 10, bottom: 10),
                 child: FloatingActionButton.extended(
                   isExtended: MediaQuery.of(context).size.width > 500,
                   heroTag: 'open_file',

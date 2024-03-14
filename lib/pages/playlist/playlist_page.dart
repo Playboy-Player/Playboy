@@ -63,7 +63,7 @@ class PlaylistState extends State<PlaylistPage> {
             collapsedHeight: 65,
             actions: [
               Padding(
-                padding: const EdgeInsets.only(top: 10),
+                padding: const EdgeInsets.only(top: 10, bottom: 10),
                 child: FloatingActionButton(
                   heroTag: 'new_list',
                   elevation: 0,
@@ -128,7 +128,7 @@ class PlaylistState extends State<PlaylistPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 10, right: 10),
+                padding: const EdgeInsets.only(top: 10, bottom: 10, right: 10),
                 child: FloatingActionButton.extended(
                   isExtended: MediaQuery.of(context).size.width > 500,
                   heroTag: 'view_list',
