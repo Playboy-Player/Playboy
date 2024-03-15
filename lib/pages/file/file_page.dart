@@ -65,7 +65,23 @@ class _FilePageState extends State<FilePage> {
                   hoverColor: backgroundColor,
                   onPressed: () async {
                     var res = await FilePicker.platform.pickFiles(
-                        type: FileType.media, lockParentWindow: true);
+                        type: FileType.custom,
+                        allowedExtensions: [
+                          'avi',
+                          'flv',
+                          'mkv',
+                          'mov',
+                          'mp4',
+                          'mpeg',
+                          'webm',
+                          'wmv',
+                          'aac',
+                          'midi',
+                          'mp3',
+                          'ogg',
+                          'wav',
+                        ],
+                        lockParentWindow: true);
                     if (res != null) {
                       String link = res.files.single.path!;
                       _openLink(link, false);

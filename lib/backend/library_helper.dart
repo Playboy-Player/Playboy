@@ -8,6 +8,22 @@ import 'package:path/path.dart';
 import 'package:playboy/backend/storage.dart';
 
 class LibraryHelper {
+  static const supportFormats = [
+    'avi',
+    'flv',
+    'mkv',
+    'mov',
+    'mp4',
+    'mpeg',
+    'webm',
+    'wmv',
+    'aac',
+    'midi',
+    'mp3',
+    'ogg',
+    'wav',
+  ];
+
   static Playlist convertToPlaylist(PlaylistItem playlistItem) {
     List<Media> res = [];
     for (var item in playlistItem.items) {
@@ -37,11 +53,19 @@ class LibraryHelper {
   static Future<PlayItem?> getItemFromDirectory(Directory dir) async {
     String source = dir.path;
     String title = basenameWithoutExtension(source);
-    source += '/$title.mp4';
-    String cover = '${dir.path}/cover.jpg';
-    if (!await File(source).exists()) {
+    // source += '/$title.mp4';
+    bool found = false;
+    for (var ext in supportFormats) {
+      var media = '$source/$title.$ext';
+      if (await File(media).exists()) {
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
       return null;
     }
+    String cover = '${dir.path}/cover.jpg';
     if (!await File(cover).exists()) {
       return PlayItem(source: source, cover: null, title: title);
     } else {
