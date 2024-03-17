@@ -202,7 +202,7 @@ class _FilePageState extends State<FilePage> {
     if (isBv) {
       final info = await BilibiliHelper.getVideoInfo(source);
       final playInfo = await BilibiliHelper.getVideoStream(source, info.cid);
-      if (!context.mounted) return;
+      if (!mounted) return;
       Navigator.of(context, rootNavigator: true)
           .push(MaterialPageRoute(
               builder: (context) => BiliPlayer(

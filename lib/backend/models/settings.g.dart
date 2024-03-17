@@ -11,7 +11,7 @@ AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) => AppSettings(
       keyTime: json['keyTime'] as int? ?? 1245974400,
       themeMode: $enumDecodeNullable(_$ThemeModeEnumMap, json['themeMode']) ??
           ThemeMode.system,
-      themeCode: json['themeCode'] as int? ?? 0,
+      themeCode: json['themeCode'] as int? ?? 4,
       logined: json['logined'] as bool? ?? false,
       wavySlider: json['wavySlider'] as bool? ?? false,
       initPage: json['initPage'] as int? ?? 0,

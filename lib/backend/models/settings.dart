@@ -45,7 +45,7 @@ class AppSettings {
     this.wbiKey = "none",
     this.keyTime = 1245974400, //090626
     this.themeMode = ThemeMode.system,
-    this.themeCode = 0,
+    this.themeCode = 4,
     this.logined = false,
     this.wavySlider = false,
     this.initPage = 0,

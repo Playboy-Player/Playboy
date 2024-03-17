@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
 import 'package:playboy/pages/settings/about_app.dart';
 import 'package:playboy/pages/settings/account_setting.dart';
 import 'package:playboy/pages/settings/display_settings.dart';
-// import 'package:playboy/pages/settings/language_settings.dart';
 import 'package:playboy/pages/settings/player_settings.dart';
 import 'package:playboy/pages/settings/storage_settings.dart';
 import 'package:playboy/pages/settings/experiment.dart';
@@ -25,7 +23,7 @@ class SettingsPageState extends State<SettingsPage> {
     Icons.play_circle_rounded,
     Icons.folder,
     // Icons.translate_rounded,
-    Symbols.flutter_rounded,
+    Icons.info,
     Icons.auto_awesome
   ];
   List<String> options = [

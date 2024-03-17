@@ -53,7 +53,7 @@
 
 ```
 Doctor summary (to see all details, run flutter doctor -v):
-[✓] Flutter (Channel stable, 3.16.5, on Microsoft Windows [版本 10.0.22631.3155], locale zh-CN)
+[✓] Flutter (Channel stable, 3.19.3, on Microsoft Windows [版本 10.0.22631.3296], locale zh-CN)
 [✓] Windows Version (Installed version of Windows is version 10 or higher)
 [✓] Android toolchain - develop for Android devices (Android SDK version 34.0.0)
 [✓] Chrome - develop for the web
