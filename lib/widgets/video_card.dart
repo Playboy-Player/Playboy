@@ -5,7 +5,6 @@ import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/pages/media/m_player.dart';
-import 'package:playboy/widgets/playlist_card.dart';
 import 'package:playboy/widgets/playlist_picker.dart';
 
 class VideoCard extends StatelessWidget {
