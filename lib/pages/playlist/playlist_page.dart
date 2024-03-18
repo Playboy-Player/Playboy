@@ -205,7 +205,6 @@ class PlaylistState extends State<PlaylistPage> {
                                           position: details.localPosition);
                                     },
                                     child: MenuAnchor(
-                                      anchorTapClosesMenu: true,
                                       controller: menuController,
                                       style: MenuStyle(
                                         surfaceTintColor:

@@ -525,7 +525,8 @@ class _HomeState extends State<Home> {
                             color: colorScheme.primaryContainer,
                             // iconSize: 30,
                             onPressed: () {
-                              // AppStorage().closeMedia();
+                              AppStorage().playboy.previous();
+                              setState(() {});
                             },
                             icon: const Icon(
                               Icons.skip_previous,
@@ -601,7 +602,10 @@ class _HomeState extends State<Home> {
                         IconButton(
                             color: colorScheme.primaryContainer,
                             // iconSize: 30,
-                            onPressed: () {},
+                            onPressed: () {
+                              AppStorage().playboy.next();
+                              setState(() {});
+                            },
                             icon: const Icon(
                               Icons.skip_next,
                               // size: 30,

@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:playboy/widgets/playlist_picker.dart';
 
 class MusicCard extends StatelessWidget {
   const MusicCard({super.key, required this.info});
@@ -133,6 +135,7 @@ class MusicListCard extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: IconButton.filledTonal(
+              tooltip: '播放',
               onPressed: () async {
                 await AppStorage().closeMedia().then((value) {
                   AppStorage().openMedia(info);
@@ -147,8 +150,52 @@ class MusicListCard extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: IconButton.filledTonal(
-              onPressed: () {},
+              tooltip: '添加到播放列表',
+              onPressed: () {
+                showDialog(
+                  barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
+                  useRootNavigator: false,
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    surfaceTintColor: Colors.transparent,
+                    title: const Text('添加到播放列表'),
+                    content: SizedBox(
+                      width: 200,
+                      height: 300,
+                      child: ListView.builder(
+                        itemBuilder: (context, index) {
+                          return SizedBox(
+                            height: 60,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(20),
+                              onTap: () {
+                                LibraryHelper.addItemToPlaylist(
+                                    AppStorage().playlists[index], info);
+                                Navigator.pop(context);
+                              },
+                              child: PlaylistPickerItem(
+                                  info: AppStorage().playlists[index]),
+                            ),
+                          );
+                        },
+                        itemCount: AppStorage().playlists.length,
+                      ),
+                    ),
+                  ),
+                );
+              },
               icon: const Icon(Icons.add),
+            ),
+          ),
+          const SizedBox(
+            width: 6,
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: IconButton(
+              tooltip: '更多',
+              onPressed: () {},
+              icon: const Icon(Icons.more_vert),
             ),
           ),
           const SizedBox(

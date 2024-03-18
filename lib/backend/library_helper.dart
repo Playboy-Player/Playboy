@@ -55,8 +55,9 @@ class LibraryHelper {
     String title = basenameWithoutExtension(source);
     // source += '/$title.mp4';
     bool found = false;
+    String media = '';
     for (var ext in supportFormats) {
-      var media = '$source/$title.$ext';
+      media = '$source/$title.$ext';
       if (await File(media).exists()) {
         found = true;
         break;
@@ -67,9 +68,9 @@ class LibraryHelper {
     }
     String cover = '${dir.path}/cover.jpg';
     if (!await File(cover).exists()) {
-      return PlayItem(source: source, cover: null, title: title);
+      return PlayItem(source: media, cover: null, title: title);
     } else {
-      return PlayItem(source: source, cover: cover, title: title);
+      return PlayItem(source: media, cover: cover, title: title);
     }
   }
 

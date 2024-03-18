@@ -293,25 +293,45 @@ class MPlayerState extends State<MPlayer> {
     return ClipRRect(
         borderRadius: const BorderRadius.all(Radius.circular(25)),
         child: DefaultTabController(
-          initialIndex: 0,
+          initialIndex: 1,
           length: 2,
           child: Scaffold(
             backgroundColor:
                 videoMode ? colorScheme.background : backgroundColor,
-            appBar: const TabBar(
+            appBar: TabBar(
               tabs: <Widget>[
                 Tab(
-                  icon: Icon(Icons.lyrics),
+                  icon: Icon(videoMode
+                      ? Icons.subtitles_outlined
+                      : Icons.lyrics_outlined),
                 ),
-                Tab(
+                const Tab(
                   icon: Icon(Icons.menu),
                 ),
               ],
             ),
             body: TabBarView(
               children: <Widget>[
-                const Center(
-                  child: Text("lyrics"),
+                Center(
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 50,
+                      ),
+                      Icon(
+                        Icons.code,
+                        size: 50,
+                        color: colorScheme.onPrimaryContainer,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        "subtitle/lyric support is developing",
+                        style: TextStyle(color: colorScheme.onPrimaryContainer),
+                      ),
+                    ],
+                  ),
                 ),
                 StreamBuilder(
                     stream: AppStorage().playboy.stream.playlist,

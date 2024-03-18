@@ -17,7 +17,7 @@ class ExperimentSettingsState extends State<ExperimentSettings> {
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
-              '实验性功能',
+              'bili api',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,

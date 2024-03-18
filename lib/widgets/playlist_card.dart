@@ -131,9 +131,32 @@ class PlaylistListCard extends StatelessWidget {
           )),
           Align(
             alignment: Alignment.centerRight,
-            child: IconButton(
+            child: IconButton.filledTonal(
+              tooltip: '播放',
               onPressed: () {},
-              icon: const Icon(Icons.more),
+              icon: const Icon(Icons.play_arrow),
+            ),
+          ),
+          const SizedBox(
+            width: 6,
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: IconButton.filledTonal(
+              tooltip: '插播',
+              onPressed: () {},
+              icon: const Icon(Icons.menu_open),
+            ),
+          ),
+          const SizedBox(
+            width: 6,
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: IconButton(
+              tooltip: '更多',
+              onPressed: () {},
+              icon: const Icon(Icons.more_vert),
             ),
           ),
           const SizedBox(
