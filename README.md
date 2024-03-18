@@ -2,8 +2,8 @@
 
 使用 [Flutter](https://flutter.dev/) 开发的媒体播放器, 界面使用 [Material You](https://m3.material.io/) 设计风格.
 
-<img src="https://m3-markdown-badges.vercel.app/stars/7/2/Playboy-Player/Playboy">
-<img src="https://m3-markdown-badges.vercel.app/issues/1/2/Playboy-Player/Playboy">
+![](https://m3-markdown-badges.vercel.app/stars/7/2/Playboy-Player/Playboy)
+![](https://m3-markdown-badges.vercel.app/issues/1/2/Playboy-Player/Playboy)
 
 ![](https://ziadoua.github.io/m3-Markdown-Badges/badges/Windows/windows3.svg)
 ![](https://ziadoua.github.io/m3-Markdown-Badges/badges/Linux/linux3.svg)
@@ -53,9 +53,6 @@
 - [ ] 视频字幕
 - [x] 解析BV链接.
 - [ ] 文件下载功能.
-- [x] 便携版 (Windows)
-- [ ] 移动端 (android) 支持
-- [ ] 跨桌面端支持 (Windows, Linux, macOS)
 
 ## 使用说明
 
@@ -116,10 +113,8 @@ Doctor summary (to see all details, run flutter doctor -v):
 
 ## 致谢
 
-[media-kit](https://github.com/media-kit/media-kit)
+视频播放器库 [media-kit](https://github.com/media-kit/media-kit)
 
-[dio](https://github.com/cfug/dio)
+网络请求库 [dio](https://github.com/cfug/dio)
 
-[bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect)
-
-[pilipala](https://github.com/guozhigq/pilipala)
+Bilibili API 收集 [bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect)
