@@ -53,19 +53,21 @@
 - [ ] 视频字幕
 - [x] 解析BV链接.
 - [ ] 文件下载功能.
+- [ ] 媒体文件搜索
 
 ## 使用说明
 
 音乐库与视频库按文件夹扫描媒体项, 将文件夹中的 `cover.jpg` 设为媒体项的封面.  
 仅扫描与文件夹同名且格式支持的媒体文件, 同名不同扩展名的文件仅会扫描一个.
 
-支持格式: `avi`, `flv`, `mkv`, `mov`, `mp4`, `mpeg`, `webm`, `wmv`, `aac`, `midi`, `mp3`, `ogg`, `wav`
+扫描格式: `avi`, `flv`, `mkv`, `mov`, `mp4`, `mpeg`, `webm`, `wmv`, `aac`, `midi`, `mp3`, `ogg`, `wav`
 
 例如, 以下目录会被扫描为一个媒体项
 
 ```
-Last Resort/Last Resort.mp4
-           /cover.jpg
+Last Resort/
+├─Last Resort.mp4
+└─cover.jpg
 ```
 
 ## 开发环境
@@ -80,10 +82,7 @@ flutter doctor 输出内容示例:
 Doctor summary (to see all details, run flutter doctor -v):
 [✓] Flutter (Channel stable, 3.19.3, on Microsoft Windows [版本 10.0.22631.3296], locale zh-CN)
 [✓] Windows Version (Installed version of Windows is version 10 or higher)
-[✓] Android toolchain - develop for Android devices (Android SDK version 34.0.0)
-[✓] Chrome - develop for the web
 [✓] Visual Studio - develop Windows apps (Visual Studio Community 2022 17.9.2)
-[✓] Android Studio (version 2023.1)
 [✓] Connected device (3 available)
 [✓] Network resources
 ```
@@ -95,6 +94,16 @@ Doctor summary (to see all details, run flutter doctor -v):
 > 目前 Linux 版本 UI 存在 Bug
 
 需要安装 [Flutter](https://docs.flutter.dev/get-started/install/linux), libmpv.
+
+flutter doctor 输出内容示例:
+
+```
+Doctor summary (to see all details, run flutter doctor -v):
+[✓] Flutter (Channel stable, 3.19.3, on Ubuntu 22.04.4 LTS 6.5.0-25-generic, locale zh_CN.UTF-8)
+[✓] Linux toolchain - develop for Linux desktop
+[✓] Connected device (1 available)
+[✓] Network resources 
+```
 
 在项目文件夹下运行 `flutter build linux` 以生成 Linux 可执行程序
 
