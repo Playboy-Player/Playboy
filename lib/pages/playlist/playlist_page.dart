@@ -228,15 +228,21 @@ class PlaylistState extends State<PlaylistPage> {
                                                 AppStorage().playlists[index]);
                                           },
                                         ),
-                                        const MenuItemButton(
-                                          leadingIcon:
-                                              Icon(Icons.add_circle_outline),
-                                          child: Text('追加到当前列表'),
+                                        MenuItemButton(
+                                          leadingIcon: const Icon(
+                                              Icons.add_circle_outline),
+                                          child: const Text('追加到当前列表'),
+                                          onPressed: () {
+                                            // TODO: append
+                                          },
                                         ),
-                                        const MenuItemButton(
-                                          leadingIcon: Icon(
+                                        MenuItemButton(
+                                          leadingIcon: const Icon(
                                               Icons.drive_file_rename_outline),
-                                          child: Text('重命名'),
+                                          child: const Text('重命名'),
+                                          onPressed: () {
+                                            //TODO: rename
+                                          },
                                         ),
                                         MenuItemButton(
                                           leadingIcon: const Icon(

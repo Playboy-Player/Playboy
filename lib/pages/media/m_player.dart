@@ -22,6 +22,10 @@ class MPlayer extends StatefulWidget {
   MPlayerState createState() => MPlayerState();
 }
 
+// TODO: title bug
+// TODO: screenshot
+// TODO: context menu
+// TODO: subtitle/lyric support
 class MPlayerState extends State<MPlayer> {
   VideoController controller = AppStorage().controller;
 

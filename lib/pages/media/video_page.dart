@@ -5,6 +5,8 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:playboy/pages/media/m_player.dart';
+import 'package:playboy/widgets/playlist_picker.dart';
 import 'package:playboy/widgets/video_card.dart';
 
 class VideoPage extends StatefulWidget {
@@ -156,7 +158,126 @@ class _VideoPageState extends State<VideoPage> {
                               ),
                               delegate: SliverChildBuilderDelegate(
                                 (BuildContext context, int index) {
-                                  return VideoCard(info: playitems[index]);
+                                  // return VideoCard(info: playitems[index]);
+                                  MenuController menuController =
+                                      MenuController();
+                                  return GestureDetector(
+                                    onSecondaryTapDown: (details) {
+                                      menuController.open(
+                                          position: details.localPosition);
+                                    },
+                                    child: MenuAnchor(
+                                      controller: menuController,
+                                      style: MenuStyle(
+                                        surfaceTintColor:
+                                            const MaterialStatePropertyAll(
+                                                Colors.transparent),
+                                        shape: MaterialStatePropertyAll(
+                                          RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                        ),
+                                      ),
+                                      menuChildren: [
+                                        MenuItemButton(
+                                          leadingIcon: const Icon(
+                                              Icons.play_arrow_outlined),
+                                          child: const Text('播放'),
+                                          onPressed: () async {
+                                            await AppStorage()
+                                                .closeMedia()
+                                                .then((value) {
+                                              if (!context.mounted) return;
+                                              AppStorage()
+                                                  .openMedia(playitems[index]);
+
+                                              Navigator.of(context,
+                                                      rootNavigator: true)
+                                                  .push(
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const MPlayer(),
+                                                ),
+                                              );
+                                            });
+                                          },
+                                        ),
+                                        MenuItemButton(
+                                          leadingIcon:
+                                              const Icon(Icons.menu_open),
+                                          child: const Text('插播'),
+                                          onPressed: () {
+                                            // TODO: insert to next
+                                          },
+                                        ),
+                                        MenuItemButton(
+                                          leadingIcon:
+                                              const Icon(Icons.last_page),
+                                          child: const Text('最后播放'),
+                                          onPressed: () {
+                                            // TODO: insert to last
+                                          },
+                                        ),
+                                        MenuItemButton(
+                                          leadingIcon: const Icon(
+                                              Icons.add_circle_outline),
+                                          child: const Text('添加到播放列表'),
+                                          onPressed: () {
+                                            showDialog(
+                                              barrierColor: colorScheme
+                                                  .surfaceTint
+                                                  .withOpacity(0.12),
+                                              useRootNavigator: false,
+                                              context: context,
+                                              builder: (BuildContext context) =>
+                                                  AlertDialog(
+                                                surfaceTintColor:
+                                                    Colors.transparent,
+                                                title: const Text('添加到播放列表'),
+                                                content: SizedBox(
+                                                  width: 200,
+                                                  height: 300,
+                                                  child: ListView.builder(
+                                                    itemBuilder:
+                                                        (context, indexList) {
+                                                      return SizedBox(
+                                                        height: 60,
+                                                        child: InkWell(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(20),
+                                                          onTap: () {
+                                                            LibraryHelper
+                                                                .addItemToPlaylist(
+                                                                    AppStorage()
+                                                                            .playlists[
+                                                                        indexList],
+                                                                    playitems[
+                                                                        index]);
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: PlaylistPickerItem(
+                                                              info: AppStorage()
+                                                                      .playlists[
+                                                                  indexList]),
+                                                        ),
+                                                      );
+                                                    },
+                                                    itemCount: AppStorage()
+                                                        .playlists
+                                                        .length,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                      child: VideoCard(info: playitems[index]),
+                                    ),
+                                  );
                                 },
                                 childCount: playitems.length,
                               ),

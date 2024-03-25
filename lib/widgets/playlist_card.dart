@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
+import 'package:playboy/backend/storage.dart';
 import 'package:playboy/pages/playlist/playlist_detail.dart';
 
 class PlaylistCard extends StatelessWidget {
@@ -133,7 +134,9 @@ class PlaylistListCard extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: IconButton.filledTonal(
               tooltip: '播放',
-              onPressed: () {},
+              onPressed: () {
+                AppStorage().openPlaylist(info);
+              },
               icon: const Icon(Icons.play_arrow),
             ),
           ),
@@ -143,7 +146,7 @@ class PlaylistListCard extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: IconButton.filledTonal(
-              tooltip: '插播',
+              tooltip: '追加到当前播放',
               onPressed: () {},
               icon: const Icon(Icons.menu_open),
             ),

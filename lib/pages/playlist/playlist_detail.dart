@@ -13,6 +13,7 @@ class PlaylistDetail extends StatefulWidget {
   PlaylistDetailState createState() => PlaylistDetailState();
 }
 
+// TODO: playlist edit
 class PlaylistDetailState extends State<PlaylistDetail> {
   @override
   Widget build(BuildContext context) {

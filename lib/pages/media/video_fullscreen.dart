@@ -13,7 +13,8 @@ class FullscreenPlayPage extends StatefulWidget {
   FullscreenPlayer createState() => FullscreenPlayer();
 }
 
-// TODO: 隐藏鼠标
+// TODO: hide cursor
+// TODO: fullscreen panel
 class FullscreenPlayer extends State<FullscreenPlayPage> {
   late final controller = AppStorage().controller;
 

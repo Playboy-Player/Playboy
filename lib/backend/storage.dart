@@ -136,8 +136,6 @@ class AppStorage extends ChangeNotifier {
   }
 
   void openMedia(PlayItem media) {
-    // TODO: 支持字幕功能
-    // AppStorage().playboy.setSubtitleTrack(SubtitleTrack.no());
     if (!settings.rememberStatus) {
       playboy.setVolume(100);
       playboy.setRate(1);
