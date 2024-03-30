@@ -22,7 +22,6 @@ class MPlayer extends StatefulWidget {
   MPlayerState createState() => MPlayerState();
 }
 
-// TODO: title bug
 // TODO: screenshot
 // TODO: context menu
 // TODO: subtitle/lyric support
@@ -135,9 +134,13 @@ class MPlayerState extends State<MPlayer> {
               onPanStart: (details) {
                 windowManager.startDragging();
               },
-              child: Text(
-                AppStorage().playingTitle,
-              ))
+              child: StreamBuilder(
+                  stream: AppStorage().playboy.stream.playlist,
+                  builder: (context, snapshot) {
+                    return Text(
+                      AppStorage().playingTitle,
+                    );
+                  }))
           : const SizedBox(),
       actions: [
         IconButton(

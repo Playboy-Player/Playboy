@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/biliapi/bilibili_helper.dart';
 import 'package:playboy/backend/constants.dart';
+import 'package:playboy/backend/storage.dart';
 import 'package:playboy/backend/web_helper.dart';
 
 class AccountSettingsPage extends StatefulWidget {
@@ -38,27 +39,11 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
           leading: const Icon(Icons.cookie_outlined),
           title: const Text('检查登录状态'),
           onTap: () async {
-            await BilibiliHelper.loginCheck().then(
-              (value) {
-                showDialog(
-                    barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
-                    useRootNavigator: false,
-                    context: context,
-                    builder: (context) => AlertDialog(
-                          surfaceTintColor: Colors.transparent,
-                          title: const Text('检查登录状态'),
-                          content: Text(value ? 'success' : 'failed'),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text('关闭'),
-                            ),
-                          ],
-                        ));
-              },
-            );
+            var res = await BilibiliHelper.loginCheck();
+            setState(() {
+              AppStorage().settings.logined = res;
+            });
+            AppStorage().saveSettings();
           },
         ),
         ListTile(
@@ -66,6 +51,9 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
           title: const Text('清除所有 cookies'),
           onTap: () {
             WebHelper.cookieManager.cookieJar.deleteAll();
+            setState(() {
+              AppStorage().settings.logined = false;
+            });
           },
         ),
         // Container(
@@ -82,88 +70,137 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
   Widget _buildGuestCard(ColorScheme colorScheme) {
     return SizedBox(
       height: 150,
-      // TODO: 未登录时另外做一套卡片内容
-      child: Card(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(20),
-            onTap: () {
-              editingController.clear();
-
-              showDialog(
-                barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
-                useRootNavigator: false,
-                context: context,
-                builder: (BuildContext context) => AlertDialog(
-                  surfaceTintColor: Colors.transparent,
-                  title: const Text('cookies'),
-                  content: TextField(
-                    autofocus: true,
-                    maxLines: 8,
-                    controller: editingController,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'SESSDATA',
-                    ),
-                    onSubmitted: (value) async {
-                      await WebHelper.cookieManager.cookieJar.saveFromResponse(
-                          Uri.parse(Constants.apiBase), [
-                        Cookie('SESSDATA', value)
-                      ]).then((value) => Navigator.pop(context));
-                    },
-                  ),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text('取消'),
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        String value = editingController.text;
-                        await WebHelper.cookieManager.cookieJar
-                            .saveFromResponse(Uri.parse(Constants.apiBase), [
-                          Cookie('SESSDATA', value)
-                        ]).then((value) => Navigator.pop(context));
-                      },
-                      child: const Text('确定'),
-                    ),
-                  ],
-                ),
-              );
-            },
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  const CircleAvatar(
-                    radius: 45,
-                    child: Icon(
-                      Icons.person,
-                      size: 50,
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(15),
-                    child: const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        //todo:limit display length
-                        Text(
-                          '未登录',
-                          style: TextStyle(fontSize: 25),
+      child: AppStorage().settings.logined
+          ? Card(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(20),
+                onTap: () {
+                  WebHelper.cookieManager.cookieJar.deleteAll();
+                  setState(() {
+                    AppStorage().settings.logined = false;
+                  });
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      const CircleAvatar(
+                        radius: 45,
+                        child: Icon(
+                          Icons.check_circle_outline,
+                          size: 50,
                         ),
-                        Text('使用 cookies 登录'),
-                        //todo:等级栏
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(15),
+                        child: const Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '已登录',
+                              style: TextStyle(fontSize: 25),
+                            ),
+                            Text('点击清除cookies'),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ))
+          : Card(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(20),
+                onTap: () {
+                  editingController.clear();
+
+                  showDialog(
+                    barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
+                    useRootNavigator: false,
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      surfaceTintColor: Colors.transparent,
+                      title: const Text('cookies'),
+                      content: TextField(
+                        autofocus: true,
+                        maxLines: 8,
+                        controller: editingController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'SESSDATA',
+                        ),
+                        onSubmitted: (value) async {
+                          await WebHelper.cookieManager.cookieJar
+                              .saveFromResponse(Uri.parse(Constants.apiBase),
+                                  [Cookie('SESSDATA', value)]);
+                          var res = await BilibiliHelper.loginCheck();
+                          setState(() {
+                            AppStorage().settings.logined = res;
+                          });
+                          AppStorage().saveSettings();
+                          if (!context.mounted) return;
+                          Navigator.pop(context);
+                        },
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('取消'),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            String value = editingController.text;
+                            await WebHelper.cookieManager.cookieJar
+                                .saveFromResponse(Uri.parse(Constants.apiBase),
+                                    [Cookie('SESSDATA', value)]);
+                            var res = await BilibiliHelper.loginCheck();
+                            setState(() {
+                              AppStorage().settings.logined = res;
+                            });
+                            AppStorage().saveSettings();
+                            if (!context.mounted) return;
+                            Navigator.pop(context);
+                          },
+                          child: const Text('确定'),
+                        ),
                       ],
                     ),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      const CircleAvatar(
+                        radius: 45,
+                        child: Icon(
+                          Icons.person,
+                          size: 50,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(15),
+                        child: const Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '未登录',
+                              style: TextStyle(fontSize: 25),
+                            ),
+                            Text('使用 cookies 登录'),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          )),
+                ),
+              )),
     );
   }
 }

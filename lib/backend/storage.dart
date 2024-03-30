@@ -13,8 +13,6 @@ import 'package:playboy/backend/models/settings.dart';
 
 class AppStorage extends ChangeNotifier {
   late AppSettings settings;
-  // late List<PlayItem> musicLibrary;
-  // late List<PlayItem> videoLibrary;
   final playlistPage = GlobalKey<NavigatorState>();
   final musicPage = GlobalKey<NavigatorState>();
   final videoPage = GlobalKey<NavigatorState>();
@@ -96,7 +94,6 @@ class AppStorage extends ChangeNotifier {
     }
     playboy.setVolume(settings.volume);
     playboy.setRate(settings.speed);
-    // playlists.addAll(await LibraryHelper.loadPlaylists());
   }
 
   Future<void> loadSettings() async {
@@ -109,7 +106,6 @@ class AppStorage extends ChangeNotifier {
       await fp.writeAsString(str);
     }
     settings = AppSettings.fromJson(jsonDecode(await fp.readAsString()));
-    // notifyListeners();
   }
 
   Future<void> saveSettings() async {
@@ -118,7 +114,6 @@ class AppStorage extends ChangeNotifier {
     var data = settings.toJson();
     var str = jsonEncode(data);
     await fp.writeAsString(str);
-    // notifyListeners();
   }
 
   void updateStatus() {

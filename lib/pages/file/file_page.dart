@@ -12,8 +12,7 @@ import 'package:playboy/widgets/folder_card.dart';
 import 'package:provider/provider.dart';
 
 class FilePage extends StatefulWidget {
-  const FilePage({super.key, required this.mark});
-  final int mark;
+  const FilePage({super.key});
 
   @override
   State<FilePage> createState() => _FilePageState();

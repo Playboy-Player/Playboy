@@ -75,6 +75,8 @@ flutter:
         - asset:  res/fonts/SourceHanSansSC-Regular.otf
 
 msix_config:
-  display_name: Playboy Preview
+  display_name: Playboy Player
+  identity_name: YuiHrsw.PlayboyPlayer
   msix_version: 1.0.0.0
-  # logo_path: C:\path\to\logo.png
+  logo_path: res/images/logo.png
+  trim_logo: false

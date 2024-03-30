@@ -24,7 +24,6 @@ class MikuMiku extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int mk = 1;
     return Consumer<AppStorage>(
       builder: (BuildContext context, AppStorage value, Widget? child) {
         MaterialColor themeColor = value.settings.getColorTheme();
@@ -44,11 +43,7 @@ class MikuMiku extends StatelessWidget {
             useMaterial3: true,
           ),
           themeMode: value.settings.themeMode,
-          home: initMedia == ''
-              ? Home(
-                  mk: mk,
-                )
-              : const MPlayer(),
+          home: initMedia == '' ? Home() : const MPlayer(),
         );
       },
     );
@@ -56,8 +51,7 @@ class MikuMiku extends StatelessWidget {
 }
 
 class Home extends StatefulWidget {
-  const Home({super.key, required this.mk});
-  final int mk;
+  const Home({super.key});
 
   @override
   State<StatefulWidget> createState() => _HomeState();
@@ -276,7 +270,7 @@ class _HomeState extends State<Home> {
                             key: AppStorage().filePage,
                             onGenerateRoute: (route) => MaterialPageRoute(
                               settings: route,
-                              builder: (context) => FilePage(mark: widget.mk),
+                              builder: (context) => FilePage(),
                             ),
                           ),
                           Navigator(
@@ -329,7 +323,7 @@ class _HomeState extends State<Home> {
                     key: AppStorage().filePage,
                     onGenerateRoute: (route) => MaterialPageRoute(
                       settings: route,
-                      builder: (context) => FilePage(mark: widget.mk),
+                      builder: (context) => FilePage(),
                     ),
                   ),
                   Navigator(
@@ -398,8 +392,7 @@ class _HomeState extends State<Home> {
                                     url: AppStorage().playingCover!)
                                 .getImage(),
                           ),
-                          builder: (BuildContext context,
-                              AsyncSnapshot<ColorScheme> snapshot) {
+                          builder: (context, snapshot) {
                             if (snapshot.hasData && snapshot.data != null) {
                               return _buildMediaCard(snapshot.data!);
                             } else {
@@ -445,13 +438,7 @@ class _HomeState extends State<Home> {
                     blendMode: BlendMode.dstIn,
                     child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
-                        child:
-                            // Image.file(
-                            //   File(AppStorage().playingCover!),
-                            //   width: double.maxFinite,
-                            //   fit: BoxFit.cover,
-                            // ),
-                            UniImage(url: AppStorage().playingCover!)),
+                        child: UniImage(url: AppStorage().playingCover!)),
                   ),
             Column(
               children: [
@@ -476,8 +463,9 @@ class _HomeState extends State<Home> {
                               ),
                               maxLines: 1,
                             ),
+                            // TODO: show author
                             // Text(
-                            //   'playboy',
+                            //   'author',
                             //   style: TextStyle(
                             //     fontSize: 12,
                             //     color: colorScheme.primaryContainer,
@@ -496,18 +484,21 @@ class _HomeState extends State<Home> {
                               borderRadius: BorderRadius.circular(16)),
                         ),
                         iconSize: 24,
-                        // color: colorScheme.onTertiary,
                         onPressed: () {
                           setState(() {
                             AppStorage().playboy.playOrPause();
-                            // AppStorage().playing = AppStorage().playboy.state.playing;
                           });
                         },
-                        icon: Icon(
-                          AppStorage().playing
-                              ? Icons.pause_circle_outline
-                              : Icons.play_arrow_outlined,
-                          color: colorScheme.onPrimaryContainer,
+                        icon: StreamBuilder(
+                          stream: AppStorage().playboy.stream.playing,
+                          builder: (context, snapshot) {
+                            return Icon(
+                              AppStorage().playing
+                                  ? Icons.pause_circle_outline
+                                  : Icons.play_arrow_outlined,
+                              color: colorScheme.onPrimaryContainer,
+                            );
+                          },
                         ),
                       ),
                       const SizedBox(
@@ -545,8 +536,7 @@ class _HomeState extends State<Home> {
                             ),
                             child: StreamBuilder(
                               stream: AppStorage().playboy.stream.position,
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<Duration> snapshot) {
+                              builder: (context, snapshot) {
                                 return SquigglySlider(
                                   squiggleAmplitude:
                                       AppStorage().settings.wavySlider
@@ -573,7 +563,6 @@ class _HomeState extends State<Home> {
                                               .inMilliseconds
                                               .toDouble()),
                                   onChanged: (value) {
-                                    // player.seek(Duration(milliseconds: value.toInt()));
                                     setState(() {
                                       AppStorage().seekingPos = value;
                                     });
@@ -601,14 +590,12 @@ class _HomeState extends State<Home> {
                         ),
                         IconButton(
                             color: colorScheme.primaryContainer,
-                            // iconSize: 30,
                             onPressed: () {
                               AppStorage().playboy.next();
                               setState(() {});
                             },
                             icon: const Icon(
                               Icons.skip_next,
-                              // size: 30,
                             )),
                         IconButton(
                           color: colorScheme.primaryContainer,
@@ -645,14 +632,12 @@ class _HomeState extends State<Home> {
                         ),
                         IconButton(
                             color: colorScheme.primaryContainer,
-                            // iconSize: 30,
                             onPressed: () {
                               AppStorage().closeMedia();
                               setState(() {});
                             },
                             icon: const Icon(
                               Icons.stop,
-                              // size: 30,
                             )),
                       ]),
                 )

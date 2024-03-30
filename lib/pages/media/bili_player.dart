@@ -22,7 +22,6 @@ class BiliPlayer extends StatefulWidget {
   BiliPlayerState createState() => BiliPlayerState();
 }
 
-// TODO: play button bug
 class BiliPlayerState extends State<BiliPlayer> {
   late final player = AppStorage().playboy;
   late final VideoController controller;
