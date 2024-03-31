@@ -41,6 +41,16 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
             AppStorage().updateStatus();
           },
         ),
+        SwitchListTile(
+          title: const Text('启动时显示媒体控制卡片'),
+          value: AppStorage().settings.showMediaCard,
+          onChanged: (bool value) {
+            setState(() {
+              AppStorage().settings.showMediaCard = value;
+            });
+            AppStorage().saveSettings();
+          },
+        ),
         // TODO: ui settings
         // const ListTile(
         //   leading: Icon(Icons.home_filled),

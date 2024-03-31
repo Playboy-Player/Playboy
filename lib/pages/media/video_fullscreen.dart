@@ -269,7 +269,7 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
         width: 10,
       ),
       IconButton(
-        icon: const Icon(Icons.view_sidebar_rounded),
+        icon: const Icon(Icons.playlist_play_rounded),
         onPressed: () {
           setState(() {});
         },

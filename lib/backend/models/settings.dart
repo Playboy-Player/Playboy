@@ -13,6 +13,7 @@ class AppSettings {
 
   //Display Settings;
   bool wavySlider;
+  bool showMediaCard;
   int initPage;
   bool musicLibListview;
   bool videoLibListview;
@@ -48,6 +49,7 @@ class AppSettings {
     this.themeCode = 4,
     this.logined = false,
     this.wavySlider = false,
+    this.showMediaCard = true,
     this.initPage = 0,
     this.musicLibListview = true,
     this.videoLibListview = true,

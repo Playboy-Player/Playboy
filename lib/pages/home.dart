@@ -18,6 +18,7 @@ import 'package:material_symbols_icons/symbols.dart';
 
 import 'file/file_page.dart';
 
+// TODO: use const + streambuilder
 class MikuMiku extends StatelessWidget {
   const MikuMiku({super.key, required this.initMedia});
   final String initMedia;
@@ -43,7 +44,7 @@ class MikuMiku extends StatelessWidget {
             useMaterial3: true,
           ),
           themeMode: value.settings.themeMode,
-          home: initMedia == '' ? Home() : const MPlayer(),
+          home: initMedia == '' ? const Home() : const MPlayer(),
         );
       },
     );
@@ -60,6 +61,14 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int currentPageIndex = 0;
   bool showMediaCard = true;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    showMediaCard = AppStorage().settings.showMediaCard;
+    currentPageIndex = AppStorage().settings.initPage;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -235,13 +244,6 @@ class _HomeState extends State<Home> {
                         topLeft: Radius.circular(25),
                         topRight: Radius.circular(25),
                       ),
-                      // child: [
-                      //   const PlaylistPage(),
-                      //   const MusicPage(),
-                      //   const VideoPage(),
-                      //   const FilePage(),
-                      //   const SearchPage()
-                      // ][currentPageIndex],
                       child: IndexedStack(
                         index: currentPageIndex,
                         children: [
@@ -288,13 +290,6 @@ class _HomeState extends State<Home> {
               ],
             )
           : Scaffold(
-              // body: [
-              //   const PlaylistPage(),
-              //   const MusicPage(),
-              //   const VideoPage(),
-              //   const FilePage(),
-              //   const SearchPage(),
-              // ][currentPageIndex],
               body: IndexedStack(
                 index: currentPageIndex,
                 children: [
@@ -384,22 +379,27 @@ class _HomeState extends State<Home> {
                       ),
                     );
                   },
-                  child: AppStorage().playingCover == null
-                      ? _buildMediaCard(colorScheme)
-                      : FutureBuilder(
-                          future: ColorScheme.fromImageProvider(
-                            provider: UniImageProvider(
-                                    url: AppStorage().playingCover!)
-                                .getImage(),
-                          ),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData && snapshot.data != null) {
-                              return _buildMediaCard(snapshot.data!);
-                            } else {
-                              return _buildMediaCard(colorScheme);
-                            }
-                          },
-                        ),
+                  child: StreamBuilder(
+                      stream: AppStorage().playboy.stream.playlist,
+                      builder: (context, snapshot) {
+                        return AppStorage().playingCover == null
+                            ? _buildMediaCard(colorScheme)
+                            : FutureBuilder(
+                                future: ColorScheme.fromImageProvider(
+                                  provider: UniImageProvider(
+                                          url: AppStorage().playingCover!)
+                                      .getImage(),
+                                ),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData &&
+                                      snapshot.data != null) {
+                                    return _buildMediaCard(snapshot.data!);
+                                  } else {
+                                    return _buildMediaCard(colorScheme);
+                                  }
+                                },
+                              );
+                      }),
                 )
               : null
           : null,

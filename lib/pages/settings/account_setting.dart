@@ -54,6 +54,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             setState(() {
               AppStorage().settings.logined = false;
             });
+            AppStorage().saveSettings();
           },
         ),
         // Container(
@@ -81,6 +82,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                   setState(() {
                     AppStorage().settings.logined = false;
                   });
+                  AppStorage().saveSettings();
                 },
                 child: Container(
                   padding: const EdgeInsets.all(16),

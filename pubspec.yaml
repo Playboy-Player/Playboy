@@ -77,6 +77,6 @@ flutter:
 msix_config:
   display_name: Playboy Player
   identity_name: YuiHrsw.PlayboyPlayer
-  msix_version: 1.0.0.0
+  msix_version: 1.17.0.0
   logo_path: res/images/logo.png
   trim_logo: false
