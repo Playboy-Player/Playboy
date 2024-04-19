@@ -64,7 +64,6 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     showMediaCard = AppStorage().settings.showMediaCard;
     currentPageIndex = AppStorage().settings.initPage;
@@ -289,121 +288,130 @@ class _HomeState extends State<Home> {
                 )
               ],
             )
-          : Scaffold(
-              body: IndexedStack(
-                index: currentPageIndex,
-                children: [
-                  Navigator(
-                    key: AppStorage().playlistPage,
-                    onGenerateRoute: (route) => MaterialPageRoute(
-                      settings: route,
-                      builder: (context) => const PlaylistPage(),
-                    ),
+          : IndexedStack(
+              index: currentPageIndex,
+              children: [
+                Navigator(
+                  key: AppStorage().playlistPage,
+                  onGenerateRoute: (route) => MaterialPageRoute(
+                    settings: route,
+                    builder: (context) => const PlaylistPage(),
                   ),
-                  Navigator(
-                    key: AppStorage().musicPage,
-                    onGenerateRoute: (route) => MaterialPageRoute(
-                      settings: route,
-                      builder: (context) => const MusicPage(),
-                    ),
+                ),
+                Navigator(
+                  key: AppStorage().musicPage,
+                  onGenerateRoute: (route) => MaterialPageRoute(
+                    settings: route,
+                    builder: (context) => const MusicPage(),
                   ),
-                  Navigator(
-                    key: AppStorage().videoPage,
-                    onGenerateRoute: (route) => MaterialPageRoute(
-                      settings: route,
-                      builder: (context) => const VideoPage(),
-                    ),
+                ),
+                Navigator(
+                  key: AppStorage().videoPage,
+                  onGenerateRoute: (route) => MaterialPageRoute(
+                    settings: route,
+                    builder: (context) => const VideoPage(),
                   ),
-                  Navigator(
-                    key: AppStorage().filePage,
-                    onGenerateRoute: (route) => MaterialPageRoute(
-                      settings: route,
-                      builder: (context) => FilePage(),
-                    ),
+                ),
+                Navigator(
+                  key: AppStorage().filePage,
+                  onGenerateRoute: (route) => MaterialPageRoute(
+                    settings: route,
+                    builder: (context) => FilePage(),
                   ),
-                  Navigator(
-                    key: AppStorage().searchPage,
-                    onGenerateRoute: (route) => MaterialPageRoute(
-                      settings: route,
-                      builder: (context) => const SearchPage(),
-                    ),
+                ),
+                Navigator(
+                  key: AppStorage().searchPage,
+                  onGenerateRoute: (route) => MaterialPageRoute(
+                    settings: route,
+                    builder: (context) => const SearchPage(),
                   ),
-                ],
-              ),
-              bottomNavigationBar: NavigationBar(
-                height: 64,
-                labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-                onDestinationSelected: (int index) {
-                  setState(() {
-                    currentPageIndex = index;
-                  });
-                },
-                selectedIndex: currentPageIndex,
-                destinations: const <Widget>[
-                  NavigationDestination(
-                    selectedIcon: Icon(Icons.web_stories),
-                    icon: Icon(Icons.web_stories_outlined),
-                    label: '播放列表',
-                  ),
-                  NavigationDestination(
-                    selectedIcon: Icon(Icons.music_note),
-                    icon: Icon(Icons.music_note_outlined),
-                    label: '音乐',
-                  ),
-                  NavigationDestination(
-                    selectedIcon: Icon(Icons.movie_filter),
-                    icon: Icon(Icons.movie_filter_outlined),
-                    label: '视频',
-                  ),
-                  NavigationDestination(
-                    selectedIcon: Icon(Icons.folder),
-                    icon: Icon(Icons.folder_outlined),
-                    label: '文件',
-                  ),
-                  NavigationDestination(
-                    selectedIcon: Icon(Icons.search),
-                    icon: Icon(Icons.search),
-                    label: '搜索',
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-      floatingActionButton: tabletUI
-          ? showMediaCard
-              ? InkWell(
-                  onTap: () {
-                    if (!context.mounted) return;
-                    Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute(
-                        builder: (context) => const MPlayer(),
-                      ),
-                    );
-                  },
-                  child: StreamBuilder(
-                      stream: AppStorage().playboy.stream.playlist,
-                      builder: (context, snapshot) {
-                        return AppStorage().playingCover == null
-                            ? _buildMediaCard(colorScheme)
-                            : FutureBuilder(
-                                future: ColorScheme.fromImageProvider(
-                                  provider: UniImageProvider(
-                                          url: AppStorage().playingCover!)
-                                      .getImage(),
-                                ),
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasData &&
-                                      snapshot.data != null) {
-                                    return _buildMediaCard(snapshot.data!);
-                                  } else {
-                                    return _buildMediaCard(colorScheme);
-                                  }
-                                },
-                              );
-                      }),
-                )
-              : null
+      floatingActionButton: showMediaCard
+          ? Padding(
+              padding: tabletUI
+                  ? EdgeInsets.zero
+                  : const EdgeInsets.only(bottom: 54),
+              child: InkWell(
+                onTap: () {
+                  if (!context.mounted) return;
+                  Navigator.of(context, rootNavigator: true).push(
+                    MaterialPageRoute(
+                      builder: (context) => const MPlayer(),
+                    ),
+                  );
+                },
+                child: StreamBuilder(
+                    stream: AppStorage().playboy.stream.playlist,
+                    builder: (context, snapshot) {
+                      return AppStorage().playingCover == null
+                          ? tabletUI
+                              ? _buildMediaCard(colorScheme)
+                              : _buildMobileMediaCard(colorScheme)
+                          : FutureBuilder(
+                              future: ColorScheme.fromImageProvider(
+                                provider: UniImageProvider(
+                                        url: AppStorage().playingCover!)
+                                    .getImage(),
+                              ),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData && snapshot.data != null) {
+                                  return tabletUI
+                                      ? _buildMediaCard(snapshot.data!)
+                                      : _buildMobileMediaCard(snapshot.data!);
+                                } else {
+                                  return tabletUI
+                                      ? _buildMediaCard(colorScheme)
+                                      : _buildMobileMediaCard(colorScheme);
+                                }
+                              },
+                            );
+                    }),
+              ),
+            )
           : null,
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButtonLocation:
+          tabletUI ? null : FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: tabletUI
+          ? null
+          : NavigationBar(
+              height: 64,
+              labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+              onDestinationSelected: (int index) {
+                setState(() {
+                  currentPageIndex = index;
+                });
+              },
+              selectedIndex: currentPageIndex,
+              destinations: const <Widget>[
+                NavigationDestination(
+                  selectedIcon: Icon(Icons.web_stories),
+                  icon: Icon(Icons.web_stories_outlined),
+                  label: '播放列表',
+                ),
+                NavigationDestination(
+                  selectedIcon: Icon(Icons.music_note),
+                  icon: Icon(Icons.music_note_outlined),
+                  label: '音乐',
+                ),
+                NavigationDestination(
+                  selectedIcon: Icon(Icons.movie_filter),
+                  icon: Icon(Icons.movie_filter_outlined),
+                  label: '视频',
+                ),
+                NavigationDestination(
+                  selectedIcon: Icon(Icons.folder),
+                  icon: Icon(Icons.folder_outlined),
+                  label: '文件',
+                ),
+                NavigationDestination(
+                  selectedIcon: Icon(Icons.search),
+                  icon: Icon(Icons.search),
+                  label: '搜索',
+                ),
+              ],
+            ),
     );
   }
 
@@ -641,6 +649,123 @@ class _HomeState extends State<Home> {
                             )),
                       ]),
                 )
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMobileMediaCard(ColorScheme colorScheme) {
+    return Card(
+      elevation: 1.6,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(20)),
+      ),
+      color: colorScheme.primary,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width - 60,
+        height: 68,
+        child: Stack(
+          children: [
+            AppStorage().playingCover == null
+                ? const SizedBox()
+                : ShaderMask(
+                    shaderCallback: (Rect bounds) {
+                      return RadialGradient(
+                        radius: 1.4,
+                        // focalRadius: 1,
+                        colors: [
+                          Colors.black.withOpacity(0.6),
+                          // Colors.black.withOpacity(0.1)
+                          Colors.transparent
+                        ],
+                        // stops: [0, 0.6],
+                        // tileMode: TileMode.mirror,
+                      ).createShader(bounds);
+                    },
+                    blendMode: BlendMode.dstIn,
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: UniImage(url: AppStorage().playingCover!)),
+                  ),
+            Column(
+              children: [
+                Expanded(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(
+                        width: 16,
+                      ),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              AppStorage().playingTitle,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: colorScheme.primaryContainer,
+                              ),
+                              maxLines: 1,
+                            ),
+                            // TODO: show author
+                            // Text(
+                            //   'author',
+                            //   style: TextStyle(
+                            //     fontSize: 12,
+                            //     color: colorScheme.primaryContainer,
+                            //   ),
+                            // ),
+                            const SizedBox(
+                              height: 8,
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                          color: colorScheme.primaryContainer,
+                          onPressed: () {
+                            AppStorage().playboy.next();
+                            setState(() {});
+                          },
+                          icon: const Icon(
+                            Icons.skip_next_outlined,
+                          )),
+                      IconButton.filled(
+                        style: IconButton.styleFrom(
+                          backgroundColor: colorScheme.primaryContainer,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16)),
+                        ),
+                        iconSize: 24,
+                        onPressed: () {
+                          setState(() {
+                            AppStorage().playboy.playOrPause();
+                          });
+                        },
+                        icon: StreamBuilder(
+                          stream: AppStorage().playboy.stream.playing,
+                          builder: (context, snapshot) {
+                            return Icon(
+                              AppStorage().playing
+                                  ? Icons.pause_circle_outline
+                                  : Icons.play_arrow_outlined,
+                              color: colorScheme.onPrimaryContainer,
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 12,
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ],
