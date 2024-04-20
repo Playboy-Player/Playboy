@@ -18,7 +18,6 @@ import 'package:material_symbols_icons/symbols.dart';
 
 import 'file/file_page.dart';
 
-// TODO: use const + streambuilder
 class MikuMiku extends StatelessWidget {
   const MikuMiku({super.key, required this.initMedia});
   final String initMedia;

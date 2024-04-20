@@ -25,18 +25,13 @@ class PlaylistDetailState extends State<PlaylistDetail> {
         scrolledUnderElevation: 0,
         actions: [
           IconButton(
-            onPressed: () {
-              AppStorage().closeMedia();
-              AppStorage().openPlaylist(widget.info);
-            },
-            icon: const Icon(Icons.play_arrow_outlined),
-          ),
-          IconButton(
             onPressed: () {},
             icon: const Icon(Icons.edit_outlined),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context, true);
+            },
             icon: const Icon(Icons.delete_outline),
           ),
           const SizedBox(
@@ -83,10 +78,49 @@ class PlaylistDetailState extends State<PlaylistDetail> {
                     width: 20,
                   ),
                   Expanded(
-                    child: Text(
-                      widget.info.title,
-                      style: const TextStyle(
-                          fontSize: 26, fontWeight: FontWeight.w500),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.info.title,
+                          style: const TextStyle(
+                              fontSize: 36, fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            TextButton.icon(
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStatePropertyAll(
+                                      colorScheme.primaryContainer)),
+                              onPressed: () {
+                                AppStorage().closeMedia();
+                                AppStorage().openPlaylist(widget.info);
+                              },
+                              icon: const Icon(Icons.play_arrow),
+                              label: const Text('顺序播放'),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            TextButton.icon(
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStatePropertyAll(
+                                      colorScheme.primaryContainer)),
+                              onPressed: () {
+                                AppStorage().closeMedia();
+                                AppStorage().openPlaylistShuffle(widget.info);
+                                setState(() {});
+                              },
+                              icon: const Icon(Icons.shuffle),
+                              label: const Text('随机播放'),
+                            ),
+                          ],
+                        )
+                      ],
                     ),
                   ),
                 ],

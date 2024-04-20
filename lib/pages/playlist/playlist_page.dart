@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -5,7 +6,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/storage.dart';
-import 'package:playboy/widgets/playlist_card.dart';
+import 'package:playboy/pages/playlist/playlist_detail.dart';
 
 class PlaylistPage extends StatefulWidget {
   const PlaylistPage({super.key});
@@ -260,8 +261,8 @@ class PlaylistState extends State<PlaylistPage> {
                                           },
                                         )
                                       ],
-                                      child: PlaylistCard(
-                                          info: AppStorage().playlists[index]),
+                                      child:
+                                          buildPlaylistCard(index, colorScheme),
                                     ),
                                   );
                                 },
@@ -272,8 +273,8 @@ class PlaylistState extends State<PlaylistPage> {
                               itemBuilder: (context, index) {
                                 return SizedBox(
                                   height: 80,
-                                  child: PlaylistListCard(
-                                      info: AppStorage().playlists[index]),
+                                  child:
+                                      buildPlaylistListCard(index, colorScheme),
                                 );
                               },
                               itemCount: AppStorage().playlists.length,
@@ -285,6 +286,171 @@ class PlaylistState extends State<PlaylistPage> {
                     child: CircularProgressIndicator(),
                   ),
                 )
+        ],
+      ),
+    );
+  }
+
+  Widget buildPlaylistCard(int index, ColorScheme colorScheme) {
+    return Card(
+      // surfaceTintColor: Colors.transparent,
+      elevation: 1.6,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(20)),
+      ),
+      child: InkWell(
+        onTap: () async {
+          final delete = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      PlaylistDetail(info: AppStorage().playlists[index])));
+          if (delete != null && delete == true) {
+            LibraryHelper.deletePlaylist(AppStorage().playlists[index]);
+            AppStorage().playlists.removeAt(index);
+            setState(() {});
+          }
+        },
+        borderRadius: BorderRadius.circular(20),
+        child: Column(
+          children: [
+            Expanded(
+              flex: 2,
+              child: AppStorage().playlists[index].cover == null
+                  ? Ink(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20)),
+                        color: colorScheme.tertiaryContainer,
+                      ),
+                      child: Icon(
+                        Icons.playlist_play_rounded,
+                        color: colorScheme.onTertiaryContainer,
+                        size: 80,
+                      ),
+                    )
+                  : SizedBox(
+                      width: double.infinity,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Image.file(
+                            File(AppStorage().playlists[index].cover!)),
+                      ),
+                    ),
+            ),
+            Expanded(
+              child: Center(
+                  child: Text(
+                AppStorage().playlists[index].title,
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+              )),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildPlaylistListCard(int index, ColorScheme colorScheme) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(20),
+      onTap: () async {
+        final delete = await Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    PlaylistDetail(info: AppStorage().playlists[index])));
+        if (delete != null && delete == true) {
+          LibraryHelper.deletePlaylist(AppStorage().playlists[index]);
+          AppStorage().playlists.removeAt(index);
+          setState(() {});
+        }
+      },
+      child: Row(
+        children: [
+          Padding(
+              padding: const EdgeInsets.all(6),
+              child: AspectRatio(
+                aspectRatio: 10 / 9,
+                child: AppStorage().playlists[index].cover == null
+                    ? Ink(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          color: colorScheme.tertiaryContainer,
+                        ),
+                        child: Icon(
+                          Icons.playlist_play_rounded,
+                          color: colorScheme.onTertiaryContainer,
+                          size: 40,
+                        ),
+                      )
+                    : Ink(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          color: colorScheme.tertiaryContainer,
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: FileImage(
+                              File(AppStorage().playlists[index].cover!),
+                            ),
+                          ),
+                        ),
+                        // child: Icon(
+                        //   Icons.playlist_play_rounded,
+                        //   color: colorScheme.onTertiaryContainer,
+                        //   size: 80,
+                        // ),
+                      ),
+              )),
+          const SizedBox(
+            width: 10,
+          ),
+          Expanded(
+              child: Text(
+            AppStorage().playlists[index].title,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          )),
+          Align(
+            alignment: Alignment.centerRight,
+            child: IconButton.filledTonal(
+              tooltip: '播放',
+              onPressed: () {
+                AppStorage().openPlaylist(AppStorage().playlists[index]);
+              },
+              icon: const Icon(Icons.play_arrow),
+            ),
+          ),
+          const SizedBox(
+            width: 6,
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: IconButton.filledTonal(
+              tooltip: '追加到当前播放',
+              onPressed: () {},
+              icon: const Icon(Icons.menu_open),
+            ),
+          ),
+          const SizedBox(
+            width: 6,
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: IconButton(
+              tooltip: '更多',
+              onPressed: () {},
+              icon: const Icon(Icons.more_vert),
+            ),
+          ),
+          const SizedBox(
+            width: 6,
+          ),
         ],
       ),
     );

@@ -170,4 +170,30 @@ class AppStorage extends ChangeNotifier {
     playingCover = pl.items[0].cover;
     shuffle = false;
   }
+
+  void openPlaylistShuffle(PlaylistItem pl) {
+    if (pl.items.isEmpty) {
+      return;
+    }
+    if (!settings.rememberStatus) {
+      playboy.setVolume(100);
+      playboy.setRate(1);
+      settings.volume = 100;
+      settings.speed = 1;
+      saveSettings();
+    }
+    duration = Duration.zero;
+    position = Duration.zero;
+    playboy.open(LibraryHelper.convertToPlaylist(pl), play: false);
+    playboy.setShuffle(true);
+    playboy.jump(0);
+    if (AppStorage().settings.autoPlay) {
+      playboy.play();
+    }
+    position = Duration.zero;
+    duration = Duration.zero;
+    playingTitle = basenameWithoutExtension(pl.items[0].title);
+    playingCover = pl.items[0].cover;
+    shuffle = true;
+  }
 }
