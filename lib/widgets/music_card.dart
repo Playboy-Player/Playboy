@@ -18,8 +18,7 @@ class MusicCard extends StatelessWidget {
         Expanded(
           flex: 5,
           child: Card(
-            // surfaceTintColor: Colors.transparent,
-            elevation: 1.6,
+            elevation: 0,
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(20)),
             ),

@@ -556,8 +556,12 @@ class MPlayerState extends State<MPlayer> {
         width: 10,
       ),
       IconButton(
-          onPressed: () async {
-            windowManager.setFullScreen(true);
+          onPressed: () {
+            windowManager.hide().then((value) {
+              windowManager.setFullScreen(true).then((value) {
+                windowManager.show();
+              });
+            });
 
             if (!mounted) return;
             Navigator.push(

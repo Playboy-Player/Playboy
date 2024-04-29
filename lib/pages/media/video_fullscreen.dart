@@ -269,7 +269,7 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
         width: 10,
       ),
       IconButton(
-        icon: const Icon(Icons.playlist_play_rounded),
+        icon: const Icon(Icons.menu),
         onPressed: () {
           setState(() {});
         },
@@ -278,8 +278,14 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
         width: 10,
       ),
       IconButton(
-          onPressed: () async {
-            windowManager.setFullScreen(false);
+          onPressed: () {
+            windowManager.hide().then((value) {
+              windowManager.setFullScreen(false).then((value) {
+                windowManager.show();
+              });
+            });
+
+            if (!mounted) return;
             Navigator.pop(context);
           },
           icon: const Icon(Icons.fullscreen_exit)),

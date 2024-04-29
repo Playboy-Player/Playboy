@@ -154,7 +154,7 @@ class _VideoPageState extends State<VideoPage> {
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: cols,
-                                childAspectRatio: 10 / 9,
+                                childAspectRatio: 5 / 4,
                               ),
                               delegate: SliverChildBuilderDelegate(
                                 (BuildContext context, int index) {

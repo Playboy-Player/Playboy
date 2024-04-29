@@ -14,8 +14,7 @@ class FileCard extends StatelessWidget {
     String name = basename(source);
     late final colorScheme = Theme.of(context).colorScheme;
     return Card(
-      // surfaceTintColor: Colors.transparent,
-      elevation: 1.6,
+      elevation: 0,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(20)),
       ),
@@ -59,13 +58,22 @@ class FileCard extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: Center(
-                  child: Text(
-                name,
-                style: const TextStyle(
-                  fontSize: 12,
+              child: Ink(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(20),
+                      bottomRight: Radius.circular(20)),
+                  color: colorScheme.tertiaryContainer.withOpacity(0.4),
                 ),
-              )),
+                child: Center(
+                    child: Text(
+                  name,
+                  style: TextStyle(
+                    color: colorScheme.onTertiaryContainer,
+                    fontSize: 12,
+                  ),
+                )),
+              ),
             )
           ],
         ),
