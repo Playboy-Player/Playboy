@@ -14,7 +14,6 @@ class VideoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
-    // TODO: dynamic color
     return Card(
       elevation: 0,
       shape: const RoundedRectangleBorder(

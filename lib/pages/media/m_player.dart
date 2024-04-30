@@ -557,17 +557,26 @@ class MPlayerState extends State<MPlayer> {
       ),
       IconButton(
           onPressed: () {
+            // TODO: better fullscreen impl for windows
             windowManager.hide().then((value) {
               windowManager.setFullScreen(true).then((value) {
                 windowManager.show();
               });
             });
+            // windowManager.setFullScreen(true);
 
             if (!mounted) return;
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const FullscreenPlayPage()));
+              context,
+              // MaterialPageRoute(
+              //     builder: (context) => const FullscreenPlayPage()),
+              PageRouteBuilder(
+                pageBuilder: (context, animation1, animation2) =>
+                    const FullscreenPlayPage(),
+                transitionDuration: Duration.zero,
+                reverseTransitionDuration: Duration.zero,
+              ),
+            );
           },
           icon: const Icon(Icons.fullscreen)),
       Expanded(

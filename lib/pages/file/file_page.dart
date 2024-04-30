@@ -22,6 +22,14 @@ class _FilePageState extends State<FilePage> {
   final TextEditingController editingController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    AppStorage().updateFilePage = () {
+      setState(() {});
+    };
+  }
+
+  @override
   Widget build(BuildContext context) {
     // int n = AppStorage().settings.musicPaths.length;
     int n = context.read<AppStorage>().settings.musicPaths.length;
@@ -86,8 +94,8 @@ class _FilePageState extends State<FilePage> {
                       _openLink(link, false);
                     }
                   },
-                  icon: const Icon(Icons.insert_drive_file_outlined),
-                  label: const Text('选取文件'),
+                  icon: const Icon(Icons.video_file_outlined),
+                  label: const Text('打开文件'),
                 ),
               ),
             ],

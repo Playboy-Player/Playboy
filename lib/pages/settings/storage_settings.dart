@@ -18,38 +18,76 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
     return Scaffold(
         body: CustomScrollView(
       slivers: [
-        // SliverToBoxAdapter(
-        //   child: Container(
-        //     padding: const EdgeInsets.all(12),
-        //     child: const Text(
-        //       '扫描选项',
-        //       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-        //     ),
-        //   ),
-        // ),
-        // SliverToBoxAdapter(
-        //   child: ListTile(
-        //     onTap: () {
-        //       AppStorage().updateStatus();
-        //     },
-        //     leading: const Icon(Icons.refresh),
-        //     title: const Text('重新扫描媒体库'),
-        //   ),
-        // ),
         SliverToBoxAdapter(
           child: Container(
             padding: const EdgeInsets.all(12),
+            child: Text(
+              '扫描选项',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: ListTile(
+            onTap: () {
+              AppStorage().scanVideo();
+              AppStorage().scanMusic();
+            },
+            leading: const Icon(Icons.refresh),
+            title: const Text('重新扫描视频库和音乐库'),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: ListTile(
+            onTap: () {
+              AppStorage().scanVideo();
+            },
+            leading: const Icon(Icons.video_library),
+            title: const Text('重新扫描视频库'),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: ListTile(
+            onTap: () {
+              AppStorage().scanMusic();
+            },
+            leading: const Icon(Icons.library_music),
+            title: const Text('重新扫描音乐库'),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            child: Text(
+              '路径设置',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             child: Row(
               children: [
-                Text(
+                const Text(
                   '音乐库路径',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
-                IconButton(
+                Expanded(
+                    child: Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton.icon(
                     onPressed: () async {
                       var res = await FilePicker.platform
                           .getDirectoryPath(lockParentWindow: true);
@@ -59,7 +97,10 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                         setState(() {});
                       }
                     },
-                    icon: const Icon(Icons.add_circle))
+                    icon: const Icon(Icons.add),
+                    label: const Text('添加'),
+                  ),
+                )),
               ],
             ),
           ),
@@ -76,18 +117,20 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
         ),
         SliverToBoxAdapter(
           child: Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             child: Row(
               children: [
-                Text(
+                const Text(
                   '视频库路径',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
-                IconButton(
+                Expanded(
+                    child: Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton.icon(
                     onPressed: () async {
                       var res = await FilePicker.platform
                           .getDirectoryPath(lockParentWindow: true);
@@ -97,7 +140,10 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                         setState(() {});
                       }
                     },
-                    icon: const Icon(Icons.add_circle))
+                    icon: const Icon(Icons.add),
+                    label: const Text('添加'),
+                  ),
+                )),
               ],
             ),
           ),
@@ -114,13 +160,12 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
         ),
         SliverToBoxAdapter(
           child: Container(
-            padding: const EdgeInsets.all(12),
-            child: Text(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: const Text(
               '截图路径',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 16,
                 fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.primary,
               ),
             ),
           ),
@@ -174,13 +219,12 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
         ),
         SliverToBoxAdapter(
           child: Container(
-            padding: const EdgeInsets.all(12),
-            child: Text(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: const Text(
               '下载路径',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 16,
                 fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.primary,
               ),
             ),
           ),

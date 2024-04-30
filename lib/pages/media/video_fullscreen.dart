@@ -284,6 +284,7 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
                 windowManager.show();
               });
             });
+            // windowManager.setFullScreen(false);
 
             if (!mounted) return;
             Navigator.pop(context);

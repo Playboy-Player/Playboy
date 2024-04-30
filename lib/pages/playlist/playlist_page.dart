@@ -300,10 +300,17 @@ class PlaylistState extends State<PlaylistPage> {
       child: InkWell(
         onTap: () async {
           final delete = await Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      PlaylistDetail(info: AppStorage().playlists[index])));
+            context,
+            // MaterialPageRoute(
+            //     builder: (context) =>
+            //         PlaylistDetail(info: AppStorage().playlists[index])),
+            PageRouteBuilder(
+              pageBuilder: (context, animation1, animation2) =>
+                  PlaylistDetail(info: AppStorage().playlists[index]),
+              transitionDuration: Duration.zero,
+              reverseTransitionDuration: Duration.zero,
+            ),
+          );
           if (delete != null && delete == true) {
             LibraryHelper.deletePlaylist(AppStorage().playlists[index]);
             AppStorage().playlists.removeAt(index);
@@ -368,10 +375,17 @@ class PlaylistState extends State<PlaylistPage> {
       borderRadius: BorderRadius.circular(20),
       onTap: () async {
         final delete = await Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    PlaylistDetail(info: AppStorage().playlists[index])));
+          context,
+          // MaterialPageRoute(
+          //     builder: (context) =>
+          //         PlaylistDetail(info: AppStorage().playlists[index])),
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) =>
+                PlaylistDetail(info: AppStorage().playlists[index]),
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero,
+          ),
+        );
         if (delete != null && delete == true) {
           LibraryHelper.deletePlaylist(AppStorage().playlists[index]);
           AppStorage().playlists.removeAt(index);

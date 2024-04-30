@@ -25,6 +25,17 @@ class _VideoPageState extends State<VideoPage> {
   void initState() {
     super.initState();
     _init();
+    AppStorage().scanVideo = () async {
+      setState(() {
+        loaded = false;
+      });
+      playitems.clear();
+      playitems.addAll(await LibraryHelper.getPlayItemList(
+          AppStorage().settings.videoPaths));
+      setState(() {
+        loaded = true;
+      });
+    };
   }
 
   void _init() async {
@@ -64,30 +75,30 @@ class _VideoPageState extends State<VideoPage> {
             pinned: true,
             expandedHeight: 80,
             actions: [
-              Container(
-                padding: const EdgeInsets.only(top: 10, bottom: 10),
-                child: FloatingActionButton(
-                  heroTag: 'scan_video',
-                  tooltip: '重新扫描',
-                  elevation: 0,
-                  hoverElevation: 0,
-                  highlightElevation: 0,
-                  backgroundColor: colorScheme.surface,
-                  hoverColor: backgroundColor,
-                  onPressed: () async {
-                    setState(() {
-                      loaded = false;
-                    });
-                    playitems.clear();
-                    playitems.addAll(await LibraryHelper.getPlayItemList(
-                        AppStorage().settings.videoPaths));
-                    setState(() {
-                      loaded = true;
-                    });
-                  },
-                  child: const Icon(Icons.scanner),
-                ),
-              ),
+              // Container(
+              //   padding: const EdgeInsets.only(top: 10, bottom: 10),
+              //   child: FloatingActionButton(
+              //     heroTag: 'scan_video',
+              //     tooltip: '重新扫描',
+              //     elevation: 0,
+              //     hoverElevation: 0,
+              //     highlightElevation: 0,
+              //     backgroundColor: colorScheme.surface,
+              //     hoverColor: backgroundColor,
+              //     onPressed: () async {
+              //       setState(() {
+              //         loaded = false;
+              //       });
+              //       playitems.clear();
+              //       playitems.addAll(await LibraryHelper.getPlayItemList(
+              //           AppStorage().settings.videoPaths));
+              //       setState(() {
+              //         loaded = true;
+              //       });
+              //     },
+              //     child: const Icon(Icons.scanner),
+              //   ),
+              // ),
               Container(
                 padding: const EdgeInsets.only(top: 10, bottom: 10, right: 10),
                 child: FloatingActionButton.extended(
@@ -153,6 +164,7 @@ class _VideoPageState extends State<VideoPage> {
                           ? SliverGrid(
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisSpacing: 6,
                                 crossAxisCount: cols,
                                 childAspectRatio: 5 / 4,
                               ),

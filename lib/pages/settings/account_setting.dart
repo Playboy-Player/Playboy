@@ -26,7 +26,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
         Container(
           padding: const EdgeInsets.all(12),
           child: Text(
-            '连接到 bilibili.com',
+            '连接到 bilibili.com (测试版)',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w500,
@@ -37,7 +37,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
         _buildGuestCard(colorScheme),
         ListTile(
           leading: const Icon(Icons.cookie_outlined),
-          title: const Text('检查登录状态'),
+          title: const Text('刷新 cookies 状态'),
           onTap: () async {
             var res = await BilibiliHelper.loginCheck();
             setState(() {
@@ -73,6 +73,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
       height: 150,
       child: AppStorage().settings.logined
           ? Card(
+              elevation: 0,
+              color: colorScheme.primaryContainer.withOpacity(0.4),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20)),
               child: InkWell(
@@ -101,10 +103,10 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '已登录',
+                              '已连接',
                               style: TextStyle(fontSize: 25),
                             ),
-                            Text('点击清除cookies'),
+                            Text('点击清除 cookies'),
                           ],
                         ),
                       ),
@@ -113,6 +115,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                 ),
               ))
           : Card(
+              elevation: 0,
+              color: colorScheme.primaryContainer.withOpacity(0.4),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20)),
               child: InkWell(
@@ -192,10 +196,10 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '未登录',
+                              '未连接',
                               style: TextStyle(fontSize: 25),
                             ),
-                            Text('使用 cookies 登录'),
+                            Text('点击加载 cookies'),
                           ],
                         ),
                       ),

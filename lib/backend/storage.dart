@@ -13,14 +13,12 @@ import 'package:playboy/backend/models/settings.dart';
 
 class AppStorage extends ChangeNotifier {
   late AppSettings settings;
-  final playlistPage = GlobalKey<NavigatorState>();
-  final musicPage = GlobalKey<NavigatorState>();
-  final videoPage = GlobalKey<NavigatorState>();
-  final filePage = GlobalKey<NavigatorState>();
-  final searchPage = GlobalKey<NavigatorState>();
-
   List<PlaylistItem> playlists = [];
   int playingIndex = 0;
+
+  late Function() updateFilePage;
+  late Function() scanMusic;
+  late Function() scanVideo;
 
   late final Player playboy;
   late final VideoController controller;

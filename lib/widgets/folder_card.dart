@@ -19,9 +19,15 @@ class FolderCard extends StatelessWidget {
       child: InkWell(
         onTap: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => FileExplorer(path: source)));
+            context,
+            // MaterialPageRoute(builder: (context) => FileExplorer(path: source)),
+            PageRouteBuilder(
+              pageBuilder: (context, animation1, animation2) =>
+                  FileExplorer(path: source),
+              transitionDuration: Duration.zero,
+              reverseTransitionDuration: Duration.zero,
+            ),
+          );
         },
         borderRadius: BorderRadius.circular(20),
         child: Column(

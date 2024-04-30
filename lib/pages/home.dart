@@ -61,6 +61,12 @@ class _HomeState extends State<Home> {
   int currentPageIndex = 0;
   bool showMediaCard = true;
 
+  final playlistPageKey = GlobalKey<NavigatorState>();
+  final musicPageKey = GlobalKey<NavigatorState>();
+  final videoPageKey = GlobalKey<NavigatorState>();
+  final filePageKey = GlobalKey<NavigatorState>();
+  final searchPageKey = GlobalKey<NavigatorState>();
+
   @override
   void initState() {
     super.initState();
@@ -109,9 +115,7 @@ class _HomeState extends State<Home> {
                         MaterialPageRoute(
                             builder: (context) => const SettingsPage()))
                     .then((value) {
-                  setState(() {
-                    // mk = mk + 1;
-                  });
+                  AppStorage().updateFilePage();
                 });
               },
               icon: const Icon(
@@ -242,91 +246,13 @@ class _HomeState extends State<Home> {
                         topLeft: Radius.circular(25),
                         topRight: Radius.circular(25),
                       ),
-                      child: IndexedStack(
-                        index: currentPageIndex,
-                        children: [
-                          Navigator(
-                            key: AppStorage().playlistPage,
-                            onGenerateRoute: (route) => MaterialPageRoute(
-                              settings: route,
-                              builder: (context) => const PlaylistPage(),
-                            ),
-                          ),
-                          Navigator(
-                            key: AppStorage().musicPage,
-                            onGenerateRoute: (route) => MaterialPageRoute(
-                              settings: route,
-                              builder: (context) => const MusicPage(),
-                            ),
-                          ),
-                          Navigator(
-                            key: AppStorage().videoPage,
-                            onGenerateRoute: (route) => MaterialPageRoute(
-                              settings: route,
-                              builder: (context) => const VideoPage(),
-                            ),
-                          ),
-                          Navigator(
-                            key: AppStorage().filePage,
-                            onGenerateRoute: (route) => MaterialPageRoute(
-                              settings: route,
-                              builder: (context) => FilePage(),
-                            ),
-                          ),
-                          Navigator(
-                            key: AppStorage().searchPage,
-                            onGenerateRoute: (route) => MaterialPageRoute(
-                              settings: route,
-                              builder: (context) => const SearchPage(),
-                            ),
-                          ),
-                        ],
-                      ),
+                      child: _buildContent(),
                     ),
                   ),
                 )
               ],
             )
-          : IndexedStack(
-              index: currentPageIndex,
-              children: [
-                Navigator(
-                  key: AppStorage().playlistPage,
-                  onGenerateRoute: (route) => MaterialPageRoute(
-                    settings: route,
-                    builder: (context) => const PlaylistPage(),
-                  ),
-                ),
-                Navigator(
-                  key: AppStorage().musicPage,
-                  onGenerateRoute: (route) => MaterialPageRoute(
-                    settings: route,
-                    builder: (context) => const MusicPage(),
-                  ),
-                ),
-                Navigator(
-                  key: AppStorage().videoPage,
-                  onGenerateRoute: (route) => MaterialPageRoute(
-                    settings: route,
-                    builder: (context) => const VideoPage(),
-                  ),
-                ),
-                Navigator(
-                  key: AppStorage().filePage,
-                  onGenerateRoute: (route) => MaterialPageRoute(
-                    settings: route,
-                    builder: (context) => FilePage(),
-                  ),
-                ),
-                Navigator(
-                  key: AppStorage().searchPage,
-                  onGenerateRoute: (route) => MaterialPageRoute(
-                    settings: route,
-                    builder: (context) => const SearchPage(),
-                  ),
-                ),
-              ],
-            ),
+          : _buildContent(),
       floatingActionButton: showMediaCard
           ? Padding(
               padding: tabletUI
@@ -346,8 +272,10 @@ class _HomeState extends State<Home> {
                     builder: (context, snapshot) {
                       return AppStorage().playingCover == null
                           ? tabletUI
-                              ? _buildMediaCard(colorScheme)
-                              : _buildMobileMediaCard(colorScheme)
+                              ? _buildMediaCard(ColorScheme.fromSeed(
+                                  seedColor: colorScheme.tertiary))
+                              : _buildMobileMediaCard(ColorScheme.fromSeed(
+                                  seedColor: colorScheme.tertiary))
                           : FutureBuilder(
                               future: ColorScheme.fromImageProvider(
                                 provider: UniImageProvider(
@@ -519,7 +447,12 @@ class _HomeState extends State<Home> {
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
+                        const SizedBox(
+                          width: 6,
+                        ),
                         IconButton(
+                            padding: const EdgeInsets.symmetric(horizontal: 2),
+                            constraints: const BoxConstraints(),
                             color: colorScheme.primaryContainer,
                             // iconSize: 30,
                             onPressed: () {
@@ -596,6 +529,8 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         IconButton(
+                            padding: const EdgeInsets.symmetric(horizontal: 2),
+                            constraints: const BoxConstraints(),
                             color: colorScheme.primaryContainer,
                             onPressed: () {
                               AppStorage().playboy.next();
@@ -605,6 +540,8 @@ class _HomeState extends State<Home> {
                               Icons.skip_next,
                             )),
                         IconButton(
+                          padding: const EdgeInsets.symmetric(horizontal: 2),
+                          constraints: const BoxConstraints(),
                           color: colorScheme.primaryContainer,
                           onPressed: () {
                             setState(() {
@@ -617,6 +554,8 @@ class _HomeState extends State<Home> {
                           iconSize: 20,
                         ),
                         IconButton(
+                          padding: const EdgeInsets.symmetric(horizontal: 2),
+                          constraints: const BoxConstraints(),
                           color: colorScheme.primaryContainer,
                           onPressed: () {
                             if (AppStorage().playboy.state.playlistMode ==
@@ -638,6 +577,8 @@ class _HomeState extends State<Home> {
                           iconSize: 20,
                         ),
                         IconButton(
+                            padding: const EdgeInsets.symmetric(horizontal: 2),
+                            constraints: const BoxConstraints(),
                             color: colorScheme.primaryContainer,
                             onPressed: () {
                               AppStorage().closeMedia();
@@ -646,6 +587,9 @@ class _HomeState extends State<Home> {
                             icon: const Icon(
                               Icons.stop,
                             )),
+                        const SizedBox(
+                          width: 6,
+                        ),
                       ]),
                 )
               ],
@@ -664,7 +608,7 @@ class _HomeState extends State<Home> {
       ),
       color: colorScheme.primary,
       child: SizedBox(
-        width: MediaQuery.of(context).size.width - 60,
+        width: MediaQuery.of(context).size.width - 30,
         height: 68,
         child: Stack(
           children: [
@@ -770,6 +714,49 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildContent() {
+    return IndexedStack(
+      index: currentPageIndex,
+      children: [
+        Navigator(
+          key: playlistPageKey,
+          onGenerateRoute: (route) => MaterialPageRoute(
+            settings: route,
+            builder: (context) => const PlaylistPage(),
+          ),
+        ),
+        Navigator(
+          key: musicPageKey,
+          onGenerateRoute: (route) => MaterialPageRoute(
+            settings: route,
+            builder: (context) => const MusicPage(),
+          ),
+        ),
+        Navigator(
+          key: videoPageKey,
+          onGenerateRoute: (route) => MaterialPageRoute(
+            settings: route,
+            builder: (context) => const VideoPage(),
+          ),
+        ),
+        Navigator(
+          key: filePageKey,
+          onGenerateRoute: (route) => MaterialPageRoute(
+            settings: route,
+            builder: (context) => const FilePage(),
+          ),
+        ),
+        Navigator(
+          key: searchPageKey,
+          onGenerateRoute: (route) => MaterialPageRoute(
+            settings: route,
+            builder: (context) => const SearchPage(),
+          ),
+        ),
+      ],
     );
   }
 }
