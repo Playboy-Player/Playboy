@@ -68,7 +68,8 @@ class MPlayerState extends State<MPlayer> {
                     ? Padding(
                         // flex: 2,
                         padding: const EdgeInsets.only(right: 10),
-                        child: SizedBox(
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 100),
                           width: videoMode
                               ? 300
                               : MediaQuery.of(context).size.width * 0.4,
@@ -78,7 +79,8 @@ class MPlayerState extends State<MPlayer> {
               ],
             ),
           ),
-          SizedBox(
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 100),
             width: videoMode
                 ? MediaQuery.of(context).size.width - 40
                 : MediaQuery.of(context).size.width - 80,
@@ -104,7 +106,8 @@ class MPlayerState extends State<MPlayer> {
               ],
             ),
           ),
-          SizedBox(
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 100),
             height: videoMode ? 60 : 100,
             child: _buildControlbar(colorScheme),
           ),
@@ -418,7 +421,8 @@ class MPlayerState extends State<MPlayer> {
       Expanded(
         child: Row(
           children: [
-            SizedBox(
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 50),
               width: videoMode ? 16 : 32,
             ),
             IconButton(
@@ -620,7 +624,8 @@ class MPlayerState extends State<MPlayer> {
               icon: Icon(AppStorage().playboy.state.rate == 1
                   ? Icons.flash_off
                   : Icons.flash_on)),
-          SizedBox(
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 50),
             width: videoMode ? 16 : 32,
           ),
         ],

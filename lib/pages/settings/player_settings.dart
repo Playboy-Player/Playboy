@@ -80,7 +80,7 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
         Container(
           padding: const EdgeInsets.all(12),
           child: Text(
-            '参数设置',
+            'mpv 设置 (未完成)',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w500,

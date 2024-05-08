@@ -12,9 +12,9 @@ class _SearchPage extends State<SearchPage> {
   bool isSearching = false;
   @override
   Widget build(BuildContext context) {
-    late final colorScheme = Theme.of(context).colorScheme;
-    late final backgroundColor = Color.alphaBlend(
-        colorScheme.primary.withOpacity(0.08), colorScheme.surface);
+    // late final colorScheme = Theme.of(context).colorScheme;
+    // late final backgroundColor = Color.alphaBlend(
+    //     colorScheme.primary.withOpacity(0.08), colorScheme.surface);
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -35,23 +35,6 @@ class _SearchPage extends State<SearchPage> {
             ),
             pinned: true,
             expandedHeight: 80,
-            actions: [
-              Container(
-                padding: const EdgeInsets.only(top: 10, right: 10),
-                child: FloatingActionButton.extended(
-                  isExtended: MediaQuery.of(context).size.width > 500,
-                  heroTag: 'filter',
-                  elevation: 0,
-                  hoverElevation: 0,
-                  highlightElevation: 0,
-                  backgroundColor: colorScheme.surface,
-                  hoverColor: backgroundColor,
-                  onPressed: () {},
-                  icon: const Icon(Icons.filter_list),
-                  label: const Text('选项'),
-                ),
-              ),
-            ],
           ),
           SliverToBoxAdapter(
             child: Padding(
@@ -80,7 +63,7 @@ class _SearchPage extends State<SearchPage> {
                             },
                           )
                         : null,
-                    labelText: '搜索媒体文件',
+                    labelText: '搜索媒体文件 (未完成)',
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20)),
                   ),

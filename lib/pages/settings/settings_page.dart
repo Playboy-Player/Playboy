@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:playboy/pages/settings/about_app.dart';
 import 'package:playboy/pages/settings/account_setting.dart';
 import 'package:playboy/pages/settings/display_settings.dart';
+import 'package:playboy/pages/settings/language_settings.dart';
 import 'package:playboy/pages/settings/player_settings.dart';
 import 'package:playboy/pages/settings/storage_settings.dart';
 import 'package:playboy/pages/settings/experiment.dart';
@@ -22,25 +24,25 @@ class SettingsPageState extends State<SettingsPage> {
     Icons.color_lens,
     Icons.play_circle_rounded,
     Icons.folder,
-    // Icons.translate_rounded,
+    Icons.translate_rounded,
     Icons.info,
-    Icons.auto_awesome
+    Icons.construction_rounded
   ];
   List<String> options = [
     '账号',
     '外观',
     '播放器',
     '文件',
-    // '语言',
+    '语言',
     '关于',
-    'Experiment',
+    '测试',
   ];
   List<Widget> pages = [
     const AccountSettingsPage(),
     const DisplaySettingsPage(),
     const PlayerSettingsPage(),
     const StorageSettingsPage(),
-    // const LanguageSettinsPage(),
+    const LanguageSettinsPage(),
     const AboutPage(),
     const ExperimentSettings(),
   ];
@@ -109,7 +111,7 @@ class SettingsPageState extends State<SettingsPage> {
       // floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       body: Row(children: [
         SizedBox(
-            width: 240,
+            width: 180,
             child: Column(
               children: [
                 // Container(
@@ -152,7 +154,7 @@ class SettingsPageState extends State<SettingsPage> {
       return Material(
         color: selected ? colorScheme.secondaryContainer : null,
         borderRadius: const BorderRadius.only(
-            topRight: Radius.circular(25), bottomRight: Radius.circular(25)),
+            topRight: Radius.circular(18), bottomRight: Radius.circular(18)),
         child: InkWell(
           onTap: () {
             setState(() {
@@ -160,7 +162,7 @@ class SettingsPageState extends State<SettingsPage> {
             });
           },
           borderRadius: const BorderRadius.only(
-              topRight: Radius.circular(25), bottomRight: Radius.circular(25)),
+              topRight: Radius.circular(18), bottomRight: Radius.circular(18)),
           child: Container(
             height: 50,
             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -190,7 +192,7 @@ class SettingsPageState extends State<SettingsPage> {
     }
 
     return ListView.builder(
-      itemCount: icons.length,
+      itemCount: icons.length - (kDebugMode ? 0 : 1),
       itemBuilder: (context, index) =>
           buildItem(index, options[index], icons[index]),
     );

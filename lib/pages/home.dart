@@ -50,6 +50,8 @@ class MikuMiku extends StatelessWidget {
   }
 }
 
+// TODO: make the media control widget in a new window and support pin on top
+// https://docs.google.com/document/d/13E27tD8_9f6lDgwg3MpGNTV8XIRCZH3ByI-t9kI9IUM/edit#heading=h.fygejf72gi1m
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -60,6 +62,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int currentPageIndex = 0;
   bool showMediaCard = true;
+  bool miniMode = false;
 
   final playlistPageKey = GlobalKey<NavigatorState>();
   final musicPageKey = GlobalKey<NavigatorState>();
@@ -80,6 +83,38 @@ class _HomeState extends State<Home> {
     late final colorScheme = Theme.of(context).colorScheme;
     late final backgroundColor = Color.alphaBlend(
         colorScheme.primary.withOpacity(0.08), colorScheme.surface);
+    if (miniMode) {
+      return Scaffold(
+        body: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onPanStart: (details) {
+              windowManager.startDragging();
+            },
+            child: StreamBuilder(
+                stream: AppStorage().playboy.stream.playlist,
+                builder: (context, snapshot) {
+                  return AppStorage().playingCover == null
+                      ? _buildMediaCardContent(
+                          ColorScheme.fromSeed(seedColor: colorScheme.tertiary))
+                      : FutureBuilder(
+                          future: ColorScheme.fromImageProvider(
+                            provider: UniImageProvider(
+                                    url: AppStorage().playingCover!)
+                                .getImage(),
+                          ),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData && snapshot.data != null) {
+                              return _buildMediaCardContent(snapshot.data!);
+                            } else {
+                              return _buildMediaCardContent(
+                                  ColorScheme.fromSeed(
+                                      seedColor: colorScheme.tertiary));
+                            }
+                          },
+                        );
+                })),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
@@ -96,15 +131,18 @@ class _HomeState extends State<Home> {
             onPanStart: (details) {
               windowManager.startDragging();
             },
-            child: const Row(children: [
-              Icon(Constants.appIcon),
-              SizedBox(
+            child: Row(children: [
+              const Icon(Constants.appIcon),
+              const SizedBox(
                 width: 10,
               ),
-              Text(
-                Constants.appName,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-              )
+              tabletUI
+                  ? const Text(
+                      Constants.appName,
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                    )
+                  : const SizedBox(),
             ])),
         actions: [
           IconButton(
@@ -252,58 +290,82 @@ class _HomeState extends State<Home> {
                 )
               ],
             )
-          : _buildContent(),
-      floatingActionButton: showMediaCard
-          ? Padding(
-              padding: tabletUI
-                  ? EdgeInsets.zero
-                  : const EdgeInsets.only(bottom: 54),
-              child: InkWell(
-                onTap: () {
-                  if (!context.mounted) return;
-                  Navigator.of(context, rootNavigator: true).push(
-                    MaterialPageRoute(
-                      builder: (context) => const MPlayer(),
-                    ),
-                  );
-                },
-                child: StreamBuilder(
-                    stream: AppStorage().playboy.stream.playlist,
-                    builder: (context, snapshot) {
-                      return AppStorage().playingCover == null
-                          ? tabletUI
-                              ? _buildMediaCard(ColorScheme.fromSeed(
-                                  seedColor: colorScheme.tertiary))
-                              : _buildMobileMediaCard(ColorScheme.fromSeed(
-                                  seedColor: colorScheme.tertiary))
-                          : FutureBuilder(
-                              future: ColorScheme.fromImageProvider(
-                                provider: UniImageProvider(
-                                        url: AppStorage().playingCover!)
-                                    .getImage(),
-                              ),
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData && snapshot.data != null) {
-                                  return tabletUI
-                                      ? _buildMediaCard(snapshot.data!)
-                                      : _buildMobileMediaCard(snapshot.data!);
-                                } else {
-                                  return tabletUI
-                                      ? _buildMediaCard(colorScheme)
-                                      : _buildMobileMediaCard(colorScheme);
-                                }
-                              },
-                            );
-                    }),
-              ),
+          : Column(
+              children: [
+                Expanded(child: _buildContent()),
+                InkWell(
+                  onTap: () {
+                    if (!context.mounted) return;
+                    Navigator.of(context, rootNavigator: true).push(
+                      MaterialPageRoute(
+                        builder: (context) => const MPlayer(),
+                      ),
+                    );
+                  },
+                  child: StreamBuilder(
+                      stream: AppStorage().playboy.stream.playlist,
+                      builder: (context, snapshot) {
+                        return AppStorage().playingCover == null
+                            ? _buildMediaBar(ColorScheme.fromSeed(
+                                seedColor: colorScheme.tertiary))
+                            : FutureBuilder(
+                                future: ColorScheme.fromImageProvider(
+                                  provider: UniImageProvider(
+                                          url: AppStorage().playingCover!)
+                                      .getImage(),
+                                ),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData &&
+                                      snapshot.data != null) {
+                                    return _buildMediaBar(snapshot.data!);
+                                  } else {
+                                    return _buildMediaBar(ColorScheme.fromSeed(
+                                        seedColor: colorScheme.tertiary));
+                                  }
+                                },
+                              );
+                      }),
+                )
+              ],
+            ),
+      floatingActionButton: showMediaCard && tabletUI
+          ? InkWell(
+              onTap: () {
+                if (!context.mounted) return;
+                Navigator.of(context, rootNavigator: true).push(
+                  MaterialPageRoute(
+                    builder: (context) => const MPlayer(),
+                  ),
+                );
+              },
+              child: StreamBuilder(
+                  stream: AppStorage().playboy.stream.playlist,
+                  builder: (context, snapshot) {
+                    return AppStorage().playingCover == null
+                        ? _buildMediaCard(ColorScheme.fromSeed(
+                            seedColor: colorScheme.tertiary))
+                        : FutureBuilder(
+                            future: ColorScheme.fromImageProvider(
+                              provider: UniImageProvider(
+                                      url: AppStorage().playingCover!)
+                                  .getImage(),
+                            ),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData && snapshot.data != null) {
+                                return _buildMediaCard(snapshot.data!);
+                              } else {
+                                return _buildMediaCard(ColorScheme.fromSeed(
+                                    seedColor: colorScheme.tertiary));
+                              }
+                            },
+                          );
+                  }),
             )
           : null,
-      floatingActionButtonLocation:
-          tabletUI ? null : FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: tabletUI
           ? null
           : NavigationBar(
-              height: 64,
+              height: 50,
               labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
               onDestinationSelected: (int index) {
                 setState(() {
@@ -348,268 +410,21 @@ class _HomeState extends State<Home> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(20)),
       ),
-      color: colorScheme.primary,
+      // color: colorScheme.primary,
       child: SizedBox(
-        width: 300,
-        height: 120,
-        child: Stack(
-          children: [
-            AppStorage().playingCover == null
-                ? const SizedBox()
-                : ShaderMask(
-                    shaderCallback: (Rect bounds) {
-                      return RadialGradient(
-                        radius: 1.4,
-                        // focalRadius: 1,
-                        colors: [
-                          Colors.black.withOpacity(0.6),
-                          // Colors.black.withOpacity(0.1)
-                          Colors.transparent
-                        ],
-                        // stops: [0, 0.6],
-                        // tileMode: TileMode.mirror,
-                      ).createShader(bounds);
-                    },
-                    blendMode: BlendMode.dstIn,
-                    child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: UniImage(url: AppStorage().playingCover!)),
-                  ),
-            Column(
-              children: [
-                Expanded(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      const SizedBox(
-                        width: 16,
-                      ),
-                      Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              AppStorage().playingTitle,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: colorScheme.primaryContainer,
-                              ),
-                              maxLines: 1,
-                            ),
-                            // TODO: show author
-                            // Text(
-                            //   'author',
-                            //   style: TextStyle(
-                            //     fontSize: 12,
-                            //     color: colorScheme.primaryContainer,
-                            //   ),
-                            // )
-                            const SizedBox(
-                              height: 8,
-                            )
-                          ],
-                        ),
-                      ),
-                      IconButton.filled(
-                        style: IconButton.styleFrom(
-                          backgroundColor: colorScheme.primaryContainer,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16)),
-                        ),
-                        iconSize: 24,
-                        onPressed: () {
-                          setState(() {
-                            AppStorage().playboy.playOrPause();
-                          });
-                        },
-                        icon: StreamBuilder(
-                          stream: AppStorage().playboy.stream.playing,
-                          builder: (context, snapshot) {
-                            return Icon(
-                              AppStorage().playing
-                                  ? Icons.pause_circle_outline
-                                  : Icons.play_arrow_outlined,
-                              color: colorScheme.onPrimaryContainer,
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 12,
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 48,
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        const SizedBox(
-                          width: 6,
-                        ),
-                        IconButton(
-                            padding: const EdgeInsets.symmetric(horizontal: 2),
-                            constraints: const BoxConstraints(),
-                            color: colorScheme.primaryContainer,
-                            // iconSize: 30,
-                            onPressed: () {
-                              AppStorage().playboy.previous();
-                              setState(() {});
-                            },
-                            icon: const Icon(
-                              Icons.skip_previous,
-                              // size: 30,
-                            )),
-                        Expanded(
-                          // width: 120,
-                          child: SliderTheme(
-                            data: SliderThemeData(
-                              trackHeight: 2,
-                              thumbShape: const RoundSliderThumbShape(
-                                  enabledThumbRadius: 6),
-                              overlayShape: SliderComponentShape.noOverlay,
-                              thumbColor: colorScheme.primaryContainer,
-                              activeTrackColor: colorScheme.primaryContainer,
-                            ),
-                            child: StreamBuilder(
-                              stream: AppStorage().playboy.stream.position,
-                              builder: (context, snapshot) {
-                                return SquigglySlider(
-                                  squiggleAmplitude:
-                                      AppStorage().settings.wavySlider
-                                          ? 1.4
-                                          : 0,
-                                  squiggleWavelength: 4,
-                                  squiggleSpeed: 0.05,
-                                  max: AppStorage()
-                                      .duration
-                                      .inMilliseconds
-                                      .toDouble(),
-                                  value: AppStorage().seeking
-                                      ? AppStorage().seekingPos
-                                      : min(
-                                          snapshot.hasData
-                                              ? snapshot.data!.inMilliseconds
-                                                  .toDouble()
-                                              : AppStorage()
-                                                  .position
-                                                  .inMilliseconds
-                                                  .toDouble(),
-                                          AppStorage()
-                                              .duration
-                                              .inMilliseconds
-                                              .toDouble()),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      AppStorage().seekingPos = value;
-                                    });
-                                  },
-                                  onChangeStart: (value) {
-                                    setState(() {
-                                      AppStorage().seeking = true;
-                                    });
-                                  },
-                                  onChangeEnd: (value) {
-                                    AppStorage()
-                                        .playboy
-                                        .seek(Duration(
-                                            milliseconds: value.toInt()))
-                                        .then((value) => {
-                                              setState(() {
-                                                AppStorage().seeking = false;
-                                              })
-                                            });
-                                  },
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                        IconButton(
-                            padding: const EdgeInsets.symmetric(horizontal: 2),
-                            constraints: const BoxConstraints(),
-                            color: colorScheme.primaryContainer,
-                            onPressed: () {
-                              AppStorage().playboy.next();
-                              setState(() {});
-                            },
-                            icon: const Icon(
-                              Icons.skip_next,
-                            )),
-                        IconButton(
-                          padding: const EdgeInsets.symmetric(horizontal: 2),
-                          constraints: const BoxConstraints(),
-                          color: colorScheme.primaryContainer,
-                          onPressed: () {
-                            setState(() {
-                              AppStorage().shuffle = !AppStorage().shuffle;
-                            });
-                          },
-                          icon: AppStorage().shuffle
-                              ? const Icon(Icons.shuffle_on)
-                              : const Icon(Icons.shuffle),
-                          iconSize: 20,
-                        ),
-                        IconButton(
-                          padding: const EdgeInsets.symmetric(horizontal: 2),
-                          constraints: const BoxConstraints(),
-                          color: colorScheme.primaryContainer,
-                          onPressed: () {
-                            if (AppStorage().playboy.state.playlistMode ==
-                                PlaylistMode.single) {
-                              AppStorage()
-                                  .playboy
-                                  .setPlaylistMode(PlaylistMode.none);
-                            } else {
-                              AppStorage()
-                                  .playboy
-                                  .setPlaylistMode(PlaylistMode.single);
-                            }
-                            setState(() {});
-                          },
-                          icon: AppStorage().playboy.state.playlistMode ==
-                                  PlaylistMode.single
-                              ? const Icon(Icons.repeat_one_on)
-                              : const Icon(Icons.repeat_one),
-                          iconSize: 20,
-                        ),
-                        IconButton(
-                            padding: const EdgeInsets.symmetric(horizontal: 2),
-                            constraints: const BoxConstraints(),
-                            color: colorScheme.primaryContainer,
-                            onPressed: () {
-                              AppStorage().closeMedia();
-                              setState(() {});
-                            },
-                            icon: const Icon(
-                              Icons.stop,
-                            )),
-                        const SizedBox(
-                          width: 6,
-                        ),
-                      ]),
-                )
-              ],
-            ),
-          ],
-        ),
-      ),
+          width: 300, height: 120, child: _buildMediaCardContent(colorScheme)),
     );
   }
 
-  Widget _buildMobileMediaCard(ColorScheme colorScheme) {
-    return Card(
-      elevation: 1.6,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(20)),
+  Widget _buildMediaBar(ColorScheme colorScheme) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+        color: colorScheme.primary,
       ),
-      color: colorScheme.primary,
       child: SizedBox(
-        width: MediaQuery.of(context).size.width - 30,
-        height: 68,
+        height: 70,
         child: Stack(
           children: [
             AppStorage().playingCover == null
@@ -617,7 +432,7 @@ class _HomeState extends State<Home> {
                 : ShaderMask(
                     shaderCallback: (Rect bounds) {
                       return RadialGradient(
-                        radius: 1.4,
+                        radius: 2,
                         // focalRadius: 1,
                         colors: [
                           Colors.black.withOpacity(0.6),
@@ -757,6 +572,284 @@ class _HomeState extends State<Home> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildMediaCardContent(ColorScheme colorScheme) {
+    return Container(
+      // color: colorScheme.primary,
+      decoration: BoxDecoration(
+          color: colorScheme.primary,
+          borderRadius: BorderRadius.circular(miniMode ? 0 : 20)),
+      child: Stack(
+        children: [
+          AppStorage().playingCover == null
+              ? const SizedBox()
+              : ShaderMask(
+                  shaderCallback: (Rect bounds) {
+                    return RadialGradient(
+                      radius: 1.4,
+                      // focalRadius: 1,
+                      colors: [
+                        Colors.black.withOpacity(0.6),
+                        // Colors.black.withOpacity(0.1)
+                        Colors.transparent
+                      ],
+                      // stops: [0, 0.6],
+                      // tileMode: TileMode.mirror,
+                    ).createShader(bounds);
+                  },
+                  blendMode: BlendMode.dstIn,
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.circular(miniMode ? 0 : 20),
+                      child: UniImage(url: AppStorage().playingCover!)),
+                ),
+          Column(
+            children: [
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    const SizedBox(
+                      width: 16,
+                    ),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            AppStorage().playingTitle,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: colorScheme.primaryContainer,
+                            ),
+                            maxLines: 1,
+                          ),
+                          // TODO: show author
+                          // Text(
+                          //   'author',
+                          //   style: TextStyle(
+                          //     fontSize: 12,
+                          //     color: colorScheme.primaryContainer,
+                          //   ),
+                          // )
+                          const SizedBox(
+                            height: 8,
+                          )
+                        ],
+                      ),
+                    ),
+                    IconButton.filled(
+                      style: IconButton.styleFrom(
+                        backgroundColor: colorScheme.primaryContainer,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16)),
+                      ),
+                      iconSize: 24,
+                      onPressed: () {
+                        setState(() {
+                          AppStorage().playboy.playOrPause();
+                        });
+                      },
+                      icon: StreamBuilder(
+                        stream: AppStorage().playboy.stream.playing,
+                        builder: (context, snapshot) {
+                          return Icon(
+                            AppStorage().playing
+                                ? Icons.pause_circle_outline
+                                : Icons.play_arrow_outlined,
+                            color: colorScheme.onPrimaryContainer,
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 12,
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 48,
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      const SizedBox(
+                        width: 6,
+                      ),
+                      IconButton(
+                          padding: const EdgeInsets.symmetric(horizontal: 2),
+                          constraints: const BoxConstraints(),
+                          color: colorScheme.primaryContainer,
+                          // iconSize: 30,
+                          onPressed: () {
+                            if (miniMode) {
+                              windowManager.setResizable(true);
+                              windowManager
+                                  .setMinimumSize(const Size(360, 500));
+                              windowManager.setSize(const Size(900, 700));
+                              windowManager.setAlwaysOnTop(false);
+                            } else {
+                              windowManager.setResizable(false);
+                              windowManager
+                                  .setMinimumSize(const Size(300, 120));
+                              windowManager.setSize(const Size(300, 120));
+                              windowManager.setAlwaysOnTop(true);
+                            }
+                            setState(() {
+                              miniMode = !miniMode;
+                            });
+                          },
+                          icon: Icon(
+                            miniMode ? Icons.fullscreen : Icons.fullscreen_exit,
+                            // size: 30,
+                          )),
+                      IconButton(
+                          padding: const EdgeInsets.symmetric(horizontal: 2),
+                          constraints: const BoxConstraints(),
+                          color: colorScheme.primaryContainer,
+                          // iconSize: 30,
+                          onPressed: () {
+                            AppStorage().playboy.previous();
+                            setState(() {});
+                          },
+                          icon: const Icon(
+                            Icons.skip_previous,
+                            // size: 30,
+                          )),
+                      Expanded(
+                        // width: 120,
+                        child: SliderTheme(
+                          data: SliderThemeData(
+                            trackHeight: 2,
+                            thumbShape: const RoundSliderThumbShape(
+                                enabledThumbRadius: 6),
+                            overlayShape: SliderComponentShape.noOverlay,
+                            thumbColor: colorScheme.primaryContainer,
+                            activeTrackColor: colorScheme.primaryContainer,
+                          ),
+                          child: StreamBuilder(
+                            stream: AppStorage().playboy.stream.position,
+                            builder: (context, snapshot) {
+                              return SquigglySlider(
+                                squiggleAmplitude:
+                                    AppStorage().settings.wavySlider ? 1.4 : 0,
+                                squiggleWavelength: 4,
+                                squiggleSpeed: 0.05,
+                                max: AppStorage()
+                                    .duration
+                                    .inMilliseconds
+                                    .toDouble(),
+                                value: AppStorage().seeking
+                                    ? AppStorage().seekingPos
+                                    : min(
+                                        snapshot.hasData
+                                            ? snapshot.data!.inMilliseconds
+                                                .toDouble()
+                                            : AppStorage()
+                                                .position
+                                                .inMilliseconds
+                                                .toDouble(),
+                                        AppStorage()
+                                            .duration
+                                            .inMilliseconds
+                                            .toDouble()),
+                                onChanged: (value) {
+                                  setState(() {
+                                    AppStorage().seekingPos = value;
+                                  });
+                                },
+                                onChangeStart: (value) {
+                                  setState(() {
+                                    AppStorage().seeking = true;
+                                  });
+                                },
+                                onChangeEnd: (value) {
+                                  AppStorage()
+                                      .playboy
+                                      .seek(
+                                          Duration(milliseconds: value.toInt()))
+                                      .then((value) => {
+                                            setState(() {
+                                              AppStorage().seeking = false;
+                                            })
+                                          });
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                          padding: const EdgeInsets.symmetric(horizontal: 2),
+                          constraints: const BoxConstraints(),
+                          color: colorScheme.primaryContainer,
+                          onPressed: () {
+                            AppStorage().playboy.next();
+                            setState(() {});
+                          },
+                          icon: const Icon(
+                            Icons.skip_next,
+                          )),
+                      IconButton(
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        constraints: const BoxConstraints(),
+                        color: colorScheme.primaryContainer,
+                        onPressed: () {
+                          setState(() {
+                            AppStorage().shuffle = !AppStorage().shuffle;
+                          });
+                        },
+                        icon: AppStorage().shuffle
+                            ? const Icon(Icons.shuffle_on)
+                            : const Icon(Icons.shuffle),
+                        iconSize: 20,
+                      ),
+                      IconButton(
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        constraints: const BoxConstraints(),
+                        color: colorScheme.primaryContainer,
+                        onPressed: () {
+                          if (AppStorage().playboy.state.playlistMode ==
+                              PlaylistMode.single) {
+                            AppStorage()
+                                .playboy
+                                .setPlaylistMode(PlaylistMode.none);
+                          } else {
+                            AppStorage()
+                                .playboy
+                                .setPlaylistMode(PlaylistMode.single);
+                          }
+                          setState(() {});
+                        },
+                        icon: AppStorage().playboy.state.playlistMode ==
+                                PlaylistMode.single
+                            ? const Icon(Icons.repeat_one_on)
+                            : const Icon(Icons.repeat_one),
+                        iconSize: 20,
+                      ),
+                      IconButton(
+                          padding: const EdgeInsets.symmetric(horizontal: 2),
+                          constraints: const BoxConstraints(),
+                          color: colorScheme.primaryContainer,
+                          onPressed: () {
+                            AppStorage().closeMedia();
+                            setState(() {});
+                          },
+                          icon: const Icon(
+                            Icons.stop,
+                          )),
+                      const SizedBox(
+                        width: 6,
+                      ),
+                    ]),
+              )
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

@@ -70,11 +70,11 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
 
   Widget _buildGuestCard(ColorScheme colorScheme) {
     return SizedBox(
-      height: 150,
+      height: 120,
       child: AppStorage().settings.logined
           ? Card(
-              elevation: 0,
-              color: colorScheme.primaryContainer.withOpacity(0.4),
+              // elevation: 0,
+              // color: colorScheme.primaryContainer.withOpacity(0.4),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20)),
               child: InkWell(
@@ -90,8 +90,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                   padding: const EdgeInsets.all(16),
                   child: Row(
                     children: [
-                      const CircleAvatar(
-                        radius: 45,
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
                         child: Icon(
                           Icons.check_circle_outline,
                           size: 50,
@@ -104,7 +104,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                           children: [
                             Text(
                               '已连接',
-                              style: TextStyle(fontSize: 25),
+                              style: TextStyle(fontSize: 20),
                             ),
                             Text('点击清除 cookies'),
                           ],
@@ -115,8 +115,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                 ),
               ))
           : Card(
-              elevation: 0,
-              color: colorScheme.primaryContainer.withOpacity(0.4),
+              // elevation: 0,
+              // color: colorScheme.primaryContainer.withOpacity(0.4),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20)),
               child: InkWell(
@@ -183,8 +183,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                   padding: const EdgeInsets.all(16),
                   child: Row(
                     children: [
-                      const CircleAvatar(
-                        radius: 45,
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
                         child: Icon(
                           Icons.person,
                           size: 50,
@@ -197,7 +197,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                           children: [
                             Text(
                               '未连接',
-                              style: TextStyle(fontSize: 25),
+                              style: TextStyle(fontSize: 20),
                             ),
                             Text('点击加载 cookies'),
                           ],

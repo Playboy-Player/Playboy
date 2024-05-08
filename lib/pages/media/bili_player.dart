@@ -12,6 +12,7 @@ import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 // import 'package:process_run/shell.dart';
 
+// TODO: sync code with mplayer
 class BiliPlayer extends StatefulWidget {
   const BiliPlayer(
       {super.key, required this.videoInfo, required this.playInfo});

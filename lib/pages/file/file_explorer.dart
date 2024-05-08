@@ -48,29 +48,27 @@ class FileExplorerState extends State<FileExplorer> {
         title: Text(name),
       ),
       body: loaded
-          ? Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: cols,
-                  // childAspectRatio: 10 / 9,
-                ),
-                itemBuilder: (context, index) {
-                  var e = contents[index];
-                  if (e is File) {
-                    if (extension(e.path) == '.mp4') {
-                      return FileCard(
-                          source: e.path, icon: Icons.audio_file_outlined);
-                    } else {
-                      return FileCard(source: e.path, icon: null);
-                    }
-                  } else if (e is Directory) {
-                    return FolderCard(source: e.path, icon: null);
-                  }
-                  return null;
-                },
-                itemCount: contents.length,
+          ? GridView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: cols,
+                // childAspectRatio: 10 / 9,
               ),
+              itemBuilder: (context, index) {
+                var e = contents[index];
+                if (e is File) {
+                  if (extension(e.path) == '.mp4') {
+                    return FileCard(
+                        source: e.path, icon: Icons.audio_file_outlined);
+                  } else {
+                    return FileCard(source: e.path, icon: null);
+                  }
+                } else if (e is Directory) {
+                  return FolderCard(source: e.path, icon: null);
+                }
+                return null;
+              },
+              itemCount: contents.length,
             )
           : const Center(
               heightFactor: 10,

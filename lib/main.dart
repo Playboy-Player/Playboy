@@ -11,7 +11,7 @@ void main(List<String> arguments) async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
   WindowOptions windowOptions = const WindowOptions(
-    minimumSize: Size(400, 500),
+    minimumSize: Size(360, 500),
     size: Size(900, 700),
     center: true,
     backgroundColor: Colors.transparent,

@@ -94,7 +94,7 @@ class _FilePageState extends State<FilePage> {
                       _openLink(link, false);
                     }
                   },
-                  icon: const Icon(Icons.video_file_outlined),
+                  icon: const Icon(Icons.insert_drive_file_outlined),
                   label: const Text('打开文件'),
                 ),
               ),
@@ -102,7 +102,7 @@ class _FilePageState extends State<FilePage> {
           ),
           SliverList(
               delegate: SliverChildListDelegate([
-            _buildOption(Icons.open_in_new, '打开视频地址', () {
+            _buildOption(Icons.link, '播放网络链接', () {
               editingController.clear();
               showDialog(
                 barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
@@ -110,7 +110,7 @@ class _FilePageState extends State<FilePage> {
                 context: context,
                 builder: (BuildContext context) => AlertDialog(
                   surfaceTintColor: Colors.transparent,
-                  title: const Text('打开视频地址'),
+                  title: const Text('播放网络链接'),
                   content: TextField(
                     autofocus: true,
                     maxLines: 1,
@@ -149,7 +149,7 @@ class _FilePageState extends State<FilePage> {
                 ),
               );
             }),
-            _buildOption(Icons.download, '从网络下载', () {
+            _buildOption(Icons.download, '下载管理器 (未完成)', () {
               Navigator.push(
                   context,
                   MaterialPageRoute(

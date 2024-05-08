@@ -35,7 +35,6 @@ dependencies:
   media_kit_video: ^1.2.4
   media_kit_libs_video: ^1.0.4
 
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -77,6 +76,7 @@ flutter:
 msix_config:
   display_name: Playboy Player
   identity_name: YuiHrsw.PlayboyPlayer
-  msix_version: 1.17.0.0
+  msix_version: 1.22.0.0
   logo_path: res/images/logo.png
   trim_logo: false
+  file_extension: .avi, .flv, .mkv, .mov, .mp4, .mpeg, .webm, .wmv, .aac, .midi, .mp3, .ogg, .wav

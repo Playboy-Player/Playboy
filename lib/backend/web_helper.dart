@@ -7,6 +7,7 @@ import 'package:playboy/backend/constants.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:playboy/backend/storage.dart';
 
+// TODO: exception logic
 class WebHelper {
   static late final Dio dio;
   static late CookieManager cookieManager;

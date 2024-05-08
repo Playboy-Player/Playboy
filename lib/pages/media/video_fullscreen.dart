@@ -42,7 +42,8 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: Opacity(
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 100),
               opacity: showControlBar ? 0.9 : 0,
               child: MouseRegion(
                 onHover: (event) {

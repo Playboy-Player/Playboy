@@ -29,9 +29,9 @@ class _AboutPageState extends State<AboutPage> {
           ),
         ),
         Card(
-          elevation: 0,
-          color:
-              Theme.of(context).colorScheme.primaryContainer.withOpacity(0.6),
+          // elevation: 0,
+          // color:
+          //     Theme.of(context).colorScheme.primaryContainer.withOpacity(0.6),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           // surfaceTintColor: Colors.transparent,

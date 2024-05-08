@@ -27,6 +27,7 @@ class PlaylistState extends State<PlaylistPage> {
   }
 
   void _init() async {
+    AppStorage().playlists.clear();
     AppStorage().playlists.addAll(await LibraryHelper.loadPlaylists());
     if (!mounted) return;
     setState(() {
@@ -37,7 +38,7 @@ class PlaylistState extends State<PlaylistPage> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    final cols = max((width / 200).round(), 2);
+    final cols = max((width / 180).round(), 2);
     late final colorScheme = Theme.of(context).colorScheme;
     late final backgroundColor = Color.alphaBlend(
         colorScheme.primary.withOpacity(0.08), colorScheme.surface);
@@ -193,6 +194,7 @@ class PlaylistState extends State<PlaylistPage> {
                           ? SliverGrid(
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisSpacing: 6,
                                 crossAxisCount: cols,
                                 childAspectRatio: 10 / 9,
                               ),
@@ -321,7 +323,7 @@ class PlaylistState extends State<PlaylistPage> {
         child: Column(
           children: [
             Expanded(
-              flex: 2,
+              flex: 3,
               child: AppStorage().playlists[index].cover == null
                   ? Ink(
                       width: double.infinity,
