@@ -280,8 +280,8 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
         width: 10,
       ),
       IconButton(
-          onPressed: () {
-            if (Platform.isWindows) {
+          onPressed: () async {
+            if (Platform.isWindows && !await windowManager.isMaximized()) {
               windowManager.setSize(const Size(900, 700));
               windowManager.setTitleBarStyle(TitleBarStyle.hidden);
               windowManager.center();

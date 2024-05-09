@@ -563,7 +563,7 @@ class MPlayerState extends State<MPlayer> {
       ),
       IconButton(
           onPressed: () async {
-            if (Platform.isWindows) {
+            if (Platform.isWindows && !await windowManager.isMaximized()) {
               var info = await getCurrentScreen();
               if (info != null) {
                 await windowManager.setAsFrameless();
