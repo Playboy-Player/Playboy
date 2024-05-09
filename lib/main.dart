@@ -13,12 +13,14 @@ void main(List<String> arguments) async {
   WindowOptions windowOptions = const WindowOptions(
     minimumSize: Size(360, 500),
     size: Size(900, 700),
-    center: true,
+    // center: true,
     backgroundColor: Colors.transparent,
     // skipTaskbar: true,
     titleBarStyle: TitleBarStyle.hidden,
   );
   windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.setHasShadow(false);
+    // await windowManager.setAsFrameless();
     await windowManager.show();
     await windowManager.focus();
   });

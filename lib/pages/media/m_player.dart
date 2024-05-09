@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:squiggly_slider/slider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
+import 'package:window_size/window_size.dart';
 
 class MPlayer extends StatefulWidget {
   const MPlayer({
@@ -560,14 +562,18 @@ class MPlayerState extends State<MPlayer> {
         width: 10,
       ),
       IconButton(
-          onPressed: () {
-            // TODO: better fullscreen impl for windows
-            windowManager.hide().then((value) {
-              windowManager.setFullScreen(true).then((value) {
-                windowManager.show();
-              });
-            });
-            // windowManager.setFullScreen(true);
+          onPressed: () async {
+            if (Platform.isWindows) {
+              var info = await getCurrentScreen();
+              if (info != null) {
+                await windowManager.setAsFrameless();
+                await windowManager.setPosition(Offset.zero);
+                await windowManager
+                    .setSize(Size(info.frame.width / 2, info.frame.height / 2));
+              }
+            } else {
+              windowManager.setFullScreen(true);
+            }
 
             if (!mounted) return;
             Navigator.push(

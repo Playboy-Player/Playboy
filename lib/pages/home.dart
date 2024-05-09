@@ -691,6 +691,7 @@ class _HomeState extends State<Home> {
                                   .setMinimumSize(const Size(360, 500));
                               windowManager.setSize(const Size(900, 700));
                               windowManager.setAlwaysOnTop(false);
+                              windowManager.center();
                             } else {
                               windowManager.setResizable(false);
                               windowManager

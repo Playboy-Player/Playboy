@@ -30,6 +30,11 @@ dependencies:
   window_manager: ^0.3.8
   # process_run: ^0.14.2
   url_launcher: ^6.2.5
+  window_size:
+    git:
+      url: https://github.com/google/flutter-desktop-embedding.git
+      path: plugins/window_size
+      ref: a738913c8ce2c9f47515382d40827e794a334274
   
   media_kit: ^1.1.10
   media_kit_video: ^1.2.4

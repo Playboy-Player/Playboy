@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -280,12 +281,13 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
       ),
       IconButton(
           onPressed: () {
-            windowManager.hide().then((value) {
-              windowManager.setFullScreen(false).then((value) {
-                windowManager.show();
-              });
-            });
-            // windowManager.setFullScreen(false);
+            if (Platform.isWindows) {
+              windowManager.setSize(const Size(900, 700));
+              windowManager.setTitleBarStyle(TitleBarStyle.hidden);
+              windowManager.center();
+            } else {
+              windowManager.setFullScreen(false);
+            }
 
             if (!mounted) return;
             Navigator.pop(context);
