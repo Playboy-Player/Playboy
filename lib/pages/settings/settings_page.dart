@@ -20,13 +20,13 @@ class SettingsPage extends StatefulWidget {
 class SettingsPageState extends State<SettingsPage> {
   int currentPage = 0;
   List<IconData> icons = [
-    Icons.account_circle,
-    Icons.color_lens,
-    Icons.play_circle_rounded,
-    Icons.folder,
+    Icons.account_circle_outlined,
+    Icons.color_lens_outlined,
+    Icons.play_circle_outline,
+    Icons.folder_outlined,
     Icons.translate_rounded,
-    Icons.info,
-    Icons.construction_rounded
+    Icons.info_outline,
+    Icons.code
   ];
   List<String> options = [
     '账号',
@@ -70,10 +70,10 @@ class SettingsPageState extends State<SettingsPage> {
           },
         ),
         toolbarHeight: 40,
-        title: const Text(
-          '设置',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-        ),
+        // title: const Text(
+        //   '设置',
+        //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+        // ),
         actions: [
           // IconButton(
           //     hoverColor: Colors.transparent,
@@ -110,19 +110,25 @@ class SettingsPageState extends State<SettingsPage> {
       ),
       // floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       body: Row(children: [
+        const SizedBox(
+          width: 10,
+        ),
         SizedBox(
-            width: 180,
+            width: 160,
             child: Column(
               children: [
-                // Container(
-                //     alignment: Alignment.centerLeft,
-                //     height: 70,
-                //     padding: const EdgeInsets.symmetric(horizontal: 20),
-                //     child: const Text(
-                //       "设置",
-                //       style:
-                //           TextStyle(fontSize: 30, fontWeight: FontWeight.w500),
-                //     )),
+                Container(
+                    alignment: Alignment.topLeft,
+                    height: 36,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      "设置",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                    )),
                 const SizedBox(
                   height: 10,
                 ),
@@ -152,20 +158,18 @@ class SettingsPageState extends State<SettingsPage> {
     Widget buildItem(int id, String name, IconData icon) {
       final bool selected = id == currentPage;
       return Material(
-        color: selected ? colorScheme.secondaryContainer : null,
-        borderRadius: const BorderRadius.only(
-            topRight: Radius.circular(18), bottomRight: Radius.circular(18)),
+        color: selected ? colorScheme.secondary : null,
+        borderRadius: BorderRadius.circular(14),
         child: InkWell(
           onTap: () {
             setState(() {
               currentPage = id;
             });
           },
-          borderRadius: const BorderRadius.only(
-              topRight: Radius.circular(18), bottomRight: Radius.circular(18)),
+          borderRadius: BorderRadius.circular(14),
           child: Container(
-            height: 50,
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            height: 44,
+            padding: const EdgeInsets.symmetric(horizontal: 4),
             child: Center(
                 child: Row(
               children: [
@@ -174,15 +178,18 @@ class SettingsPageState extends State<SettingsPage> {
                 ),
                 Icon(
                   icon,
-                  color: colorScheme.onPrimaryContainer,
-                  size: 26,
+                  color: selected ? colorScheme.onSecondary : null,
+                  size: 22,
                 ),
                 const SizedBox(
-                  width: 10,
+                  width: 14,
                 ),
                 Text(
                   name,
-                  style: const TextStyle(fontSize: 16),
+                  style: TextStyle(
+                    color: selected ? colorScheme.onSecondary : null,
+                    fontSize: 16,
+                  ),
                 )
               ],
             )),
@@ -191,10 +198,15 @@ class SettingsPageState extends State<SettingsPage> {
       );
     }
 
-    return ListView.builder(
+    return ListView.separated(
       itemCount: icons.length - (kDebugMode ? 0 : 1),
       itemBuilder: (context, index) =>
           buildItem(index, options[index], icons[index]),
+      separatorBuilder: (context, index) {
+        return const SizedBox(
+          height: 6,
+        );
+      },
     );
   }
 }

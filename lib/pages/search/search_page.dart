@@ -27,7 +27,7 @@ class _SearchPage extends State<SearchPage> {
               title: Text(
                 '搜索',
                 style: TextStyle(
-                    color: Theme.of(context).colorScheme.onBackground,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
                     fontSize: 25,
                     fontWeight: FontWeight.w500),
               ),
@@ -35,6 +35,7 @@ class _SearchPage extends State<SearchPage> {
             ),
             pinned: true,
             expandedHeight: 80,
+            collapsedHeight: 65,
           ),
           SliverToBoxAdapter(
             child: Padding(
@@ -49,23 +50,42 @@ class _SearchPage extends State<SearchPage> {
                 child: TextField(
                   // autofocus: true,
                   decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.search),
+                    prefixIcon: Container(
+                      alignment: Alignment.center,
+                      width: 50,
+                      child: const Icon(Icons.search),
+                    ),
                     suffixIcon: isSearching
-                        ? IconButton(
-                            icon: const Icon(
-                              Symbols.cancel_rounded,
-                              weight: 600,
+                        ? Container(
+                            alignment: Alignment.centerLeft,
+                            width: 46,
+                            child: IconButton(
+                              icon: const Icon(
+                                Symbols.cancel_rounded,
+                                weight: 600,
+                              ),
+                              onPressed: () {
+                                FocusScope.of(context).unfocus();
+                                // searchController.clear();
+                                // widget.onSearchTextChanged('');
+                              },
                             ),
-                            onPressed: () {
-                              FocusScope.of(context).unfocus();
-                              // searchController.clear();
-                              // widget.onSearchTextChanged('');
-                            },
                           )
                         : null,
                     labelText: '搜索媒体文件 (未完成)',
+                    floatingLabelBehavior: FloatingLabelBehavior.never,
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20)),
+                      borderSide: const BorderSide(
+                        width: 0,
+                        style: BorderStyle.none,
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    filled: true,
+                    fillColor: Theme.of(context)
+                        .colorScheme
+                        .secondaryContainer
+                        .withOpacity(0.4),
                   ),
                 ),
               )),

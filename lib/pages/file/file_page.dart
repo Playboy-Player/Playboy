@@ -50,7 +50,7 @@ class _FilePageState extends State<FilePage> {
               title: Text(
                 '文件',
                 style: TextStyle(
-                    color: Theme.of(context).colorScheme.onBackground,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
                     fontSize: 25,
                     fontWeight: FontWeight.w500),
               ),
@@ -58,6 +58,7 @@ class _FilePageState extends State<FilePage> {
             ),
             pinned: true,
             expandedHeight: 80,
+            collapsedHeight: 65,
             actions: [
               Container(
                 padding: const EdgeInsets.only(top: 10, right: 10, bottom: 10),
@@ -149,7 +150,7 @@ class _FilePageState extends State<FilePage> {
                 ),
               );
             }),
-            _buildOption(Icons.download, '下载管理器 (未完成)', () {
+            _buildOption(Icons.download, '下载管理 (未完成)', () {
               Navigator.push(
                   context,
                   MaterialPageRoute(

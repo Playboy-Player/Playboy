@@ -35,11 +35,11 @@ class MusicCard extends StatelessWidget {
                       width: double.infinity,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: colorScheme.tertiaryContainer,
+                        color: colorScheme.secondaryContainer,
                       ),
                       child: Icon(
                         Icons.music_note,
-                        color: colorScheme.onTertiaryContainer,
+                        color: colorScheme.onSecondaryContainer,
                         size: 80,
                       ),
                     )
@@ -47,7 +47,7 @@ class MusicCard extends StatelessWidget {
                       width: double.infinity,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: colorScheme.tertiaryContainer,
+                        color: colorScheme.secondaryContainer,
                         image: DecorationImage(
                           fit: BoxFit.cover,
                           image: FileImage(
@@ -96,11 +96,11 @@ class MusicListCard extends StatelessWidget {
                         width: double.infinity,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
-                          color: colorScheme.tertiaryContainer,
+                          color: colorScheme.secondaryContainer,
                         ),
                         child: Icon(
                           Icons.music_note,
-                          color: colorScheme.onTertiaryContainer,
+                          color: colorScheme.onSecondaryContainer,
                           size: 40,
                         ),
                       )
@@ -108,7 +108,7 @@ class MusicListCard extends StatelessWidget {
                         width: double.infinity,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
-                          color: colorScheme.tertiaryContainer,
+                          color: colorScheme.secondaryContainer,
                           image: DecorationImage(
                             fit: BoxFit.cover,
                             image: FileImage(

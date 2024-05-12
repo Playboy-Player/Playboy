@@ -40,11 +40,11 @@ class FolderCard extends StatelessWidget {
                   borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20)),
-                  color: colorScheme.tertiaryContainer,
+                  color: colorScheme.secondaryContainer,
                 ),
                 child: Icon(
                   icon ?? Icons.folder,
-                  color: colorScheme.onTertiaryContainer,
+                  color: colorScheme.onSecondaryContainer,
                   size: 60,
                 ),
               ),
@@ -55,13 +55,13 @@ class FolderCard extends StatelessWidget {
                   borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(20),
                       bottomRight: Radius.circular(20)),
-                  color: colorScheme.tertiaryContainer.withOpacity(0.4),
+                  color: colorScheme.secondaryContainer.withOpacity(0.4),
                 ),
                 child: Center(
                     child: Text(
                   name,
                   style: TextStyle(
-                    color: colorScheme.onTertiaryContainer,
+                    color: colorScheme.onSecondaryContainer,
                     fontSize: 12,
                   ),
                 )),

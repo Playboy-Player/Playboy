@@ -47,11 +47,11 @@ class VideoCard extends StatelessWidget {
                         borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(20),
                             topRight: Radius.circular(20)),
-                        color: colorScheme.tertiaryContainer,
+                        color: colorScheme.secondaryContainer,
                       ),
                       child: Icon(
                         Icons.movie_filter_rounded,
-                        color: colorScheme.onTertiaryContainer,
+                        color: colorScheme.onSecondaryContainer,
                         size: 80,
                       ),
                     )
@@ -61,7 +61,7 @@ class VideoCard extends StatelessWidget {
                         borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(20),
                             topRight: Radius.circular(20)),
-                        color: colorScheme.tertiaryContainer,
+                        color: colorScheme.secondaryContainer,
                         image: DecorationImage(
                           fit: BoxFit.cover,
                           image: FileImage(
@@ -82,13 +82,13 @@ class VideoCard extends StatelessWidget {
                   borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(20),
                       bottomRight: Radius.circular(20)),
-                  color: colorScheme.tertiaryContainer.withOpacity(0.6),
+                  color: colorScheme.secondaryContainer.withOpacity(0.6),
                 ),
                 child: Center(
                     child: Text(
                   info.title,
                   style: TextStyle(
-                    color: colorScheme.onTertiaryContainer,
+                    color: colorScheme.onSecondaryContainer,
                     fontSize: 16,
                   ),
                 )),
@@ -136,11 +136,11 @@ class VideoListCard extends StatelessWidget {
                         width: double.infinity,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
-                          color: colorScheme.tertiaryContainer,
+                          color: colorScheme.secondaryContainer,
                         ),
                         child: Icon(
                           Icons.movie_filter,
-                          color: colorScheme.onTertiaryContainer,
+                          color: colorScheme.onSecondaryContainer,
                           size: 40,
                         ),
                       )
@@ -148,7 +148,7 @@ class VideoListCard extends StatelessWidget {
                         width: double.infinity,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
-                          color: colorScheme.tertiaryContainer,
+                          color: colorScheme.secondaryContainer,
                           image: DecorationImage(
                             fit: BoxFit.cover,
                             image: FileImage(

@@ -57,11 +57,11 @@ class PlaylistDetailState extends State<PlaylistDetail> {
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
-                                color: colorScheme.tertiaryContainer,
+                                color: colorScheme.secondaryContainer,
                               ),
                               child: Icon(
                                 Icons.playlist_play_rounded,
-                                color: colorScheme.onTertiaryContainer,
+                                color: colorScheme.onSecondaryContainer,
                                 size: 80,
                               ),
                             )

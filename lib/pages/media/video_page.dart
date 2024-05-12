@@ -50,7 +50,7 @@ class _VideoPageState extends State<VideoPage> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    final cols = max((width / 200).round(), 2);
+    final cols = max((width / 180).round(), 2);
     late final colorScheme = Theme.of(context).colorScheme;
     late final backgroundColor = Color.alphaBlend(
         colorScheme.primary.withOpacity(0.08), colorScheme.surface);
@@ -66,7 +66,7 @@ class _VideoPageState extends State<VideoPage> {
               title: Text(
                 '视频',
                 style: TextStyle(
-                    color: Theme.of(context).colorScheme.onBackground,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
                     fontSize: 25,
                     fontWeight: FontWeight.w500),
               ),
@@ -74,6 +74,7 @@ class _VideoPageState extends State<VideoPage> {
             ),
             pinned: true,
             expandedHeight: 80,
+            collapsedHeight: 65,
             actions: [
               // Container(
               //   padding: const EdgeInsets.only(top: 10, bottom: 10),

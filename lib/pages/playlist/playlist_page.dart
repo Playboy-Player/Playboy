@@ -54,7 +54,7 @@ class PlaylistState extends State<PlaylistPage> {
               title: Text(
                 '播放列表',
                 style: TextStyle(
-                    color: Theme.of(context).colorScheme.onBackground,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
                     fontSize: 25,
                     fontWeight: FontWeight.w500),
               ),
@@ -331,11 +331,11 @@ class PlaylistState extends State<PlaylistPage> {
                         borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(20),
                             topRight: Radius.circular(20)),
-                        color: colorScheme.tertiaryContainer,
+                        color: colorScheme.secondaryContainer,
                       ),
                       child: Icon(
                         Icons.playlist_play_rounded,
-                        color: colorScheme.onTertiaryContainer,
+                        color: colorScheme.onSecondaryContainer,
                         size: 80,
                       ),
                     )
@@ -354,13 +354,13 @@ class PlaylistState extends State<PlaylistPage> {
                   borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(20),
                       bottomRight: Radius.circular(20)),
-                  color: colorScheme.tertiaryContainer.withOpacity(0.4),
+                  color: colorScheme.secondaryContainer.withOpacity(0.4),
                 ),
                 child: Center(
                     child: Text(
                   AppStorage().playlists[index].title,
                   style: TextStyle(
-                    color: colorScheme.onTertiaryContainer,
+                    color: colorScheme.onSecondaryContainer,
                     fontSize: 16,
                   ),
                 )),
@@ -405,11 +405,11 @@ class PlaylistState extends State<PlaylistPage> {
                         width: double.infinity,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
-                          color: colorScheme.tertiaryContainer,
+                          color: colorScheme.secondaryContainer,
                         ),
                         child: Icon(
                           Icons.playlist_play_rounded,
-                          color: colorScheme.onTertiaryContainer,
+                          color: colorScheme.onSecondaryContainer,
                           size: 40,
                         ),
                       )
@@ -417,7 +417,7 @@ class PlaylistState extends State<PlaylistPage> {
                         width: double.infinity,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
-                          color: colorScheme.tertiaryContainer,
+                          color: colorScheme.secondaryContainer,
                           image: DecorationImage(
                             fit: BoxFit.cover,
                             image: FileImage(

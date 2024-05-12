@@ -22,20 +22,20 @@ class PlayerListCard extends StatelessWidget {
                   ? Ink(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        color: colorScheme.tertiaryContainer,
+                        borderRadius: BorderRadius.circular(14),
+                        color: colorScheme.secondaryContainer,
                       ),
                       child: Icon(
                         Icons.music_note,
-                        color: colorScheme.onTertiaryContainer,
+                        color: colorScheme.onSecondaryContainer,
                         size: 20,
                       ),
                     )
                   : Ink(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        color: colorScheme.tertiaryContainer,
+                        borderRadius: BorderRadius.circular(14),
+                        color: colorScheme.secondaryContainer,
                         image: DecorationImage(
                           fit: BoxFit.cover,
                           image: FileImage(

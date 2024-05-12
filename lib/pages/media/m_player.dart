@@ -224,19 +224,19 @@ class MPlayerState extends State<MPlayer> {
                   child: AppStorage().playingCover == null
                       ? Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: colorScheme.tertiaryContainer,
+                            borderRadius: BorderRadius.circular(40),
+                            color: colorScheme.secondaryContainer,
                           ),
                           // padding: const EdgeInsets.all(30),
                           child: Icon(
                             Icons.music_note,
-                            color: colorScheme.onTertiaryContainer,
+                            color: colorScheme.onSecondaryContainer,
                             size: 120,
                           ),
                         )
                       : DecoratedBox(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(40),
                             image: DecorationImage(
                               image:
                                   // FileImage(File(AppStorage().playingCover!)),

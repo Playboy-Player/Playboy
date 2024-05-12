@@ -21,7 +21,7 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.secondary,
             ),
           ),
         ),
@@ -84,7 +84,7 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.secondary,
             ),
           ),
         ),

@@ -15,6 +15,7 @@ class StorageSettingsPage extends StatefulWidget {
 class _StorageSettingsPageState extends State<StorageSettingsPage> {
   @override
   Widget build(BuildContext context) {
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
         body: CustomScrollView(
       slivers: [
@@ -26,7 +27,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).colorScheme.secondary,
               ),
             ),
           ),
@@ -67,7 +68,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).colorScheme.secondary,
               ),
             ),
           ),
@@ -109,8 +110,8 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
           itemBuilder: (context, index) {
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child:
-                  _buildMusicPathCard(AppStorage().settings.musicPaths[index]),
+              child: _buildMusicPathCard(
+                  AppStorage().settings.musicPaths[index], colorScheme),
             );
           },
           itemCount: AppStorage().settings.musicPaths.length,
@@ -152,8 +153,8 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
           itemBuilder: (context, index) {
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child:
-                  _buildVideoPathCard(AppStorage().settings.videoPaths[index]),
+              child: _buildVideoPathCard(
+                  AppStorage().settings.videoPaths[index], colorScheme),
             );
           },
           itemCount: AppStorage().settings.videoPaths.length,
@@ -176,11 +177,8 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
             child: Card(
               elevation: 0,
               shape: RoundedRectangleBorder(
-                side: BorderSide(
-                  color: Theme.of(context).colorScheme.onBackground,
-                ),
-                borderRadius: const BorderRadius.all(Radius.circular(20)),
-              ),
+                  borderRadius: BorderRadius.circular(14)),
+              color: colorScheme.secondaryContainer.withOpacity(0.4),
               child: SizedBox(
                 height: 50,
                 child: Row(
@@ -188,7 +186,12 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                     const SizedBox(
                       width: 10,
                     ),
-                    Text(AppStorage().settings.screenshotPath),
+                    Text(
+                      AppStorage().settings.screenshotPath,
+                      style: TextStyle(
+                        color: colorScheme.onSecondaryContainer,
+                      ),
+                    ),
                     Expanded(
                         child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -203,8 +206,9 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                                 setState(() {});
                               }
                             },
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.edit,
+                              color: colorScheme.onSecondaryContainer,
                             )),
                         const SizedBox(
                           width: 10,
@@ -235,11 +239,8 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
             child: Card(
               elevation: 0,
               shape: RoundedRectangleBorder(
-                side: BorderSide(
-                  color: Theme.of(context).colorScheme.onBackground,
-                ),
-                borderRadius: const BorderRadius.all(Radius.circular(20)),
-              ),
+                  borderRadius: BorderRadius.circular(14)),
+              color: colorScheme.secondaryContainer.withOpacity(0.4),
               child: SizedBox(
                 height: 50,
                 child: Row(
@@ -247,7 +248,12 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                     const SizedBox(
                       width: 10,
                     ),
-                    Text(AppStorage().settings.downloadPath),
+                    Text(
+                      AppStorage().settings.downloadPath,
+                      style: TextStyle(
+                        color: colorScheme.onSecondaryContainer,
+                      ),
+                    ),
                     Expanded(
                         child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -262,8 +268,9 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                                 setState(() {});
                               }
                             },
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.edit,
+                              color: colorScheme.onSecondaryContainer,
                             )),
                         const SizedBox(
                           width: 10,
@@ -284,7 +291,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).colorScheme.secondary,
               ),
             ),
           ),
@@ -316,15 +323,11 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
     ));
   }
 
-  Widget _buildMusicPathCard(String path) {
+  Widget _buildMusicPathCard(String path, ColorScheme colorScheme) {
     return Card(
       elevation: 0,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(
-          color: Theme.of(context).colorScheme.onBackground,
-        ),
-        borderRadius: const BorderRadius.all(Radius.circular(20)),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      color: colorScheme.secondaryContainer.withOpacity(0.4),
       child: SizedBox(
         height: 50,
         child: Row(
@@ -332,7 +335,12 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
             const SizedBox(
               width: 10,
             ),
-            Text(path),
+            Text(
+              path,
+              style: TextStyle(
+                color: colorScheme.onSecondaryContainer,
+              ),
+            ),
             Expanded(
                 child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -341,8 +349,9 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                     onPressed: () {
                       launchUrl(Uri.directory(path));
                     },
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.folder_outlined,
+                      color: colorScheme.onSecondaryContainer,
                     )),
                 IconButton(
                     onPressed: () {
@@ -350,8 +359,9 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                       AppStorage().saveSettings();
                       setState(() {});
                     },
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.delete_outline,
+                      color: colorScheme.onSecondaryContainer,
                     )),
                 const SizedBox(
                   width: 10,
@@ -364,15 +374,11 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
     );
   }
 
-  Widget _buildVideoPathCard(String path) {
+  Widget _buildVideoPathCard(String path, ColorScheme colorScheme) {
     return Card(
       elevation: 0,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(
-          color: Theme.of(context).colorScheme.onBackground,
-        ),
-        borderRadius: const BorderRadius.all(Radius.circular(20)),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      color: colorScheme.secondaryContainer.withOpacity(0.4),
       child: SizedBox(
         height: 50,
         child: Row(
@@ -380,7 +386,12 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
             const SizedBox(
               width: 10,
             ),
-            Text(path),
+            Text(
+              path,
+              style: TextStyle(
+                color: colorScheme.onSecondaryContainer,
+              ),
+            ),
             Expanded(
                 child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -389,8 +400,9 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                     onPressed: () {
                       launchUrl(Uri.directory(path));
                     },
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.folder_outlined,
+                      color: colorScheme.onSecondaryContainer,
                     )),
                 IconButton(
                     onPressed: () {
@@ -398,8 +410,9 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                       AppStorage().saveSettings();
                       setState(() {});
                     },
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.delete_outline,
+                      color: colorScheme.onSecondaryContainer,
                     )),
                 const SizedBox(
                   width: 10,

@@ -30,7 +30,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.secondary,
             ),
           ),
         ),
@@ -73,10 +73,10 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
       height: 120,
       child: AppStorage().settings.logined
           ? Card(
-              // elevation: 0,
-              // color: colorScheme.primaryContainer.withOpacity(0.4),
+              elevation: 0,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20)),
+              color: colorScheme.secondaryContainer.withOpacity(0.4),
               child: InkWell(
                 borderRadius: BorderRadius.circular(20),
                 onTap: () {
@@ -115,10 +115,10 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                 ),
               ))
           : Card(
-              // elevation: 0,
-              // color: colorScheme.primaryContainer.withOpacity(0.4),
+              elevation: 0,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20)),
+              color: colorScheme.secondaryContainer.withOpacity(0.4),
               child: InkWell(
                 borderRadius: BorderRadius.circular(20),
                 onTap: () {

@@ -8,6 +8,7 @@ class DisplaySettingsPage extends StatefulWidget {
   State<StatefulWidget> createState() => _DisplaySettingsPageState();
 }
 
+// TODO: fullscreen scaling settings
 class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.secondary,
             ),
           ),
         ),
@@ -69,7 +70,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.secondary,
             ),
           ),
         ),
@@ -118,7 +119,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.secondary,
             ),
           ),
         ),

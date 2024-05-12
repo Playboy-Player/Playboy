@@ -21,7 +21,7 @@ class ExperimentSettingsState extends State<ExperimentSettings> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).colorScheme.secondary,
               ),
             ),
           ),

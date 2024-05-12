@@ -13,7 +13,7 @@ class AboutPage extends StatefulWidget {
 class _AboutPageState extends State<AboutPage> {
   @override
   Widget build(BuildContext context) {
-    var cs = Theme.of(context).colorScheme;
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
         body: ListView(
       children: [
@@ -24,18 +24,15 @@ class _AboutPageState extends State<AboutPage> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.secondary,
             ),
           ),
         ),
         Card(
-          // elevation: 0,
-          // color:
-          //     Theme.of(context).colorScheme.primaryContainer.withOpacity(0.6),
+          elevation: 0,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          // surfaceTintColor: Colors.transparent,
-          // color: cs.primaryContainer,
+          color: colorScheme.primaryContainer.withOpacity(0.2),
           child: SizedBox(
               height: 200,
               child: Row(
@@ -44,7 +41,7 @@ class _AboutPageState extends State<AboutPage> {
                   Icon(
                     Icons.smart_display,
                     size: 80,
-                    color: cs.onPrimaryContainer,
+                    color: colorScheme.onPrimaryContainer,
                   ),
                   const SizedBox(
                     width: 10,
@@ -60,13 +57,13 @@ class _AboutPageState extends State<AboutPage> {
                         'Playboy',
                         style: TextStyle(
                             fontSize: 40,
-                            color: cs.onPrimaryContainer,
+                            color: colorScheme.onPrimaryContainer,
                             fontWeight: FontWeight.w500),
                       ),
                       Text(
                         ' ${Constants.version}-${Constants.flag}',
                         style: TextStyle(
-                            color: cs.onPrimaryContainer,
+                            color: colorScheme.onPrimaryContainer,
                             fontWeight: FontWeight.w500),
                       )
                     ],
