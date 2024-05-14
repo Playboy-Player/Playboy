@@ -52,6 +52,8 @@ class MikuMiku extends StatelessWidget {
 
 // TODO: make the media control widget in a new window and support pin on top
 // https://docs.google.com/document/d/13E27tD8_9f6lDgwg3MpGNTV8XIRCZH3ByI-t9kI9IUM/edit#heading=h.fygejf72gi1m
+
+// TODO: support drag file to window
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -61,7 +63,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int currentPageIndex = 0;
-  bool showMediaCard = true;
+  bool showMediaCard = false;
   bool miniMode = false;
 
   final playlistPageKey = GlobalKey<NavigatorState>();
@@ -79,10 +81,11 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    bool tabletUI = MediaQuery.of(context).size.width > 500;
+    // bool tabletUI = MediaQuery.of(context).size.width > 500;
+    bool tabletUI = AppStorage().settings.tabletUI;
     late final colorScheme = Theme.of(context).colorScheme;
     late final backgroundColor = Color.alphaBlend(
-        colorScheme.primary.withOpacity(0.08), colorScheme.surface);
+        colorScheme.primary.withOpacity(0.04), colorScheme.surface);
     if (miniMode) {
       return Scaffold(
         body: GestureDetector(
@@ -132,16 +135,35 @@ class _HomeState extends State<Home> {
               windowManager.startDragging();
             },
             child: Row(children: [
-              const Icon(Constants.appIcon),
+              IconButton(
+                  constraints: const BoxConstraints(),
+                  padding: EdgeInsets.zero,
+                  onPressed: () {
+                    if (!context.mounted) return;
+                    Navigator.of(context, rootNavigator: true).push(
+                      MaterialPageRoute(
+                        builder: (context) => const MPlayer(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Constants.appIcon)),
               const SizedBox(
                 width: 10,
               ),
               tabletUI
-                  ? const Text(
-                      Constants.appName,
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                    )
+                  ? StreamBuilder(
+                      stream: AppStorage().playboy.stream.playlist,
+                      builder: ((context, snapshot) {
+                        return Text(
+                          AppStorage().playingTitle == 'Not Playing'
+                              ? Constants.appName
+                              : AppStorage().playingTitle,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        );
+                      }))
                   : const SizedBox(),
             ])),
         actions: [
@@ -154,23 +176,27 @@ class _HomeState extends State<Home> {
                             builder: (context) => const SettingsPage()))
                     .then((value) {
                   AppStorage().updateFilePage();
+                }).then((value) {
+                  setState(() {});
                 });
               },
               icon: const Icon(
                 Symbols.settings_rounded,
                 weight: 500,
               )),
-          IconButton(
-              hoverColor: Colors.transparent,
-              onPressed: () {
-                setState(() {
-                  showMediaCard = !showMediaCard;
-                });
-              },
-              icon: const Icon(
-                Symbols.smart_button_rounded,
-                weight: 500,
-              )),
+          AppStorage().settings.showMediaCard
+              ? IconButton(
+                  hoverColor: Colors.transparent,
+                  onPressed: () {
+                    setState(() {
+                      showMediaCard = !showMediaCard;
+                    });
+                  },
+                  icon: const Icon(
+                    Symbols.branding_watermark_rounded,
+                    weight: 550,
+                  ))
+              : const SizedBox(),
           IconButton(
               hoverColor: Colors.transparent,
               iconSize: 20,

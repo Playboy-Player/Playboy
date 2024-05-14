@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:playboy/pages/search/search_result.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -10,6 +11,8 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPage extends State<SearchPage> {
   bool isSearching = false;
+  TextEditingController controller = TextEditingController();
+  FocusNode inputNode = FocusNode();
   @override
   Widget build(BuildContext context) {
     // late final colorScheme = Theme.of(context).colorScheme;
@@ -35,7 +38,7 @@ class _SearchPage extends State<SearchPage> {
             ),
             pinned: true,
             expandedHeight: 80,
-            collapsedHeight: 65,
+            collapsedHeight: 60,
           ),
           SliverToBoxAdapter(
             child: Padding(
@@ -48,7 +51,8 @@ class _SearchPage extends State<SearchPage> {
                   });
                 },
                 child: TextField(
-                  // autofocus: true,
+                  focusNode: inputNode,
+                  controller: controller,
                   decoration: InputDecoration(
                     prefixIcon: Container(
                       alignment: Alignment.center,
@@ -65,14 +69,13 @@ class _SearchPage extends State<SearchPage> {
                                 weight: 600,
                               ),
                               onPressed: () {
+                                controller.clear();
                                 FocusScope.of(context).unfocus();
-                                // searchController.clear();
-                                // widget.onSearchTextChanged('');
                               },
                             ),
                           )
                         : null,
-                    labelText: '搜索媒体文件 (未完成)',
+                    labelText: '搜索播放列表, 媒体文件...',
                     floatingLabelBehavior: FloatingLabelBehavior.never,
                     border: OutlineInputBorder(
                       borderSide: const BorderSide(
@@ -87,6 +90,21 @@ class _SearchPage extends State<SearchPage> {
                         .secondaryContainer
                         .withOpacity(0.4),
                   ),
+                  onSubmitted: (value) {
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation1, animation2) =>
+                            SearchResultPage(
+                          keyword: value,
+                        ),
+                        transitionDuration: Duration.zero,
+                        reverseTransitionDuration: Duration.zero,
+                      ),
+                    ).then((value) {
+                      inputNode.requestFocus();
+                    });
+                  },
                 ),
               )),
             ),
@@ -95,7 +113,7 @@ class _SearchPage extends State<SearchPage> {
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Text(
-                '最近文件',
+                '最近搜索',
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
               ),
             ),
@@ -124,7 +142,7 @@ class _SearchPage extends State<SearchPage> {
                           width: 10,
                         ),
                         Text(
-                          '没有最近文件',
+                          '没有最近搜索',
                           style: TextStyle(fontSize: 20),
                         ),
                       ]),

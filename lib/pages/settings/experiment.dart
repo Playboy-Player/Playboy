@@ -17,7 +17,7 @@ class ExperimentSettingsState extends State<ExperimentSettings> {
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
-              'bili api',
+              'Dev Settings',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
@@ -26,11 +26,33 @@ class ExperimentSettingsState extends State<ExperimentSettings> {
             ),
           ),
           SwitchListTile(
-            title: const Text('启用 try_look 标识'),
+            title: const Text('Enable dev settings'),
+            value: AppStorage().settings.enableDevSettings,
+            onChanged: (bool value) {
+              setState(() {
+                AppStorage().settings.enableDevSettings = value;
+              });
+              AppStorage().saveSettings();
+              // AppStorage().updateStatus();
+            },
+          ),
+          SwitchListTile(
+            title: const Text('Use try_look flag'),
             value: AppStorage().settings.tryLook,
             onChanged: (bool value) {
               setState(() {
                 AppStorage().settings.tryLook = value;
+              });
+              AppStorage().saveSettings();
+              // AppStorage().updateStatus();
+            },
+          ),
+          SwitchListTile(
+            title: const Text('Tablet UI'),
+            value: AppStorage().settings.tabletUI,
+            onChanged: (bool value) {
+              setState(() {
+                AppStorage().settings.tabletUI = value;
               });
               AppStorage().saveSettings();
               // AppStorage().updateStatus();

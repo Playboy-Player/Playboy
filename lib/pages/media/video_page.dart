@@ -25,6 +25,7 @@ class _VideoPageState extends State<VideoPage> {
   void initState() {
     super.initState();
     _init();
+    gridview = !AppStorage().settings.videoLibListview;
     AppStorage().scanVideo = () async {
       setState(() {
         loaded = false;
@@ -74,7 +75,7 @@ class _VideoPageState extends State<VideoPage> {
             ),
             pinned: true,
             expandedHeight: 80,
-            collapsedHeight: 65,
+            collapsedHeight: 60,
             actions: [
               // Container(
               //   padding: const EdgeInsets.only(top: 10, bottom: 10),

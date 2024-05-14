@@ -54,15 +54,18 @@ class SettingsPageState extends State<SettingsPage> {
     //     colorScheme.primary.withOpacity(0.08), colorScheme.surface);
     return Scaffold(
       appBar: AppBar(
-        // leading: IconButton(
-        //     hoverColor: Colors.transparent,
-        //     onPressed: () {
-        //       Navigator.pop(context);
-        //     },
-        //     icon: const Icon(Symbols.home)),
+        leadingWidth: 40,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          iconSize: 20,
+          constraints: const BoxConstraints(),
+          icon: const Icon(Icons.arrow_back_ios_new),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        titleSpacing: 0,
         scrolledUnderElevation: 0,
-        // automaticallyImplyLeading: false,
-        // backgroundColor: backgroundColor,
         flexibleSpace: GestureDetector(
           behavior: HitTestBehavior.translucent,
           onPanStart: (details) {
@@ -70,17 +73,7 @@ class SettingsPageState extends State<SettingsPage> {
           },
         ),
         toolbarHeight: 40,
-        // title: const Text(
-        //   '设置',
-        //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-        // ),
         actions: [
-          // IconButton(
-          //     hoverColor: Colors.transparent,
-          //     onPressed: () {
-          //       Navigator.pop(context);
-          //     },
-          //     icon: const Icon(Symbols.home)),
           IconButton(
               hoverColor: Colors.transparent,
               iconSize: 20,

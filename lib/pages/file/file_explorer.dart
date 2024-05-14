@@ -6,6 +6,7 @@ import 'package:path/path.dart';
 import 'package:playboy/widgets/file_card.dart';
 import 'package:playboy/widgets/folder_card.dart';
 
+// TODO: open in system file explorer
 class FileExplorer extends StatefulWidget {
   const FileExplorer({super.key, required this.path});
   final String path;
@@ -45,7 +46,17 @@ class FileExplorerState extends State<FileExplorer> {
     String name = basename(widget.path);
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          constraints: const BoxConstraints(),
+          icon: const Icon(Icons.arrow_back_ios_new),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        titleSpacing: 0,
         title: Text(name),
+        scrolledUnderElevation: 0,
       ),
       body: loaded
           ? GridView.builder(

@@ -33,7 +33,7 @@ class FolderCard extends StatelessWidget {
         child: Column(
           children: [
             Expanded(
-              flex: 2,
+              flex: 3,
               child: Ink(
                 width: double.infinity,
                 decoration: BoxDecoration(

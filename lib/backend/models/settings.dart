@@ -6,41 +6,49 @@ part 'settings.g.dart';
 
 @JsonSerializable()
 class AppSettings {
-  //Account Settings;
+  // Account Settings;
   String wbiKey;
   int keyTime;
   bool logined;
 
-  //Display Settings;
+  // Display Settings;
   bool wavySlider;
   bool showMediaCard;
   int initPage;
+  bool playlistListview;
   bool musicLibListview;
   bool videoLibListview;
+  bool searchListview;
+  int defaultSearchOption;
   ThemeMode themeMode;
   int themeCode;
 
   // bool autoRotation;
   // bool globalCopyable;
 
-  //Player Settings
+  // Player Settings
   bool autoPlay;
   bool autoDownload;
   bool defaultMusicMode;
-  //0:ask 1:never 2:always
+  // 0:ask 1:never 2:always
   int continueToPlay;
   // int defaultQuality;
   double volume;
   double speed;
   bool rememberStatus;
-  bool tryLook;
   bool playAfterExit;
 
-  //Storage Settings
+  // Storage Settings
   List<String> videoPaths;
   List<String> musicPaths;
+  List<String> favouritePaths;
   String screenshotPath;
   String downloadPath;
+
+  // Dev Settings
+  bool enableDevSettings;
+  bool tryLook;
+  bool tabletUI;
 
   AppSettings({
     this.wbiKey = "none",
@@ -51,8 +59,11 @@ class AppSettings {
     this.wavySlider = false,
     this.showMediaCard = true,
     this.initPage = 0,
-    this.musicLibListview = true,
-    this.videoLibListview = true,
+    this.playlistListview = false,
+    this.musicLibListview = false,
+    this.videoLibListview = false,
+    this.searchListview = false,
+    this.defaultSearchOption = 0,
     // this.autoRotation = false,
     // this.globalCopyable = false,
     this.autoPlay = true,
@@ -62,12 +73,15 @@ class AppSettings {
     this.volume = 100,
     this.speed = 1,
     this.rememberStatus = true,
-    this.tryLook = true,
     this.playAfterExit = true,
     this.videoPaths = const [],
     this.musicPaths = const [],
+    this.favouritePaths = const [],
     this.screenshotPath = '',
     this.downloadPath = '',
+    this.enableDevSettings = false,
+    this.tabletUI = true,
+    this.tryLook = true,
   });
 
   factory AppSettings.fromJson(Map<String, dynamic> json) =>

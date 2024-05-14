@@ -43,7 +43,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
           },
         ),
         SwitchListTile(
-          title: const Text('启动时显示媒体控制卡片'),
+          title: const Text('应用内显示媒体控制卡片'),
           value: AppStorage().settings.showMediaCard,
           onChanged: (bool value) {
             setState(() {
@@ -53,24 +53,204 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
           },
         ),
         // TODO: ui settings
-        // const ListTile(
-        //   leading: Icon(Icons.home_filled),
-        //   title: Text('初始页面'),
-        // ),
-        // const ListTile(
-        //   title: Text('音乐库默认视图'),
-        // ),
-        // const ListTile(
-        //   title: Text('视频库默认视图'),
-        // ),
-        Container(
-          padding: const EdgeInsets.all(12),
-          child: Text(
-            '主题模式',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.secondary,
+        ListTile(
+          title: const Text('初始页面'),
+          trailing: SizedBox(
+            height: 44,
+            width: 150,
+            child: DropdownButtonFormField(
+              borderRadius: BorderRadius.circular(16),
+              decoration: InputDecoration(
+                isDense: true,
+                filled: true,
+                border: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    width: 0,
+                    style: BorderStyle.none,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                fillColor: Theme.of(context).colorScheme.secondaryContainer,
+              ),
+              value: AppStorage().settings.initPage,
+              items: const [
+                DropdownMenuItem(
+                  value: 0,
+                  child: Row(
+                    children: [
+                      Icon(Icons.web_stories_outlined),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text('播放列表'),
+                    ],
+                  ),
+                ),
+                DropdownMenuItem(
+                  value: 1,
+                  child: Row(
+                    children: [
+                      Icon(Icons.music_note_outlined),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text('音乐'),
+                    ],
+                  ),
+                ),
+                DropdownMenuItem(
+                  value: 2,
+                  child: Row(
+                    children: [
+                      Icon(Icons.movie_filter_outlined),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text('视频'),
+                    ],
+                  ),
+                ),
+                DropdownMenuItem(
+                  value: 3,
+                  child: Row(
+                    children: [
+                      Icon(Icons.folder_outlined),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text('文件'),
+                    ],
+                  ),
+                ),
+                DropdownMenuItem(
+                  value: 4,
+                  child: Row(
+                    children: [
+                      Icon(Icons.search),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text('搜索'),
+                    ],
+                  ),
+                ),
+              ],
+              onChanged: (value) {
+                AppStorage().settings.initPage = value!;
+                AppStorage().saveSettings();
+              },
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 4,
+        ),
+        ListTile(
+          title: const Text('音乐库默认视图'),
+          trailing: SizedBox(
+            height: 44,
+            width: 150,
+            child: DropdownButtonFormField(
+              borderRadius: BorderRadius.circular(16),
+              decoration: InputDecoration(
+                isDense: true,
+                filled: true,
+                border: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    width: 0,
+                    style: BorderStyle.none,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                fillColor: Theme.of(context).colorScheme.secondaryContainer,
+              ),
+              value: AppStorage().settings.musicLibListview,
+              items: const [
+                DropdownMenuItem(
+                  value: false,
+                  child: Row(
+                    children: [
+                      Icon(Icons.calendar_view_month),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text('网格'),
+                    ],
+                  ),
+                ),
+                DropdownMenuItem(
+                  value: true,
+                  child: Row(
+                    children: [
+                      Icon(Icons.view_agenda_outlined),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text('列表'),
+                    ],
+                  ),
+                ),
+              ],
+              onChanged: (value) {
+                AppStorage().settings.musicLibListview = value!;
+                AppStorage().saveSettings();
+              },
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 4,
+        ),
+        ListTile(
+          title: const Text('视频库默认视图'),
+          trailing: SizedBox(
+            height: 44,
+            width: 150,
+            child: DropdownButtonFormField(
+              borderRadius: BorderRadius.circular(16),
+              decoration: InputDecoration(
+                isDense: true,
+                filled: true,
+                border: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    width: 0,
+                    style: BorderStyle.none,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                fillColor: Theme.of(context).colorScheme.secondaryContainer,
+              ),
+              value: AppStorage().settings.videoLibListview,
+              items: const [
+                DropdownMenuItem(
+                  value: false,
+                  child: Row(
+                    children: [
+                      Icon(Icons.calendar_view_month),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text('网格'),
+                    ],
+                  ),
+                ),
+                DropdownMenuItem(
+                  value: true,
+                  child: Row(
+                    children: [
+                      Icon(Icons.view_agenda_outlined),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text('列表'),
+                    ],
+                  ),
+                ),
+              ],
+              onChanged: (value) {
+                AppStorage().settings.videoLibListview = value!;
+                AppStorage().saveSettings();
+              },
             ),
           ),
         ),
@@ -115,7 +295,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
         Container(
           padding: const EdgeInsets.all(12),
           child: Text(
-            '颜色',
+            '主题颜色',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w500,

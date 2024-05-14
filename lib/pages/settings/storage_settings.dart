@@ -79,7 +79,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
             child: Row(
               children: [
                 const Text(
-                  '音乐库路径',
+                  '音乐文件夹',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -110,8 +110,8 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
           itemBuilder: (context, index) {
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: _buildMusicPathCard(
-                  AppStorage().settings.musicPaths[index], colorScheme),
+              child: _buildPathCard(AppStorage().settings.musicPaths[index],
+                  colorScheme, AppStorage().settings.musicPaths),
             );
           },
           itemCount: AppStorage().settings.musicPaths.length,
@@ -122,7 +122,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
             child: Row(
               children: [
                 const Text(
-                  '视频库路径',
+                  '视频文件夹',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -153,8 +153,8 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
           itemBuilder: (context, index) {
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: _buildVideoPathCard(
-                  AppStorage().settings.videoPaths[index], colorScheme),
+              child: _buildPathCard(AppStorage().settings.videoPaths[index],
+                  colorScheme, AppStorage().settings.videoPaths),
             );
           },
           itemCount: AppStorage().settings.videoPaths.length,
@@ -162,8 +162,51 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
         SliverToBoxAdapter(
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: Row(
+              children: [
+                const Text(
+                  '收藏夹',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Expanded(
+                    child: Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton.icon(
+                    onPressed: () async {
+                      var res = await FilePicker.platform
+                          .getDirectoryPath(lockParentWindow: true);
+                      if (res != null) {
+                        AppStorage().settings.favouritePaths.add(res);
+                        AppStorage().saveSettings();
+                        setState(() {});
+                      }
+                    },
+                    icon: const Icon(Icons.add),
+                    label: const Text('添加'),
+                  ),
+                )),
+              ],
+            ),
+          ),
+        ),
+        SliverList.builder(
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: _buildPathCard(AppStorage().settings.favouritePaths[index],
+                  colorScheme, AppStorage().settings.favouritePaths),
+            );
+          },
+          itemCount: AppStorage().settings.favouritePaths.length,
+        ),
+        SliverToBoxAdapter(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             child: const Text(
-              '截图路径',
+              '截图文件夹',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
@@ -225,7 +268,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             child: const Text(
-              '下载路径',
+              '下载文件夹',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
@@ -323,7 +366,8 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
     ));
   }
 
-  Widget _buildMusicPathCard(String path, ColorScheme colorScheme) {
+  Widget _buildPathCard(
+      String path, ColorScheme colorScheme, List<String> dst) {
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
@@ -355,58 +399,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                     )),
                 IconButton(
                     onPressed: () {
-                      AppStorage().settings.musicPaths.remove(path);
-                      AppStorage().saveSettings();
-                      setState(() {});
-                    },
-                    icon: Icon(
-                      Icons.delete_outline,
-                      color: colorScheme.onSecondaryContainer,
-                    )),
-                const SizedBox(
-                  width: 10,
-                )
-              ],
-            ))
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildVideoPathCard(String path, ColorScheme colorScheme) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      color: colorScheme.secondaryContainer.withOpacity(0.4),
-      child: SizedBox(
-        height: 50,
-        child: Row(
-          children: [
-            const SizedBox(
-              width: 10,
-            ),
-            Text(
-              path,
-              style: TextStyle(
-                color: colorScheme.onSecondaryContainer,
-              ),
-            ),
-            Expanded(
-                child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                    onPressed: () {
-                      launchUrl(Uri.directory(path));
-                    },
-                    icon: Icon(
-                      Icons.folder_outlined,
-                      color: colorScheme.onSecondaryContainer,
-                    )),
-                IconButton(
-                    onPressed: () {
-                      AppStorage().settings.videoPaths.remove(path);
+                      dst.remove(path);
                       AppStorage().saveSettings();
                       setState(() {});
                     },

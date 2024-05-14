@@ -24,6 +24,7 @@ class _MusicPageState extends State<MusicPage> {
   void initState() {
     super.initState();
     _init();
+    gridview = !AppStorage().settings.musicLibListview;
     AppStorage().scanMusic = () async {
       setState(() {
         loaded = false;
@@ -73,7 +74,7 @@ class _MusicPageState extends State<MusicPage> {
             ),
             pinned: true,
             expandedHeight: 80,
-            collapsedHeight: 65,
+            collapsedHeight: 60,
             actions: [
               // Container(
               //   padding: const EdgeInsets.only(top: 10, bottom: 10),

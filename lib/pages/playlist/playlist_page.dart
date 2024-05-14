@@ -62,7 +62,7 @@ class PlaylistState extends State<PlaylistPage> {
             ),
             pinned: true,
             expandedHeight: 80,
-            collapsedHeight: 65,
+            collapsedHeight: 60,
             actions: [
               Padding(
                 padding: const EdgeInsets.only(top: 10, bottom: 10),

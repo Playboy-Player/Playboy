@@ -50,7 +50,7 @@ class MPlayerState extends State<MPlayer> {
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
     late final backgroundColor = Color.alphaBlend(
-        colorScheme.primary.withOpacity(0.08), colorScheme.surface);
+        colorScheme.primary.withOpacity(0.04), colorScheme.surface);
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: _buildTitlebar(backgroundColor),
@@ -123,6 +123,16 @@ class MPlayerState extends State<MPlayer> {
 
   PreferredSizeWidget _buildTitlebar(Color backgroundColor) {
     return AppBar(
+      automaticallyImplyLeading: false,
+      // TODO: build home page when open file from system file explorer
+      leading: IconButton(
+        constraints: const BoxConstraints(),
+        icon: const Icon(Icons.arrow_back_ios_new),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
+      titleSpacing: 0,
       toolbarHeight: 50,
       flexibleSpace: GestureDetector(
         behavior: HitTestBehavior.translucent,

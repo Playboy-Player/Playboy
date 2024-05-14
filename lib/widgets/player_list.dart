@@ -19,7 +19,7 @@ class PlayerListCard extends StatelessWidget {
             child: AspectRatio(
               aspectRatio: 1,
               child: info.cover == null
-                  ? Ink(
+                  ? Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(14),
@@ -31,7 +31,7 @@ class PlayerListCard extends StatelessWidget {
                         size: 20,
                       ),
                     )
-                  : Ink(
+                  : Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(14),
