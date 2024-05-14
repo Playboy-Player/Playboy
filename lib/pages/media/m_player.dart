@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
 import 'package:path/path.dart' as p;
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
@@ -32,6 +31,7 @@ class MPlayerState extends State<MPlayer> {
 
   bool menuExpanded = false;
   bool videoMode = !AppStorage().settings.defaultMusicMode;
+  int curPanel = 0;
 
   @override
   void initState() {
@@ -159,20 +159,49 @@ class MPlayerState extends State<MPlayer> {
           : const SizedBox(),
       actions: [
         IconButton(
-          isSelected: menuExpanded,
+          icon: const Icon(Icons.lyrics_outlined),
+          onPressed: () {
+            if (!menuExpanded) {
+              setState(() {
+                menuExpanded = true;
+                curPanel = 0;
+              });
+            } else if (curPanel == 0) {
+              setState(() {
+                menuExpanded = false;
+              });
+            } else {
+              setState(() {
+                curPanel = 0;
+              });
+            }
+          },
+        ),
+        IconButton(
           icon: const Icon(
-            Symbols.right_panel_open,
-            weight: 550,
-          ),
-          selectedIcon: const Icon(
-            Symbols.right_panel_close,
+            Icons.menu,
             weight: 550,
           ),
           onPressed: () {
-            setState(() {
-              menuExpanded = !menuExpanded;
-            });
+            if (!menuExpanded) {
+              setState(() {
+                menuExpanded = true;
+                curPanel = 1;
+              });
+            } else if (curPanel == 1) {
+              setState(() {
+                menuExpanded = false;
+              });
+            } else {
+              setState(() {
+                curPanel = 1;
+              });
+            }
           },
+        ),
+        IconButton(
+          icon: const Icon(Icons.more_vert),
+          onPressed: () {},
         ),
         IconButton(
             hoverColor: Colors.transparent,
@@ -208,9 +237,11 @@ class MPlayerState extends State<MPlayer> {
 
   Widget _buildPlayer(ColorScheme colorScheme) {
     return ClipRRect(
-        borderRadius: const BorderRadius.all(Radius.circular(25)),
+      borderRadius: const BorderRadius.all(Radius.circular(25)),
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 200),
         child: videoMode
-            ? Container(
+            ? ColoredBox(
                 color: Colors.black,
                 child: Center(
                   child: Video(
@@ -219,46 +250,49 @@ class MPlayerState extends State<MPlayer> {
                     subtitleViewConfiguration:
                         const SubtitleViewConfiguration(visible: false),
                   ),
-                )
-                // const Center(
-                //     child: CircularProgressIndicator(),
-                //   )
-                ,
+                ),
               )
             : Container(
                 padding: const EdgeInsets.only(
                     top: 50, left: 50, right: 50, bottom: 75),
                 alignment: Alignment.center,
-                child: AspectRatio(
-                  aspectRatio: 1,
-                  child: AppStorage().playingCover == null
-                      ? Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(40),
-                            color: colorScheme.secondaryContainer,
-                          ),
-                          // padding: const EdgeInsets.all(30),
-                          child: Icon(
-                            Icons.music_note,
-                            color: colorScheme.onSecondaryContainer,
-                            size: 120,
-                          ),
-                        )
-                      : DecoratedBox(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(40),
-                            image: DecorationImage(
-                              image:
-                                  // FileImage(File(AppStorage().playingCover!)),
-                                  UniImageProvider(
-                                          url: AppStorage().playingCover!)
-                                      .getImage(),
-                              fit: BoxFit.cover,
+                child: StreamBuilder(
+                  stream: AppStorage().playboy.stream.playlist,
+                  builder: (context, snapshot) {
+                    return AspectRatio(
+                      aspectRatio: 1,
+                      child: AppStorage().playingCover == null
+                          ? Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(40),
+                                color: colorScheme.secondaryContainer,
+                              ),
+                              // padding: const EdgeInsets.all(30),
+                              child: Icon(
+                                Icons.music_note,
+                                color: colorScheme.onSecondaryContainer,
+                                size: 120,
+                              ),
+                            )
+                          : DecoratedBox(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(40),
+                                image: DecorationImage(
+                                  image:
+                                      // FileImage(File(AppStorage().playingCover!)),
+                                      UniImageProvider(
+                                              url: AppStorage().playingCover!)
+                                          .getImage(),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
+                    );
+                  },
                 ),
-              ));
+              ),
+      ),
+    );
   }
 
   Widget _buildSeekbar() {
@@ -311,130 +345,13 @@ class MPlayerState extends State<MPlayer> {
     );
   }
 
-  Widget _buildSidePanel(ColorScheme colorScheme, Color backgroundColor) {
-    return ClipRRect(
-        borderRadius: const BorderRadius.all(Radius.circular(25)),
-        child: DefaultTabController(
-          initialIndex: 1,
-          length: 2,
-          child: Scaffold(
-            backgroundColor:
-                videoMode ? colorScheme.background : backgroundColor,
-            appBar: TabBar(
-              tabs: <Widget>[
-                Tab(
-                  icon: Icon(videoMode
-                      ? Icons.subtitles_outlined
-                      : Icons.lyrics_outlined),
-                ),
-                const Tab(
-                  icon: Icon(Icons.menu),
-                ),
-              ],
-            ),
-            body: TabBarView(
-              children: <Widget>[
-                Center(
-                  child: Column(
-                    children: [
-                      const SizedBox(
-                        height: 50,
-                      ),
-                      Icon(
-                        Icons.code,
-                        size: 50,
-                        color: colorScheme.onPrimaryContainer,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        "subtitle/lyric support is developing",
-                        style: TextStyle(color: colorScheme.onPrimaryContainer),
-                      ),
-                    ],
-                  ),
-                ),
-                StreamBuilder(
-                    stream: AppStorage().playboy.stream.playlist,
-                    builder: (context, snapshot) {
-                      return ListView.builder(
-                        itemBuilder: (BuildContext context, int index) {
-                          var src = AppStorage()
-                              .playboy
-                              .state
-                              .playlist
-                              .medias[index]
-                              .uri;
-                          return SizedBox(
-                            height: 46,
-                            child: Row(
-                              children: [
-                                const SizedBox(
-                                  width: 4,
-                                ),
-                                Expanded(
-                                  child: InkWell(
-                                    borderRadius: BorderRadius.circular(20),
-                                    onTap: () {
-                                      AppStorage().playboy.jump(index);
-                                    },
-                                    child: PlayerListCard(
-                                      info: PlayItem(
-                                        source: src,
-                                        cover: null,
-                                        title: p.basenameWithoutExtension(src),
-                                      ),
-                                      isPlaying:
-                                          index == AppStorage().playingIndex,
-                                    ),
-                                  ),
-                                ),
-                                IconButton(
-                                    onPressed: () {
-                                      var len = AppStorage()
-                                          .playboy
-                                          .state
-                                          .playlist
-                                          .medias
-                                          .length;
-                                      if (index == AppStorage().playingIndex) {
-                                        if (len == 1) {
-                                          AppStorage().closeMedia();
-                                        } else if (len - 1 == index) {
-                                          AppStorage().playboy.previous();
-                                        } else {
-                                          AppStorage().playboy.next();
-                                        }
-                                      }
-                                      AppStorage().playboy.remove(index);
-                                      setState(() {});
-                                    },
-                                    icon: const Icon(Icons.close)),
-                                const SizedBox(
-                                  width: 4,
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                        itemCount:
-                            AppStorage().playboy.state.playlist.medias.length,
-                      );
-                    }),
-              ],
-            ),
-          ),
-        ));
-  }
-
   Widget _buildControlbar(ColorScheme colorScheme) {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       Expanded(
         child: Row(
           children: [
             AnimatedContainer(
-              duration: const Duration(milliseconds: 50),
+              duration: const Duration(milliseconds: 100),
               width: videoMode ? 16 : 32,
             ),
             IconButton(
@@ -641,11 +558,147 @@ class MPlayerState extends State<MPlayer> {
                   ? Icons.flash_off
                   : Icons.flash_on)),
           AnimatedContainer(
-            duration: const Duration(milliseconds: 50),
+            duration: const Duration(milliseconds: 100),
             width: videoMode ? 16 : 32,
           ),
         ],
       )),
     ]);
+  }
+
+  Widget _buildSidePanel(ColorScheme colorScheme, Color backgroundColor) {
+    return ClipRRect(
+      borderRadius: const BorderRadius.all(Radius.circular(25)),
+      child: [
+        _buildSubtitlePanel(colorScheme, backgroundColor),
+        _buildPlaylistPanel(colorScheme, backgroundColor),
+      ][curPanel],
+    );
+  }
+
+  Widget _buildPlaylistPanel(ColorScheme colorScheme, Color backgroundColor) {
+    return Scaffold(
+      backgroundColor: videoMode ? colorScheme.background : backgroundColor,
+      appBar: AppBar(
+        backgroundColor: videoMode ? colorScheme.background : backgroundColor,
+        automaticallyImplyLeading: false,
+        toolbarHeight: 46,
+        titleSpacing: videoMode ? null : 8,
+        scrolledUnderElevation: 0,
+        title: Text(
+          '播放列表',
+          style: TextStyle(color: colorScheme.primary),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                menuExpanded = false;
+              });
+            },
+            icon: Icon(
+              Icons.close,
+              color: colorScheme.primary,
+            ),
+          ),
+          const SizedBox(
+            width: 4,
+          ),
+        ],
+      ),
+      body: StreamBuilder(
+          stream: AppStorage().playboy.stream.playlist,
+          builder: (context, snapshot) {
+            return ListView.builder(
+              itemBuilder: (BuildContext context, int index) {
+                var src = AppStorage().playboy.state.playlist.medias[index].uri;
+                return SizedBox(
+                  height: 46,
+                  child: Row(
+                    children: [
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      Expanded(
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(20),
+                          onTap: () {
+                            AppStorage().playboy.jump(index);
+                          },
+                          child: PlayerListCard(
+                            info: PlayItem(
+                              source: src,
+                              cover: null,
+                              title: p.basenameWithoutExtension(src),
+                            ),
+                            isPlaying: index == AppStorage().playingIndex,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                          onPressed: () {
+                            var len = AppStorage()
+                                .playboy
+                                .state
+                                .playlist
+                                .medias
+                                .length;
+                            if (index == AppStorage().playingIndex) {
+                              if (len == 1) {
+                                AppStorage().closeMedia();
+                              } else if (len - 1 == index) {
+                                AppStorage().playboy.previous();
+                              } else {
+                                AppStorage().playboy.next();
+                              }
+                            }
+                            AppStorage().playboy.remove(index);
+                            setState(() {});
+                          },
+                          icon: const Icon(Icons.close)),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                    ],
+                  ),
+                );
+              },
+              itemCount: AppStorage().playboy.state.playlist.medias.length,
+            );
+          }),
+    );
+  }
+
+  Widget _buildSubtitlePanel(ColorScheme colorScheme, Color backgroundColor) {
+    return Scaffold(
+      backgroundColor: videoMode ? colorScheme.background : backgroundColor,
+      appBar: AppBar(
+        backgroundColor: videoMode ? colorScheme.background : backgroundColor,
+        automaticallyImplyLeading: false,
+        toolbarHeight: 46,
+        titleSpacing: videoMode ? null : 8,
+        scrolledUnderElevation: 0,
+        title: Text(
+          '字幕',
+          style: TextStyle(color: colorScheme.primary),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                menuExpanded = false;
+              });
+            },
+            icon: Icon(
+              Icons.close,
+              color: colorScheme.primary,
+            ),
+          ),
+          const SizedBox(
+            width: 4,
+          ),
+        ],
+      ),
+    );
   }
 }
