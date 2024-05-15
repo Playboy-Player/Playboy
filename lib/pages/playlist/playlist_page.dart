@@ -8,6 +8,7 @@ import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/pages/playlist/playlist_detail.dart';
 
+// TODO: smart playlist: all music/movie
 class PlaylistPage extends StatefulWidget {
   const PlaylistPage({super.key});
 
@@ -27,6 +28,7 @@ class PlaylistState extends State<PlaylistPage> {
   }
 
   void _init() async {
+    gridview = !AppStorage().settings.playlistListview;
     AppStorage().playlists.clear();
     AppStorage().playlists.addAll(await LibraryHelper.loadPlaylists());
     if (!mounted) return;
@@ -210,9 +212,6 @@ class PlaylistState extends State<PlaylistPage> {
                                     child: MenuAnchor(
                                       controller: menuController,
                                       style: MenuStyle(
-                                        surfaceTintColor:
-                                            const MaterialStatePropertyAll(
-                                                Colors.transparent),
                                         shape: MaterialStatePropertyAll(
                                           RoundedRectangleBorder(
                                             borderRadius:
@@ -224,33 +223,68 @@ class PlaylistState extends State<PlaylistPage> {
                                         MenuItemButton(
                                           leadingIcon: const Icon(
                                               Icons.play_arrow_outlined),
-                                          child: const Text('播放'),
+                                          trailingIcon: const SizedBox(
+                                            width: 4,
+                                          ),
+                                          child: const Text('顺序播放'),
                                           onPressed: () {
                                             AppStorage().closeMedia();
                                             AppStorage().openPlaylist(
-                                                AppStorage().playlists[index]);
+                                                AppStorage().playlists[index],
+                                                false);
                                           },
                                         ),
                                         MenuItemButton(
-                                          leadingIcon: const Icon(
-                                              Icons.add_circle_outline),
-                                          child: const Text('追加到当前列表'),
+                                          leadingIcon:
+                                              const Icon(Icons.shuffle),
+                                          trailingIcon: const SizedBox(
+                                            width: 4,
+                                          ),
+                                          child: const Text('随机播放'),
                                           onPressed: () {
-                                            // TODO: append
+                                            AppStorage().closeMedia();
+                                            AppStorage().openPlaylist(
+                                                AppStorage().playlists[index],
+                                                true);
+                                          },
+                                        ),
+                                        // TODO: append
+                                        // MenuItemButton(
+                                        //   leadingIcon: const Icon(
+                                        //       Icons.add_circle_outline),
+                                        //   child: const Text('追加到当前列表'),
+                                        //   onPressed: () {
+                                        //   },
+                                        // ),
+                                        MenuItemButton(
+                                          leadingIcon: const Icon(
+                                              Icons.design_services_outlined),
+                                          trailingIcon: const SizedBox(
+                                            width: 4,
+                                          ),
+                                          child: const Text('修改封面'),
+                                          onPressed: () {
+                                            //TODO: edit cover
                                           },
                                         ),
                                         MenuItemButton(
                                           leadingIcon: const Icon(
                                               Icons.drive_file_rename_outline),
+                                          trailingIcon: const SizedBox(
+                                            width: 4,
+                                          ),
                                           child: const Text('重命名'),
                                           onPressed: () {
                                             //TODO: rename
                                           },
                                         ),
                                         MenuItemButton(
-                                          leadingIcon: const Icon(
+                                          leadingIcon: Icon(
                                             Icons.delete_outline,
-                                            color: Colors.red,
+                                            color: colorScheme.error,
+                                          ),
+                                          trailingIcon: const SizedBox(
+                                            width: 4,
                                           ),
                                           child: const Text('删除'),
                                           onPressed: () {
@@ -445,7 +479,7 @@ class PlaylistState extends State<PlaylistPage> {
             child: IconButton.filledTonal(
               tooltip: '播放',
               onPressed: () {
-                AppStorage().openPlaylist(AppStorage().playlists[index]);
+                AppStorage().openPlaylist(AppStorage().playlists[index], false);
               },
               icon: const Icon(Icons.play_arrow),
             ),

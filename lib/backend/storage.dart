@@ -13,30 +13,27 @@ import 'package:playboy/backend/models/settings.dart';
 
 // TODO: auto create screenshot and download folder
 class AppStorage extends ChangeNotifier {
+  late final String dataPath;
   late AppSettings settings;
-  List<PlaylistItem> playlists = [];
-  int playingIndex = 0;
 
   late Function() updateFilePage;
-  late Function() scanMusic;
-  late Function() scanVideo;
+  late Function() updateMusicPage;
+  late Function() updateVideoPage;
 
   late final Player playboy;
   late final VideoController controller;
 
   String? playingCover;
   String playingTitle = 'Not Playing';
+  List<PlaylistItem> playlists = [];
+  int playingIndex = 0;
+  bool loop = false;
+  bool shuffle = false;
   Duration position = const Duration();
   Duration duration = const Duration();
   bool playing = false;
-
-  bool loop = false;
-  bool shuffle = false;
-
   bool seeking = false;
   double seekingPos = 0;
-
-  String dataPath = '';
 
   static final AppStorage _instance = AppStorage._internal();
   factory AppStorage() => _instance;
@@ -131,11 +128,7 @@ class AppStorage extends ChangeNotifier {
 
   void openMedia(PlayItem media) {
     if (!settings.rememberStatus) {
-      playboy.setVolume(100);
-      playboy.setRate(1);
-      settings.volume = 100;
-      settings.speed = 1;
-      saveSettings();
+      resetPlayerStatus();
     }
     duration = Duration.zero;
     position = Duration.zero;
@@ -148,51 +141,38 @@ class AppStorage extends ChangeNotifier {
     shuffle = false;
   }
 
-  void openPlaylist(PlaylistItem pl) {
-    if (pl.items.isEmpty) {
+  void openPlaylist(PlaylistItem playlistItem, bool shuffleList) {
+    if (playlistItem.items.isEmpty) {
       return;
     }
     if (!settings.rememberStatus) {
-      playboy.setVolume(100);
-      playboy.setRate(1);
-      settings.volume = 100;
-      settings.speed = 1;
-      saveSettings();
+      resetPlayerStatus();
     }
     duration = Duration.zero;
     position = Duration.zero;
-    playboy.open(LibraryHelper.convertToPlaylist(pl),
-        play: AppStorage().settings.autoPlay);
+    if (shuffleList) {
+      playboy.open(LibraryHelper.convertToPlaylist(playlistItem), play: false);
+      playboy.setShuffle(true);
+      playboy.jump(0);
+      if (AppStorage().settings.autoPlay) {
+        playboy.play();
+      }
+    } else {
+      playboy.open(LibraryHelper.convertToPlaylist(playlistItem),
+          play: AppStorage().settings.autoPlay);
+    }
     position = Duration.zero;
     duration = Duration.zero;
-    playingTitle = basenameWithoutExtension(pl.items[0].title);
-    playingCover = pl.items[0].cover;
-    shuffle = false;
+    playingTitle = basenameWithoutExtension(playlistItem.items.first.title);
+    playingCover = playlistItem.items.first.cover;
+    shuffle = shuffleList;
   }
 
-  void openPlaylistShuffle(PlaylistItem pl) {
-    if (pl.items.isEmpty) {
-      return;
-    }
-    if (!settings.rememberStatus) {
-      playboy.setVolume(100);
-      playboy.setRate(1);
-      settings.volume = 100;
-      settings.speed = 1;
-      saveSettings();
-    }
-    duration = Duration.zero;
-    position = Duration.zero;
-    playboy.open(LibraryHelper.convertToPlaylist(pl), play: false);
-    playboy.setShuffle(true);
-    playboy.jump(0);
-    if (AppStorage().settings.autoPlay) {
-      playboy.play();
-    }
-    position = Duration.zero;
-    duration = Duration.zero;
-    playingTitle = basenameWithoutExtension(pl.items[0].title);
-    playingCover = pl.items[0].cover;
-    shuffle = true;
+  void resetPlayerStatus() {
+    playboy.setVolume(100);
+    playboy.setRate(1);
+    settings.volume = 100;
+    settings.speed = 1;
+    saveSettings();
   }
 }

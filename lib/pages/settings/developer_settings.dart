@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/storage.dart';
 
-class ExperimentSettings extends StatefulWidget {
-  const ExperimentSettings({super.key});
+class DeveloperSettings extends StatefulWidget {
+  const DeveloperSettings({super.key});
 
   @override
-  State<ExperimentSettings> createState() => ExperimentSettingsState();
+  State<DeveloperSettings> createState() => DeveloperSettingsState();
 }
 
-class ExperimentSettingsState extends State<ExperimentSettings> {
+class DeveloperSettingsState extends State<DeveloperSettings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,7 +17,7 @@ class ExperimentSettingsState extends State<ExperimentSettings> {
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
-              'Dev Settings',
+              'Developer Settings',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
@@ -26,7 +26,7 @@ class ExperimentSettingsState extends State<ExperimentSettings> {
             ),
           ),
           SwitchListTile(
-            title: const Text('Enable dev settings'),
+            title: const Text('Enable developer settings'),
             value: AppStorage().settings.enableDevSettings,
             onChanged: (bool value) {
               setState(() {

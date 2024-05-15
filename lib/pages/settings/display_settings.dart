@@ -13,16 +13,12 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // appBar: AppBar(
-        //   automaticallyImplyLeading: false,
-        //   title: const Text("外观"),
-        // ),
         body: ListView(
       children: [
         Container(
           padding: const EdgeInsets.all(12),
           child: Text(
-            '界面',
+            '界面设置',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w500,
@@ -137,6 +133,63 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
               ],
               onChanged: (value) {
                 AppStorage().settings.initPage = value!;
+                AppStorage().saveSettings();
+              },
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 4,
+        ),
+        // TODO: use segment button
+        ListTile(
+          title: const Text('播放列表默认视图'),
+          trailing: SizedBox(
+            height: 44,
+            width: 150,
+            child: DropdownButtonFormField(
+              borderRadius: BorderRadius.circular(16),
+              decoration: InputDecoration(
+                isDense: true,
+                filled: true,
+                border: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    width: 0,
+                    style: BorderStyle.none,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                fillColor: Theme.of(context).colorScheme.secondaryContainer,
+              ),
+              value: AppStorage().settings.playlistListview,
+              items: const [
+                DropdownMenuItem(
+                  value: false,
+                  child: Row(
+                    children: [
+                      Icon(Icons.calendar_view_month),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text('网格'),
+                    ],
+                  ),
+                ),
+                DropdownMenuItem(
+                  value: true,
+                  child: Row(
+                    children: [
+                      Icon(Icons.view_agenda_outlined),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text('列表'),
+                    ],
+                  ),
+                ),
+              ],
+              onChanged: (value) {
+                AppStorage().settings.playlistListview = value!;
                 AppStorage().saveSettings();
               },
             ),

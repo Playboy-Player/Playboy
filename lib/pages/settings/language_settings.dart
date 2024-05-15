@@ -16,7 +16,7 @@ class _LanguageSettinsPageState extends State<LanguageSettinsPage> {
         Container(
           padding: const EdgeInsets.all(12),
           child: Text(
-            '界面语言 (未完成)',
+            '显示语言 (未完成)',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w500,

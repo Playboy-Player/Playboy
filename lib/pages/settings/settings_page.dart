@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:playboy/pages/settings/about_app.dart';
-import 'package:playboy/pages/settings/account_setting.dart';
+import 'package:playboy/pages/settings/extension_settings.dart';
 import 'package:playboy/pages/settings/display_settings.dart';
 import 'package:playboy/pages/settings/language_settings.dart';
 import 'package:playboy/pages/settings/player_settings.dart';
 import 'package:playboy/pages/settings/storage_settings.dart';
-import 'package:playboy/pages/settings/experiment.dart';
+import 'package:playboy/pages/settings/developer_settings.dart';
 import 'package:window_manager/window_manager.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -20,31 +20,31 @@ class SettingsPage extends StatefulWidget {
 class SettingsPageState extends State<SettingsPage> {
   int currentPage = 0;
   List<IconData> icons = [
-    Icons.account_circle_outlined,
     Icons.color_lens_outlined,
     Icons.play_circle_outline,
     Icons.folder_outlined,
     Icons.translate_rounded,
+    Icons.extension_outlined,
     Icons.info_outline,
-    Icons.code
+    Icons.build_outlined,
   ];
   List<String> options = [
-    '账号',
     '外观',
     '播放器',
     '文件',
     '语言',
+    '扩展',
     '关于',
-    '测试',
+    '开发者',
   ];
   List<Widget> pages = [
-    const AccountSettingsPage(),
     const DisplaySettingsPage(),
     const PlayerSettingsPage(),
     const StorageSettingsPage(),
     const LanguageSettinsPage(),
+    const ExtensionSettings(),
     const AboutPage(),
-    const ExperimentSettings(),
+    const DeveloperSettings(),
   ];
 
   @override

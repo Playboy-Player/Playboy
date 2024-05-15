@@ -3,11 +3,11 @@ import 'dart:math';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:playboy/backend/biliapi/bilibili_helper.dart';
+// import 'package:playboy/backend/biliapi/bilibili_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/pages/file/download_page.dart';
-import 'package:playboy/pages/media/bili_player.dart';
+// import 'package:playboy/pages/media/bili_player.dart';
 import 'package:playboy/pages/media/m_player.dart';
 import 'package:playboy/widgets/folder_card.dart';
 import 'package:provider/provider.dart';
@@ -90,14 +90,22 @@ class _FilePageState extends State<FilePage> {
                             labelText: 'URL',
                           ),
                           onSubmitted: (value) async {
-                            if (value.startsWith('BV')) {
-                              _openLink(value, true);
-                            } else {
-                              _openLink(value, false);
-                            }
+                            // if (value.startsWith('BV')) {
+                            //   _openLink(value, true);
+                            // } else {
+                            //   _openLink(value, false);
+                            // }
+                            _openLink(value);
                           },
                         ),
+                        actionsAlignment: MainAxisAlignment.center,
                         actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('仅下载'),
+                          ),
                           TextButton(
                             onPressed: () {
                               Navigator.pop(context);
@@ -106,11 +114,12 @@ class _FilePageState extends State<FilePage> {
                           ),
                           TextButton(
                             onPressed: () async {
-                              if (editingController.text.startsWith('BV')) {
-                                _openLink(editingController.text, true);
-                              } else {
-                                _openLink(editingController.text, false);
-                              }
+                              // if (editingController.text.startsWith('BV')) {
+                              //   _openLink(editingController.text, true);
+                              // } else {
+                              //   _openLink(editingController.text, false);
+                              // }
+                              _openLink(editingController.text);
                             },
                             child: const Text('确定'),
                           ),
@@ -154,7 +163,7 @@ class _FilePageState extends State<FilePage> {
                         lockParentWindow: true);
                     if (res != null) {
                       String link = res.files.single.path!;
-                      _openLink(link, false);
+                      _openLink(link);
                     }
                   },
                   icon: const Icon(Icons.note_outlined),
@@ -308,34 +317,47 @@ class _FilePageState extends State<FilePage> {
     );
   }
 
-  void _openLink(String source, bool isBv) async {
+  void _openLink(String source) async {
+    // AppStorage().closeMedia();
+    // if (isBv) {
+    //   final info = await BilibiliHelper.getVideoInfo(source);
+    //   final playInfo = await BilibiliHelper.getVideoStream(source, info.cid);
+    //   if (!mounted) return;
+    //   Navigator.of(context, rootNavigator: true)
+    //       .push(MaterialPageRoute(
+    //           builder: (context) => BiliPlayer(
+    //                 videoInfo: info,
+    //                 playInfo: playInfo,
+    //               )))
+    //       .then((value) {
+    //     AppStorage().updateStatus();
+    //   });
+    // } else {
+    //   if (!context.mounted) return;
+    //   AppStorage()
+    //       .openMedia(PlayItem(source: source, cover: null, title: source));
+    //   Navigator.of(context, rootNavigator: true)
+    //       .push(
+    //     MaterialPageRoute(
+    //       builder: (context) => const MPlayer(),
+    //     ),
+    //   )
+    //       .then((value) {
+    //     AppStorage().updateStatus();
+    //   });
+    // }
+    if (!context.mounted) return;
     AppStorage().closeMedia();
-    if (isBv) {
-      final info = await BilibiliHelper.getVideoInfo(source);
-      final playInfo = await BilibiliHelper.getVideoStream(source, info.cid);
-      if (!mounted) return;
-      Navigator.of(context, rootNavigator: true)
-          .push(MaterialPageRoute(
-              builder: (context) => BiliPlayer(
-                    videoInfo: info,
-                    playInfo: playInfo,
-                  )))
-          .then((value) {
-        AppStorage().updateStatus();
-      });
-    } else {
-      if (!context.mounted) return;
-      AppStorage()
-          .openMedia(PlayItem(source: source, cover: null, title: source));
-      Navigator.of(context, rootNavigator: true)
-          .push(
-        MaterialPageRoute(
-          builder: (context) => const MPlayer(),
-        ),
-      )
-          .then((value) {
-        AppStorage().updateStatus();
-      });
-    }
+    AppStorage()
+        .openMedia(PlayItem(source: source, cover: null, title: source));
+    Navigator.of(context, rootNavigator: true)
+        .push(
+      MaterialPageRoute(
+        builder: (context) => const MPlayer(),
+      ),
+    )
+        .then((value) {
+      AppStorage().updateStatus();
+    });
   }
 }

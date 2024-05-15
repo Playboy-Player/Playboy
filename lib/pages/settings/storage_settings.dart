@@ -35,8 +35,8 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
         SliverToBoxAdapter(
           child: ListTile(
             onTap: () {
-              AppStorage().scanVideo();
-              AppStorage().scanMusic();
+              AppStorage().updateVideoPage();
+              AppStorage().updateMusicPage();
             },
             leading: const Icon(Icons.refresh),
             title: const Text('重新扫描视频库和音乐库'),
@@ -45,7 +45,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
         SliverToBoxAdapter(
           child: ListTile(
             onTap: () {
-              AppStorage().scanVideo();
+              AppStorage().updateVideoPage();
             },
             leading: const Icon(Icons.video_library),
             title: const Text('重新扫描视频库'),
@@ -54,7 +54,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
         SliverToBoxAdapter(
           child: ListTile(
             onTap: () {
-              AppStorage().scanMusic();
+              AppStorage().updateMusicPage();
             },
             leading: const Icon(Icons.library_music),
             title: const Text('重新扫描音乐库'),

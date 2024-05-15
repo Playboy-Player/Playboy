@@ -1,10 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
-// import 'package:flutter/foundation.dart';
 import 'package:playboy/backend/constants.dart';
-// import 'package:path_provider/path_provider.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:playboy/backend/storage.dart';
 
 // TODO: exception logic
@@ -34,7 +31,7 @@ class WebHelper {
     if ((await cookieManager.cookieJar
             .loadForRequest(Uri.parse(Constants.mainBase)))
         .isEmpty) {
-      await dio.get(Constants.mainBase); //获取默认cookie
+      await dio.get(Constants.mainBase);
     }
   }
 
@@ -73,21 +70,12 @@ class WebHelper {
   download(urlPath, savePath) async {
     Response response;
     response = await dio.download(urlPath, savePath,
-        onReceiveProgress: (int count, int total) {
-      // if (kDebugMode) {
-      //   print("$count $total");
-      // }
-    });
+        onReceiveProgress: (int count, int total) {});
     return response.data;
   }
 
   void cancel({required CancelToken token}) {
     _cancelToken.cancel("cancelled");
     _cancelToken = token;
-  }
-
-  Future<bool> isConnected() async {
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    return connectivityResult != ConnectivityResult.none;
   }
 }

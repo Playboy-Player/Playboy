@@ -25,7 +25,7 @@ class _MusicPageState extends State<MusicPage> {
     super.initState();
     _init();
     gridview = !AppStorage().settings.musicLibListview;
-    AppStorage().scanMusic = () async {
+    AppStorage().updateMusicPage = () async {
       setState(() {
         loaded = false;
       });

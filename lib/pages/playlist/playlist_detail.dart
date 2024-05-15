@@ -35,7 +35,7 @@ class PlaylistDetailState extends State<PlaylistDetail> {
         actions: [
           IconButton(
             onPressed: () {},
-            icon: const Icon(Icons.edit_outlined),
+            icon: const Icon(Icons.drive_file_rename_outline),
           ),
           IconButton(
             onPressed: () {
@@ -107,7 +107,7 @@ class PlaylistDetailState extends State<PlaylistDetail> {
                                       colorScheme.primaryContainer)),
                               onPressed: () {
                                 AppStorage().closeMedia();
-                                AppStorage().openPlaylist(widget.info);
+                                AppStorage().openPlaylist(widget.info, false);
                               },
                               icon: const Icon(Icons.play_arrow),
                               label: const Text('顺序播放'),
@@ -121,7 +121,7 @@ class PlaylistDetailState extends State<PlaylistDetail> {
                                       colorScheme.primaryContainer)),
                               onPressed: () {
                                 AppStorage().closeMedia();
-                                AppStorage().openPlaylistShuffle(widget.info);
+                                AppStorage().openPlaylist(widget.info, true);
                                 setState(() {});
                               },
                               icon: const Icon(Icons.shuffle),

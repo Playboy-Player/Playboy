@@ -26,7 +26,7 @@ class _VideoPageState extends State<VideoPage> {
     super.initState();
     _init();
     gridview = !AppStorage().settings.videoLibListview;
-    AppStorage().scanVideo = () async {
+    AppStorage().updateVideoPage = () async {
       setState(() {
         loaded = false;
       });
