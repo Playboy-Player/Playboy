@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
 import 'package:playboy/pages/search/search_result.dart';
 
 class SearchPage extends StatefulWidget {
@@ -65,7 +64,7 @@ class _SearchPage extends State<SearchPage> {
                             width: 46,
                             child: IconButton(
                               icon: const Icon(
-                                Symbols.cancel_rounded,
+                                Icons.cancel_outlined,
                                 weight: 600,
                               ),
                               onPressed: () {
@@ -135,7 +134,7 @@ class _SearchPage extends State<SearchPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          Symbols.upcoming_rounded,
+                          Icons.upcoming_rounded,
                           size: 40,
                         ),
                         SizedBox(

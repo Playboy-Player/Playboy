@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
@@ -144,7 +143,7 @@ class _MusicPageState extends State<MusicPage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(
-                                    Symbols.upcoming_rounded,
+                                    Icons.upcoming_rounded,
                                     size: 40,
                                   ),
                                   SizedBox(
@@ -207,17 +206,13 @@ class _MusicPageState extends State<MusicPage> {
                                           leadingIcon:
                                               const Icon(Icons.menu_open),
                                           child: const Text('插播'),
-                                          onPressed: () {
-                                            // TODO: insert to next
-                                          },
+                                          onPressed: () {},
                                         ),
                                         MenuItemButton(
                                           leadingIcon:
                                               const Icon(Icons.last_page),
                                           child: const Text('最后播放'),
-                                          onPressed: () {
-                                            // TODO: insert to last
-                                          },
+                                          onPressed: () {},
                                         ),
                                         MenuItemButton(
                                           leadingIcon: const Icon(

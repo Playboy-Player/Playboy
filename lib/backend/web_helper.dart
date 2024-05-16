@@ -4,7 +4,6 @@ import 'package:cookie_jar/cookie_jar.dart';
 import 'package:playboy/backend/constants.dart';
 import 'package:playboy/backend/storage.dart';
 
-// TODO: exception logic
 class WebHelper {
   static late final Dio dio;
   static late CookieManager cookieManager;
@@ -17,17 +16,18 @@ class WebHelper {
       connectTimeout: const Duration(seconds: 30),
       receiveTimeout: const Duration(seconds: 30),
       sendTimeout: const Duration(seconds: 30),
-      headers: {'referer': 'https://www.bilibili.com'},
+      // headers: {'referer': 'https://www.bilibili.com'},
     );
     dio = Dio(options);
     dio.transformer = BackgroundTransformer();
-  }
-
-  Future<void> init() async {
     var cookiePath = '${AppStorage().dataPath}/cookies';
     cookieManager =
         CookieManager(PersistCookieJar(storage: FileStorage(cookiePath)));
     dio.interceptors.add(cookieManager);
+  }
+
+  Future<void> loadBvTools() async {
+    dio.options.headers.addAll({'referer': 'https://www.bilibili.com'});
     if ((await cookieManager.cookieJar
             .loadForRequest(Uri.parse(Constants.mainBase)))
         .isEmpty) {

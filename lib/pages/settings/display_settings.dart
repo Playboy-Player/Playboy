@@ -8,7 +8,6 @@ class DisplaySettingsPage extends StatefulWidget {
   State<StatefulWidget> createState() => _DisplaySettingsPageState();
 }
 
-// TODO: fullscreen scaling settings
 class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
   @override
   Widget build(BuildContext context) {
@@ -48,7 +47,6 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
             AppStorage().saveSettings();
           },
         ),
-        // TODO: ui settings
         ListTile(
           title: const Text('初始页面'),
           trailing: SizedBox(
@@ -141,7 +139,6 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
         const SizedBox(
           height: 4,
         ),
-        // TODO: use segment button
         ListTile(
           title: const Text('播放列表默认视图'),
           trailing: SizedBox(

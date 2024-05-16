@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 // import 'package:playboy/backend/biliapi/bilibili_helper.dart';
 // import 'package:playboy/backend/constants.dart';
-// import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/storage.dart';
 // import 'package:playboy/backend/web_helper.dart';
 
 class ExtensionSettings extends StatefulWidget {
@@ -26,13 +26,35 @@ class _ExtensionSettingsState extends State<ExtensionSettings> {
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
-              'BV Tools',
+              'BV Tools 设置',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
                 color: colorScheme.secondary,
               ),
             ),
+          ),
+          SwitchListTile(
+            title: const Text('Enable BV Tools'),
+            value: AppStorage().settings.enableBvTools,
+            onChanged: (bool value) {
+              setState(() {
+                AppStorage().settings.enableBvTools = value;
+              });
+              AppStorage().saveSettings();
+              // AppStorage().updateStatus();
+            },
+          ),
+          SwitchListTile(
+            title: const Text('Use try_look flag'),
+            value: AppStorage().settings.tryLook,
+            onChanged: (bool value) {
+              setState(() {
+                AppStorage().settings.tryLook = value;
+              });
+              AppStorage().saveSettings();
+              // AppStorage().updateStatus();
+            },
           ),
           // _buildGuestCard(colorScheme),
           // ListTile(
@@ -56,13 +78,6 @@ class _ExtensionSettingsState extends State<ExtensionSettings> {
           //     });
           //     AppStorage().saveSettings();
           //   },
-          // ),
-          // Container(
-          //   padding: const EdgeInsets.all(12),
-          //   child: const Text(
-          //     '连接到 youtube.com',
-          //     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-          //   ),
           // ),
         ],
       ),

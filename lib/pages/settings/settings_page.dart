@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:playboy/pages/settings/about_app.dart';
-import 'package:playboy/pages/settings/extension_settings.dart';
+import 'package:playboy/pages/settings/bvtools_settings.dart';
 import 'package:playboy/pages/settings/display_settings.dart';
 import 'package:playboy/pages/settings/language_settings.dart';
 import 'package:playboy/pages/settings/player_settings.dart';
@@ -16,7 +16,6 @@ class SettingsPage extends StatefulWidget {
   SettingsPageState createState() => SettingsPageState();
 }
 
-// TODO: mobile settings ui
 class SettingsPageState extends State<SettingsPage> {
   int currentPage = 0;
   List<IconData> icons = [
@@ -24,7 +23,7 @@ class SettingsPageState extends State<SettingsPage> {
     Icons.play_circle_outline,
     Icons.folder_outlined,
     Icons.translate_rounded,
-    Icons.extension_outlined,
+    Icons.live_tv,
     Icons.info_outline,
     Icons.build_outlined,
   ];
@@ -33,7 +32,7 @@ class SettingsPageState extends State<SettingsPage> {
     '播放器',
     '文件',
     '语言',
-    '扩展',
+    'BV Tools',
     '关于',
     '开发者',
   ];

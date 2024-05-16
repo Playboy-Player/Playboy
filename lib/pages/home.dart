@@ -14,7 +14,6 @@ import 'package:playboy/widgets/uni_image.dart';
 import 'package:provider/provider.dart';
 import 'package:squiggly_slider/slider.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:material_symbols_icons/symbols.dart';
 
 import 'file/file_page.dart';
 
@@ -33,13 +32,17 @@ class MikuMiku extends StatelessWidget {
           theme: ThemeData(
             fontFamily: "SourceHanSans",
             colorScheme: ColorScheme.fromSeed(
-                seedColor: themeColor, brightness: Brightness.light),
+              seedColor: themeColor,
+              brightness: Brightness.light,
+            ),
             useMaterial3: true,
           ),
           darkTheme: ThemeData(
             fontFamily: "SourceHanSans",
             colorScheme: ColorScheme.fromSeed(
-                seedColor: themeColor, brightness: Brightness.dark),
+              seedColor: themeColor,
+              brightness: Brightness.dark,
+            ),
             useMaterial3: true,
           ),
           themeMode: value.settings.themeMode,
@@ -50,10 +53,6 @@ class MikuMiku extends StatelessWidget {
   }
 }
 
-// TODO: make the media control widget in a new window and support pin on top
-// https://docs.google.com/document/d/13E27tD8_9f6lDgwg3MpGNTV8XIRCZH3ByI-t9kI9IUM/edit#heading=h.fygejf72gi1m
-
-// TODO: support drag file to window
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -181,7 +180,7 @@ class _HomeState extends State<Home> {
                 });
               },
               icon: const Icon(
-                Symbols.settings_rounded,
+                Icons.settings_applications_outlined,
                 weight: 500,
               )),
           AppStorage().settings.showMediaCard
@@ -193,7 +192,7 @@ class _HomeState extends State<Home> {
                     });
                   },
                   icon: const Icon(
-                    Symbols.branding_watermark_rounded,
+                    Icons.branding_watermark_outlined,
                     weight: 550,
                   ))
               : const SizedBox(),
@@ -497,7 +496,6 @@ class _HomeState extends State<Home> {
                               ),
                               maxLines: 1,
                             ),
-                            // TODO: show author
                             // Text(
                             //   'author',
                             //   style: TextStyle(
@@ -653,7 +651,6 @@ class _HomeState extends State<Home> {
                             ),
                             maxLines: 1,
                           ),
-                          // TODO: show author
                           // Text(
                           //   'author',
                           //   style: TextStyle(

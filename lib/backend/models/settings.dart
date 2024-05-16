@@ -46,7 +46,7 @@ class AppSettings {
   String downloadPath;
 
   // Dev Settings
-  bool enableDevSettings;
+  bool enableBvTools;
   bool tryLook;
   bool tabletUI;
 
@@ -79,7 +79,7 @@ class AppSettings {
     this.favouritePaths = const [],
     this.screenshotPath = '',
     this.downloadPath = '',
-    this.enableDevSettings = false,
+    this.enableBvTools = false,
     this.tabletUI = true,
     this.tryLook = true,
   });

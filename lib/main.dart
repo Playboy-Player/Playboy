@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/storage.dart';
-// import 'package:playboy/backend/web_helper.dart';
+import 'package:playboy/backend/web_helper.dart';
 import 'package:provider/provider.dart';
 import 'pages/home.dart';
 import 'package:window_manager/window_manager.dart';
@@ -25,7 +25,10 @@ void main(List<String> arguments) async {
   MediaKit.ensureInitialized();
 
   await AppStorage().init();
-  // await WebHelper().init();
+
+  if (AppStorage().settings.enableBvTools) {
+    await WebHelper().loadBvTools();
+  }
 
   // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(

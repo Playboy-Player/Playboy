@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
 import 'package:playboy/backend/biliapi/models/video_info.dart';
 import 'package:playboy/backend/biliapi/models/video_stream_response.dart';
 import 'package:playboy/backend/storage.dart';
@@ -12,7 +11,6 @@ import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 // import 'package:process_run/shell.dart';
 
-// TODO: remove
 class BiliPlayer extends StatefulWidget {
   const BiliPlayer(
       {super.key, required this.videoInfo, required this.playInfo});
@@ -179,13 +177,8 @@ class BiliPlayerState extends State<BiliPlayer> {
         //   },
         // ),
         IconButton(
-          isSelected: menuExpanded,
           icon: const Icon(
-            Symbols.right_panel_open,
-            weight: 550,
-          ),
-          selectedIcon: const Icon(
-            Symbols.right_panel_close,
+            Icons.menu,
             weight: 550,
           ),
           onPressed: () {

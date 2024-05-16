@@ -26,28 +26,6 @@ class DeveloperSettingsState extends State<DeveloperSettings> {
             ),
           ),
           SwitchListTile(
-            title: const Text('Enable developer settings'),
-            value: AppStorage().settings.enableDevSettings,
-            onChanged: (bool value) {
-              setState(() {
-                AppStorage().settings.enableDevSettings = value;
-              });
-              AppStorage().saveSettings();
-              // AppStorage().updateStatus();
-            },
-          ),
-          SwitchListTile(
-            title: const Text('Use try_look flag'),
-            value: AppStorage().settings.tryLook,
-            onChanged: (bool value) {
-              setState(() {
-                AppStorage().settings.tryLook = value;
-              });
-              AppStorage().saveSettings();
-              // AppStorage().updateStatus();
-            },
-          ),
-          SwitchListTile(
             title: const Text('Tablet UI'),
             value: AppStorage().settings.tabletUI,
             onChanged: (bool value) {

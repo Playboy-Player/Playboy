@@ -2,13 +2,11 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/pages/playlist/playlist_detail.dart';
 
-// TODO: smart playlist: all music/movie
 class PlaylistPage extends StatefulWidget {
   const PlaylistPage({super.key});
 
@@ -175,7 +173,7 @@ class PlaylistState extends State<PlaylistPage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(
-                                    Symbols.upcoming_rounded,
+                                    Icons.upcoming_rounded,
                                     size: 40,
                                   ),
                                   SizedBox(
@@ -248,14 +246,15 @@ class PlaylistState extends State<PlaylistPage> {
                                                 true);
                                           },
                                         ),
-                                        // TODO: append
-                                        // MenuItemButton(
-                                        //   leadingIcon: const Icon(
-                                        //       Icons.add_circle_outline),
-                                        //   child: const Text('追加到当前列表'),
-                                        //   onPressed: () {
-                                        //   },
-                                        // ),
+                                        MenuItemButton(
+                                          leadingIcon: const Icon(
+                                              Icons.add_circle_outline),
+                                          trailingIcon: const SizedBox(
+                                            width: 4,
+                                          ),
+                                          child: const Text('追加到当前列表'),
+                                          onPressed: () {},
+                                        ),
                                         MenuItemButton(
                                           leadingIcon: const Icon(
                                               Icons.design_services_outlined),
@@ -263,9 +262,7 @@ class PlaylistState extends State<PlaylistPage> {
                                             width: 4,
                                           ),
                                           child: const Text('修改封面'),
-                                          onPressed: () {
-                                            //TODO: edit cover
-                                          },
+                                          onPressed: () {},
                                         ),
                                         MenuItemButton(
                                           leadingIcon: const Icon(
@@ -274,9 +271,7 @@ class PlaylistState extends State<PlaylistPage> {
                                             width: 4,
                                           ),
                                           child: const Text('重命名'),
-                                          onPressed: () {
-                                            //TODO: rename
-                                          },
+                                          onPressed: () {},
                                         ),
                                         MenuItemButton(
                                           leadingIcon: Icon(

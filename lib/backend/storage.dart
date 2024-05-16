@@ -11,7 +11,6 @@ import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/models/settings.dart';
 
-// TODO: auto create screenshot and download folder
 class AppStorage extends ChangeNotifier {
   late final String dataPath;
   late AppSettings settings;

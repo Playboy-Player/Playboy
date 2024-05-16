@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
 import 'package:playboy/backend/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -73,8 +72,7 @@ class _AboutPageState extends State<AboutPage> {
         ),
         ListTile(
           leading: const Icon(
-            Symbols.person_play,
-            weight: 600,
+            Icons.web_outlined,
           ),
           title: const Text('Playboy Project'),
           subtitle: const Text('https://github.com/Playboy-Player'),
@@ -85,8 +83,7 @@ class _AboutPageState extends State<AboutPage> {
         ),
         ListTile(
           leading: const Icon(
-            Symbols.code_blocks,
-            weight: 600,
+            Icons.data_object,
           ),
           title: const Text('Source Code'),
           subtitle: const Text('https://github.com/Playboy-Player/Playboy'),
@@ -97,8 +94,7 @@ class _AboutPageState extends State<AboutPage> {
         ),
         ListTile(
           leading: const Icon(
-            Symbols.message,
-            weight: 600,
+            Icons.message_outlined,
           ),
           title: const Text('Feedback'),
           trailing: const Icon(Icons.open_in_new),

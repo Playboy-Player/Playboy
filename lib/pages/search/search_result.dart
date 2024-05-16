@@ -140,17 +140,17 @@ class SearchResultPageState extends State<SearchResultPage> {
                 const SizedBox(
                   width: 6,
                 ),
-                // FilterChip(
-                //   showCheckmark: false,
-                //   avatar: const Icon(Icons.live_tv),
-                //   label: const Text('BV Tools'),
-                //   onSelected: (value) {
-                //     setState(() {
-                //       choosed = 5;
-                //     });
-                //   },
-                //   selected: choosed == 5,
-                // ),
+                FilterChip(
+                  showCheckmark: false,
+                  avatar: const Icon(Icons.live_tv),
+                  label: const Text('BV Tools'),
+                  onSelected: (value) {
+                    setState(() {
+                      choosed = 5;
+                    });
+                  },
+                  selected: choosed == 5,
+                ),
               ],
             ),
           )

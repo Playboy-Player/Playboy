@@ -23,9 +23,6 @@ class MPlayer extends StatefulWidget {
   MPlayerState createState() => MPlayerState();
 }
 
-// TODO: screenshot
-// TODO: context menu
-// TODO: subtitle/lyric support
 class MPlayerState extends State<MPlayer> {
   VideoController controller = AppStorage().controller;
 
@@ -124,7 +121,6 @@ class MPlayerState extends State<MPlayer> {
   PreferredSizeWidget _buildTitlebar(Color backgroundColor) {
     return AppBar(
       automaticallyImplyLeading: false,
-      // TODO: build home page when open file from system file explorer
       leading: IconButton(
         constraints: const BoxConstraints(),
         icon: const Icon(Icons.arrow_back_ios_new),

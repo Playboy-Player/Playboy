@@ -43,7 +43,7 @@ AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) => AppSettings(
           const [],
       screenshotPath: json['screenshotPath'] as String? ?? '',
       downloadPath: json['downloadPath'] as String? ?? '',
-      enableDevSettings: json['enableDevSettings'] as bool? ?? false,
+      enableBvTools: json['enableBvTools'] as bool? ?? false,
       tabletUI: json['tabletUI'] as bool? ?? true,
       tryLook: json['tryLook'] as bool? ?? true,
     );
@@ -76,7 +76,7 @@ Map<String, dynamic> _$AppSettingsToJson(AppSettings instance) =>
       'favouritePaths': instance.favouritePaths,
       'screenshotPath': instance.screenshotPath,
       'downloadPath': instance.downloadPath,
-      'enableDevSettings': instance.enableDevSettings,
+      'enableBvTools': instance.enableBvTools,
       'tryLook': instance.tryLook,
       'tabletUI': instance.tabletUI,
     };

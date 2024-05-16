@@ -6,7 +6,6 @@ import 'package:path/path.dart';
 import 'package:playboy/widgets/file_card.dart';
 import 'package:playboy/widgets/folder_card.dart';
 
-// TODO: open in system file explorer
 class FileExplorer extends StatefulWidget {
   const FileExplorer({super.key, required this.path});
   final String path;

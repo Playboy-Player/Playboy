@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
 // import 'package:playboy/backend/biliapi/bilibili_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
@@ -188,7 +187,6 @@ class _FilePageState extends State<FilePage> {
               _buildOption(Icons.live_tv, 'BV Tools', () {}),
             ]),
           ),
-          // TODO: fold list
           SliverToBoxAdapter(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -288,7 +286,7 @@ class _FilePageState extends State<FilePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          Symbols.upcoming_rounded,
+                          Icons.upcoming_rounded,
                           size: 40,
                         ),
                         SizedBox(
