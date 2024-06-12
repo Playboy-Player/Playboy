@@ -37,16 +37,16 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
             AppStorage().updateStatus();
           },
         ),
-        SwitchListTile(
-          title: const Text('应用内显示媒体控制卡片'),
-          value: AppStorage().settings.showMediaCard,
-          onChanged: (bool value) {
-            setState(() {
-              AppStorage().settings.showMediaCard = value;
-            });
-            AppStorage().saveSettings();
-          },
-        ),
+        // SwitchListTile(
+        //   title: const Text('应用内显示媒体控制卡片'),
+        //   value: AppStorage().settings.showMediaCard,
+        //   onChanged: (bool value) {
+        //     setState(() {
+        //       AppStorage().settings.showMediaCard = value;
+        //     });
+        //     AppStorage().saveSettings();
+        //   },
+        // ),
         ListTile(
           title: const Text('初始页面'),
           trailing: SizedBox(

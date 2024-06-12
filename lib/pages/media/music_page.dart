@@ -101,8 +101,7 @@ class _MusicPageState extends State<MusicPage> {
               // ),
               Container(
                 padding: const EdgeInsets.only(top: 10, bottom: 10, right: 10),
-                child: FloatingActionButton.extended(
-                  isExtended: MediaQuery.of(context).size.width > 500,
+                child: FloatingActionButton(
                   heroTag: 'view_music',
                   tooltip: '切换显示视图',
                   elevation: 0,
@@ -115,10 +114,9 @@ class _MusicPageState extends State<MusicPage> {
                       gridview = !gridview;
                     });
                   },
-                  icon: Icon(gridview
+                  child: Icon(gridview
                       ? Icons.calendar_view_month
                       : Icons.view_agenda_outlined),
-                  label: Text(gridview ? '网格' : '列表'),
                 ),
               ),
             ],

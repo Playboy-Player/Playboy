@@ -100,7 +100,7 @@ class DownloadPageState extends State<DownloadPage> {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

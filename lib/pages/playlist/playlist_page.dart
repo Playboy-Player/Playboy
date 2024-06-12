@@ -67,6 +67,7 @@ class PlaylistState extends State<PlaylistPage> {
               Padding(
                 padding: const EdgeInsets.only(top: 10, bottom: 10),
                 child: FloatingActionButton(
+                  tooltip: '新建播放列表',
                   heroTag: 'new_list',
                   elevation: 0,
                   hoverElevation: 0,
@@ -126,13 +127,11 @@ class PlaylistState extends State<PlaylistPage> {
                     );
                   },
                   child: const Icon(Icons.playlist_add),
-                  // label: const Text('新建'),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 10, bottom: 10, right: 10),
-                child: FloatingActionButton.extended(
-                  isExtended: MediaQuery.of(context).size.width > 500,
+                child: FloatingActionButton(
                   heroTag: 'view_list',
                   tooltip: '切换显示视图',
                   elevation: 0,
@@ -145,10 +144,9 @@ class PlaylistState extends State<PlaylistPage> {
                       gridview = !gridview;
                     });
                   },
-                  icon: Icon(gridview
+                  child: Icon(gridview
                       ? Icons.calendar_view_month
                       : Icons.view_agenda_outlined),
-                  label: Text(gridview ? '网格' : '列表'),
                 ),
               ),
             ],

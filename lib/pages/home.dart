@@ -30,7 +30,8 @@ class MikuMiku extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'Playboy',
           theme: ThemeData(
-            fontFamily: "SourceHanSans",
+            // fontFamily: "SourceHanSans",
+            fontFamilyFallback: const ['SimHei'],
             colorScheme: ColorScheme.fromSeed(
               seedColor: themeColor,
               brightness: Brightness.light,
@@ -38,7 +39,8 @@ class MikuMiku extends StatelessWidget {
             useMaterial3: true,
           ),
           darkTheme: ThemeData(
-            fontFamily: "SourceHanSans",
+            // fontFamily: "SourceHanSans",
+            fontFamilyFallback: const ['SimHei'],
             colorScheme: ColorScheme.fromSeed(
               seedColor: themeColor,
               brightness: Brightness.dark,
@@ -62,7 +64,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int currentPageIndex = 0;
-  bool showMediaCard = false;
+  // bool showMediaCard = false;
   bool miniMode = false;
 
   final playlistPageKey = GlobalKey<NavigatorState>();
@@ -74,7 +76,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    showMediaCard = AppStorage().settings.showMediaCard;
+    // showMediaCard = AppStorage().settings.showMediaCard;
     currentPageIndex = AppStorage().settings.initPage;
   }
 
@@ -97,7 +99,7 @@ class _HomeState extends State<Home> {
                 builder: (context, snapshot) {
                   return AppStorage().playingCover == null
                       ? _buildMediaCardContent(
-                          ColorScheme.fromSeed(seedColor: colorScheme.tertiary))
+                          ColorScheme.fromSeed(seedColor: colorScheme.primary))
                       : FutureBuilder(
                           future: ColorScheme.fromImageProvider(
                             provider: UniImageProvider(
@@ -110,7 +112,7 @@ class _HomeState extends State<Home> {
                             } else {
                               return _buildMediaCardContent(
                                   ColorScheme.fromSeed(
-                                      seedColor: colorScheme.tertiary));
+                                      seedColor: colorScheme.primary));
                             }
                           },
                         );
@@ -135,6 +137,10 @@ class _HomeState extends State<Home> {
             },
             child: Row(children: [
               IconButton(
+                  highlightColor: Colors.transparent,
+                  focusColor: Colors.transparent,
+                  hoverColor: Colors.transparent,
+                  splashColor: Colors.transparent,
                   constraints: const BoxConstraints(),
                   padding: EdgeInsets.zero,
                   onPressed: () {
@@ -180,20 +186,34 @@ class _HomeState extends State<Home> {
                 });
               },
               icon: const Icon(
-                Icons.settings_applications_outlined,
+                Icons.filter_vintage,
                 weight: 500,
               )),
           AppStorage().settings.showMediaCard
               ? IconButton(
                   hoverColor: Colors.transparent,
                   onPressed: () {
+                    // setState(() {
+                    //   showMediaCard = !showMediaCard;
+                    // });
+                    if (miniMode) {
+                      windowManager.setResizable(true);
+                      windowManager.setMinimumSize(const Size(360, 500));
+                      windowManager.setSize(const Size(900, 700));
+                      windowManager.setAlwaysOnTop(false);
+                      windowManager.center();
+                    } else {
+                      windowManager.setResizable(false);
+                      windowManager.setMinimumSize(const Size(300, 120));
+                      windowManager.setSize(const Size(300, 120));
+                      windowManager.setAlwaysOnTop(true);
+                    }
                     setState(() {
-                      showMediaCard = !showMediaCard;
+                      miniMode = !miniMode;
                     });
                   },
                   icon: const Icon(
-                    Icons.branding_watermark_outlined,
-                    weight: 550,
+                    Icons.headset_outlined,
                   ))
               : const SizedBox(),
           IconButton(
@@ -251,8 +271,8 @@ class _HomeState extends State<Home> {
                             iconSize: 28,
                             icon:
                                 Theme.of(context).brightness == Brightness.dark
-                                    ? const Icon(Icons.wb_sunny_outlined)
-                                    : const Icon(Icons.mode_night_outlined),
+                                    ? const Icon(Icons.wb_sunny)
+                                    : const Icon(Icons.dark_mode),
                             onPressed: () {
                               setState(() {
                                 AppStorage().settings.themeMode =
@@ -331,8 +351,7 @@ class _HomeState extends State<Home> {
                       stream: AppStorage().playboy.stream.playlist,
                       builder: (context, snapshot) {
                         return AppStorage().playingCover == null
-                            ? _buildMediaBar(ColorScheme.fromSeed(
-                                seedColor: colorScheme.tertiary))
+                            ? _buildMediaBar(colorScheme)
                             : FutureBuilder(
                                 future: ColorScheme.fromImageProvider(
                                   provider: UniImageProvider(
@@ -344,8 +363,7 @@ class _HomeState extends State<Home> {
                                       snapshot.data != null) {
                                     return _buildMediaBar(snapshot.data!);
                                   } else {
-                                    return _buildMediaBar(ColorScheme.fromSeed(
-                                        seedColor: colorScheme.tertiary));
+                                    return _buildMediaBar(colorScheme);
                                   }
                                 },
                               );
@@ -353,40 +371,13 @@ class _HomeState extends State<Home> {
                 )
               ],
             ),
-      floatingActionButton: showMediaCard && tabletUI
-          ? InkWell(
-              onTap: () {
-                if (!context.mounted) return;
-                Navigator.of(context, rootNavigator: true).push(
-                  MaterialPageRoute(
-                    builder: (context) => const MPlayer(),
-                  ),
-                );
-              },
-              child: StreamBuilder(
-                  stream: AppStorage().playboy.stream.playlist,
-                  builder: (context, snapshot) {
-                    return AppStorage().playingCover == null
-                        ? _buildMediaCard(ColorScheme.fromSeed(
-                            seedColor: colorScheme.tertiary))
-                        : FutureBuilder(
-                            future: ColorScheme.fromImageProvider(
-                              provider: UniImageProvider(
-                                      url: AppStorage().playingCover!)
-                                  .getImage(),
-                            ),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData && snapshot.data != null) {
-                                return _buildMediaCard(snapshot.data!);
-                              } else {
-                                return _buildMediaCard(ColorScheme.fromSeed(
-                                    seedColor: colorScheme.tertiary));
-                              }
-                            },
-                          );
-                  }),
-            )
-          : null,
+      floatingActionButton: StreamBuilder(
+          stream: AppStorage().playboy.stream.playlist,
+          builder: (context, snapshot) {
+            return AppStorage().playingTitle != 'Not Playing' && tabletUI
+                ? _buildMediaButtons(colorScheme)
+                : const SizedBox();
+          }),
       bottomNavigationBar: tabletUI
           ? null
           : NavigationBar(
@@ -429,17 +420,17 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget _buildMediaCard(ColorScheme colorScheme) {
-    return Card(
-      elevation: 1.6,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(20)),
-      ),
-      // color: colorScheme.primary,
-      child: SizedBox(
-          width: 300, height: 120, child: _buildMediaCardContent(colorScheme)),
-    );
-  }
+  // Widget _buildMediaCard(ColorScheme colorScheme) {
+  //   return Card(
+  //     elevation: 1.6,
+  //     shape: const RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.all(Radius.circular(20)),
+  //     ),
+  //     // color: colorScheme.primary,
+  //     child: SizedBox(
+  //         width: 300, height: 120, child: _buildMediaCardContent(colorScheme)),
+  //   );
+  // }
 
   Widget _buildMediaBar(ColorScheme colorScheme) {
     return Container(
@@ -644,6 +635,7 @@ class _HomeState extends State<Home> {
                         children: [
                           Text(
                             AppStorage().playingTitle,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -663,6 +655,9 @@ class _HomeState extends State<Home> {
                           )
                         ],
                       ),
+                    ),
+                    const SizedBox(
+                      width: 4,
                     ),
                     IconButton.filled(
                       style: IconButton.styleFrom(
@@ -874,6 +869,161 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildMediaButtons(ColorScheme colorScheme) {
+    return Container(
+      width: 360,
+      height: 48,
+      decoration: BoxDecoration(
+        color: colorScheme.primary,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+        const SizedBox(
+          width: 6,
+        ),
+        IconButton(
+          padding: const EdgeInsets.symmetric(horizontal: 2),
+          constraints: const BoxConstraints(),
+          color: colorScheme.primaryContainer,
+          // iconSize: 30,
+          onPressed: () {
+            setState(() {
+              AppStorage().playboy.playOrPause();
+            });
+          },
+          icon: StreamBuilder(
+            stream: AppStorage().playboy.stream.playing,
+            builder: (context, snapshot) {
+              return Icon(
+                AppStorage().playing ? Icons.pause : Icons.play_arrow,
+              );
+            },
+          ),
+        ),
+        IconButton(
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            constraints: const BoxConstraints(),
+            color: colorScheme.primaryContainer,
+            // iconSize: 30,
+            onPressed: () {
+              AppStorage().playboy.previous();
+              setState(() {});
+            },
+            icon: const Icon(
+              Icons.skip_previous,
+              // size: 30,
+            )),
+        Expanded(
+          // width: 120,
+          child: SliderTheme(
+            data: SliderThemeData(
+              trackHeight: 2,
+              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+              overlayShape: SliderComponentShape.noOverlay,
+              thumbColor: colorScheme.primaryContainer,
+              activeTrackColor: colorScheme.primaryContainer,
+            ),
+            child: StreamBuilder(
+              stream: AppStorage().playboy.stream.position,
+              builder: (context, snapshot) {
+                return SquigglySlider(
+                  squiggleAmplitude: AppStorage().settings.wavySlider ? 1.4 : 0,
+                  squiggleWavelength: 4,
+                  squiggleSpeed: 0.05,
+                  max: AppStorage().duration.inMilliseconds.toDouble(),
+                  value: AppStorage().seeking
+                      ? AppStorage().seekingPos
+                      : min(
+                          snapshot.hasData
+                              ? snapshot.data!.inMilliseconds.toDouble()
+                              : AppStorage().position.inMilliseconds.toDouble(),
+                          AppStorage().duration.inMilliseconds.toDouble()),
+                  onChanged: (value) {
+                    setState(() {
+                      AppStorage().seekingPos = value;
+                    });
+                  },
+                  onChangeStart: (value) {
+                    setState(() {
+                      AppStorage().seeking = true;
+                    });
+                  },
+                  onChangeEnd: (value) {
+                    AppStorage()
+                        .playboy
+                        .seek(Duration(milliseconds: value.toInt()))
+                        .then((value) => {
+                              setState(() {
+                                AppStorage().seeking = false;
+                              })
+                            });
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+        IconButton(
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            constraints: const BoxConstraints(),
+            color: colorScheme.primaryContainer,
+            onPressed: () {
+              AppStorage().playboy.next();
+              setState(() {});
+            },
+            icon: const Icon(
+              Icons.skip_next,
+            )),
+        IconButton(
+          padding: const EdgeInsets.symmetric(horizontal: 2),
+          constraints: const BoxConstraints(),
+          color: colorScheme.primaryContainer,
+          onPressed: () {
+            setState(() {
+              AppStorage().shuffle = !AppStorage().shuffle;
+            });
+          },
+          icon: AppStorage().shuffle
+              ? const Icon(Icons.shuffle_on)
+              : const Icon(Icons.shuffle),
+          iconSize: 20,
+        ),
+        IconButton(
+          padding: const EdgeInsets.symmetric(horizontal: 2),
+          constraints: const BoxConstraints(),
+          color: colorScheme.primaryContainer,
+          onPressed: () {
+            if (AppStorage().playboy.state.playlistMode ==
+                PlaylistMode.single) {
+              AppStorage().playboy.setPlaylistMode(PlaylistMode.none);
+            } else {
+              AppStorage().playboy.setPlaylistMode(PlaylistMode.single);
+            }
+            setState(() {});
+          },
+          icon: AppStorage().playboy.state.playlistMode == PlaylistMode.single
+              ? const Icon(Icons.repeat_one_on)
+              : const Icon(Icons.repeat_one),
+          iconSize: 20,
+        ),
+        IconButton(
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            constraints: const BoxConstraints(),
+            color: colorScheme.primaryContainer,
+            onPressed: () {
+              AppStorage().closeMedia();
+              setState(() {});
+            },
+            icon: const Icon(
+              Icons.stop,
+            )),
+        const SizedBox(
+          width: 6,
+        ),
+      ]),
     );
   }
 }

@@ -59,120 +59,67 @@ class _FilePageState extends State<FilePage> {
             pinned: true,
             expandedHeight: 80,
             collapsedHeight: 60,
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(top: 10, bottom: 10),
-                child: FloatingActionButton(
-                  heroTag: 'open_link',
-                  tooltip: '打开网络串流',
-                  elevation: 0,
-                  hoverElevation: 0,
-                  highlightElevation: 0,
-                  backgroundColor: colorScheme.surface,
-                  hoverColor: backgroundColor,
-                  onPressed: () {
-                    editingController.clear();
-                    showDialog(
-                      barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
-                      useRootNavigator: false,
-                      context: context,
-                      builder: (BuildContext context) => AlertDialog(
-                        surfaceTintColor: Colors.transparent,
-                        title: const Text('打开网络串流'),
-                        content: TextField(
-                          autofocus: true,
-                          maxLines: 1,
-                          controller: editingController,
-                          decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.link),
-                            border: OutlineInputBorder(),
-                            labelText: 'URL',
-                          ),
-                          onSubmitted: (value) async {
-                            // if (value.startsWith('BV')) {
-                            //   _openLink(value, true);
-                            // } else {
-                            //   _openLink(value, false);
-                            // }
-                            _openLink(value);
-                          },
-                        ),
-                        actionsAlignment: MainAxisAlignment.center,
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text('仅下载'),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text('取消'),
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              // if (editingController.text.startsWith('BV')) {
-                              //   _openLink(editingController.text, true);
-                              // } else {
-                              //   _openLink(editingController.text, false);
-                              // }
-                              _openLink(editingController.text);
-                            },
-                            child: const Text('确定'),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                  child: const Icon(Icons.settings_system_daydream_rounded),
-                  // label: const Text('新建'),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 10, right: 10, bottom: 10),
-                child: FloatingActionButton.extended(
-                  isExtended: MediaQuery.of(context).size.width > 500,
-                  heroTag: 'open_file',
-                  tooltip: '打开本地文件',
-                  elevation: 0,
-                  hoverElevation: 0,
-                  highlightElevation: 0,
-                  backgroundColor: colorScheme.surface,
-                  hoverColor: backgroundColor,
-                  onPressed: () async {
-                    var res = await FilePicker.platform.pickFiles(
-                        type: FileType.custom,
-                        allowedExtensions: [
-                          'avi',
-                          'flv',
-                          'mkv',
-                          'mov',
-                          'mp4',
-                          'mpeg',
-                          'webm',
-                          'wmv',
-                          'aac',
-                          'midi',
-                          'mp3',
-                          'ogg',
-                          'wav',
-                        ],
-                        lockParentWindow: true);
-                    if (res != null) {
-                      String link = res.files.single.path!;
-                      _openLink(link);
-                    }
-                  },
-                  icon: const Icon(Icons.note_outlined),
-                  label: const Text('本地文件'),
-                ),
-              ),
-            ],
           ),
           SliverList(
             delegate: SliverChildListDelegate([
+              _buildOption(Icons.insert_drive_file_outlined, '打开本地文件',
+                  () async {
+                var res =
+                    await FilePicker.platform.pickFiles(lockParentWindow: true);
+                if (res != null) {
+                  String link = res.files.single.path!;
+                  _openLink(link);
+                }
+              }),
+              _buildOption(Icons.link, '打开网络串流', () {
+                editingController.clear();
+                showDialog(
+                  barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
+                  useRootNavigator: false,
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    surfaceTintColor: Colors.transparent,
+                    title: const Text('打开网络串流'),
+                    content: TextField(
+                      autofocus: true,
+                      maxLines: 1,
+                      controller: editingController,
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.link),
+                        border: OutlineInputBorder(),
+                        labelText: 'URL',
+                      ),
+                      onSubmitted: (value) async {
+                        // if (value.startsWith('BV')) {
+                        //   _openLink(value, true);
+                        // } else {
+                        //   _openLink(value, false);
+                        // }
+                        _openLink(value);
+                      },
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('取消'),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          // if (editingController.text.startsWith('BV')) {
+                          //   _openLink(editingController.text, true);
+                          // } else {
+                          //   _openLink(editingController.text, false);
+                          // }
+                          _openLink(editingController.text);
+                        },
+                        child: const Text('确定'),
+                      ),
+                    ],
+                  ),
+                );
+              }),
               _buildOption(Icons.download, '下载管理', () {
                 Navigator.push(
                   context,
@@ -184,7 +131,7 @@ class _FilePageState extends State<FilePage> {
                   ),
                 );
               }),
-              _buildOption(Icons.live_tv, 'BV Tools', () {}),
+              _buildOption(Icons.live_tv, 'BV Tools', null),
             ]),
           ),
           SliverToBoxAdapter(
