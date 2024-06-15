@@ -36,8 +36,8 @@ class _FilePageState extends State<FilePage> {
     final width = MediaQuery.of(context).size.width;
     final cols = max((width / 150).round(), 2);
     late final colorScheme = Theme.of(context).colorScheme;
-    late final backgroundColor = Color.alphaBlend(
-        colorScheme.primary.withOpacity(0.08), colorScheme.surface);
+    // late final backgroundColor = Color.alphaBlend(
+    //     colorScheme.primary.withOpacity(0.08), colorScheme.surface);
     return Scaffold(
       body: CustomScrollView(
         slivers: [

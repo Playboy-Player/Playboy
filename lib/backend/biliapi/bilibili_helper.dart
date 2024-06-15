@@ -4,6 +4,7 @@ import 'package:playboy/backend/biliapi/models/video_info.dart';
 import 'package:playboy/backend/biliapi/models/video_info_response.dart';
 import 'package:playboy/backend/biliapi/models/video_stream_response.dart';
 import 'package:playboy/backend/biliapi/wbi_helper.dart';
+import 'package:playboy/backend/storage.dart';
 import 'package:playboy/backend/web_helper.dart';
 
 class BilibiliHelper {
@@ -50,7 +51,7 @@ class BilibiliHelper {
               "fnval": 80,
               "fnver": 0,
               "fourk": 1,
-              "try_look": 1
+              "try_look": AppStorage().settings.tryLook ? 1 : 0,
             }));
     VideoStreamResponse requestInfo =
         VideoStreamResponse.fromJson(request.data);

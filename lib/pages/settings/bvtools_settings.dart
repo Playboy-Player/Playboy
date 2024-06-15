@@ -1,9 +1,13 @@
 // import 'dart:io';
 
+import 'package:cookie_jar/cookie_jar.dart';
 import 'package:flutter/material.dart';
+import 'package:playboy/backend/biliapi/bilibili_helper.dart';
+import 'package:playboy/backend/constants.dart';
 // import 'package:playboy/backend/biliapi/bilibili_helper.dart';
 // import 'package:playboy/backend/constants.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/web_helper.dart';
 // import 'package:playboy/backend/web_helper.dart';
 
 class ExtensionSettings extends StatefulWidget {
@@ -35,7 +39,14 @@ class _ExtensionSettingsState extends State<ExtensionSettings> {
             ),
           ),
           SwitchListTile(
-            title: const Text('Enable BV Tools'),
+            tileColor: colorScheme.primaryContainer,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            title: Container(
+              alignment: Alignment.centerLeft,
+              height: 40,
+              child: const Text('启用 BV Tools'),
+            ),
             value: AppStorage().settings.enableBvTools,
             onChanged: (bool value) {
               setState(() {
@@ -45,40 +56,122 @@ class _ExtensionSettingsState extends State<ExtensionSettings> {
               // AppStorage().updateStatus();
             },
           ),
-          SwitchListTile(
-            title: const Text('Use try_look flag'),
-            value: AppStorage().settings.tryLook,
-            onChanged: (bool value) {
-              setState(() {
-                AppStorage().settings.tryLook = value;
-              });
-              AppStorage().saveSettings();
-              // AppStorage().updateStatus();
-            },
-          ),
+
           // _buildGuestCard(colorScheme),
-          // ListTile(
-          //   leading: const Icon(Icons.cookie_outlined),
-          //   title: const Text('刷新 cookies 状态'),
-          //   onTap: () async {
-          //     var res = await BilibiliHelper.loginCheck();
-          //     setState(() {
-          //       AppStorage().settings.logined = res;
-          //     });
-          //     AppStorage().saveSettings();
-          //   },
-          // ),
-          // ListTile(
-          //   leading: const Icon(Icons.delete_outline),
-          //   title: const Text('清除所有 cookies'),
-          //   onTap: () {
-          //     WebHelper.cookieManager.cookieJar.deleteAll();
-          //     setState(() {
-          //       AppStorage().settings.logined = false;
-          //     });
-          //     AppStorage().saveSettings();
-          //   },
-          // ),
+          !AppStorage().settings.enableBvTools
+              ? const SizedBox()
+              : ListTile(
+                  leading: const Icon(Icons.cloud_sync),
+                  title: const Text('加载 cookies'),
+                  onTap: () {
+                    editingController.clear();
+                    showDialog(
+                      barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
+                      useRootNavigator: false,
+                      context: context,
+                      builder: (BuildContext context) => AlertDialog(
+                        surfaceTintColor: Colors.transparent,
+                        title: const Text('cookies'),
+                        content: TextField(
+                          autofocus: true,
+                          maxLines: 8,
+                          controller: editingController,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'SESSDATA',
+                          ),
+                          onSubmitted: (value) async {
+                            await WebHelper.cookieManager.cookieJar
+                                .saveFromResponse(Uri.parse(Constants.apiBase),
+                                    [Cookie('SESSDATA', value)]);
+                            var res = await BilibiliHelper.loginCheck();
+                            setState(() {
+                              AppStorage().settings.logined = res;
+                            });
+                            AppStorage().saveSettings();
+                            if (!context.mounted) return;
+                            Navigator.pop(context);
+                          },
+                        ),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('取消'),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              String value = editingController.text;
+                              await WebHelper.cookieManager.cookieJar
+                                  .saveFromResponse(
+                                      Uri.parse(Constants.apiBase),
+                                      [Cookie('SESSDATA', value)]);
+                              var res = await BilibiliHelper.loginCheck();
+                              setState(() {
+                                AppStorage().settings.logined = res;
+                              });
+                              AppStorage().saveSettings();
+                              if (!context.mounted) return;
+                              Navigator.pop(context);
+                            },
+                            child: const Text('确定'),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+          !AppStorage().settings.enableBvTools
+              ? const SizedBox()
+              : ListTile(
+                  leading: const Icon(Icons.cookie),
+                  title: const Text('刷新 cookies 状态'),
+                  subtitle: Text(
+                      '当前 cookies 状态: ${AppStorage().settings.logined ? '可用' : '无效'}'),
+                  onTap: () async {
+                    var res = await BilibiliHelper.loginCheck();
+                    setState(() {
+                      AppStorage().settings.logined = res;
+                    });
+                    AppStorage().saveSettings();
+                  },
+                ),
+
+          !AppStorage().settings.enableBvTools
+              ? const SizedBox()
+              : SwitchListTile(
+                  title: const Row(
+                    children: [
+                      Icon(Icons.healing),
+                      SizedBox(
+                        width: 12,
+                      ),
+                      Text('访客开启 1080P')
+                    ],
+                  ),
+                  value: AppStorage().settings.tryLook,
+                  onChanged: (bool value) {
+                    setState(() {
+                      AppStorage().settings.tryLook = value;
+                    });
+                    AppStorage().saveSettings();
+                    // AppStorage().updateStatus();
+                  },
+                ),
+          !AppStorage().settings.enableBvTools
+              ? const SizedBox()
+              : ListTile(
+                  leading: const Icon(Icons.delete),
+                  title: const Text('清除所有 cookies'),
+                  onTap: () {
+                    WebHelper.cookieManager.cookieJar.deleteAll();
+                    setState(() {
+                      AppStorage().settings.logined = false;
+                    });
+                    AppStorage().saveSettings();
+                  },
+                ),
         ],
       ),
     );

@@ -491,8 +491,12 @@ class MPlayerState extends State<MPlayer> {
               if (info != null) {
                 await windowManager.setAsFrameless();
                 await windowManager.setPosition(Offset.zero);
-                await windowManager
-                    .setSize(Size(info.frame.width / 2, info.frame.height / 2));
+                await windowManager.setSize(
+                  Size(
+                    info.frame.width / info.scaleFactor,
+                    info.frame.height / info.scaleFactor,
+                  ),
+                );
               }
             } else {
               windowManager.setFullScreen(true);
