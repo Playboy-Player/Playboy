@@ -56,6 +56,7 @@ class FileExplorerState extends State<FileExplorer> {
         titleSpacing: 0,
         title: Text(name),
         scrolledUnderElevation: 0,
+        backgroundColor: Theme.of(context).colorScheme.surface,
       ),
       body: loaded
           ? GridView.builder(

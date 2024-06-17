@@ -24,6 +24,7 @@ class DownloadPageState extends State<DownloadPage> {
         ),
         titleSpacing: 0,
         scrolledUnderElevation: 0,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         title: const Text('下载管理'),
         actions: [
           IconButton(

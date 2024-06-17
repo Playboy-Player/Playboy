@@ -1,14 +1,8 @@
-// import 'dart:io';
-
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/biliapi/bilibili_helper.dart';
-import 'package:playboy/backend/constants.dart';
-// import 'package:playboy/backend/biliapi/bilibili_helper.dart';
-// import 'package:playboy/backend/constants.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/backend/web_helper.dart';
-// import 'package:playboy/backend/web_helper.dart';
 
 class ExtensionSettings extends StatefulWidget {
   const ExtensionSettings({super.key});
@@ -82,7 +76,8 @@ class _ExtensionSettingsState extends State<ExtensionSettings> {
                           ),
                           onSubmitted: (value) async {
                             await WebHelper.cookieManager.cookieJar
-                                .saveFromResponse(Uri.parse(Constants.apiBase),
+                                .saveFromResponse(
+                                    Uri.parse(BilibiliHelper.apiBase),
                                     [Cookie('SESSDATA', value)]);
                             var res = await BilibiliHelper.loginCheck();
                             setState(() {
@@ -105,7 +100,7 @@ class _ExtensionSettingsState extends State<ExtensionSettings> {
                               String value = editingController.text;
                               await WebHelper.cookieManager.cookieJar
                                   .saveFromResponse(
-                                      Uri.parse(Constants.apiBase),
+                                      Uri.parse(BilibiliHelper.apiBase),
                                       [Cookie('SESSDATA', value)]);
                               var res = await BilibiliHelper.loginCheck();
                               setState(() {

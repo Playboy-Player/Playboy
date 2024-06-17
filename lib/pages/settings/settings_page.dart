@@ -25,7 +25,7 @@ class SettingsPageState extends State<SettingsPage> {
     Icons.translate_rounded,
     Icons.live_tv,
     Icons.info_outline,
-    Icons.precision_manufacturing_outlined,
+    Icons.code_outlined,
   ];
   List<String> options = [
     '外观',
@@ -64,6 +64,7 @@ class SettingsPageState extends State<SettingsPage> {
           },
         ),
         titleSpacing: 0,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         scrolledUnderElevation: 0,
         flexibleSpace: GestureDetector(
           behavior: HitTestBehavior.translucent,

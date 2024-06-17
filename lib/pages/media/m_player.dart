@@ -578,9 +578,9 @@ class MPlayerState extends State<MPlayer> {
 
   Widget _buildPlaylistPanel(ColorScheme colorScheme, Color backgroundColor) {
     return Scaffold(
-      backgroundColor: videoMode ? colorScheme.background : backgroundColor,
+      backgroundColor: videoMode ? colorScheme.surface : backgroundColor,
       appBar: AppBar(
-        backgroundColor: videoMode ? colorScheme.background : backgroundColor,
+        backgroundColor: videoMode ? colorScheme.surface : backgroundColor,
         automaticallyImplyLeading: false,
         toolbarHeight: 46,
         titleSpacing: videoMode ? null : 8,
@@ -671,9 +671,9 @@ class MPlayerState extends State<MPlayer> {
 
   Widget _buildSubtitlePanel(ColorScheme colorScheme, Color backgroundColor) {
     return Scaffold(
-      backgroundColor: videoMode ? colorScheme.background : backgroundColor,
+      backgroundColor: videoMode ? colorScheme.surface : backgroundColor,
       appBar: AppBar(
-        backgroundColor: videoMode ? colorScheme.background : backgroundColor,
+        backgroundColor: videoMode ? colorScheme.surface : backgroundColor,
         automaticallyImplyLeading: false,
         toolbarHeight: 46,
         titleSpacing: videoMode ? null : 8,

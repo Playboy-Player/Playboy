@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
-import 'package:playboy/backend/constants.dart';
+import 'package:playboy/backend/biliapi/bilibili_helper.dart';
 import 'package:playboy/backend/storage.dart';
 
 class WebHelper {
@@ -29,9 +29,9 @@ class WebHelper {
   Future<void> loadBvTools() async {
     dio.options.headers.addAll({'referer': 'https://www.bilibili.com'});
     if ((await cookieManager.cookieJar
-            .loadForRequest(Uri.parse(Constants.mainBase)))
+            .loadForRequest(Uri.parse(BilibiliHelper.mainBase)))
         .isEmpty) {
-      await dio.get(Constants.mainBase);
+      await dio.get(BilibiliHelper.mainBase);
     }
   }
 

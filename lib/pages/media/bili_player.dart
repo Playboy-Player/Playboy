@@ -314,8 +314,7 @@ class BiliPlayerState extends State<BiliPlayer> {
           initialIndex: 0,
           length: 2,
           child: Scaffold(
-            backgroundColor:
-                videoMode ? colorScheme.background : backgroundColor,
+            backgroundColor: videoMode ? colorScheme.surface : backgroundColor,
             appBar: const TabBar(
               tabs: <Widget>[
                 Tab(

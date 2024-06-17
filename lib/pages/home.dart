@@ -25,7 +25,7 @@ class MikuMiku extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<AppStorage>(
       builder: (BuildContext context, AppStorage value, Widget? child) {
-        MaterialColor themeColor = value.settings.getColorTheme();
+        MaterialColor themeColor = value.getColorTheme();
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Playboy',

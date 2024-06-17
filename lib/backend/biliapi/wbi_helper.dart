@@ -1,10 +1,10 @@
 import 'dart:convert';
 
+import 'package:playboy/backend/biliapi/bilibili_helper.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/backend/web_helper.dart';
 
 import 'models/login_info_response.dart';
-import '../constants.dart';
 import 'package:crypto/crypto.dart';
 
 //https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/misc/sign/wbi.md
@@ -83,7 +83,7 @@ class WbiHelper {
       return AppStorage().settings.wbiKey;
     }
     var request =
-        await WebHelper().get("${Constants.apiBase}/x/web-interface/nav");
+        await WebHelper().get("${BilibiliHelper.apiBase}/x/web-interface/nav");
     LoginInfoResponse requestInfo = LoginInfoResponse.fromJson(request.data);
     if (requestInfo.data == null || requestInfo.data!.wbiImg == null) {
       return 'none';

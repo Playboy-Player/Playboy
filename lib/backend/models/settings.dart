@@ -87,24 +87,4 @@ class AppSettings {
   factory AppSettings.fromJson(Map<String, dynamic> json) =>
       _$AppSettingsFromJson(json);
   Map<String, dynamic> toJson() => _$AppSettingsToJson(this);
-
-  MaterialColor getColorTheme() {
-    switch (themeCode) {
-      case 0:
-        return Colors.pink;
-      case 1:
-        return Colors.orange;
-      case 2:
-        return Colors.amber;
-      case 3:
-        return Colors.teal;
-      case 4:
-        return Colors.blue;
-      case 5:
-        return Colors.indigo;
-      case 6:
-        return Colors.purple;
-    }
-    return Colors.pink;
-  }
 }

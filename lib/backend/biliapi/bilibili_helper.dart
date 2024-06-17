@@ -1,5 +1,4 @@
 import 'package:playboy/backend/biliapi/models/login_info_response.dart';
-import 'package:playboy/backend/constants.dart';
 import 'package:playboy/backend/biliapi/models/video_info.dart';
 import 'package:playboy/backend/biliapi/models/video_info_response.dart';
 import 'package:playboy/backend/biliapi/models/video_stream_response.dart';
@@ -8,9 +7,12 @@ import 'package:playboy/backend/storage.dart';
 import 'package:playboy/backend/web_helper.dart';
 
 class BilibiliHelper {
+  static const String mainBase = "https://www.bilibili.com";
+  static const String apiBase = "https://api.bilibili.com";
+
   static Future<bool> loginCheck() async {
     var request =
-        await WebHelper().get("${Constants.apiBase}/x/web-interface/nav");
+        await WebHelper().get("${BilibiliHelper.apiBase}/x/web-interface/nav");
     LoginInfoResponse requestInfo = LoginInfoResponse.fromJson(request.data);
     var info = requestInfo.data!;
     return info.isLogin ?? false;
@@ -18,7 +20,7 @@ class BilibiliHelper {
 
   static Future<VideoInfo> getVideoInfo(String bvid) async {
     var request = await WebHelper().get(
-        "${Constants.apiBase}/x/web-interface/view",
+        "${BilibiliHelper.apiBase}/x/web-interface/view",
         queryParameters: await WbiHelper.signParams({"bvid": bvid}));
     VideoInfoResponse requestInfo = VideoInfoResponse.fromJson(request.data);
     //todo: null safety
@@ -43,7 +45,7 @@ class BilibiliHelper {
 
   static Future<Dash> getVideoStream(String bvid, int cid) async {
     var request =
-        await WebHelper().get("${Constants.apiBase}/x/player/wbi/playurl",
+        await WebHelper().get("${BilibiliHelper.apiBase}/x/player/wbi/playurl",
             queryParameters: await WbiHelper.signParams({
               "bvid": bvid,
               "cid": cid,

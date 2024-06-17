@@ -180,9 +180,9 @@ class _MusicPageState extends State<MusicPage> {
                                       controller: menuController,
                                       style: MenuStyle(
                                         surfaceTintColor:
-                                            const MaterialStatePropertyAll(
+                                            const WidgetStatePropertyAll(
                                                 Colors.transparent),
-                                        shape: MaterialStatePropertyAll(
+                                        shape: WidgetStatePropertyAll(
                                           RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(10),

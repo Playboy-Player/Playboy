@@ -12,6 +12,49 @@ import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/models/settings.dart';
 
 class AppStorage extends ChangeNotifier {
+  List<MaterialColor> colors = [
+    Colors.amber,
+    Colors.blue,
+    Colors.blueGrey,
+    Colors.brown,
+    Colors.cyan,
+    Colors.deepOrange,
+    Colors.deepPurple,
+    Colors.green,
+    Colors.grey,
+    Colors.indigo,
+    Colors.lightBlue,
+    Colors.lightGreen,
+    Colors.lime,
+    Colors.orange,
+    Colors.pink,
+    Colors.purple,
+    Colors.red,
+    Colors.teal,
+    Colors.yellow,
+  ];
+  List<String> themes = [
+    "amber",
+    "blue+",
+    "grey+",
+    "brown",
+    "miku",
+    "orange+",
+    "purple+",
+    "green+",
+    "grey",
+    "indigo",
+    "blue",
+    "green",
+    "lime",
+    "orange",
+    "pink",
+    "purple",
+    "red",
+    "teal",
+    "yellow",
+  ];
+
   late final String dataPath;
   late AppSettings settings;
 
@@ -173,5 +216,9 @@ class AppStorage extends ChangeNotifier {
     settings.volume = 100;
     settings.speed = 1;
     saveSettings();
+  }
+
+  MaterialColor getColorTheme() {
+    return colors[settings.themeCode];
   }
 }

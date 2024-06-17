@@ -31,6 +31,7 @@ class PlaylistDetailState extends State<PlaylistDetail> {
         titleSpacing: 0,
         title: Text(widget.info.title),
         scrolledUnderElevation: 0,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         actions: [
           IconButton(
             onPressed: () {},
@@ -102,7 +103,7 @@ class PlaylistDetailState extends State<PlaylistDetail> {
                           children: [
                             TextButton.icon(
                               style: ButtonStyle(
-                                  backgroundColor: MaterialStatePropertyAll(
+                                  backgroundColor: WidgetStatePropertyAll(
                                       colorScheme.primaryContainer)),
                               onPressed: () {
                                 AppStorage().closeMedia();
@@ -116,7 +117,7 @@ class PlaylistDetailState extends State<PlaylistDetail> {
                             ),
                             TextButton.icon(
                               style: ButtonStyle(
-                                  backgroundColor: MaterialStatePropertyAll(
+                                  backgroundColor: WidgetStatePropertyAll(
                                       colorScheme.primaryContainer)),
                               onPressed: () {
                                 AppStorage().closeMedia();

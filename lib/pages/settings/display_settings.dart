@@ -304,6 +304,68 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
             ),
           ),
         ),
+        Container(
+          padding: const EdgeInsets.all(12),
+          child: Text(
+            '主题设置',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+          ),
+        ),
+        ListTile(
+          leading: const Icon(Icons.color_lens_outlined),
+          title: const Text('主题颜色'),
+          trailing: SizedBox(
+            height: 44,
+            width: 150,
+            child: DropdownButtonFormField(
+              // icon: const SizedBox(),
+              isExpanded: true,
+              borderRadius: BorderRadius.circular(16),
+              decoration: InputDecoration(
+                isDense: true,
+                filled: true,
+                border: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    width: 0,
+                    style: BorderStyle.none,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                fillColor: Theme.of(context).colorScheme.secondaryContainer,
+              ),
+              value: AppStorage().settings.themeCode,
+              items: List.generate(AppStorage().colors.length, (index) {
+                return DropdownMenuItem(
+                  value: index,
+                  child: Row(
+                    children: [
+                      ColoredBox(
+                        color: AppStorage().colors[index],
+                        child: const SizedBox(
+                          height: 16,
+                          width: 16,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(AppStorage().themes[index]),
+                    ],
+                  ),
+                );
+              }),
+              onChanged: (value) {
+                AppStorage().settings.themeCode = value!;
+                AppStorage().saveSettings();
+                AppStorage().updateStatus();
+              },
+            ),
+          ),
+        ),
         SwitchListTile(
             title: const Text('主题模式跟随系统'),
             value: AppStorage().settings.themeMode == ThemeMode.system,
@@ -342,99 +404,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
                   AppStorage().updateStatus();
                 },
               ),
-        Container(
-          padding: const EdgeInsets.all(12),
-          child: Text(
-            '主题颜色',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-          ),
-        ),
-        RadioListTile(
-            title: const Text('Pink'),
-            value: 0,
-            groupValue: AppStorage().settings.themeCode,
-            onChanged: (int? value) {
-              setState(() {
-                AppStorage().settings.themeCode = value!;
-              });
-              AppStorage().saveSettings();
-              AppStorage().updateStatus();
-            }),
-        RadioListTile(
-            title: const Text('Orange'),
-            value: 1,
-            groupValue: AppStorage().settings.themeCode,
-            onChanged: (int? value) {
-              setState(() {
-                AppStorage().settings.themeCode = value!;
-              });
-              AppStorage().saveSettings();
-              AppStorage().updateStatus();
-            }),
-        RadioListTile(
-            title: const Text('Amber'),
-            value: 2,
-            groupValue: AppStorage().settings.themeCode,
-            onChanged: (int? value) {
-              setState(() {
-                AppStorage().settings.themeCode = value!;
-              });
-              AppStorage().saveSettings();
-              AppStorage().updateStatus();
-            }),
-        RadioListTile(
-            title: const Text('Teal'),
-            value: 3,
-            groupValue: AppStorage().settings.themeCode,
-            onChanged: (int? value) {
-              setState(() {
-                AppStorage().settings.themeCode = value!;
-              });
-              AppStorage().saveSettings();
-              AppStorage().updateStatus();
-            }),
-        RadioListTile(
-            title: const Text('Blue'),
-            value: 4,
-            groupValue: AppStorage().settings.themeCode,
-            onChanged: (int? value) {
-              setState(() {
-                AppStorage().settings.themeCode = value!;
-              });
-              AppStorage().saveSettings();
-              AppStorage().updateStatus();
-            }),
-        RadioListTile(
-            title: const Text('Indigo'),
-            value: 5,
-            groupValue: AppStorage().settings.themeCode,
-            onChanged: (int? value) {
-              setState(() {
-                AppStorage().settings.themeCode = value!;
-              });
-              AppStorage().saveSettings();
-              AppStorage().updateStatus();
-            }),
-        RadioListTile(
-            title: const Text('Purple'),
-            value: 6,
-            groupValue: AppStorage().settings.themeCode,
-            onChanged: (int? value) {
-              setState(() {
-                AppStorage().settings.themeCode = value!;
-              });
-              AppStorage().saveSettings();
-              AppStorage().updateStatus();
-            }),
       ],
     ));
   }
 }
-
-// enum ThemeColors{
-//
-// }

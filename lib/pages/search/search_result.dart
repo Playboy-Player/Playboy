@@ -27,6 +27,7 @@ class SearchResultPageState extends State<SearchResultPage> {
         ),
         titleSpacing: 0,
         scrolledUnderElevation: 0,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         title: InkWell(
           hoverColor: Colors.transparent,
           splashColor: Colors.transparent,

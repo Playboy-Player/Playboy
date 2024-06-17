@@ -208,7 +208,7 @@ class PlaylistState extends State<PlaylistPage> {
                                     child: MenuAnchor(
                                       controller: menuController,
                                       style: MenuStyle(
-                                        shape: MaterialStatePropertyAll(
+                                        shape: WidgetStatePropertyAll(
                                           RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(10),
