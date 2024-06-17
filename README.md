@@ -39,19 +39,19 @@
   </tr>
 </table>
 
-## 功能 & 开发进度
+## 功能
 
-- [x] 主题颜色自定义
-- [x] 深色模式支持
+[查看开发进度](https://github.com/orgs/Playboy-Player/projects/3)
+
+- [x] 主题颜色设置 & 深色模式支持
 - [ ] 多语言支持
-- [x] 播放本地和媒体文件.
+- [x] 播放本地和网络媒体
+- [x] 迷你播放器模式
 - [x] 设置为系统打开方式
 - [x] 播放列表 (随机播放, 单曲循环)
-- [x] 任意倍速调节 (0-4倍速)
-- [ ] 编辑媒体文件.
-- [ ] 歌词支持
-- [ ] 视频字幕
-- [x] 解析BV链接.
+- [x] 倍速调节 (0-4倍速)
+- [ ] 歌词和字幕
+- [ ] 解析BV链接.
 - [ ] 文件下载功能.
 - [ ] 媒体文件搜索
 
@@ -60,7 +60,7 @@
 音乐库与视频库按文件夹扫描媒体项, 将文件夹中的 `cover.jpg` 设为媒体项的封面.  
 仅扫描与文件夹同名且格式支持的媒体文件, 同名不同扩展名的文件仅会扫描一个.
 
-扫描格式: `avi`, `flv`, `mkv`, `mov`, `mp4`, `mpeg`, `webm`, `wmv`, `aac`, `midi`, `mp3`, `ogg`, `wav`
+支持格式: `avi`, `flv`, `mkv`, `mov`, `mp4`, `mpeg`, `webm`, `wmv`, `aac`, `midi`, `mp3`, `ogg`, `wav`
 
 例如, 以下目录会被扫描为一个媒体项
 
@@ -80,9 +80,9 @@ flutter doctor 输出内容示例:
 
 ```
 Doctor summary (to see all details, run flutter doctor -v):
-[✓] Flutter (Channel stable, 3.19.3, on Microsoft Windows [版本 10.0.22631.3296], locale zh-CN)
+[✓] Flutter (Channel stable, 3.22.2, on Microsoft Windows [版本 10.0.22631.3737], locale zh-CN)
 [✓] Windows Version (Installed version of Windows is version 10 or higher)
-[✓] Visual Studio - develop Windows apps (Visual Studio Community 2022 17.9.2)
+[✓] Visual Studio - develop Windows apps (Visual Studio 生成工具 2022 17.10.2)
 [✓] Connected device (3 available)
 [✓] Network resources
 ```
@@ -119,11 +119,3 @@ Doctor summary (to see all details, run flutter doctor -v):
 
 如果您在使用中发现 bug 或者希望添加某些功能, 请 [新建一个 issue](https://github.com/Playboy-Player/Playboy/issues/new).  
 也欢迎直接 Pull Request 提交代码贡献.
-
-## 致谢
-
-视频播放器库 [media-kit](https://github.com/media-kit/media-kit)
-
-网络请求库 [dio](https://github.com/cfug/dio)
-
-Bilibili API 收集 [bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect)
