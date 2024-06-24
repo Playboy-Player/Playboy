@@ -70,7 +70,7 @@ Last Resort/
 └─cover.jpg
 ```
 
-## 开发环境
+## 跨平台支持情况
 
 ### Windows
 
@@ -91,15 +91,16 @@ Doctor summary (to see all details, run flutter doctor -v):
 
 ### Linux
 
-> 目前 Linux 版本 UI 存在 Bug
+> 目前 Linux 版本存在较多 Bug, 如播放时切换页面可能导致应用崩溃, 迷你播放器显示尺寸错误等
 
-需要安装 [Flutter](https://docs.flutter.dev/get-started/install/linux), libmpv.
+需要安装 [Flutter](https://docs.flutter.dev/get-started/install/linux), libmpv-dev.
 
 flutter doctor 输出内容示例:
 
 ```
 Doctor summary (to see all details, run flutter doctor -v):
-[✓] Flutter (Channel stable, 3.19.3, on Ubuntu 22.04.4 LTS 6.5.0-25-generic, locale zh_CN.UTF-8)
+[✓] Flutter (Channel stable, 3.22.2, on Debian GNU/Linux 12 (bookworm) 5.15.153.1-microsoft-standard-WSL2, locale
+    en_US.UTF-8)
 [✓] Linux toolchain - develop for Linux desktop
 [✓] Connected device (1 available)
 [✓] Network resources 
@@ -109,11 +110,11 @@ Doctor summary (to see all details, run flutter doctor -v):
 
 ### macOS
 
-> 计划中
+> 理论上兼容, 由于无编译环境, 暂未测试
 
 ### android
 
-> 计划中
+> 开发中
 
 ## 为本项目做出贡献
 
