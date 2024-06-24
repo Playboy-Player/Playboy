@@ -98,8 +98,7 @@ class _HomeState extends State<Home> {
                 stream: AppStorage().playboy.stream.playlist,
                 builder: (context, snapshot) {
                   return AppStorage().playingCover == null
-                      ? _buildMediaCardContent(
-                          ColorScheme.fromSeed(seedColor: colorScheme.primary))
+                      ? _buildMediaCardContent(colorScheme)
                       : FutureBuilder(
                           future: ColorScheme.fromImageProvider(
                             provider: UniImageProvider(
@@ -110,9 +109,7 @@ class _HomeState extends State<Home> {
                             if (snapshot.hasData && snapshot.data != null) {
                               return _buildMediaCardContent(snapshot.data!);
                             } else {
-                              return _buildMediaCardContent(
-                                  ColorScheme.fromSeed(
-                                      seedColor: colorScheme.primary));
+                              return _buildMediaCardContent(colorScheme);
                             }
                           },
                         );
@@ -155,21 +152,23 @@ class _HomeState extends State<Home> {
               const SizedBox(
                 width: 10,
               ),
-              tabletUI
-                  ? StreamBuilder(
-                      stream: AppStorage().playboy.stream.playlist,
-                      builder: ((context, snapshot) {
-                        return Text(
-                          AppStorage().playingTitle == 'Not Playing'
-                              ? Constants.appName
-                              : AppStorage().playingTitle,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        );
-                      }))
-                  : const SizedBox(),
+              Expanded(
+                child: tabletUI
+                    ? StreamBuilder(
+                        stream: AppStorage().playboy.stream.playlist,
+                        builder: ((context, snapshot) {
+                          return Text(
+                            AppStorage().playingTitle == 'Not Playing'
+                                ? Constants.appName
+                                : AppStorage().playingTitle,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          );
+                        }))
+                    : const SizedBox(),
+              ),
             ])),
         actions: [
           IconButton(
@@ -936,11 +935,16 @@ class _HomeState extends State<Home> {
                   max: AppStorage().duration.inMilliseconds.toDouble(),
                   value: AppStorage().seeking
                       ? AppStorage().seekingPos
-                      : min(
-                          snapshot.hasData
-                              ? snapshot.data!.inMilliseconds.toDouble()
-                              : AppStorage().position.inMilliseconds.toDouble(),
-                          AppStorage().duration.inMilliseconds.toDouble()),
+                      : max(
+                          min(
+                              snapshot.hasData
+                                  ? snapshot.data!.inMilliseconds.toDouble()
+                                  : AppStorage()
+                                      .position
+                                      .inMilliseconds
+                                      .toDouble(),
+                              AppStorage().duration.inMilliseconds.toDouble()),
+                          0),
                   onChanged: (value) {
                     setState(() {
                       AppStorage().seekingPos = value;

@@ -36,8 +36,18 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
           Video(
             controller: controller,
             controls: NoVideoControls,
-            subtitleViewConfiguration:
-                const SubtitleViewConfiguration(visible: false),
+            subtitleViewConfiguration: const SubtitleViewConfiguration(
+              style: TextStyle(
+                fontSize: 60,
+                color: Colors.white,
+                shadows: <Shadow>[
+                  Shadow(
+                    blurRadius: 16,
+                    color: Colors.black,
+                  ),
+                ],
+              ),
+            ),
           ),
           Align(
             alignment: Alignment.bottomCenter,
@@ -110,11 +120,13 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
             max: AppStorage().duration.inMilliseconds.toDouble(),
             value: AppStorage().seeking
                 ? AppStorage().seekingPos
-                : min(
-                    snapshot.hasData
-                        ? snapshot.data!.inMilliseconds.toDouble()
-                        : AppStorage().position.inMilliseconds.toDouble(),
-                    AppStorage().duration.inMilliseconds.toDouble()),
+                : max(
+                    min(
+                        snapshot.hasData
+                            ? snapshot.data!.inMilliseconds.toDouble()
+                            : AppStorage().position.inMilliseconds.toDouble(),
+                        AppStorage().duration.inMilliseconds.toDouble()),
+                    0),
             onChanged: (value) {
               // player.seek(Duration(milliseconds: value.toInt()));
               setState(() {
@@ -166,7 +178,7 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
               child: SliderTheme(
                 data: SliderThemeData(
                   activeTrackColor: colorScheme.secondaryContainer,
-                  thumbColor: colorScheme.onSecondaryContainer,
+                  thumbColor: colorScheme.secondary,
                   trackHeight: 4,
                   thumbShape:
                       const RoundSliderThumbShape(enabledThumbRadius: 6),
@@ -228,7 +240,8 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
       ),
       IconButton.filled(
         style: IconButton.styleFrom(
-          // backgroundColor: colorScheme.tertiary,
+          backgroundColor: colorScheme.secondary,
+          foregroundColor: colorScheme.onSecondary,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         ),
@@ -300,7 +313,7 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
             child: SliderTheme(
                 data: SliderThemeData(
                   activeTrackColor: colorScheme.secondaryContainer,
-                  thumbColor: colorScheme.onSecondaryContainer,
+                  thumbColor: colorScheme.secondary,
                   trackHeight: 4,
                   thumbShape:
                       const RoundSliderThumbShape(enabledThumbRadius: 6),

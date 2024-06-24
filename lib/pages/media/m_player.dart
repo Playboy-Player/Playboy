@@ -243,8 +243,18 @@ class MPlayerState extends State<MPlayer> {
                   child: Video(
                     controller: controller,
                     controls: NoVideoControls,
-                    subtitleViewConfiguration:
-                        const SubtitleViewConfiguration(visible: false),
+                    subtitleViewConfiguration: const SubtitleViewConfiguration(
+                      style: TextStyle(
+                        fontSize: 60,
+                        color: Colors.white,
+                        shadows: <Shadow>[
+                          Shadow(
+                            blurRadius: 16,
+                            color: Colors.black,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               )
@@ -309,11 +319,13 @@ class MPlayerState extends State<MPlayer> {
             max: AppStorage().duration.inMilliseconds.toDouble(),
             value: AppStorage().seeking
                 ? AppStorage().seekingPos
-                : min(
-                    snapshot.hasData
-                        ? snapshot.data!.inMilliseconds.toDouble()
-                        : AppStorage().position.inMilliseconds.toDouble(),
-                    AppStorage().duration.inMilliseconds.toDouble()),
+                : max(
+                    min(
+                        snapshot.hasData
+                            ? snapshot.data!.inMilliseconds.toDouble()
+                            : AppStorage().position.inMilliseconds.toDouble(),
+                        AppStorage().duration.inMilliseconds.toDouble()),
+                    0),
             onChanged: (value) {
               // player.seek(Duration(milliseconds: value.toInt()));
               setState(() {
@@ -366,7 +378,7 @@ class MPlayerState extends State<MPlayer> {
               child: SliderTheme(
                 data: SliderThemeData(
                   activeTrackColor: colorScheme.secondaryContainer,
-                  thumbColor: colorScheme.onSecondaryContainer,
+                  thumbColor: colorScheme.secondary,
                   trackHeight: 4,
                   thumbShape:
                       const RoundSliderThumbShape(enabledThumbRadius: 6),
@@ -431,7 +443,8 @@ class MPlayerState extends State<MPlayer> {
       ),
       IconButton.filled(
         style: IconButton.styleFrom(
-          // backgroundColor: colorScheme.tertiary,
+          backgroundColor: colorScheme.secondary,
+          foregroundColor: colorScheme.onSecondary,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         ),
@@ -485,36 +498,39 @@ class MPlayerState extends State<MPlayer> {
         width: 10,
       ),
       IconButton(
-          onPressed: () async {
-            if (Platform.isWindows && !await windowManager.isMaximized()) {
-              var info = await getCurrentScreen();
-              if (info != null) {
-                await windowManager.setAsFrameless();
-                await windowManager.setPosition(Offset.zero);
-                await windowManager.setSize(
-                  Size(
-                    info.frame.width / info.scaleFactor,
-                    info.frame.height / info.scaleFactor,
-                  ),
-                );
-              }
-            } else {
-              windowManager.setFullScreen(true);
-            }
+          onPressed: !videoMode
+              ? null
+              : () async {
+                  if (Platform.isWindows &&
+                      !await windowManager.isMaximized()) {
+                    var info = await getCurrentScreen();
+                    if (info != null) {
+                      await windowManager.setAsFrameless();
+                      await windowManager.setPosition(Offset.zero);
+                      await windowManager.setSize(
+                        Size(
+                          info.frame.width / info.scaleFactor,
+                          info.frame.height / info.scaleFactor,
+                        ),
+                      );
+                    }
+                  } else {
+                    windowManager.setFullScreen(true);
+                  }
 
-            if (!mounted) return;
-            Navigator.push(
-              context,
-              // MaterialPageRoute(
-              //     builder: (context) => const FullscreenPlayPage()),
-              PageRouteBuilder(
-                pageBuilder: (context, animation1, animation2) =>
-                    const FullscreenPlayPage(),
-                transitionDuration: Duration.zero,
-                reverseTransitionDuration: Duration.zero,
-              ),
-            );
-          },
+                  if (!mounted) return;
+                  Navigator.push(
+                    context,
+                    // MaterialPageRoute(
+                    //     builder: (context) => const FullscreenPlayPage()),
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation1, animation2) =>
+                          const FullscreenPlayPage(),
+                      transitionDuration: Duration.zero,
+                      reverseTransitionDuration: Duration.zero,
+                    ),
+                  );
+                },
           icon: const Icon(Icons.fullscreen)),
       Expanded(
           child: Row(
@@ -525,7 +541,7 @@ class MPlayerState extends State<MPlayer> {
             child: SliderTheme(
                 data: SliderThemeData(
                   activeTrackColor: colorScheme.secondaryContainer,
-                  thumbColor: colorScheme.onSecondaryContainer,
+                  thumbColor: colorScheme.secondary,
                   trackHeight: 4,
                   thumbShape:
                       const RoundSliderThumbShape(enabledThumbRadius: 6),
@@ -679,7 +695,7 @@ class MPlayerState extends State<MPlayer> {
         titleSpacing: videoMode ? null : 8,
         scrolledUnderElevation: 0,
         title: Text(
-          '字幕',
+          '歌词',
           style: TextStyle(color: colorScheme.primary),
         ),
         actions: [

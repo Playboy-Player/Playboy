@@ -60,6 +60,7 @@ class FolderCard extends StatelessWidget {
                 child: Center(
                     child: Text(
                   name,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: colorScheme.onSecondaryContainer,
                     fontSize: 12,

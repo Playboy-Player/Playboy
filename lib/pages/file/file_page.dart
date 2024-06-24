@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 // import 'package:playboy/backend/biliapi/bilibili_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
-import 'package:playboy/pages/file/download_page.dart';
+// import 'package:playboy/pages/file/download_page.dart';
 // import 'package:playboy/pages/media/bili_player.dart';
 import 'package:playboy/pages/media/m_player.dart';
 import 'package:playboy/widgets/folder_card.dart';
@@ -62,7 +62,15 @@ class _FilePageState extends State<FilePage> {
           ),
           SliverList(
             delegate: SliverChildListDelegate([
-              _buildOption(Icons.insert_drive_file_outlined, '打开本地文件',
+              _buildOption(Icons.folder_open, '播放文件夹', () async {
+                var res = await FilePicker.platform
+                    .getDirectoryPath(lockParentWindow: true);
+                if (res != null) {
+                  String link = res;
+                  _openLink(link);
+                }
+              }),
+              _buildOption(Icons.insert_drive_file_outlined, '播放本地文件',
                   () async {
                 var res =
                     await FilePicker.platform.pickFiles(lockParentWindow: true);
@@ -120,17 +128,19 @@ class _FilePageState extends State<FilePage> {
                   ),
                 );
               }),
-              _buildOption(Icons.download, '下载管理', () {
-                Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation1, animation2) =>
-                        const DownloadPage(),
-                    transitionDuration: Duration.zero,
-                    reverseTransitionDuration: Duration.zero,
+              _buildOption(Icons.file_download_outlined, '下载管理', null
+                  // () {
+                  //   Navigator.push(
+                  //     context,
+                  //     PageRouteBuilder(
+                  //       pageBuilder: (context, animation1, animation2) =>
+                  //           const DownloadPage(),
+                  //       transitionDuration: Duration.zero,
+                  //       reverseTransitionDuration: Duration.zero,
+                  //     ),
+                  //   );
+                  // }
                   ),
-                );
-              }),
               _buildOption(Icons.live_tv, 'BV Tools', null),
             ]),
           ),
