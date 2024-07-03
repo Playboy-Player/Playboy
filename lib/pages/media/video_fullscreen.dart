@@ -33,19 +33,22 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
     return Scaffold(
       body: Stack(
         children: [
-          Video(
-            controller: controller,
-            controls: NoVideoControls,
-            subtitleViewConfiguration: const SubtitleViewConfiguration(
-              style: TextStyle(
-                fontSize: 60,
-                color: Colors.white,
-                shadows: <Shadow>[
-                  Shadow(
-                    blurRadius: 16,
-                    color: Colors.black,
-                  ),
-                ],
+          MouseRegion(
+            cursor: SystemMouseCursors.none,
+            child: Video(
+              controller: controller,
+              controls: NoVideoControls,
+              subtitleViewConfiguration: const SubtitleViewConfiguration(
+                style: TextStyle(
+                  fontSize: 60,
+                  color: Colors.white,
+                  shadows: <Shadow>[
+                    Shadow(
+                      blurRadius: 16,
+                      color: Colors.black,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
