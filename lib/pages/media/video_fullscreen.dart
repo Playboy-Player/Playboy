@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
@@ -23,7 +24,28 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
   // bool seeking = false;
   // double seekingPos = 0;
 
-  bool showControlBar = false;
+  bool _showControlBar = false;
+
+  bool _isMouseHidden = false;
+  Timer? _timer;
+
+  void _resetTimer() {
+    _timer?.cancel();
+    setState(() {
+      _isMouseHidden = false;
+    });
+    _timer = Timer(const Duration(seconds: 2), () {
+      setState(() {
+        _isMouseHidden = true;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +56,11 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
       body: Stack(
         children: [
           MouseRegion(
-            cursor: SystemMouseCursors.none,
+            onHover: (_) {
+              _resetTimer();
+            },
+            cursor:
+                _isMouseHidden ? SystemMouseCursors.none : MouseCursor.defer,
             child: Video(
               controller: controller,
               controls: NoVideoControls,
@@ -56,16 +82,16 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
             alignment: Alignment.bottomCenter,
             child: AnimatedOpacity(
               duration: const Duration(milliseconds: 100),
-              opacity: showControlBar ? 0.9 : 0,
+              opacity: _showControlBar ? 0.9 : 0,
               child: MouseRegion(
                 onHover: (event) {
                   setState(() {
-                    showControlBar = true;
+                    _showControlBar = true;
                   });
                 },
                 onExit: (event) {
                   setState(() {
-                    showControlBar = false;
+                    _showControlBar = false;
                   });
                 },
                 child: Container(

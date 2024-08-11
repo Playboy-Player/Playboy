@@ -78,8 +78,7 @@ class MPlayerState extends State<MPlayer> {
               ],
             ),
           ),
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 100),
+          SizedBox(
             width: videoMode
                 ? MediaQuery.of(context).size.width - 40
                 : MediaQuery.of(context).size.width - 80,
