@@ -15,9 +15,9 @@ class PlaylistPage extends StatefulWidget {
 }
 
 class PlaylistState extends State<PlaylistPage> {
-  final TextEditingController editingController = TextEditingController();
-  bool loaded = false;
-  bool gridview = true;
+  final TextEditingController _editingController = TextEditingController();
+  bool _loaded = false;
+  bool _gridview = true;
 
   @override
   void initState() {
@@ -26,12 +26,12 @@ class PlaylistState extends State<PlaylistPage> {
   }
 
   void _init() async {
-    gridview = !AppStorage().settings.playlistListview;
+    _gridview = !AppStorage().settings.playlistListview;
     AppStorage().playlists.clear();
     AppStorage().playlists.addAll(await LibraryHelper.loadPlaylists());
     if (!mounted) return;
     setState(() {
-      loaded = true;
+      _loaded = true;
     });
   }
 
@@ -75,7 +75,7 @@ class PlaylistState extends State<PlaylistPage> {
                   backgroundColor: colorScheme.surface,
                   hoverColor: backgroundColor,
                   onPressed: () {
-                    editingController.clear();
+                    _editingController.clear();
                     showDialog(
                       barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
                       useRootNavigator: false,
@@ -86,14 +86,18 @@ class PlaylistState extends State<PlaylistPage> {
                         content: TextField(
                           autofocus: true,
                           maxLines: 1,
-                          controller: editingController,
+                          controller: _editingController,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: '名称',
                           ),
                           onSubmitted: (value) {
                             var pl = PlaylistItem(
-                                items: [], title: value, cover: null);
+                              uuid: idGenerator(),
+                              items: [],
+                              title: value,
+                              cover: null,
+                            );
                             LibraryHelper.savePlaylist(pl);
                             setState(() {
                               AppStorage().playlists.add(pl);
@@ -111,9 +115,11 @@ class PlaylistState extends State<PlaylistPage> {
                           TextButton(
                             onPressed: () {
                               var pl = PlaylistItem(
-                                  items: [],
-                                  title: editingController.text,
-                                  cover: null);
+                                uuid: idGenerator(),
+                                items: [],
+                                title: _editingController.text,
+                                cover: null,
+                              );
                               LibraryHelper.savePlaylist(pl);
                               setState(() {
                                 AppStorage().playlists.add(pl);
@@ -126,7 +132,7 @@ class PlaylistState extends State<PlaylistPage> {
                       ),
                     );
                   },
-                  child: const Icon(Icons.playlist_add),
+                  child: const Icon(Icons.add_circle_outline),
                 ),
               ),
               Padding(
@@ -141,17 +147,17 @@ class PlaylistState extends State<PlaylistPage> {
                   hoverColor: backgroundColor,
                   onPressed: () {
                     setState(() {
-                      gridview = !gridview;
+                      _gridview = !_gridview;
                     });
                   },
-                  child: Icon(gridview
+                  child: Icon(_gridview
                       ? Icons.calendar_view_month
                       : Icons.view_agenda_outlined),
                 ),
               ),
             ],
           ),
-          loaded
+          _loaded
               ? (AppStorage().playlists.isEmpty
                   ? SliverToBoxAdapter(
                       child: Padding(
@@ -188,7 +194,7 @@ class PlaylistState extends State<PlaylistPage> {
                     )
                   : SliverPadding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      sliver: gridview
+                      sliver: _gridview
                           ? SliverGrid(
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
@@ -281,7 +287,67 @@ class PlaylistState extends State<PlaylistPage> {
                                                 horizontal: 6),
                                             child: Text('重命名'),
                                           ),
-                                          () {},
+                                          () {
+                                            _editingController.clear();
+                                            showDialog(
+                                              barrierColor: colorScheme
+                                                  .surfaceTint
+                                                  .withOpacity(0.12),
+                                              useRootNavigator: false,
+                                              context: context,
+                                              builder: (BuildContext context) =>
+                                                  AlertDialog(
+                                                surfaceTintColor:
+                                                    Colors.transparent,
+                                                title: Text(
+                                                    '重命名 ${AppStorage().playlists[index].title}'),
+                                                content: TextField(
+                                                  autofocus: true,
+                                                  maxLines: 1,
+                                                  controller:
+                                                      _editingController,
+                                                  decoration:
+                                                      const InputDecoration(
+                                                    border:
+                                                        OutlineInputBorder(),
+                                                    labelText: '名称',
+                                                  ),
+                                                  onSubmitted: (value) {
+                                                    LibraryHelper
+                                                        .renamePlaylist(
+                                                      AppStorage()
+                                                          .playlists[index],
+                                                      value,
+                                                    );
+                                                    setState(() {});
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: const Text('取消'),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      LibraryHelper
+                                                          .renamePlaylist(
+                                                        AppStorage()
+                                                            .playlists[index],
+                                                        _editingController.text,
+                                                      );
+                                                      setState(() {});
+                                                      Navigator.pop(context);
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: const Text('确定'),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
                                         ),
                                         _buildMenuItem(
                                           Icons.delete_outline,
@@ -480,7 +546,7 @@ class PlaylistState extends State<PlaylistPage> {
           )),
           Align(
             alignment: Alignment.centerRight,
-            child: IconButton.filledTonal(
+            child: IconButton(
               tooltip: '播放',
               onPressed: () {
                 AppStorage().openPlaylist(AppStorage().playlists[index], false);
@@ -493,21 +559,33 @@ class PlaylistState extends State<PlaylistPage> {
           ),
           Align(
             alignment: Alignment.centerRight,
-            child: IconButton.filledTonal(
-              tooltip: '追加到当前播放',
-              onPressed: () {},
-              icon: const Icon(Icons.menu_open),
-            ),
-          ),
-          const SizedBox(
-            width: 6,
-          ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: IconButton(
+            // child: IconButton(
+            //   tooltip: '更多',
+            //   onPressed: () {},
+            //   icon: const Icon(Icons.more_vert),
+            // ),
+            child: PopupMenuButton(
               tooltip: '更多',
-              onPressed: () {},
-              icon: const Icon(Icons.more_vert),
+              itemBuilder: (context) => [
+                _buildPopupMenuItem(
+                  Icons.play_circle_outline_rounded,
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 6),
+                    child: Text('顺序播放'),
+                  ),
+                  () {
+                    AppStorage().closeMedia();
+                    AppStorage()
+                        .openPlaylist(AppStorage().playlists[index], false);
+                  },
+                ),
+                const PopupMenuItem(
+                  child: Text('Item 2'),
+                ),
+                const PopupMenuItem(
+                  child: Text('Item 3'),
+                ),
+              ],
             ),
           ),
           const SizedBox(
@@ -528,4 +606,25 @@ class PlaylistState extends State<PlaylistPage> {
       child: label,
     );
   }
+
+  PopupMenuItem _buildPopupMenuItem(
+      IconData icon, Widget label, Function()? onPressed) {
+    return PopupMenuItem(
+      onTap: onPressed,
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            size: 18,
+          ),
+          label
+        ],
+      ),
+    );
+  }
+}
+
+String idGenerator() {
+  final now = DateTime.now();
+  return now.microsecondsSinceEpoch.toString();
 }

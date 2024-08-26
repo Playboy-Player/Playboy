@@ -26,26 +26,66 @@ class MikuMiku extends StatelessWidget {
     return Consumer<AppStorage>(
       builder: (BuildContext context, AppStorage value, Widget? child) {
         MaterialColor themeColor = value.getColorTheme();
+        var lightTheme = ColorScheme.fromSeed(
+            seedColor: themeColor, brightness: Brightness.light);
+        var darkTheme = ColorScheme.fromSeed(
+            seedColor: themeColor, brightness: Brightness.dark);
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Playboy',
           theme: ThemeData(
-            // fontFamily: "SourceHanSans",
             fontFamilyFallback: const ['SimHei'],
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: themeColor,
-              brightness: Brightness.light,
+            colorScheme: lightTheme,
+            tooltipTheme: TooltipThemeData(
+              decoration: BoxDecoration(
+                color: lightTheme.secondary,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              textStyle: TextStyle(
+                color: lightTheme.onSecondary,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-            useMaterial3: true,
+            dialogTheme: DialogTheme(
+              surfaceTintColor: Colors.transparent,
+              barrierColor: lightTheme.surfaceTint.withOpacity(0.12),
+            ),
+            appBarTheme: AppBarTheme(
+              scrolledUnderElevation: 0,
+              backgroundColor: lightTheme.surface,
+            ),
+            navigationRailTheme: NavigationRailThemeData(
+              backgroundColor: Color.alphaBlend(
+                  lightTheme.primary.withOpacity(0.04), lightTheme.surface),
+              indicatorColor: lightTheme.primaryContainer,
+            ),
           ),
           darkTheme: ThemeData(
-            // fontFamily: "SourceHanSans",
             fontFamilyFallback: const ['SimHei'],
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: themeColor,
-              brightness: Brightness.dark,
+            colorScheme: darkTheme,
+            tooltipTheme: TooltipThemeData(
+              decoration: BoxDecoration(
+                color: darkTheme.secondary,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              textStyle: TextStyle(
+                color: darkTheme.onSecondary,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-            useMaterial3: true,
+            dialogTheme: DialogTheme(
+              surfaceTintColor: Colors.transparent,
+              barrierColor: darkTheme.surfaceTint.withOpacity(0.12),
+            ),
+            appBarTheme: AppBarTheme(
+              scrolledUnderElevation: 0,
+              backgroundColor: darkTheme.surface,
+            ),
+            navigationRailTheme: NavigationRailThemeData(
+              backgroundColor: Color.alphaBlend(
+                  darkTheme.primary.withOpacity(0.04), darkTheme.surface),
+              indicatorColor: darkTheme.primaryContainer,
+            ),
           ),
           themeMode: value.settings.themeMode,
           home: initMedia == '' ? const Home() : const MPlayer(),
@@ -63,21 +103,21 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int currentPageIndex = 0;
+  int _currentPageIndex = 0;
   // bool showMediaCard = false;
-  bool miniMode = false;
+  bool _miniMode = false;
 
-  final playlistPageKey = GlobalKey<NavigatorState>();
-  final musicPageKey = GlobalKey<NavigatorState>();
-  final videoPageKey = GlobalKey<NavigatorState>();
-  final filePageKey = GlobalKey<NavigatorState>();
-  final searchPageKey = GlobalKey<NavigatorState>();
+  final _playlistPageKey = GlobalKey<NavigatorState>();
+  final _musicPageKey = GlobalKey<NavigatorState>();
+  final _videoPageKey = GlobalKey<NavigatorState>();
+  final _filePageKey = GlobalKey<NavigatorState>();
+  final _searchPageKey = GlobalKey<NavigatorState>();
 
   @override
   void initState() {
     super.initState();
     // showMediaCard = AppStorage().settings.showMediaCard;
-    currentPageIndex = AppStorage().settings.initPage;
+    _currentPageIndex = AppStorage().settings.initPage;
   }
 
   @override
@@ -87,7 +127,7 @@ class _HomeState extends State<Home> {
     late final colorScheme = Theme.of(context).colorScheme;
     late final backgroundColor = Color.alphaBlend(
         colorScheme.primary.withOpacity(0.04), colorScheme.surface);
-    if (miniMode) {
+    if (_miniMode) {
       return Scaffold(
         body: GestureDetector(
             behavior: HitTestBehavior.translucent,
@@ -195,7 +235,7 @@ class _HomeState extends State<Home> {
                     // setState(() {
                     //   showMediaCard = !showMediaCard;
                     // });
-                    if (miniMode) {
+                    if (_miniMode) {
                       windowManager.setResizable(true);
                       windowManager.setMinimumSize(const Size(360, 500));
                       windowManager.setSize(const Size(900, 700));
@@ -208,7 +248,7 @@ class _HomeState extends State<Home> {
                       windowManager.setAlwaysOnTop(true);
                     }
                     setState(() {
-                      miniMode = !miniMode;
+                      _miniMode = !_miniMode;
                     });
                   },
                   icon: const Icon(
@@ -249,10 +289,10 @@ class _HomeState extends State<Home> {
                   // groupAlignment: -0.9,
                   backgroundColor: backgroundColor,
                   minWidth: 64,
-                  selectedIndex: currentPageIndex,
+                  selectedIndex: _currentPageIndex,
                   onDestinationSelected: (int index) {
                     setState(() {
-                      currentPageIndex = index;
+                      _currentPageIndex = index;
                     });
                   },
                   labelType: NavigationRailLabelType.selected,
@@ -384,10 +424,10 @@ class _HomeState extends State<Home> {
               labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
               onDestinationSelected: (int index) {
                 setState(() {
-                  currentPageIndex = index;
+                  _currentPageIndex = index;
                 });
               },
-              selectedIndex: currentPageIndex,
+              selectedIndex: _currentPageIndex,
               destinations: const <Widget>[
                 NavigationDestination(
                   selectedIcon: Icon(Icons.web_stories),
@@ -548,38 +588,38 @@ class _HomeState extends State<Home> {
 
   Widget _buildContent() {
     return IndexedStack(
-      index: currentPageIndex,
+      index: _currentPageIndex,
       children: [
         Navigator(
-          key: playlistPageKey,
+          key: _playlistPageKey,
           onGenerateRoute: (route) => MaterialPageRoute(
             settings: route,
             builder: (context) => const PlaylistPage(),
           ),
         ),
         Navigator(
-          key: musicPageKey,
+          key: _musicPageKey,
           onGenerateRoute: (route) => MaterialPageRoute(
             settings: route,
             builder: (context) => const MusicPage(),
           ),
         ),
         Navigator(
-          key: videoPageKey,
+          key: _videoPageKey,
           onGenerateRoute: (route) => MaterialPageRoute(
             settings: route,
             builder: (context) => const VideoPage(),
           ),
         ),
         Navigator(
-          key: filePageKey,
+          key: _filePageKey,
           onGenerateRoute: (route) => MaterialPageRoute(
             settings: route,
             builder: (context) => const FilePage(),
           ),
         ),
         Navigator(
-          key: searchPageKey,
+          key: _searchPageKey,
           onGenerateRoute: (route) => MaterialPageRoute(
             settings: route,
             builder: (context) => const SearchPage(),
@@ -594,7 +634,7 @@ class _HomeState extends State<Home> {
       // color: colorScheme.primary,
       decoration: BoxDecoration(
           color: colorScheme.primary,
-          borderRadius: BorderRadius.circular(miniMode ? 0 : 20)),
+          borderRadius: BorderRadius.circular(_miniMode ? 0 : 20)),
       child: Stack(
         children: [
           AppStorage().playingCover == null
@@ -615,7 +655,7 @@ class _HomeState extends State<Home> {
                   },
                   blendMode: BlendMode.dstIn,
                   child: ClipRRect(
-                      borderRadius: BorderRadius.circular(miniMode ? 0 : 20),
+                      borderRadius: BorderRadius.circular(_miniMode ? 0 : 20),
                       child: UniImage(url: AppStorage().playingCover!)),
                 ),
           Column(
@@ -702,7 +742,7 @@ class _HomeState extends State<Home> {
                           color: colorScheme.primaryContainer,
                           // iconSize: 30,
                           onPressed: () {
-                            if (miniMode) {
+                            if (_miniMode) {
                               windowManager.setResizable(true);
                               windowManager
                                   .setMinimumSize(const Size(360, 500));
@@ -717,11 +757,13 @@ class _HomeState extends State<Home> {
                               windowManager.setAlwaysOnTop(true);
                             }
                             setState(() {
-                              miniMode = !miniMode;
+                              _miniMode = !_miniMode;
                             });
                           },
                           icon: Icon(
-                            miniMode ? Icons.fullscreen : Icons.fullscreen_exit,
+                            _miniMode
+                                ? Icons.fullscreen
+                                : Icons.fullscreen_exit,
                             // size: 30,
                           )),
                       IconButton(

@@ -136,6 +136,12 @@ class PlaylistDetailState extends State<PlaylistDetail> {
               ),
             ),
           ),
+          const SliverToBoxAdapter(
+            child: Divider(
+              indent: 16,
+              endIndent: 16,
+            ),
+          ),
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             sliver: SliverList(

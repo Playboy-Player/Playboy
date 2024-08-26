@@ -101,7 +101,7 @@ class LibraryHelper {
   }
 
   static void savePlaylist(PlaylistItem pl) {
-    var fp = File('${AppStorage().dataPath}/playlists/${pl.title}.json');
+    var fp = File('${AppStorage().dataPath}/playlists/${pl.uuid}.json');
     if (!fp.existsSync()) {
       fp.createSync(recursive: true);
     }
@@ -110,7 +110,7 @@ class LibraryHelper {
   }
 
   static void deletePlaylist(PlaylistItem pl) {
-    var fp = File('${AppStorage().dataPath}/playlists/${pl.title}.json');
+    var fp = File('${AppStorage().dataPath}/playlists/${pl.uuid}.json');
     if (fp.existsSync()) {
       fp.deleteSync();
     }
@@ -125,4 +125,13 @@ class LibraryHelper {
     pl.items.remove(p);
     savePlaylist(pl);
   }
+
+  static void renamePlaylist(PlaylistItem pl, String name) {
+    pl.title = name;
+    savePlaylist(pl);
+  }
+
+  static void setPlaylistCover(PlaylistItem pl, String path) {}
+
+  static void clearPlaylistCover(PlaylistItem pl) {}
 }
