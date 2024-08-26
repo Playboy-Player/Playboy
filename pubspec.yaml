@@ -66,7 +66,7 @@ flutter:
 msix_config:
   display_name: Playboy Player
   identity_name: YuiHrsw.PlayboyPlayer
-  msix_version: 1.23.0.0
+  msix_version: 1.24.0.0
   logo_path: res/images/icon512.png
   trim_logo: false
   file_extension: .avi, .flv, .mkv, .mov, .mp4, .mpeg, .webm, .wmv, .aac, .midi, .mp3, .ogg, .wav

@@ -80,9 +80,9 @@ flutter doctor 输出内容示例:
 
 ```
 Doctor summary (to see all details, run flutter doctor -v):
-[✓] Flutter (Channel stable, 3.22.2, on Microsoft Windows [版本 10.0.22631.3737], locale zh-CN)
+[✓] Flutter (Channel stable, 3.24.1, on Microsoft Windows [版本 10.0.22631.4037], locale zh-CN)
 [✓] Windows Version (Installed version of Windows is version 10 or higher)
-[✓] Visual Studio - develop Windows apps (Visual Studio 生成工具 2022 17.10.2)
+[✓] Visual Studio - develop Windows apps (Visual Studio 生成工具 2022 17.11.1)
 [✓] Connected device (3 available)
 [✓] Network resources
 ```
