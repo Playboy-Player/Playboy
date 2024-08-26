@@ -29,7 +29,7 @@ class _MusicPageState extends State<MusicPage> {
         loaded = false;
       });
       playitems.clear();
-      playitems.addAll(await LibraryHelper.getPlayItemList(
+      playitems.addAll(await LibraryHelper.getMediaFromPaths(
           AppStorage().settings.musicPaths));
       setState(() {
         loaded = true;
@@ -38,8 +38,8 @@ class _MusicPageState extends State<MusicPage> {
   }
 
   void _init() async {
-    playitems.addAll(
-        await LibraryHelper.getPlayItemList(AppStorage().settings.musicPaths));
+    playitems.addAll(await LibraryHelper.getMediaFromPaths(
+        AppStorage().settings.musicPaths));
     if (!mounted) return;
     setState(() {
       loaded = true;
@@ -229,7 +229,7 @@ class _MusicPageState extends State<MusicPage> {
                                                     Colors.transparent,
                                                 title: const Text('添加到播放列表'),
                                                 content: SizedBox(
-                                                  width: 200,
+                                                  width: 300,
                                                   height: 300,
                                                   child: ListView.builder(
                                                     itemBuilder:

@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
@@ -9,19 +10,26 @@ import 'package:playboy/backend/storage.dart';
 
 class LibraryHelper {
   static const supportFormats = [
-    'avi',
-    'flv',
-    'mkv',
-    'mov',
-    'mp4',
-    'mpeg',
-    'webm',
-    'wmv',
-    'aac',
-    'midi',
-    'mp3',
-    'ogg',
-    'wav',
+    '.avi',
+    '.flv',
+    '.mkv',
+    '.mov',
+    '.mp4',
+    '.mpeg',
+    '.webm',
+    '.wmv',
+    '.aac',
+    '.midi',
+    '.mp3',
+    '.ogg',
+    '.wav',
+  ];
+  static const imageFormats = [
+    'jpg',
+    'png',
+    'webp',
+    'bmp',
+    'wbmp',
   ];
 
   static Playlist convertToPlaylist(PlaylistItem playlistItem) {
@@ -32,20 +40,52 @@ class LibraryHelper {
     return Playlist(res);
   }
 
-  static Future<List<PlayItem>> getPlayItemList(List<String> paths) async {
+  static Future<List<PlayItem>> getMediaFromPaths(List<String> paths) async {
     List<PlayItem> res = [];
-    Directory dir;
-    for (var path in paths) {
-      dir = Directory(path);
-      var list = dir.list();
-      await for (var item in list) {
-        if (item is Directory) {
-          var tmp = await getItemFromDirectory(item);
-          if (tmp != null) {
-            res.add(tmp);
+    var distinctPaths = paths.toSet().toList();
+    for (var path in distinctPaths) {
+      // use bfs to scan the whole folder
+      Queue q = Queue();
+      q.add(path);
+      while (q.isNotEmpty) {
+        int n = q.length;
+        for (int i = 0; i < n; i++) {
+          var p = q.removeFirst();
+          var dir = Directory(p);
+          await for (var item in dir.list()) {
+            if (item is Directory) {
+              q.add(item.path);
+            } else if (supportFormats.contains(extension(item.path))) {
+              res.add(
+                PlayItem(
+                  source: item.path,
+                  cover: null,
+                  title: basenameWithoutExtension(item.path),
+                ),
+              );
+            }
           }
         }
       }
+
+      // var dir = Directory(path);
+      // var list = dir.list();
+      // await for (var item in list) {
+      //   if (item is Directory) {
+      //     var tmp = await getItemFromDirectory(item);
+      //     if (tmp != null) {
+      //       res.add(tmp);
+      //     }
+      //   } else if (supportFormats.contains(extension(item.path))) {
+      //     res.add(
+      //       PlayItem(
+      //         source: item.path,
+      //         cover: null,
+      //         title: basenameWithoutExtension(item.path),
+      //       ),
+      //     );
+      //   }
+      // }
     }
     return res;
   }

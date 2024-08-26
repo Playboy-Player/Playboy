@@ -39,8 +39,8 @@ class MusicCard extends StatelessWidget {
                       ),
                       child: Icon(
                         Icons.music_note,
-                        color: colorScheme.onSecondaryContainer,
-                        size: 80,
+                        color: colorScheme.secondary,
+                        size: 50,
                       ),
                     )
                   : Ink(
@@ -64,7 +64,16 @@ class MusicCard extends StatelessWidget {
             ),
           ),
         ),
-        Expanded(child: Text(info.title))
+        Expanded(
+          child: Tooltip(
+            message: info.title,
+            waitDuration: const Duration(seconds: 2),
+            child: Text(
+              info.title,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        )
       ],
     );
   }
@@ -100,8 +109,8 @@ class MusicListCard extends StatelessWidget {
                         ),
                         child: Icon(
                           Icons.music_note,
-                          color: colorScheme.onSecondaryContainer,
-                          size: 40,
+                          color: colorScheme.secondary,
+                          size: 30,
                         ),
                       )
                     : Ink(
@@ -159,7 +168,7 @@ class MusicListCard extends StatelessWidget {
                     surfaceTintColor: Colors.transparent,
                     title: const Text('添加到播放列表'),
                     content: SizedBox(
-                      width: 200,
+                      width: 300,
                       height: 300,
                       child: ListView.builder(
                         itemBuilder: (context, index) {

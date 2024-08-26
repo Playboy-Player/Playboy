@@ -259,7 +259,10 @@ class PlaylistState extends State<PlaylistPage> {
                                                 horizontal: 6),
                                             child: Text('追加到当前列表'),
                                           ),
-                                          () {},
+                                          () {
+                                            AppStorage().appendPlaylist(
+                                                AppStorage().playlists[index]);
+                                          },
                                         ),
                                         const Divider(),
                                         _buildMenuItem(
@@ -439,7 +442,7 @@ class PlaylistState extends State<PlaylistPage> {
                       ),
                       child: Icon(
                         Icons.playlist_play_rounded,
-                        color: colorScheme.onSecondaryContainer,
+                        color: colorScheme.secondary,
                         size: 80,
                       ),
                     )
@@ -513,7 +516,7 @@ class PlaylistState extends State<PlaylistPage> {
                         ),
                         child: Icon(
                           Icons.playlist_play_rounded,
-                          color: colorScheme.onSecondaryContainer,
+                          color: colorScheme.secondary,
                           size: 40,
                         ),
                       )

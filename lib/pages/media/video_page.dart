@@ -30,7 +30,7 @@ class _VideoPageState extends State<VideoPage> {
         loaded = false;
       });
       playitems.clear();
-      playitems.addAll(await LibraryHelper.getPlayItemList(
+      playitems.addAll(await LibraryHelper.getMediaFromPaths(
           AppStorage().settings.videoPaths));
       setState(() {
         loaded = true;
@@ -39,8 +39,8 @@ class _VideoPageState extends State<VideoPage> {
   }
 
   void _init() async {
-    playitems.addAll(
-        await LibraryHelper.getPlayItemList(AppStorage().settings.videoPaths));
+    playitems.addAll(await LibraryHelper.getMediaFromPaths(
+        AppStorage().settings.videoPaths));
     if (!mounted) return;
     setState(() {
       loaded = true;
@@ -243,7 +243,7 @@ class _VideoPageState extends State<VideoPage> {
                                                     Colors.transparent,
                                                 title: const Text('添加到播放列表'),
                                                 content: SizedBox(
-                                                  width: 200,
+                                                  width: 300,
                                                   height: 300,
                                                   child: ListView.builder(
                                                     itemBuilder:

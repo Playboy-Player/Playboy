@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:media_kit/generated/libmpv/bindings.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:path/path.dart';
@@ -216,6 +217,14 @@ class AppStorage extends ChangeNotifier {
     settings.volume = 100;
     settings.speed = 1;
     saveSettings();
+  }
+
+  // currently it doesn't work
+  // https://github.com/media-kit/media-kit/issues/722
+  void appendPlaylist(PlaylistItem pl) {
+    for (var item in pl.items) {
+      playboy.add(Media(item.source));
+    }
   }
 
   MaterialColor getColorTheme() {

@@ -51,8 +51,8 @@ class VideoCard extends StatelessWidget {
                       ),
                       child: Icon(
                         Icons.movie_filter_rounded,
-                        color: colorScheme.onSecondaryContainer,
-                        size: 80,
+                        color: colorScheme.secondary,
+                        size: 50,
                       ),
                     )
                   : Ink(
@@ -140,8 +140,8 @@ class VideoListCard extends StatelessWidget {
                         ),
                         child: Icon(
                           Icons.movie_filter,
-                          color: colorScheme.onSecondaryContainer,
-                          size: 40,
+                          color: colorScheme.secondary,
+                          size: 30,
                         ),
                       )
                     : Ink(
@@ -206,7 +206,7 @@ class VideoListCard extends StatelessWidget {
                     surfaceTintColor: Colors.transparent,
                     title: const Text('添加到播放列表'),
                     content: SizedBox(
-                      width: 200,
+                      width: 300,
                       height: 300,
                       child: ListView.builder(
                         itemBuilder: (context, index) {
