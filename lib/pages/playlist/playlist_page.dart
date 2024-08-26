@@ -203,7 +203,8 @@ class PlaylistState extends State<PlaylistPage> {
                                   return GestureDetector(
                                     onSecondaryTapDown: (details) {
                                       menuController.open(
-                                          position: details.localPosition);
+                                        position: details.localPosition,
+                                      );
                                     },
                                     child: MenuAnchor(
                                       controller: menuController,
@@ -216,71 +217,80 @@ class PlaylistState extends State<PlaylistPage> {
                                         ),
                                       ),
                                       menuChildren: [
-                                        MenuItemButton(
-                                          leadingIcon: const Icon(
-                                              Icons.play_arrow_outlined),
-                                          trailingIcon: const SizedBox(
-                                            width: 4,
+                                        const SizedBox(height: 10),
+                                        _buildMenuItem(
+                                          Icons.play_circle_outline_rounded,
+                                          const Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 6),
+                                            child: Text('顺序播放'),
                                           ),
-                                          child: const Text('顺序播放'),
-                                          onPressed: () {
+                                          () {
                                             AppStorage().closeMedia();
                                             AppStorage().openPlaylist(
                                                 AppStorage().playlists[index],
                                                 false);
                                           },
                                         ),
-                                        MenuItemButton(
-                                          leadingIcon:
-                                              const Icon(Icons.shuffle),
-                                          trailingIcon: const SizedBox(
-                                            width: 4,
+                                        _buildMenuItem(
+                                          Icons.shuffle,
+                                          const Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 6),
+                                            child: Text('随机播放'),
                                           ),
-                                          child: const Text('随机播放'),
-                                          onPressed: () {
+                                          () {
                                             AppStorage().closeMedia();
                                             AppStorage().openPlaylist(
                                                 AppStorage().playlists[index],
                                                 true);
                                           },
                                         ),
-                                        MenuItemButton(
-                                          leadingIcon: const Icon(
-                                              Icons.add_circle_outline),
-                                          trailingIcon: const SizedBox(
-                                            width: 4,
+                                        _buildMenuItem(
+                                          Icons.add_circle_outline,
+                                          const Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 6),
+                                            child: Text('追加到当前列表'),
                                           ),
-                                          child: const Text('追加到当前列表'),
-                                          onPressed: () {},
+                                          () {},
                                         ),
-                                        MenuItemButton(
-                                          leadingIcon: const Icon(
-                                              Icons.design_services_outlined),
-                                          trailingIcon: const SizedBox(
-                                            width: 4,
+                                        const Divider(),
+                                        _buildMenuItem(
+                                          Icons.share,
+                                          const Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 6),
+                                            child: Text('导出'),
                                           ),
-                                          child: const Text('修改封面'),
-                                          onPressed: () {},
+                                          () {},
                                         ),
-                                        MenuItemButton(
-                                          leadingIcon: const Icon(
-                                              Icons.drive_file_rename_outline),
-                                          trailingIcon: const SizedBox(
-                                            width: 4,
+                                        _buildMenuItem(
+                                          Icons.design_services_outlined,
+                                          const Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 6),
+                                            child: Text('修改封面'),
                                           ),
-                                          child: const Text('重命名'),
-                                          onPressed: () {},
+                                          () {},
                                         ),
-                                        MenuItemButton(
-                                          leadingIcon: Icon(
-                                            Icons.delete_outline,
-                                            color: colorScheme.error,
+                                        _buildMenuItem(
+                                          Icons.drive_file_rename_outline,
+                                          const Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 6),
+                                            child: Text('重命名'),
                                           ),
-                                          trailingIcon: const SizedBox(
-                                            width: 4,
+                                          () {},
+                                        ),
+                                        _buildMenuItem(
+                                          Icons.delete_outline,
+                                          const Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 6),
+                                            child: Text('删除'),
                                           ),
-                                          child: const Text('删除'),
-                                          onPressed: () {
+                                          () {
                                             LibraryHelper.deletePlaylist(
                                                 AppStorage().playlists[index]);
                                             AppStorage()
@@ -288,7 +298,8 @@ class PlaylistState extends State<PlaylistPage> {
                                                 .removeAt(index);
                                             setState(() {});
                                           },
-                                        )
+                                        ),
+                                        const SizedBox(height: 10),
                                       ],
                                       child:
                                           buildPlaylistCard(index, colorScheme),
@@ -504,6 +515,17 @@ class PlaylistState extends State<PlaylistPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildMenuItem(IconData icon, Widget label, Function()? onPressed) {
+    return MenuItemButton(
+      leadingIcon: Icon(
+        icon,
+        size: 18,
+      ),
+      onPressed: onPressed,
+      child: label,
     );
   }
 }
