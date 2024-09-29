@@ -160,11 +160,29 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         scrolledUnderElevation: 0,
         backgroundColor: backgroundColor,
-        flexibleSpace: GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onPanStart: (details) {
-            windowManager.startDragging();
-          },
+        flexibleSpace: Column(
+          children: [
+            SizedBox(
+              height: 8,
+              child: MouseRegion(
+                cursor: SystemMouseCursors.resizeUp,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onPanStart: (details) {
+                    windowManager.startResizing(ResizeEdge.top);
+                  },
+                ),
+              ),
+            ),
+            Expanded(
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onPanStart: (details) {
+                  windowManager.startDragging();
+                },
+              ),
+            )
+          ],
         ),
         toolbarHeight: 40,
         title: GestureDetector(

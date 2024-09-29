@@ -66,11 +66,29 @@ class SettingsPageState extends State<SettingsPage> {
         titleSpacing: 0,
         backgroundColor: Theme.of(context).colorScheme.surface,
         scrolledUnderElevation: 0,
-        flexibleSpace: GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onPanStart: (details) {
-            windowManager.startDragging();
-          },
+        flexibleSpace: Column(
+          children: [
+            SizedBox(
+              height: 8,
+              child: MouseRegion(
+                cursor: SystemMouseCursors.resizeUp,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onPanStart: (details) {
+                    windowManager.startResizing(ResizeEdge.top);
+                  },
+                ),
+              ),
+            ),
+            Expanded(
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onPanStart: (details) {
+                  windowManager.startDragging();
+                },
+              ),
+            )
+          ],
         ),
         toolbarHeight: 40,
         actions: [

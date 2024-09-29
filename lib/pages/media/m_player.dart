@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
@@ -129,11 +130,29 @@ class MPlayerState extends State<MPlayer> {
       ),
       titleSpacing: 0,
       toolbarHeight: 50,
-      flexibleSpace: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onPanStart: (details) {
-          windowManager.startDragging();
-        },
+      flexibleSpace: Column(
+        children: [
+          SizedBox(
+            height: 8,
+            child: MouseRegion(
+              cursor: SystemMouseCursors.resizeUp,
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onPanStart: (details) {
+                  windowManager.startResizing(ResizeEdge.top);
+                },
+              ),
+            ),
+          ),
+          Expanded(
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onPanStart: (details) {
+                windowManager.startDragging();
+              },
+            ),
+          )
+        ],
       ),
       // toolbarHeight: videoMode ? null : 70,
       backgroundColor: backgroundColor,
