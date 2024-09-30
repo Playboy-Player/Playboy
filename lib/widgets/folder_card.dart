@@ -11,66 +11,55 @@ class FolderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     String name = basename(source);
     late final colorScheme = Theme.of(context).colorScheme;
-    return Card(
-      elevation: 0,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(20)),
-      ),
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            // MaterialPageRoute(builder: (context) => FileExplorer(path: source)),
-            PageRouteBuilder(
-              pageBuilder: (context, animation1, animation2) =>
-                  FileExplorer(path: source),
-              transitionDuration: Duration.zero,
-              reverseTransitionDuration: Duration.zero,
+    return Column(
+      children: [
+        Expanded(
+          flex: 5,
+          child: Card(
+            elevation: 0,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20)),
             ),
-          );
-        },
-        borderRadius: BorderRadius.circular(20),
-        child: Column(
-          children: [
-            Expanded(
-              flex: 3,
+            child: InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  // MaterialPageRoute(builder: (context) => FileExplorer(path: source)),
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation1, animation2) =>
+                        FileExplorer(path: source),
+                    transitionDuration: Duration.zero,
+                    reverseTransitionDuration: Duration.zero,
+                  ),
+                );
+              },
+              borderRadius: BorderRadius.circular(20),
               child: Ink(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20)),
+                  borderRadius: const BorderRadius.all(Radius.circular(20)),
                   color: colorScheme.secondaryContainer,
                 ),
                 child: Icon(
                   icon ?? Icons.folder,
-                  color: colorScheme.onSecondaryContainer,
+                  color: colorScheme.secondary,
                   size: 60,
                 ),
               ),
             ),
-            Expanded(
-              child: Ink(
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(20),
-                      bottomRight: Radius.circular(20)),
-                  color: colorScheme.secondaryContainer.withOpacity(0.4),
-                ),
-                child: Center(
-                    child: Text(
-                  name,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: colorScheme.onSecondaryContainer,
-                    fontSize: 12,
-                  ),
-                )),
-              ),
-            )
-          ],
+          ),
         ),
-      ),
+        Expanded(
+          child: Tooltip(
+            message: name,
+            waitDuration: const Duration(seconds: 1),
+            child: Text(
+              name,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        )
+      ],
     );
   }
 }

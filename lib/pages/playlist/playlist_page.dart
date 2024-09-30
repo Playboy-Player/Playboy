@@ -200,7 +200,7 @@ class PlaylistState extends State<PlaylistPage> {
                                   SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisSpacing: 6,
                                 crossAxisCount: cols,
-                                childAspectRatio: 10 / 9,
+                                childAspectRatio: 12 / 11,
                               ),
                               delegate: SliverChildBuilderDelegate(
                                 (BuildContext context, int index) {
@@ -221,6 +221,9 @@ class PlaylistState extends State<PlaylistPage> {
                                                 BorderRadius.circular(10),
                                           ),
                                         ),
+                                        // backgroundColor: WidgetStatePropertyAll(
+                                        //   colorScheme.tertiaryContainer,
+                                        // ),
                                       ),
                                       menuChildren: [
                                         const SizedBox(height: 10),
@@ -401,81 +404,76 @@ class PlaylistState extends State<PlaylistPage> {
   }
 
   Widget buildPlaylistCard(int index, ColorScheme colorScheme) {
-    return Card(
-      elevation: 0,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(20)),
-      ),
-      child: InkWell(
-        onTap: () async {
-          final delete = await Navigator.push(
-            context,
-            // MaterialPageRoute(
-            //     builder: (context) =>
-            //         PlaylistDetail(info: AppStorage().playlists[index])),
-            PageRouteBuilder(
-              pageBuilder: (context, animation1, animation2) =>
-                  PlaylistDetail(info: AppStorage().playlists[index]),
-              transitionDuration: Duration.zero,
-              reverseTransitionDuration: Duration.zero,
+    return Column(
+      children: [
+        Expanded(
+          flex: 5,
+          child: Card(
+            elevation: 0,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20)),
             ),
-          );
-          if (delete != null && delete == true) {
-            LibraryHelper.deletePlaylist(AppStorage().playlists[index]);
-            AppStorage().playlists.removeAt(index);
-            setState(() {});
-          }
-        },
-        borderRadius: BorderRadius.circular(20),
-        child: Column(
-          children: [
-            Expanded(
-              flex: 3,
+            child: InkWell(
+              onTap: () async {
+                final delete = await Navigator.push(
+                  context,
+                  // MaterialPageRoute(
+                  //     builder: (context) =>
+                  //         PlaylistDetail(info: AppStorage().playlists[index])),
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation1, animation2) =>
+                        PlaylistDetail(info: AppStorage().playlists[index]),
+                    transitionDuration: Duration.zero,
+                    reverseTransitionDuration: Duration.zero,
+                  ),
+                );
+                if (delete != null && delete == true) {
+                  LibraryHelper.deletePlaylist(AppStorage().playlists[index]);
+                  AppStorage().playlists.removeAt(index);
+                  setState(() {});
+                }
+              },
+              borderRadius: BorderRadius.circular(20),
               child: AppStorage().playlists[index].cover == null
                   ? Ink(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20)),
+                        borderRadius: BorderRadius.circular(20),
                         color: colorScheme.secondaryContainer,
                       ),
                       child: Icon(
                         Icons.playlist_play_rounded,
                         color: colorScheme.secondary,
-                        size: 80,
+                        size: 60,
                       ),
                     )
-                  : SizedBox(
+                  : Ink(
                       width: double.infinity,
-                      child: ClipRRect(
+                      decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        child: Image.file(
-                            File(AppStorage().playlists[index].cover!)),
+                        color: colorScheme.secondaryContainer,
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: FileImage(
+                            File(AppStorage().playlists[index].cover!),
+                          ),
+                        ),
                       ),
                     ),
             ),
-            Expanded(
-              child: Ink(
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(20),
-                      bottomRight: Radius.circular(20)),
-                  color: colorScheme.secondaryContainer.withOpacity(0.4),
-                ),
-                child: Center(
-                    child: Text(
-                  AppStorage().playlists[index].title,
-                  style: TextStyle(
-                    color: colorScheme.onSecondaryContainer,
-                    fontSize: 16,
-                  ),
-                )),
-              ),
-            )
-          ],
+          ),
         ),
-      ),
+        Expanded(
+          child: Tooltip(
+            message: AppStorage().playlists[index].title,
+            waitDuration: const Duration(seconds: 2),
+            child: Text(
+              AppStorage().playlists[index].title,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        )
+      ],
     );
   }
 

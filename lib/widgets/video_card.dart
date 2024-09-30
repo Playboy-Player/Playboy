@@ -14,39 +14,37 @@ class VideoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
-    return Card(
-      elevation: 0,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(20)),
-      ),
-      child: InkWell(
-        onTap: () async {
-          await AppStorage().closeMedia().then((value) {
-            if (!context.mounted) return;
-            AppStorage().openMedia(info);
-            Navigator.of(context, rootNavigator: true)
-                .push(
-              MaterialPageRoute(
-                builder: (context) => const MPlayer(),
-              ),
-            )
-                .then((value) {
-              AppStorage().updateStatus();
-            });
-          });
-        },
-        borderRadius: BorderRadius.circular(20),
-        child: Column(
-          children: [
-            Expanded(
-              flex: 3,
+    return Column(
+      children: [
+        Expanded(
+          flex: 5,
+          child: Card(
+            elevation: 0,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20)),
+            ),
+            child: InkWell(
+              onTap: () async {
+                await AppStorage().closeMedia().then((value) {
+                  if (!context.mounted) return;
+                  AppStorage().openMedia(info);
+                  Navigator.of(context, rootNavigator: true)
+                      .push(
+                    MaterialPageRoute(
+                      builder: (context) => const MPlayer(),
+                    ),
+                  )
+                      .then((value) {
+                    AppStorage().updateStatus();
+                  });
+                });
+              },
+              borderRadius: BorderRadius.circular(20),
               child: info.cover == null
                   ? Ink(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20)),
+                        borderRadius: BorderRadius.circular(20),
                         color: colorScheme.secondaryContainer,
                       ),
                       child: Icon(
@@ -58,9 +56,7 @@ class VideoCard extends StatelessWidget {
                   : Ink(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20)),
+                        borderRadius: BorderRadius.circular(20),
                         color: colorScheme.secondaryContainer,
                         image: DecorationImage(
                           fit: BoxFit.cover,
@@ -69,34 +65,21 @@ class VideoCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      // child: Icon(
-                      //   Icons.playlist_play_rounded,
-                      //   color: colorScheme.onTertiaryContainer,
-                      //   size: 80,
-                      // ),
                     ),
             ),
-            Expanded(
-              child: Ink(
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(20),
-                      bottomRight: Radius.circular(20)),
-                  color: colorScheme.secondaryContainer.withOpacity(0.6),
-                ),
-                child: Center(
-                    child: Text(
-                  info.title,
-                  style: TextStyle(
-                    color: colorScheme.onSecondaryContainer,
-                    fontSize: 16,
-                  ),
-                )),
-              ),
-            )
-          ],
+          ),
         ),
-      ),
+        Expanded(
+          child: Tooltip(
+            message: info.title,
+            waitDuration: const Duration(seconds: 2),
+            child: Text(
+              info.title,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        )
+      ],
     );
   }
 }

@@ -63,7 +63,7 @@ class FileExplorerState extends State<FileExplorer> {
               padding: const EdgeInsets.symmetric(horizontal: 10),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: cols,
-                // childAspectRatio: 10 / 9,
+                childAspectRatio: 12 / 11,
               ),
               itemBuilder: (context, index) {
                 var e = contents[index];

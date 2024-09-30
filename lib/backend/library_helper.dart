@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:media_kit/media_kit.dart';
+import 'package:playboy/backend/hash.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:path/path.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:process_run/process_run.dart';
 
 class LibraryHelper {
   static const supportFormats = [
@@ -56,10 +58,11 @@ class LibraryHelper {
             if (item is Directory) {
               q.add(item.path);
             } else if (supportFormats.contains(extension(item.path))) {
+              var cover = await saveThumbnail(item.path);
               res.add(
                 PlayItem(
                   source: item.path,
-                  cover: null,
+                  cover: cover,
                   title: basenameWithoutExtension(item.path),
                 ),
               );
@@ -88,6 +91,25 @@ class LibraryHelper {
       // }
     }
     return res;
+  }
+
+  static Future<String> saveThumbnail(String path) async {
+    var thumbnailsPath = "${AppStorage().dataPath}\\thumbnails";
+    var fp = Directory(thumbnailsPath);
+    if (!await fp.exists()) {
+      await fp.create();
+    }
+    var hashedPath = hashPath(path);
+    var outputPath = "$thumbnailsPath\\$hashedPath.jpg";
+    if (await File(outputPath).exists()) return outputPath;
+    var shell = Shell();
+    try {
+      await shell.run(
+          'ffmpeg -progress - -i \"$path\" -y -ss 0:00:05.000000 -frames:v 1 -q:v 1 \"$outputPath\"');
+    } catch (e) {
+      print(e.toString());
+    }
+    return outputPath;
   }
 
   static Future<PlayItem?> getItemFromDirectory(Directory dir) async {
