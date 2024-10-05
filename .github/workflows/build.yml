@@ -108,10 +108,10 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build Windows App
+      - name: Build Android App
         run: flutter build apk
 
-      - name: Upload Windows Build Artifacts
+      - name: Upload Android Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: release-apk
