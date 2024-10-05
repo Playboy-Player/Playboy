@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ import 'file/file_page.dart';
 
 class MikuMiku extends StatelessWidget {
   const MikuMiku({super.key, required this.initMedia});
+
   final String initMedia;
 
   @override
@@ -104,6 +106,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _currentPageIndex = 0;
+
   // bool showMediaCard = false;
   bool _miniMode = false;
 
@@ -157,149 +160,134 @@ class _HomeState extends State<Home> {
       );
     }
     return Scaffold(
-      appBar: AppBar(
-        scrolledUnderElevation: 0,
-        backgroundColor: backgroundColor,
-        flexibleSpace: Column(
-          children: [
-            SizedBox(
-              height: 8,
-              child: MouseRegion(
-                cursor: SystemMouseCursors.resizeUp,
-                child: GestureDetector(
+      appBar: Platform.isAndroid
+          ? null
+          : AppBar(
+              scrolledUnderElevation: 0,
+              backgroundColor: backgroundColor,
+              flexibleSpace: Column(
+                children: [
+                  SizedBox(
+                    height: 8,
+                    child: MouseRegion(
+                      cursor: SystemMouseCursors.resizeUp,
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onPanStart: (details) {
+                          windowManager.startResizing(ResizeEdge.top);
+                        },
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onPanStart: (details) {
+                        windowManager.startDragging();
+                      },
+                    ),
+                  )
+                ],
+              ),
+              toolbarHeight: 40,
+              title: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onPanStart: (details) {
-                    windowManager.startResizing(ResizeEdge.top);
+                    windowManager.startDragging();
                   },
-                ),
-              ),
-            ),
-            Expanded(
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onPanStart: (details) {
-                  windowManager.startDragging();
-                },
-              ),
-            )
-          ],
-        ),
-        toolbarHeight: 40,
-        title: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onPanStart: (details) {
-              windowManager.startDragging();
-            },
-            child: Row(children: [
-              IconButton(
-                  highlightColor: Colors.transparent,
-                  focusColor: Colors.transparent,
-                  hoverColor: Colors.transparent,
-                  splashColor: Colors.transparent,
-                  constraints: const BoxConstraints(),
-                  padding: EdgeInsets.zero,
-                  onPressed: () {
-                    if (!context.mounted) return;
-                    Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute(
-                        builder: (context) => const MPlayer(),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Constants.appIcon)),
-              const SizedBox(
-                width: 10,
-              ),
-              Expanded(
-                child: tabletUI
-                    ? StreamBuilder(
-                        stream: AppStorage().playboy.stream.playlist,
-                        builder: ((context, snapshot) {
-                          return Text(
-                            AppStorage().playingTitle == 'Not Playing'
-                                ? Constants.appName
-                                : AppStorage().playingTitle,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
+                  child: Row(children: [
+                    IconButton(
+                        highlightColor: Colors.transparent,
+                        focusColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        constraints: const BoxConstraints(),
+                        padding: EdgeInsets.zero,
+                        onPressed: () {
+                          if (!context.mounted) return;
+                          Navigator.of(context, rootNavigator: true).push(
+                            MaterialPageRoute(
+                              builder: (context) => const MPlayer(),
                             ),
                           );
-                        }))
+                        },
+                        icon: const Icon(Constants.appIcon)),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: tabletUI
+                          ? StreamBuilder(
+                              stream: AppStorage().playboy.stream.playlist,
+                              builder: ((context, snapshot) {
+                                return Text(
+                                  AppStorage().playingTitle == 'Not Playing'
+                                      ? Constants.appName
+                                      : AppStorage().playingTitle,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                );
+                              }))
+                          : const SizedBox(),
+                    ),
+                  ])),
+              actions: [
+                AppStorage().settings.showMediaCard
+                    ? IconButton(
+                        hoverColor: Colors.transparent,
+                        onPressed: () {
+                          // setState(() {
+                          //   showMediaCard = !showMediaCard;
+                          // });
+                          if (_miniMode) {
+                            windowManager.setResizable(true);
+                            windowManager.setMinimumSize(const Size(360, 500));
+                            windowManager.setSize(const Size(900, 700));
+                            windowManager.setAlwaysOnTop(false);
+                            windowManager.center();
+                          } else {
+                            windowManager.setResizable(false);
+                            windowManager.setMinimumSize(const Size(300, 120));
+                            windowManager.setSize(const Size(300, 120));
+                            windowManager.setAlwaysOnTop(true);
+                          }
+                          setState(() {
+                            _miniMode = !_miniMode;
+                          });
+                        },
+                        icon: const Icon(
+                          Icons.headset_outlined,
+                        ))
                     : const SizedBox(),
-              ),
-            ])),
-        actions: [
-          IconButton(
-              hoverColor: Colors.transparent,
-              onPressed: () {
-                Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const SettingsPage()))
-                    .then((value) {
-                  AppStorage().updateFilePage();
-                }).then((value) {
-                  setState(() {});
-                });
-              },
-              icon: const Icon(
-                Icons.filter_vintage,
-                weight: 500,
-              )),
-          AppStorage().settings.showMediaCard
-              ? IconButton(
-                  hoverColor: Colors.transparent,
-                  onPressed: () {
-                    // setState(() {
-                    //   showMediaCard = !showMediaCard;
-                    // });
-                    if (_miniMode) {
-                      windowManager.setResizable(true);
-                      windowManager.setMinimumSize(const Size(360, 500));
-                      windowManager.setSize(const Size(900, 700));
-                      windowManager.setAlwaysOnTop(false);
-                      windowManager.center();
-                    } else {
-                      windowManager.setResizable(false);
-                      windowManager.setMinimumSize(const Size(300, 120));
-                      windowManager.setSize(const Size(300, 120));
-                      windowManager.setAlwaysOnTop(true);
-                    }
-                    setState(() {
-                      _miniMode = !_miniMode;
-                    });
-                  },
-                  icon: const Icon(
-                    Icons.headset_outlined,
-                  ))
-              : const SizedBox(),
-          IconButton(
-              hoverColor: Colors.transparent,
-              iconSize: 20,
-              onPressed: () {
-                windowManager.minimize();
-              },
-              icon: const Icon(Icons.minimize)),
-          IconButton(
-              hoverColor: Colors.transparent,
-              iconSize: 20,
-              onPressed: () async {
-                if (await windowManager.isMaximized()) {
-                  windowManager.unmaximize();
-                } else {
-                  windowManager.maximize();
-                }
-              },
-              icon: const Icon(Icons.crop_square)),
-          IconButton(
-              hoverColor: Colors.transparent,
-              iconSize: 20,
-              onPressed: () {
-                windowManager.close();
-              },
-              icon: const Icon(Icons.close)),
-        ],
-      ),
+                IconButton(
+                    hoverColor: Colors.transparent,
+                    iconSize: 20,
+                    onPressed: () {
+                      windowManager.minimize();
+                    },
+                    icon: const Icon(Icons.minimize)),
+                IconButton(
+                    hoverColor: Colors.transparent,
+                    iconSize: 20,
+                    onPressed: () async {
+                      if (await windowManager.isMaximized()) {
+                        windowManager.unmaximize();
+                      } else {
+                        windowManager.maximize();
+                      }
+                    },
+                    icon: const Icon(Icons.crop_square)),
+                IconButton(
+                    hoverColor: Colors.transparent,
+                    iconSize: 20,
+                    onPressed: () {
+                      windowManager.close();
+                    },
+                    icon: const Icon(Icons.close)),
+              ],
+            ),
       body: tabletUI
           ? Row(
               children: <Widget>[
@@ -325,7 +313,25 @@ class _HomeState extends State<Home> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           IconButton(
-                            iconSize: 28,
+                            iconSize: 24,
+                            icon: const Icon(
+                              Icons.filter_vintage,
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const SettingsPage())).then((value) {
+                                AppStorage().updateFilePage();
+                              }).then((value) {
+                                setState(() {});
+                              });
+                            },
+                          ),
+                          const SizedBox(height: 6),
+                          IconButton(
+                            iconSize: 24,
                             icon:
                                 Theme.of(context).brightness == Brightness.dark
                                     ? const Icon(Icons.wb_sunny)
@@ -438,39 +444,46 @@ class _HomeState extends State<Home> {
       bottomNavigationBar: tabletUI
           ? null
           : NavigationBar(
-              height: 50,
-              labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+              height: 70,
+              labelBehavior:
+                  NavigationDestinationLabelBehavior.onlyShowSelected,
               onDestinationSelected: (int index) {
                 setState(() {
                   _currentPageIndex = index;
                 });
               },
               selectedIndex: _currentPageIndex,
-              destinations: const <Widget>[
-                NavigationDestination(
+              destinations: <Widget>[
+                const NavigationDestination(
                   selectedIcon: Icon(Icons.web_stories),
                   icon: Icon(Icons.web_stories_outlined),
                   label: '播放列表',
                 ),
-                NavigationDestination(
+                const NavigationDestination(
                   selectedIcon: Icon(Icons.music_note),
                   icon: Icon(Icons.music_note_outlined),
                   label: '音乐',
                 ),
-                NavigationDestination(
+                const NavigationDestination(
                   selectedIcon: Icon(Icons.movie_filter),
                   icon: Icon(Icons.movie_filter_outlined),
                   label: '视频',
                 ),
-                NavigationDestination(
+                const NavigationDestination(
                   selectedIcon: Icon(Icons.folder),
                   icon: Icon(Icons.folder_outlined),
                   label: '文件',
                 ),
-                NavigationDestination(
-                  selectedIcon: Icon(Icons.search),
-                  icon: Icon(Icons.search),
-                  label: '搜索',
+                if (AppStorage().settings.tabletUI)
+                  const NavigationDestination(
+                    selectedIcon: Icon(Icons.search),
+                    icon: Icon(Icons.search),
+                    label: '搜索',
+                  ),
+                const NavigationDestination(
+                  selectedIcon: Icon(Icons.settings),
+                  icon: Icon(Icons.settings_outlined),
+                  label: '设置',
                 ),
               ],
             ),
@@ -636,13 +649,16 @@ class _HomeState extends State<Home> {
             builder: (context) => const FilePage(),
           ),
         ),
-        Navigator(
-          key: _searchPageKey,
-          onGenerateRoute: (route) => MaterialPageRoute(
-            settings: route,
-            builder: (context) => const SearchPage(),
-          ),
-        ),
+        if (AppStorage().settings.tabletUI)
+          Navigator(
+            key: _searchPageKey,
+            onGenerateRoute: (route) => MaterialPageRoute(
+              settings: route,
+              builder: (context) => const SearchPage(),
+            ),
+          )
+        else
+          const SettingsPage(),
       ],
     );
   }

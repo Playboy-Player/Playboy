@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/storage.dart';
@@ -9,19 +11,21 @@ import 'package:media_kit/media_kit.dart';
 
 void main(List<String> arguments) async {
   WidgetsFlutterBinding.ensureInitialized();
-  await windowManager.ensureInitialized();
-  WindowOptions windowOptions = const WindowOptions(
-    minimumSize: Size(360, 500),
-    size: Size(900, 700),
-    center: true,
-    backgroundColor: Colors.transparent,
-    titleBarStyle: TitleBarStyle.hidden,
-  );
-  windowManager.waitUntilReadyToShow(windowOptions, () async {
-    await windowManager.setHasShadow(false);
-    await windowManager.show();
-    await windowManager.focus();
-  });
+  if (!Platform.isAndroid) {
+    await windowManager.ensureInitialized();
+    WindowOptions windowOptions = const WindowOptions(
+      minimumSize: Size(360, 500),
+      size: Size(900, 700),
+      center: true,
+      backgroundColor: Colors.transparent,
+      titleBarStyle: TitleBarStyle.hidden,
+    );
+    windowManager.waitUntilReadyToShow(windowOptions, () async {
+      await windowManager.setHasShadow(false);
+      await windowManager.show();
+      await windowManager.focus();
+    });
+  }
   MediaKit.ensureInitialized();
 
   await AppStorage().init();
