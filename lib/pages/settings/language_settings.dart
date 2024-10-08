@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class LanguageSettinsPage extends StatefulWidget {
-  const LanguageSettinsPage({super.key});
+class LanguageSettingsPage extends StatefulWidget {
+  const LanguageSettingsPage({super.key});
 
   @override
-  State<StatefulWidget> createState() => _LanguageSettinsPageState();
+  State<StatefulWidget> createState() => _LanguageSettingsPageState();
 }
 
-class _LanguageSettinsPageState extends State<LanguageSettinsPage> {
+class _LanguageSettingsPageState extends State<LanguageSettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

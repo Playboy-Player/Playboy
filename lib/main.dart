@@ -49,9 +49,10 @@ void main(List<String> arguments) async {
 
   runApp(
     ChangeNotifierProvider(
-        create: (context) => AppStorage(),
-        child: MikuMiku(
-          initMedia: initMedia,
-        )),
+      create: (context) => AppStorage(),
+      child: MikuMiku(
+        initMedia: initMedia,
+      ),
+    ),
   );
 }

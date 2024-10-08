@@ -42,7 +42,7 @@ class SettingsPageState extends State<SettingsPage> {
     const DisplaySettingsPage(),
     const PlayerSettingsPage(),
     const StorageSettingsPage(),
-    const LanguageSettinsPage(),
+    const LanguageSettingsPage(),
     const ExtensionSettings(),
     const AboutPage(),
     const DeveloperSettings(),
@@ -132,6 +132,10 @@ class SettingsPageState extends State<SettingsPage> {
             width: 160,
             child: Column(
               children: [
+                if (Platform.isAndroid)
+                  const SizedBox(
+                    height: 40,
+                  ),
                 Container(
                     alignment: Alignment.topLeft,
                     height: 36,

@@ -319,10 +319,11 @@ class _HomeState extends State<Home> {
                             ),
                             onPressed: () {
                               Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const SettingsPage())).then((value) {
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const SettingsPage(),
+                                ),
+                              ).then((value) {
                                 AppStorage().updateFilePage();
                               }).then((value) {
                                 setState(() {});
@@ -388,10 +389,12 @@ class _HomeState extends State<Home> {
                     color: backgroundColor,
                     padding: const EdgeInsets.only(right: 10),
                     child: ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(25),
-                        topRight: Radius.circular(25),
-                      ),
+                      borderRadius: Platform.isAndroid
+                          ? BorderRadius.zero
+                          : const BorderRadius.only(
+                              topLeft: Radius.circular(25),
+                              topRight: Radius.circular(25),
+                            ),
                       child: _buildContent(),
                     ),
                   ),
