@@ -1,5 +1,7 @@
 # Playboy
 
+> 本项目目前通过 Github Actions 自动编译 Windows 和 Android 测试版本, 可[在此](https://github.com/Playboy-Player/Playboy/actions)下载体验.
+
 使用 [Flutter](https://flutter.dev/) 开发的媒体播放器, 界面使用 [Material You](https://m3.material.io/) 设计风格.
 
 ![](https://m3-markdown-badges.vercel.app/stars/7/2/Playboy-Player/Playboy)
@@ -41,7 +43,7 @@
 
 ## 功能
 
-[查看开发进度](https://github.com/orgs/Playboy-Player/projects/3)
+[查看开发计划 & 进度](https://github.com/orgs/Playboy-Player/projects/3)
 
 - [x] 主题颜色设置 & 深色模式支持
 - [ ] 多语言支持
@@ -104,11 +106,25 @@ Doctor summary (to see all details, run flutter doctor -v):
 
 ### macOS
 
-> 理论上兼容, 由于无编译环境, 暂未测试
+> [可以运行](https://github.com/Playboy-Player/Playboy/issues/3), 但需要更多适配工作, 由于无编译环境, 开发进度暂时停滞.
 
 ### android
 
-> 开发中
+> 针对手机的布局优化尚未完成, 建议在平板设备上体验.
+
+flutter doctor 输出内容示例:
+
+```
+Doctor summary (to see all details, run flutter doctor -v):
+[✓] Flutter (Channel stable, 3.24.1, on Microsoft Windows [版本 10.0.22631.4169], locale zh-CN)
+[✓] Windows Version (Installed version of Windows is version 10 or higher)
+[✓] Android toolchain - develop for Android devices (Android SDK version 34.0.0)
+[✓] Android Studio (version 2024.2)
+[✓] Connected device (3 available)
+[✓] Network resources
+```
+
+建议在 [Android Studio](https://developer.android.com/studio?hl=zh-cn#get-android-studio) 中运行项目.
 
 ## 为本项目做出贡献
 

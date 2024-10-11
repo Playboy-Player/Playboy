@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
@@ -212,6 +213,9 @@ class PlaylistState extends State<PlaylistPage> {
                                         position: details.localPosition,
                                       );
                                     },
+                                    onLongPress: () {
+                                      menuController.open();
+                                    },
                                     child: MenuAnchor(
                                       controller: menuController,
                                       style: MenuStyle(
@@ -251,8 +255,9 @@ class PlaylistState extends State<PlaylistPage> {
                                           () {
                                             AppStorage().closeMedia();
                                             AppStorage().openPlaylist(
-                                                AppStorage().playlists[index],
-                                                true);
+                                              AppStorage().playlists[index],
+                                              true,
+                                            );
                                           },
                                         ),
                                         _buildMenuItem(
@@ -264,7 +269,8 @@ class PlaylistState extends State<PlaylistPage> {
                                           ),
                                           () {
                                             AppStorage().appendPlaylist(
-                                                AppStorage().playlists[index]);
+                                              AppStorage().playlists[index],
+                                            );
                                           },
                                         ),
                                         const Divider(),
@@ -275,7 +281,34 @@ class PlaylistState extends State<PlaylistPage> {
                                                 horizontal: 6),
                                             child: Text('导出'),
                                           ),
-                                          () {},
+                                          () async {
+                                            final originalFile = File(
+                                              '${AppStorage().dataPath}/playlists/${AppStorage().playlists[index].uuid}.json',
+                                            );
+                                            String? newFilePath =
+                                                await FilePicker.platform
+                                                    .saveFile(
+                                              dialogTitle: '另存为',
+                                              fileName:
+                                                  '${AppStorage().playlists[index].uuid}.json',
+                                            );
+
+                                            if (newFilePath != null) {
+                                              final newFile = File(newFilePath);
+
+                                              await originalFile
+                                                  .copy(newFile.path);
+                                              if (!context.mounted) return;
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                    '文件已另存为: $newFilePath',
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          },
                                         ),
                                         _buildMenuItem(
                                           Icons.design_services_outlined,
@@ -284,7 +317,59 @@ class PlaylistState extends State<PlaylistPage> {
                                                 horizontal: 6),
                                             child: Text('修改封面'),
                                           ),
-                                          () {},
+                                          () async {
+                                            String? coverPath = await FilePicker
+                                                .platform
+                                                .pickFiles(type: FileType.image)
+                                                .then(
+                                              (result) {
+                                                return result
+                                                    ?.files.single.path;
+                                              },
+                                            );
+                                            if (coverPath != null) {
+                                              var savePath =
+                                                  '${AppStorage().dataPath}/playlists/${AppStorage().playlists[index].uuid}.cover.jpg';
+                                              var originalFile =
+                                                  File(coverPath);
+                                              var newFile = File(
+                                                savePath,
+                                              );
+                                              AppStorage()
+                                                  .playlists[index]
+                                                  .cover = savePath;
+                                              await originalFile
+                                                  .copy(newFile.path)
+                                                  .then(
+                                                (value) {
+                                                  setState(() {});
+                                                },
+                                              );
+                                            }
+                                          },
+                                        ),
+                                        _buildMenuItem(
+                                          Icons.cleaning_services,
+                                          const Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 6),
+                                            child: Text(
+                                              '清除封面',
+                                            ),
+                                          ),
+                                          () async {
+                                            setState(() {
+                                              AppStorage()
+                                                  .playlists[index]
+                                                  .cover = null;
+                                            });
+                                            var coverPath =
+                                                '${AppStorage().dataPath}/playlists/${AppStorage().playlists[index].uuid}.cover.jpg';
+                                            var cover = File(coverPath);
+                                            if (await cover.exists()) {
+                                              await cover.delete();
+                                            }
+                                          },
                                         ),
                                         _buildMenuItem(
                                           Icons.drive_file_rename_outline,
@@ -306,7 +391,8 @@ class PlaylistState extends State<PlaylistPage> {
                                                 surfaceTintColor:
                                                     Colors.transparent,
                                                 title: Text(
-                                                    '重命名 ${AppStorage().playlists[index].title}'),
+                                                  '重命名 ${AppStorage().playlists[index].title}',
+                                                ),
                                                 content: TextField(
                                                   autofocus: true,
                                                   maxLines: 1,
@@ -363,18 +449,49 @@ class PlaylistState extends State<PlaylistPage> {
                                             child: Text('删除'),
                                           ),
                                           () {
-                                            LibraryHelper.deletePlaylist(
-                                                AppStorage().playlists[index]);
-                                            AppStorage()
-                                                .playlists
-                                                .removeAt(index);
-                                            setState(() {});
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: const Text("确认操作"),
+                                                  content:
+                                                      const Text("确定要删除播放列表吗?"),
+                                                  actions: [
+                                                    TextButton(
+                                                      child: const Text("取消"),
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                    ),
+                                                    TextButton(
+                                                      child: const Text("确认"),
+                                                      onPressed: () {
+                                                        LibraryHelper
+                                                            .deletePlaylist(
+                                                          AppStorage()
+                                                              .playlists[index],
+                                                        );
+                                                        AppStorage()
+                                                            .playlists
+                                                            .removeAt(index);
+                                                        setState(() {});
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
                                           },
                                         ),
                                         const SizedBox(height: 10),
                                       ],
-                                      child:
-                                          buildPlaylistCard(index, colorScheme),
+                                      child: buildPlaylistCard(
+                                        index,
+                                        colorScheme,
+                                      ),
                                     ),
                                   );
                                 },
@@ -385,8 +502,10 @@ class PlaylistState extends State<PlaylistPage> {
                               itemBuilder: (context, index) {
                                 return SizedBox(
                                   height: 80,
-                                  child:
-                                      buildPlaylistListCard(index, colorScheme),
+                                  child: buildPlaylistListCard(
+                                    index,
+                                    colorScheme,
+                                  ),
                                 );
                               },
                               itemCount: AppStorage().playlists.length,
@@ -454,8 +573,9 @@ class PlaylistState extends State<PlaylistPage> {
                         color: colorScheme.secondaryContainer,
                         image: DecorationImage(
                           fit: BoxFit.cover,
-                          image: FileImage(
-                            File(AppStorage().playlists[index].cover!),
+                          image: MemoryImage(
+                            File(AppStorage().playlists[index].cover!)
+                                .readAsBytesSync(),
                           ),
                         ),
                       ),

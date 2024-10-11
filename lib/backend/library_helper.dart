@@ -156,6 +156,12 @@ class LibraryHelper {
     await for (var item in dir.list()) {
       if (item is File && extension(item.path) == '.json') {
         var pl = PlaylistItem.fromJson(jsonDecode(await item.readAsString()));
+        var cover = '${withoutExtension(item.path)}.cover.jpg';
+        if (await File(cover).exists()) {
+          pl.cover = cover;
+        } else {
+          pl.cover = null;
+        }
         playlists.add(pl);
       }
     }
@@ -176,6 +182,11 @@ class LibraryHelper {
     if (fp.existsSync()) {
       fp.deleteSync();
     }
+
+    var cover = File('${AppStorage().dataPath}/playlists/${pl.uuid}.cover.jpg');
+    if (cover.existsSync()) {
+      cover.deleteSync();
+    }
   }
 
   static void addItemToPlaylist(PlaylistItem pl, PlayItem p) {
@@ -192,8 +203,4 @@ class LibraryHelper {
     pl.title = name;
     savePlaylist(pl);
   }
-
-  static void setPlaylistCover(PlaylistItem pl, String path) {}
-
-  static void clearPlaylistCover(PlaylistItem pl) {}
 }

@@ -28,20 +28,20 @@ class PlaylistDetailState extends State<PlaylistDetail> {
             Navigator.pop(context);
           },
         ),
-        titleSpacing: 0,
-        title: Text(widget.info.title),
+        // titleSpacing: 0,
+        // title: const Text('所有列表'),
         scrolledUnderElevation: 0,
         backgroundColor: Theme.of(context).colorScheme.surface,
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.drive_file_rename_outline),
-          ),
           IconButton(
             onPressed: () {
               Navigator.pop(context, true);
             },
             icon: const Icon(Icons.delete_outline),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.more_vert),
           ),
           const SizedBox(
             width: 10,
@@ -52,7 +52,11 @@ class PlaylistDetailState extends State<PlaylistDetail> {
         slivers: [
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.only(
+                left: 24,
+                right: 24,
+                bottom: 24,
+              ),
               child: Row(
                 // mainAxisAlignment: MainAxisAlignment.center,
                 // crossAxisAlignment: CrossAxisAlignment.end,
@@ -60,7 +64,7 @@ class PlaylistDetailState extends State<PlaylistDetail> {
                   SizedBox(
                     width: 140,
                     child: AspectRatio(
-                      aspectRatio: 1,
+                      aspectRatio: 72 / 55,
                       child: widget.info.cover == null
                           ? Container(
                               width: double.infinity,
@@ -78,7 +82,10 @@ class PlaylistDetailState extends State<PlaylistDetail> {
                               width: double.infinity,
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(20),
-                                child: Image.file(File(widget.info.cover!)),
+                                child: Image.file(
+                                  File(widget.info.cover!),
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                     ),
