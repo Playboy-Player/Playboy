@@ -229,265 +229,8 @@ class PlaylistState extends State<PlaylistPage> {
                                         //   colorScheme.tertiaryContainer,
                                         // ),
                                       ),
-                                      menuChildren: [
-                                        const SizedBox(height: 10),
-                                        _buildMenuItem(
-                                          Icons.play_circle_outline_rounded,
-                                          const Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 6),
-                                            child: Text('顺序播放'),
-                                          ),
-                                          () {
-                                            AppStorage().closeMedia();
-                                            AppStorage().openPlaylist(
-                                                AppStorage().playlists[index],
-                                                false);
-                                          },
-                                        ),
-                                        _buildMenuItem(
-                                          Icons.shuffle,
-                                          const Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 6),
-                                            child: Text('随机播放'),
-                                          ),
-                                          () {
-                                            AppStorage().closeMedia();
-                                            AppStorage().openPlaylist(
-                                              AppStorage().playlists[index],
-                                              true,
-                                            );
-                                          },
-                                        ),
-                                        _buildMenuItem(
-                                          Icons.add_circle_outline,
-                                          const Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 6),
-                                            child: Text('追加到当前列表'),
-                                          ),
-                                          () {
-                                            AppStorage().appendPlaylist(
-                                              AppStorage().playlists[index],
-                                            );
-                                          },
-                                        ),
-                                        const Divider(),
-                                        _buildMenuItem(
-                                          Icons.share,
-                                          const Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 6),
-                                            child: Text('导出'),
-                                          ),
-                                          () async {
-                                            final originalFile = File(
-                                              '${AppStorage().dataPath}/playlists/${AppStorage().playlists[index].uuid}.json',
-                                            );
-                                            String? newFilePath =
-                                                await FilePicker.platform
-                                                    .saveFile(
-                                              dialogTitle: '另存为',
-                                              fileName:
-                                                  '${AppStorage().playlists[index].uuid}.json',
-                                            );
-
-                                            if (newFilePath != null) {
-                                              final newFile = File(newFilePath);
-
-                                              await originalFile
-                                                  .copy(newFile.path);
-                                              if (!context.mounted) return;
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                  content: Text(
-                                                    '文件已另存为: $newFilePath',
-                                                  ),
-                                                ),
-                                              );
-                                            }
-                                          },
-                                        ),
-                                        _buildMenuItem(
-                                          Icons.design_services_outlined,
-                                          const Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 6),
-                                            child: Text('修改封面'),
-                                          ),
-                                          () async {
-                                            String? coverPath = await FilePicker
-                                                .platform
-                                                .pickFiles(type: FileType.image)
-                                                .then(
-                                              (result) {
-                                                return result
-                                                    ?.files.single.path;
-                                              },
-                                            );
-                                            if (coverPath != null) {
-                                              var savePath =
-                                                  '${AppStorage().dataPath}/playlists/${AppStorage().playlists[index].uuid}.cover.jpg';
-                                              var originalFile =
-                                                  File(coverPath);
-                                              var newFile = File(
-                                                savePath,
-                                              );
-                                              AppStorage()
-                                                  .playlists[index]
-                                                  .cover = savePath;
-                                              await originalFile
-                                                  .copy(newFile.path)
-                                                  .then(
-                                                (value) {
-                                                  setState(() {});
-                                                },
-                                              );
-                                            }
-                                          },
-                                        ),
-                                        _buildMenuItem(
-                                          Icons.cleaning_services,
-                                          const Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 6),
-                                            child: Text(
-                                              '清除封面',
-                                            ),
-                                          ),
-                                          () async {
-                                            setState(() {
-                                              AppStorage()
-                                                  .playlists[index]
-                                                  .cover = null;
-                                            });
-                                            var coverPath =
-                                                '${AppStorage().dataPath}/playlists/${AppStorage().playlists[index].uuid}.cover.jpg';
-                                            var cover = File(coverPath);
-                                            if (await cover.exists()) {
-                                              await cover.delete();
-                                            }
-                                          },
-                                        ),
-                                        _buildMenuItem(
-                                          Icons.drive_file_rename_outline,
-                                          const Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 6),
-                                            child: Text('重命名'),
-                                          ),
-                                          () {
-                                            _editingController.clear();
-                                            showDialog(
-                                              barrierColor: colorScheme
-                                                  .surfaceTint
-                                                  .withOpacity(0.12),
-                                              useRootNavigator: false,
-                                              context: context,
-                                              builder: (BuildContext context) =>
-                                                  AlertDialog(
-                                                surfaceTintColor:
-                                                    Colors.transparent,
-                                                title: Text(
-                                                  '重命名 ${AppStorage().playlists[index].title}',
-                                                ),
-                                                content: TextField(
-                                                  autofocus: true,
-                                                  maxLines: 1,
-                                                  controller:
-                                                      _editingController,
-                                                  decoration:
-                                                      const InputDecoration(
-                                                    border:
-                                                        OutlineInputBorder(),
-                                                    labelText: '名称',
-                                                  ),
-                                                  onSubmitted: (value) {
-                                                    LibraryHelper
-                                                        .renamePlaylist(
-                                                      AppStorage()
-                                                          .playlists[index],
-                                                      value,
-                                                    );
-                                                    setState(() {});
-                                                    Navigator.pop(context);
-                                                  },
-                                                ),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: const Text('取消'),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      LibraryHelper
-                                                          .renamePlaylist(
-                                                        AppStorage()
-                                                            .playlists[index],
-                                                        _editingController.text,
-                                                      );
-                                                      setState(() {});
-                                                      Navigator.pop(context);
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: const Text('确定'),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                        _buildMenuItem(
-                                          Icons.delete_outline,
-                                          const Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 6),
-                                            child: Text('删除'),
-                                          ),
-                                          () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return AlertDialog(
-                                                  title: const Text("确认操作"),
-                                                  content:
-                                                      const Text("确定要删除播放列表吗?"),
-                                                  actions: [
-                                                    TextButton(
-                                                      child: const Text("取消"),
-                                                      onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                    ),
-                                                    TextButton(
-                                                      child: const Text("确认"),
-                                                      onPressed: () {
-                                                        LibraryHelper
-                                                            .deletePlaylist(
-                                                          AppStorage()
-                                                              .playlists[index],
-                                                        );
-                                                        AppStorage()
-                                                            .playlists
-                                                            .removeAt(index);
-                                                        setState(() {});
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          },
-                                        ),
-                                        const SizedBox(height: 10),
-                                      ],
+                                      menuChildren: _buildMenuItems(
+                                          context, colorScheme, index),
                                       child: buildPlaylistCard(
                                         index,
                                         colorScheme,
@@ -599,6 +342,8 @@ class PlaylistState extends State<PlaylistPage> {
 
   Widget buildPlaylistListCard(int index, ColorScheme colorScheme) {
     return InkWell(
+      // overlayColor: WidgetStatePropertyAll(Colors.transparent),
+      focusColor: Colors.transparent,
       borderRadius: BorderRadius.circular(20),
       onTap: () async {
         final delete = await Navigator.push(
@@ -680,33 +425,31 @@ class PlaylistState extends State<PlaylistPage> {
           ),
           Align(
             alignment: Alignment.centerRight,
-            // child: IconButton(
-            //   tooltip: '更多',
-            //   onPressed: () {},
-            //   icon: const Icon(Icons.more_vert),
-            // ),
-            child: PopupMenuButton(
-              tooltip: '更多',
-              itemBuilder: (context) => [
-                _buildPopupMenuItem(
-                  Icons.play_circle_outline_rounded,
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 6),
-                    child: Text('顺序播放'),
+            child: MenuAnchor(
+              style: MenuStyle(
+                shape: WidgetStatePropertyAll(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  () {
-                    AppStorage().closeMedia();
-                    AppStorage()
-                        .openPlaylist(AppStorage().playlists[index], false);
+                ),
+                // backgroundColor: WidgetStatePropertyAll(
+                //   colorScheme.tertiaryContainer,
+                // ),
+              ),
+              builder: (_, controller, child) {
+                return IconButton(
+                  tooltip: '菜单',
+                  onPressed: () {
+                    if (controller.isOpen) {
+                      controller.close();
+                    } else {
+                      controller.open();
+                    }
                   },
-                ),
-                const PopupMenuItem(
-                  child: Text('Item 2'),
-                ),
-                const PopupMenuItem(
-                  child: Text('Item 3'),
-                ),
-              ],
+                  icon: const Icon(Icons.more_vert),
+                );
+              },
+              menuChildren: _buildMenuItems(context, colorScheme, index),
             ),
           ),
           const SizedBox(
@@ -728,20 +471,224 @@ class PlaylistState extends State<PlaylistPage> {
     );
   }
 
-  PopupMenuItem _buildPopupMenuItem(
-      IconData icon, Widget label, Function()? onPressed) {
-    return PopupMenuItem(
-      onTap: onPressed,
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            size: 18,
-          ),
-          label
-        ],
+  List<Widget> _buildMenuItems(
+      BuildContext context, ColorScheme colorScheme, int index) {
+    return [
+      const SizedBox(height: 10),
+      _buildMenuItem(
+        Icons.play_circle_outline_rounded,
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 6),
+          child: Text('顺序播放'),
+        ),
+        () {
+          AppStorage().closeMedia();
+          AppStorage().openPlaylist(AppStorage().playlists[index], false);
+        },
       ),
-    );
+      _buildMenuItem(
+        Icons.shuffle,
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 6),
+          child: Text('随机播放'),
+        ),
+        () {
+          AppStorage().closeMedia();
+          AppStorage().openPlaylist(
+            AppStorage().playlists[index],
+            true,
+          );
+        },
+      ),
+      _buildMenuItem(
+        Icons.add_circle_outline,
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 6),
+          child: Text('追加到当前列表'),
+        ),
+        () {
+          AppStorage().appendPlaylist(
+            AppStorage().playlists[index],
+          );
+        },
+      ),
+      const Divider(),
+      _buildMenuItem(
+        Icons.share,
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 6),
+          child: Text('导出'),
+        ),
+        () async {
+          final originalFile = File(
+            '${AppStorage().dataPath}/playlists/${AppStorage().playlists[index].uuid}.json',
+          );
+          String? newFilePath = await FilePicker.platform.saveFile(
+            dialogTitle: '另存为',
+            fileName: '${AppStorage().playlists[index].uuid}.json',
+          );
+
+          if (newFilePath != null) {
+            final newFile = File(newFilePath);
+
+            await originalFile.copy(newFile.path);
+            if (!context.mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  '文件已另存为: $newFilePath',
+                ),
+              ),
+            );
+          }
+        },
+      ),
+      _buildMenuItem(
+        Icons.design_services_outlined,
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 6),
+          child: Text('修改封面'),
+        ),
+        () async {
+          String? coverPath =
+              await FilePicker.platform.pickFiles(type: FileType.image).then(
+            (result) {
+              return result?.files.single.path;
+            },
+          );
+          if (coverPath != null) {
+            var savePath =
+                '${AppStorage().dataPath}/playlists/${AppStorage().playlists[index].uuid}.cover.jpg';
+            var originalFile = File(coverPath);
+            var newFile = File(
+              savePath,
+            );
+            AppStorage().playlists[index].cover = savePath;
+            await originalFile.copy(newFile.path).then(
+              (value) {
+                setState(() {});
+              },
+            );
+          }
+        },
+      ),
+      _buildMenuItem(
+        Icons.cleaning_services,
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 6),
+          child: Text(
+            '清除封面',
+          ),
+        ),
+        () async {
+          setState(() {
+            AppStorage().playlists[index].cover = null;
+          });
+          var coverPath =
+              '${AppStorage().dataPath}/playlists/${AppStorage().playlists[index].uuid}.cover.jpg';
+          var cover = File(coverPath);
+          if (await cover.exists()) {
+            await cover.delete();
+          }
+        },
+      ),
+      _buildMenuItem(
+        Icons.drive_file_rename_outline,
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 6),
+          child: Text('重命名'),
+        ),
+        () {
+          _editingController.clear();
+          showDialog(
+            barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
+            useRootNavigator: false,
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              surfaceTintColor: Colors.transparent,
+              title: Text(
+                '重命名 ${AppStorage().playlists[index].title}',
+              ),
+              content: TextField(
+                autofocus: true,
+                maxLines: 1,
+                controller: _editingController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: '名称',
+                ),
+                onSubmitted: (value) {
+                  LibraryHelper.renamePlaylist(
+                    AppStorage().playlists[index],
+                    value,
+                  );
+                  setState(() {});
+                  Navigator.pop(context);
+                },
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('取消'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    LibraryHelper.renamePlaylist(
+                      AppStorage().playlists[index],
+                      _editingController.text,
+                    );
+                    setState(() {});
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
+                  child: const Text('确定'),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+      _buildMenuItem(
+        Icons.delete_outline,
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 6),
+          child: Text('删除'),
+        ),
+        () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text("确认操作"),
+                content: const Text("确定要删除播放列表吗?"),
+                actions: [
+                  TextButton(
+                    child: const Text("取消"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  TextButton(
+                    child: const Text("确认"),
+                    onPressed: () {
+                      LibraryHelper.deletePlaylist(
+                        AppStorage().playlists[index],
+                      );
+                      AppStorage().playlists.removeAt(index);
+                      setState(() {});
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      ),
+      const SizedBox(height: 10),
+    ];
   }
 }
 
