@@ -11,14 +11,20 @@ import 'package:media_kit/media_kit.dart';
 
 void main(List<String> arguments) async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (!Platform.isAndroid) {
+  MediaKit.ensureInitialized();
+
+  await AppStorage().init();
+
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     await windowManager.ensureInitialized();
-    WindowOptions windowOptions = const WindowOptions(
-      minimumSize: Size(360, 500),
-      size: Size(900, 700),
+    WindowOptions windowOptions = WindowOptions(
+      minimumSize: const Size(360, 500),
+      size: const Size(900, 700),
       center: true,
       backgroundColor: Colors.transparent,
-      titleBarStyle: TitleBarStyle.hidden,
+      titleBarStyle: AppStorage().settings.enableTitleBar
+          ? TitleBarStyle.hidden
+          : TitleBarStyle.normal,
     );
     windowManager.waitUntilReadyToShow(windowOptions, () async {
       await windowManager.setHasShadow(false);
@@ -26,20 +32,21 @@ void main(List<String> arguments) async {
       await windowManager.focus();
     });
   }
-  MediaKit.ensureInitialized();
-
-  await AppStorage().init();
 
   if (AppStorage().settings.enableBvTools) {
     await WebHelper().loadBvTools();
   }
 
-  // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-  // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-  //   systemNavigationBarColor: Colors.transparent,
-  //   systemNavigationBarDividerColor: Colors.transparent,
-  //   statusBarColor: Colors.transparent,
-  // ));
+  // if (Platform.isAndroid) {
+  //   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  //   SystemChrome.setSystemUIOverlayStyle(
+  //     const SystemUiOverlayStyle(
+  //       systemNavigationBarColor: Colors.transparent,
+  //       systemNavigationBarDividerColor: Colors.transparent,
+  //       statusBarColor: Colors.transparent,
+  //     ),
+  //   );
+  // }
 
   String initMedia = '';
   if (arguments.isNotEmpty) {

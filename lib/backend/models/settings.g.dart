@@ -7,11 +7,8 @@ part of 'settings.dart';
 // **************************************************************************
 
 AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) => AppSettings(
-      wbiKey: json['wbiKey'] as String? ?? "none",
+      wbiKey: json['wbiKey'] as String? ?? 'none',
       keyTime: (json['keyTime'] as num?)?.toInt() ?? 1245974400,
-      themeMode: $enumDecodeNullable(_$ThemeModeEnumMap, json['themeMode']) ??
-          ThemeMode.system,
-      themeCode: (json['themeCode'] as num?)?.toInt() ?? 4,
       logined: json['logined'] as bool? ?? false,
       wavySlider: json['wavySlider'] as bool? ?? false,
       showMediaCard: json['showMediaCard'] as bool? ?? true,
@@ -21,6 +18,9 @@ AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) => AppSettings(
       videoLibListview: json['videoLibListview'] as bool? ?? false,
       searchListview: json['searchListview'] as bool? ?? false,
       defaultSearchOption: (json['defaultSearchOption'] as num?)?.toInt() ?? 0,
+      themeMode: $enumDecodeNullable(_$ThemeModeEnumMap, json['themeMode']) ??
+          ThemeMode.system,
+      themeCode: (json['themeCode'] as num?)?.toInt() ?? 4,
       autoPlay: json['autoPlay'] as bool? ?? true,
       autoDownload: json['autoDownload'] as bool? ?? false,
       defaultMusicMode: json['defaultMusicMode'] as bool? ?? false,
@@ -44,8 +44,10 @@ AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) => AppSettings(
       screenshotPath: json['screenshotPath'] as String? ?? '',
       downloadPath: json['downloadPath'] as String? ?? '',
       enableBvTools: json['enableBvTools'] as bool? ?? false,
-      tabletUI: json['tabletUI'] as bool? ?? true,
       tryLook: json['tryLook'] as bool? ?? true,
+      tabletUI: json['tabletUI'] as bool? ?? true,
+      enableTitleBar: json['enableTitleBar'] as bool? ?? true,
+      titleBarOffset: (json['titleBarOffset'] as num?)?.toDouble() ?? 0,
     );
 
 Map<String, dynamic> _$AppSettingsToJson(AppSettings instance) =>
@@ -79,6 +81,8 @@ Map<String, dynamic> _$AppSettingsToJson(AppSettings instance) =>
       'enableBvTools': instance.enableBvTools,
       'tryLook': instance.tryLook,
       'tabletUI': instance.tabletUI,
+      'enableTitleBar': instance.enableTitleBar,
+      'titleBarOffset': instance.titleBarOffset,
     };
 
 const _$ThemeModeEnumMap = {

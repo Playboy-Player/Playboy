@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:playboy/backend/storage.dart';
 import 'package:playboy/pages/settings/about_app.dart';
 import 'package:playboy/pages/settings/bvtools_settings.dart';
 import 'package:playboy/pages/settings/display_settings.dart';
@@ -54,8 +54,12 @@ class SettingsPageState extends State<SettingsPage> {
     // late final backgroundColor = Color.alphaBlend(
     //     colorScheme.primary.withOpacity(0.08), colorScheme.surface);
     return Scaffold(
-      appBar: Platform.isAndroid
-          ? null
+      appBar: !AppStorage().settings.enableTitleBar
+          ? AppBar(
+              automaticallyImplyLeading: false,
+              scrolledUnderElevation: 0,
+              toolbarHeight: 10 + AppStorage().settings.titleBarOffset,
+            )
           : AppBar(
               leadingWidth: 40,
               automaticallyImplyLeading: false,
@@ -124,44 +128,48 @@ class SettingsPageState extends State<SettingsPage> {
               ],
             ),
       // floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-      body: Row(children: [
-        const SizedBox(
-          width: 10,
-        ),
-        SizedBox(
-            width: 160,
-            child: Column(
-              children: [
-                if (Platform.isAndroid)
+      body: Row(
+        children: [
+          const SizedBox(
+            width: 10,
+          ),
+          SizedBox(
+              width: 160,
+              child: Column(
+                children: [
+                  if (Platform.isAndroid)
+                    const SizedBox(
+                      height: 40,
+                    ),
+                  Container(
+                      alignment: Alignment.topLeft,
+                      height: 36,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        "设置",
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      )),
                   const SizedBox(
-                    height: 40,
+                    height: 10,
                   ),
-                Container(
-                    alignment: Alignment.topLeft,
-                    height: 36,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Text(
-                      "设置",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                    )),
-                const SizedBox(
-                  height: 10,
-                ),
-                Expanded(
-                  child: buildSettings(),
-                )
-              ],
+                  Expanded(
+                    child: buildSettings(),
+                  )
+                ],
+              )),
+          Expanded(
+            child: SafeArea(
+                child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: pages[currentPage],
             )),
-        Expanded(
-            child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: pages[currentPage],
-        )),
-      ]),
+          ),
+        ],
+      ),
       // floatingActionButton: FloatingActionButton(
       //     heroTag: 'settings',
       //     backgroundColor: colorScheme.onTertiary,
@@ -218,7 +226,7 @@ class SettingsPageState extends State<SettingsPage> {
     }
 
     return ListView.separated(
-      itemCount: icons.length - (kDebugMode ? 0 : 1),
+      itemCount: icons.length,
       itemBuilder: (context, index) =>
           buildItem(index, options[index], icons[index]),
       separatorBuilder: (context, index) {

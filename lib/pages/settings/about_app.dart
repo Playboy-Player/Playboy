@@ -14,96 +14,156 @@ class _AboutPageState extends State<AboutPage> {
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-        body: ListView(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          child: Text(
-            '关于',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.secondary,
+      body: ListView(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            child: Text(
+              '关于',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
             ),
           ),
-        ),
-        Card(
-          elevation: 0,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          color: colorScheme.primaryContainer.withOpacity(0.2),
-          child: SizedBox(
-              height: 200,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.smart_display,
-                    size: 80,
-                    color: colorScheme.onPrimaryContainer,
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(
-                        height: 12,
+          Card(
+            elevation: 0,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(80),
+                topRight: Radius.circular(30),
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(80),
+              ),
+            ),
+            color: colorScheme.primaryContainer.withOpacity(0.3),
+            child: SizedBox(
+                height: 200,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.smart_display,
+                      size: 80,
+                      color: colorScheme.primary,
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // const SizedBox(
+                        //   height: 12,
+                        // ),
+                        Text(
+                          'Playboy',
+                          style: TextStyle(
+                              fontSize: 40,
+                              color: colorScheme.primary,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        Text(
+                          ' ${Constants.version} ${Constants.flag}',
+                          style: TextStyle(
+                              color: colorScheme.primary,
+                              fontWeight: FontWeight.w500),
+                        )
+                      ],
+                    )
+                  ],
+                )),
+          ),
+          Container(
+            padding: const EdgeInsets.all(12),
+            child: Text(
+              '维护者',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+          ),
+          Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              height: 80,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    hoverColor: Colors.transparent,
+                    focusColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    onTap: () {
+                      if (Constants.maintainers[index].url == '') {
+                        return;
+                      }
+                      launchUrl(Uri.parse(Constants.maintainers[index].url));
+                    },
+                    child: SizedBox(
+                      height: 80,
+                      width: 60,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CircleAvatar(
+                            backgroundImage: AssetImage(
+                              Constants.maintainers[index].avatar,
+                            ),
+                            radius: 28,
+                          ),
+                          Text(
+                            Constants.maintainers[index].name,
+                            style: const TextStyle(
+                              // color: Colors.orange,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
-                      Text(
-                        'Playboy',
-                        style: TextStyle(
-                            fontSize: 40,
-                            color: colorScheme.onPrimaryContainer,
-                            fontWeight: FontWeight.w500),
-                      ),
-                      Text(
-                        ' ${Constants.version}-${Constants.flag}',
-                        style: TextStyle(
-                            color: colorScheme.onPrimaryContainer,
-                            fontWeight: FontWeight.w500),
-                      )
-                    ],
-                  )
-                ],
+                    ),
+                  );
+                },
+                itemCount: Constants.maintainers.length,
               )),
-        ),
-        ListTile(
-          leading: const Icon(
-            Icons.web_outlined,
+          Container(
+            padding: const EdgeInsets.all(12),
+            child: Text(
+              '支持',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
           ),
-          title: const Text('Playboy Project'),
-          subtitle: const Text('https://github.com/Playboy-Player'),
-          trailing: const Icon(Icons.open_in_new),
-          onTap: () {
-            launchUrl(Uri.https('github.com', '/Playboy-Player'));
-          },
-        ),
-        ListTile(
-          leading: const Icon(
-            Icons.data_object,
+          ListTile(
+            leading: const Icon(
+              Icons.data_object,
+            ),
+            title: const Text('项目地址'),
+            trailing: const Icon(Icons.open_in_new),
+            onTap: () {
+              launchUrl(Uri.https('github.com', '/Playboy-Player/Playboy'));
+            },
           ),
-          title: const Text('Source Code'),
-          subtitle: const Text('https://github.com/Playboy-Player/Playboy'),
-          trailing: const Icon(Icons.open_in_new),
-          onTap: () {
-            launchUrl(Uri.https('github.com', '/Playboy-Player/Playboy'));
-          },
-        ),
-        ListTile(
-          leading: const Icon(
-            Icons.message_outlined,
-          ),
-          title: const Text('Feedback'),
-          trailing: const Icon(Icons.open_in_new),
-          onTap: () {
-            launchUrl(
-                Uri.https('github.com', '/Playboy-Player/Playboy/issues/new'));
-          },
-        )
-      ],
-    ));
+          ListTile(
+            leading: const Icon(
+              Icons.feedback_outlined,
+            ),
+            title: const Text('反馈问题'),
+            trailing: const Icon(Icons.open_in_new),
+            onTap: () {
+              launchUrl(Uri.https(
+                  'github.com', '/Playboy-Player/Playboy/issues/new'));
+            },
+          )
+        ],
+      ),
+    );
   }
 }

@@ -105,9 +105,9 @@ class LibraryHelper {
     var shell = Shell();
     try {
       await shell.run(
-          'ffmpeg -progress - -i \"$path\" -y -ss 0:00:05.000000 -frames:v 1 -q:v 1 \"$outputPath\"');
+          'ffmpeg -progress - -i "$path" -y -ss 0:00:05.000000 -frames:v 1 -q:v 1 "$outputPath"');
     } catch (e) {
-      print(e.toString());
+      // print(e.toString());
     }
     return outputPath;
   }

@@ -33,7 +33,9 @@ class _ExtensionSettingsState extends State<ExtensionSettings> {
             ),
           ),
           SwitchListTile(
-            tileColor: colorScheme.primaryContainer,
+            tileColor: AppStorage().settings.enableBvTools
+                ? colorScheme.primaryContainer
+                : colorScheme.primaryContainer.withOpacity(0.2),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             title: Container(

@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -160,8 +159,12 @@ class _HomeState extends State<Home> {
       );
     }
     return Scaffold(
-      appBar: Platform.isAndroid
-          ? null
+      appBar: !AppStorage().settings.enableTitleBar
+          ? AppBar(
+              scrolledUnderElevation: 0,
+              backgroundColor: backgroundColor,
+              toolbarHeight: 10 + AppStorage().settings.titleBarOffset,
+            )
           : AppBar(
               scrolledUnderElevation: 0,
               backgroundColor: backgroundColor,
@@ -389,12 +392,10 @@ class _HomeState extends State<Home> {
                     color: backgroundColor,
                     padding: const EdgeInsets.only(right: 10),
                     child: ClipRRect(
-                      borderRadius: Platform.isAndroid
-                          ? BorderRadius.zero
-                          : const BorderRadius.only(
-                              topLeft: Radius.circular(25),
-                              topRight: Radius.circular(25),
-                            ),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(25),
+                        topRight: Radius.circular(25),
+                      ),
                       child: _buildContent(),
                     ),
                   ),

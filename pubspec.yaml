@@ -63,7 +63,8 @@ flutter_launcher_icons:
   #   image_path: "path/to/image.png"
 
 flutter:
-
+  assets:
+    - res/maintainers/
   uses-material-design: true
 
 msix_config:
