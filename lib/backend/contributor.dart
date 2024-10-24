@@ -8,11 +8,16 @@ class Constants {
   static const String version = '2024.10';
   static const String flag = kDebugMode ? 'debug' : 'release';
 
-  static List<Maintainer> maintainers = [
-    Maintainer(
+  static List<Contributor> maintainers = [
+    Contributor(
       avatar: 'res/maintainers/yui.jpg',
       name: 'YuiHrsw',
       url: 'https://github.com/YuiHrsw',
+    ),
+    Contributor(
+      avatar: 'res/maintainers/KernelInterrupt.jpg',
+      name: 'KernelInterrupt',
+      url: 'https://github.com/KernelInterrupt',
     )
   ];
 }

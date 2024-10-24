@@ -1,9 +1,9 @@
-class Maintainer {
+class Contributor {
   String avatar;
   String name;
   String url;
 
-  Maintainer({
+  Contributor({
     required this.avatar,
     required this.name,
     required this.url,

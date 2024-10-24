@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:playboy/backend/constants.dart';
+import 'package:playboy/backend/contributor.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutPage extends StatefulWidget {
@@ -79,7 +79,7 @@ class _AboutPageState extends State<AboutPage> {
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
-              '维护者',
+              '贡献者',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
@@ -89,8 +89,11 @@ class _AboutPageState extends State<AboutPage> {
           ),
           Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              height: 80,
-              child: ListView.builder(
+              height: 100,
+              child: ListView.separated(
+                separatorBuilder: (context, index) {
+                  return const SizedBox(width: 18);
+                },
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
                   return InkWell(
@@ -108,7 +111,7 @@ class _AboutPageState extends State<AboutPage> {
                       height: 80,
                       width: 60,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           CircleAvatar(
                             backgroundImage: AssetImage(

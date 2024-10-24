@@ -1,5 +1,7 @@
 # Playboy
 
+[English version](./README_en.md)
+
 > 本项目目前通过 Github Actions 自动编译 Windows 和 Android 测试版本, 可[在此](https://github.com/Playboy-Player/Playboy/actions)下载体验.
 
 使用 [Flutter](https://flutter.dev/) 开发的媒体播放器, 界面使用 [Material You](https://m3.material.io/) 设计风格.

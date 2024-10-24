@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:playboy/backend/constants.dart';
+import 'package:playboy/backend/contributor.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/pages/media/m_player.dart';
 import 'package:playboy/pages/media/music_page.dart';
