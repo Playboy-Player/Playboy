@@ -45,6 +45,9 @@ class AppSettings {
   String screenshotPath = '';
   String downloadPath = '';
 
+  // Language Settings
+  String language = 'zh';
+
   // BvTools Settings
   bool enableBvTools = false;
   bool tryLook = true;
@@ -89,6 +92,9 @@ class AppSettings {
     this.favouritePaths = const [],
     this.screenshotPath = '',
     this.downloadPath = '',
+
+    // Language Settings
+    this.language = 'zh',
 
     // BvTools Settings
     this.enableBvTools = false,

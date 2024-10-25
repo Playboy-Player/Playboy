@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:playboy/l10n/i10n.dart';
 import 'package:playboy/pages/playlist/playlist_detail.dart';
 
 class PlaylistPage extends StatefulWidget {
@@ -53,7 +54,7 @@ class PlaylistState extends State<PlaylistPage> {
               titlePadding:
                   const EdgeInsetsDirectional.only(start: 16, bottom: 16),
               title: Text(
-                '播放列表',
+                context.l10n.playlist,
                 style: TextStyle(
                     color: Theme.of(context).colorScheme.onPrimaryContainer,
                     fontSize: 25,

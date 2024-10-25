@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:playboy/backend/storage.dart';
 
 class LanguageSettingsPage extends StatefulWidget {
   const LanguageSettingsPage({super.key});
@@ -16,7 +17,7 @@ class _LanguageSettingsPageState extends State<LanguageSettingsPage> {
         Container(
           padding: const EdgeInsets.all(12),
           child: Text(
-            '显示语言 (未完成)',
+            '显示语言',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w500,
@@ -25,15 +26,33 @@ class _LanguageSettingsPageState extends State<LanguageSettingsPage> {
           ),
         ),
         RadioListTile(
-            title: const Text('中文'),
-            value: 0,
-            groupValue: 0,
-            onChanged: (int? value) {}),
+          title: const Text('简体中文'),
+          value: 'zh',
+          groupValue: AppStorage().settings.language,
+          onChanged: (value) {
+            if (value != null) {
+              setState(() {
+                AppStorage().settings.language = value;
+              });
+              AppStorage().saveSettings();
+              AppStorage().updateStatus();
+            }
+          },
+        ),
         RadioListTile(
-            title: const Text('English'),
-            value: 1,
-            groupValue: 0,
-            onChanged: (int? value) {}),
+          title: const Text('English'),
+          value: 'en',
+          groupValue: AppStorage().settings.language,
+          onChanged: (value) {
+            if (value != null) {
+              setState(() {
+                AppStorage().settings.language = value;
+              });
+              AppStorage().saveSettings();
+              AppStorage().updateStatus();
+            }
+          },
+        ),
       ],
     ));
   }

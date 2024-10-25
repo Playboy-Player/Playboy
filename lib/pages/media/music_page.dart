@@ -5,7 +5,6 @@ import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/widgets/music_card.dart';
-import 'package:playboy/widgets/playlist_picker.dart';
 
 class MusicPage extends StatefulWidget {
   const MusicPage({super.key});
@@ -169,8 +168,6 @@ class _MusicPageState extends State<MusicPage> {
                               delegate: SliverChildBuilderDelegate(
                                 (BuildContext context, int index) {
                                   // return MusicCard(info: playitems[index]);
-                                  MenuController menuController =
-                                      MenuController();
                                   return MusicCard(info: playitems[index]);
                                 },
                                 childCount: playitems.length,

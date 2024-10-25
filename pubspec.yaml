@@ -38,6 +38,10 @@ dependencies:
 
   process_run: ^1.1.0
 
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -66,6 +70,7 @@ flutter:
   assets:
     - res/maintainers/
   uses-material-design: true
+  generate: true
 
 msix_config:
   display_name: Playboy Player
@@ -74,3 +79,5 @@ msix_config:
   logo_path: res/images/icon512.png
   trim_logo: false
   file_extension: .avi, .flv, .mkv, .mov, .mp4, .mpeg, .webm, .wmv, .aac, .midi, .mp3, .ogg, .wav
+flutter_intl:
+  enabled: true

@@ -14,7 +14,7 @@ import 'package:playboy/widgets/uni_image.dart';
 import 'package:provider/provider.dart';
 import 'package:squiggly_slider/slider.dart';
 import 'package:window_manager/window_manager.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'file/file_page.dart';
 
 class MikuMiku extends StatelessWidget {
@@ -32,6 +32,9 @@ class MikuMiku extends StatelessWidget {
         var darkTheme = ColorScheme.fromSeed(
             seedColor: themeColor, brightness: Brightness.dark);
         return MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: Locale(value.settings.language),
           debugShowCheckedModeBanner: false,
           title: 'Playboy',
           theme: ThemeData(
