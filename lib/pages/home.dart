@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:playboy/backend/contributor.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:playboy/l10n/i10n.dart';
 import 'package:playboy/pages/media/m_player.dart';
 import 'package:playboy/pages/media/music_page.dart';
 import 'package:playboy/pages/playlist/playlist_page.dart';
@@ -362,31 +363,41 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                   ),
-                  destinations: const <NavigationRailDestination>[
+                  destinations: <NavigationRailDestination>[
                     NavigationRailDestination(
-                      selectedIcon: Icon(Icons.web_stories),
-                      icon: Icon(Icons.web_stories_outlined),
-                      label: Text('播放列表'),
-                    ),
+                        selectedIcon: Icon(Icons.web_stories),
+                        icon: Icon(Icons.web_stories_outlined),
+                        label: Text(
+                          context.l10n.playlist,
+                        ) //Text('播放列表'),
+                        ),
                     NavigationRailDestination(
                       selectedIcon: Icon(Icons.music_note),
                       icon: Icon(Icons.music_note_outlined),
-                      label: Text('音乐'),
+                      label: Text(
+                        context.l10n.music,
+                      ),
                     ),
                     NavigationRailDestination(
                       selectedIcon: Icon(Icons.movie_filter),
                       icon: Icon(Icons.movie_filter_outlined),
-                      label: Text('视频'),
+                      label: Text(
+                        context.l10n.video,
+                      ),
                     ),
                     NavigationRailDestination(
                       selectedIcon: Icon(Icons.folder),
                       icon: Icon(Icons.folder_outlined),
-                      label: Text('文件'),
+                      label: Text(
+                        context.l10n.storage,
+                      ),
                     ),
                     NavigationRailDestination(
                       selectedIcon: Icon(Icons.search),
                       icon: Icon(Icons.search),
-                      label: Text('搜索'),
+                      label: Text(
+                        context.l10n.search,
+                      ),
                     ),
                   ],
                 ),

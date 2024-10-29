@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:playboy/l10n/i10n.dart';
 import 'package:playboy/widgets/file_card.dart';
 import 'package:playboy/widgets/folder_card.dart';
 
@@ -54,7 +55,7 @@ class FileExplorerState extends State<FileExplorer> {
           },
         ),
         titleSpacing: 0,
-        title: Text(name),
+        title: Text(context.l10n.name),
         scrolledUnderElevation: 0,
         backgroundColor: Theme.of(context).colorScheme.surface,
       ),

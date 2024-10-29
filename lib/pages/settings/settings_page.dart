@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:playboy/l10n/i10n.dart';
 import 'package:playboy/pages/settings/about_app.dart';
 import 'package:playboy/pages/settings/bvtools_settings.dart';
 import 'package:playboy/pages/settings/display_settings.dart';
@@ -29,15 +30,7 @@ class SettingsPageState extends State<SettingsPage> {
     Icons.info_outline,
     Icons.code_outlined,
   ];
-  List<String> options = [
-    '外观',
-    '播放器',
-    '文件',
-    '语言',
-    'BV Tools',
-    '关于',
-    '开发者',
-  ];
+
   List<Widget> pages = [
     const DisplaySettingsPage(),
     const PlayerSettingsPage(),
@@ -50,6 +43,14 @@ class SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    // List<String> options = [
+    //   context.l10n.player,
+    //   context.l10n.file,
+    //   context.l10n.language,
+    //   context.l10n.bvTools,
+    //   context.l10n.about,
+    //   context.l10n.developer,
+    // ];
     // late final colorScheme = Theme.of(context).colorScheme;
     // late final backgroundColor = Color.alphaBlend(
     //     colorScheme.primary.withOpacity(0.08), colorScheme.surface);
@@ -146,7 +147,7 @@ class SettingsPageState extends State<SettingsPage> {
                       height: 36,
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Text(
-                        "设置",
+                        context.l10n.settings,
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w500,
@@ -181,6 +182,15 @@ class SettingsPageState extends State<SettingsPage> {
   }
 
   Widget buildSettings() {
+    List<String> options = [
+      context.l10n.appearance,
+      context.l10n.player,
+      context.l10n.file,
+      context.l10n.language,
+      context.l10n.bvTools,
+      context.l10n.about,
+      context.l10n.developer,
+    ];
     late final colorScheme = Theme.of(context).colorScheme;
     Widget buildItem(int id, String name, IconData icon) {
       final bool selected = id == currentPage;

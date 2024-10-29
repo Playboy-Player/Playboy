@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:playboy/l10n/i10n.dart';
 
 class PlayerSettingsPage extends StatefulWidget {
   const PlayerSettingsPage({super.key});
@@ -17,7 +18,7 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
         Container(
           padding: const EdgeInsets.all(12),
           child: Text(
-            '播放设置',
+            context.l10n.playback_settings,
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w500,
@@ -26,7 +27,7 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
           ),
         ),
         SwitchListTile(
-            title: const Text('自动播放视频'),
+            title: Text(context.l10n.auto_play_video),
             value: AppStorage().settings.autoPlay,
             onChanged: (bool value) {
               setState(() {
@@ -36,7 +37,7 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
               // AppStorage().updateStatus();
             }),
         SwitchListTile(
-            title: const Text('自动下载视频'),
+            title: Text(context.l10n.auto_download_video),
             value: AppStorage().settings.autoDownload,
             onChanged: (bool value) {
               setState(() {
@@ -46,7 +47,7 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
               // AppStorage().updateStatus();
             }),
         SwitchListTile(
-            title: const Text('默认音乐模式'),
+            title: Text(context.l10n.default_music_mode),
             value: AppStorage().settings.defaultMusicMode,
             onChanged: (bool value) {
               setState(() {
@@ -56,8 +57,8 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
               // AppStorage().updateStatus();
             }),
         SwitchListTile(
-            title: const Text('记忆播放器状态'),
-            subtitle: const Text('音量和倍速'),
+            title: Text(context.l10n.remember_player_state),
+            subtitle: Text(context.l10n.volume_and_speed),
             value: AppStorage().settings.rememberStatus,
             onChanged: (bool value) {
               setState(() {
@@ -67,8 +68,8 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
               // AppStorage().updateStatus();
             }),
         SwitchListTile(
-            title: const Text('退出播放界面后继续播放'),
-            subtitle: const Text('可通过全局播放控件停止'),
+            title: Text(context.l10n.continue_play_after_exit),
+            subtitle: Text(context.l10n.global_playback_control),
             value: AppStorage().settings.playAfterExit,
             onChanged: (bool value) {
               setState(() {
@@ -80,7 +81,7 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
         Container(
           padding: const EdgeInsets.all(12),
           child: Text(
-            'mpv 设置 (未完成)',
+            context.l10n.mpv_settings,
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w500,
