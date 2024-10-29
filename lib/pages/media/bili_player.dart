@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:playboy/backend/biliapi/models/video_info.dart';
 import 'package:playboy/backend/biliapi/models/video_stream_response.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:playboy/l10n/i10n.dart';
 import 'package:playboy/pages/media/video_fullscreen.dart';
 import 'package:squiggly_slider/slider.dart';
 import 'package:window_manager/window_manager.dart';
@@ -325,13 +326,13 @@ class BiliPlayerState extends State<BiliPlayer> {
                 ),
               ],
             ),
-            body: const TabBarView(
+            body: TabBarView(
               children: <Widget>[
                 Center(
-                  child: Text("所有分集"),
+                  child: Text(context.l10n.all_episodes),
                 ),
                 Center(
-                  child: Text("当前列表"),
+                  child: Text(context.l10n.current_list),
                 ),
               ],
             ),

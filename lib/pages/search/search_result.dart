@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:playboy/l10n/i10n.dart';
 
 class SearchResultPage extends StatefulWidget {
   const SearchResultPage({super.key, required this.keyword});
@@ -36,7 +37,7 @@ class SearchResultPageState extends State<SearchResultPage> {
           onTap: () {
             Navigator.pop(context);
           },
-          child: Text('"${widget.keyword}" 的搜索结果'),
+          child: Text('"${widget.keyword}" ${context.l10n.search_results}'),
         ),
         actions: [
           IconButton(
@@ -74,7 +75,7 @@ class SearchResultPageState extends State<SearchResultPage> {
                 FilterChip(
                   showCheckmark: false,
                   avatar: const Icon(Icons.web_stories_outlined),
-                  label: const Text('播放列表'),
+                  label: Text(context.l10n.play),
                   onSelected: (value) {
                     setState(() {
                       choosed = 0;
@@ -88,7 +89,7 @@ class SearchResultPageState extends State<SearchResultPage> {
                 FilterChip(
                   showCheckmark: false,
                   avatar: const Icon(Icons.music_note_outlined),
-                  label: const Text('音乐'),
+                  label: Text(context.l10n.music),
                   onSelected: (value) {
                     setState(() {
                       choosed = 1;
@@ -102,7 +103,7 @@ class SearchResultPageState extends State<SearchResultPage> {
                 FilterChip(
                   showCheckmark: false,
                   avatar: const Icon(Icons.movie_filter_outlined),
-                  label: const Text('视频'),
+                  label: Text(context.l10n.video),
                   onSelected: (value) {
                     setState(() {
                       choosed = 2;
@@ -116,7 +117,7 @@ class SearchResultPageState extends State<SearchResultPage> {
                 FilterChip(
                   showCheckmark: false,
                   avatar: const Icon(Icons.folder_outlined),
-                  label: const Text('收藏夹'),
+                  label: Text(context.l10n.favorites),
                   onSelected: (value) {
                     setState(() {
                       choosed = 3;
@@ -130,7 +131,7 @@ class SearchResultPageState extends State<SearchResultPage> {
                 FilterChip(
                   showCheckmark: false,
                   avatar: const Icon(Icons.history),
-                  label: const Text('历史记录'),
+                  label: Text(context.l10n.history),
                   onSelected: (value) {
                     setState(() {
                       choosed = 4;

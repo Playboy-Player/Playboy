@@ -1,9 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:playboy/l10n/i10n.dart';
 import 'package:playboy/widgets/music_card.dart';
 
 class MusicPage extends StatefulWidget {
@@ -62,7 +64,7 @@ class _MusicPageState extends State<MusicPage> {
               titlePadding:
                   const EdgeInsetsDirectional.only(start: 16, bottom: 16),
               title: Text(
-                '音乐',
+                context.l10n.music,
                 style: TextStyle(
                     color: Theme.of(context).colorScheme.onPrimaryContainer,
                     fontSize: 25,
@@ -102,7 +104,7 @@ class _MusicPageState extends State<MusicPage> {
                 padding: const EdgeInsets.only(top: 10, bottom: 10, right: 10),
                 child: FloatingActionButton(
                   heroTag: 'view_music',
-                  tooltip: '切换显示视图',
+                  tooltip: Intl.message('切换显示视图', name: "Toggle Display View"),
                   elevation: 0,
                   hoverElevation: 0,
                   highlightElevation: 0,
@@ -134,20 +136,20 @@ class _MusicPageState extends State<MusicPage> {
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(20)),
                           ),
-                          child: const SizedBox(
+                          child: SizedBox(
                             height: 200,
                             child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(
+                                  const Icon(
                                     Icons.upcoming_rounded,
                                     size: 40,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 10,
                                   ),
                                   Text(
-                                    '没有音乐',
+                                    context.l10n.no_music,
                                     style: TextStyle(fontSize: 20),
                                   ),
                                 ]),

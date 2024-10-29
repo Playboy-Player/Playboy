@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:playboy/backend/biliapi/bilibili_helper.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/backend/web_helper.dart';
+import 'package:playboy/l10n/i10n.dart';
 
 class ExtensionSettings extends StatefulWidget {
   const ExtensionSettings({super.key});
@@ -24,7 +25,7 @@ class _ExtensionSettingsState extends State<ExtensionSettings> {
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
-              'BV Tools 设置',
+              context.l10n.bvTools,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
@@ -41,7 +42,7 @@ class _ExtensionSettingsState extends State<ExtensionSettings> {
             title: Container(
               alignment: Alignment.centerLeft,
               height: 40,
-              child: const Text('启用 BV Tools'),
+              child: Text(context.l10n.enable_bv_tools),
             ),
             value: AppStorage().settings.enableBvTools,
             onChanged: (bool value) {
@@ -58,7 +59,7 @@ class _ExtensionSettingsState extends State<ExtensionSettings> {
               ? const SizedBox()
               : ListTile(
                   leading: const Icon(Icons.cloud_sync),
-                  title: const Text('加载 cookies'),
+                  title: Text(context.l10n.load_cookies),
                   onTap: () {
                     editingController.clear();
                     showDialog(
@@ -67,7 +68,7 @@ class _ExtensionSettingsState extends State<ExtensionSettings> {
                       context: context,
                       builder: (BuildContext context) => AlertDialog(
                         surfaceTintColor: Colors.transparent,
-                        title: const Text('cookies'),
+                        title: Text(context.l10n.cookies),
                         content: TextField(
                           autofocus: true,
                           maxLines: 8,
@@ -95,7 +96,7 @@ class _ExtensionSettingsState extends State<ExtensionSettings> {
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                            child: const Text('取消'),
+                            child: Text(context.l10n.cancel),
                           ),
                           TextButton(
                             onPressed: () async {
@@ -112,7 +113,7 @@ class _ExtensionSettingsState extends State<ExtensionSettings> {
                               if (!context.mounted) return;
                               Navigator.pop(context);
                             },
-                            child: const Text('确定'),
+                            child: Text(context.l10n.confirm),
                           ),
                         ],
                       ),
@@ -123,9 +124,11 @@ class _ExtensionSettingsState extends State<ExtensionSettings> {
               ? const SizedBox()
               : ListTile(
                   leading: const Icon(Icons.cookie),
-                  title: const Text('刷新 cookies 状态'),
+                  title: Text(context.l10n.refresh_cookies_status),
                   subtitle: Text(
-                      '当前 cookies 状态: ${AppStorage().settings.logined ? '可用' : '无效'}'),
+                      '${context.l10n.current_cookies_status} ${AppStorage().settings.logined ? context.l10n.available : context.l10n.invalid}'),
+                  //Text(
+                  //     '当前 cookies 状态: ${AppStorage().settings.logined ? '可用' : '无效'}'),
                   onTap: () async {
                     var res = await BilibiliHelper.loginCheck();
                     setState(() {
@@ -138,13 +141,13 @@ class _ExtensionSettingsState extends State<ExtensionSettings> {
           !AppStorage().settings.enableBvTools
               ? const SizedBox()
               : SwitchListTile(
-                  title: const Row(
+                  title: Row(
                     children: [
                       Icon(Icons.healing),
                       SizedBox(
                         width: 12,
                       ),
-                      Text('访客开启 1080P')
+                      Text(context.l10n.visitor_enable_1080p)
                     ],
                   ),
                   value: AppStorage().settings.tryLook,
@@ -160,7 +163,7 @@ class _ExtensionSettingsState extends State<ExtensionSettings> {
               ? const SizedBox()
               : ListTile(
                   leading: const Icon(Icons.delete),
-                  title: const Text('清除所有 cookies'),
+                  title: Text(context.l10n.clear_all_cookies),
                   onTap: () {
                     WebHelper.cookieManager.cookieJar.deleteAll();
                     setState(() {
