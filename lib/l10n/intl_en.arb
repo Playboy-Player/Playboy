@@ -134,7 +134,7 @@
 
     "collect": "collect",
 
-     "recently_played": "Recently Played",
+    "recently_played": "Recently Played",
     "no_recently_played": "No Recently Played",
     "storage": "Storage"
 }
