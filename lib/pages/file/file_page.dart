@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 // import 'package:playboy/backend/biliapi/bilibili_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
-import 'package:playboy/l10n/i10n.dart';
 // import 'package:playboy/pages/file/download_page.dart';
 // import 'package:playboy/pages/media/bili_player.dart';
 import 'package:playboy/pages/media/m_player.dart';
@@ -49,7 +48,7 @@ class _FilePageState extends State<FilePage> {
               titlePadding:
                   const EdgeInsetsDirectional.only(start: 16, bottom: 16),
               title: Text(
-                context.l10n.file,
+                '文件',
                 style: TextStyle(
                     color: Theme.of(context).colorScheme.onPrimaryContainer,
                     fontSize: 25,
@@ -63,8 +62,7 @@ class _FilePageState extends State<FilePage> {
           ),
           SliverList(
             delegate: SliverChildListDelegate([
-              _buildOption(Icons.folder_open, context.l10n.play_folder,
-                  () async {
+              _buildOption(Icons.folder_open, '播放文件夹', () async {
                 var res = await FilePicker.platform
                     .getDirectoryPath(lockParentWindow: true);
                 if (res != null) {
@@ -72,8 +70,8 @@ class _FilePageState extends State<FilePage> {
                   _openLink(link);
                 }
               }),
-              _buildOption(Icons.insert_drive_file_outlined,
-                  context.l10n.play_local_file, () async {
+              _buildOption(Icons.insert_drive_file_outlined, '播放本地文件',
+                  () async {
                 var res =
                     await FilePicker.platform.pickFiles(lockParentWindow: true);
                 if (res != null) {
@@ -81,7 +79,7 @@ class _FilePageState extends State<FilePage> {
                   _openLink(link);
                 }
               }),
-              _buildOption(Icons.link, context.l10n.open_network_stream, () {
+              _buildOption(Icons.link, '打开网络串流', () {
                 editingController.clear();
                 showDialog(
                   barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
@@ -89,7 +87,7 @@ class _FilePageState extends State<FilePage> {
                   context: context,
                   builder: (BuildContext context) => AlertDialog(
                     surfaceTintColor: Colors.transparent,
-                    title: Text(context.l10n.open_network_stream),
+                    title: const Text('打开网络串流'),
                     content: TextField(
                       autofocus: true,
                       maxLines: 1,
@@ -113,7 +111,7 @@ class _FilePageState extends State<FilePage> {
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: Text(context.l10n.cancel),
+                        child: const Text('取消'),
                       ),
                       TextButton(
                         onPressed: () async {
@@ -124,14 +122,13 @@ class _FilePageState extends State<FilePage> {
                           // }
                           _openLink(editingController.text);
                         },
-                        child: Text(context.l10n.confirm),
+                        child: const Text('确定'),
                       ),
                     ],
                   ),
                 );
               }),
-              _buildOption(Icons.file_download_outlined,
-                  context.l10n.download_manager, null
+              _buildOption(Icons.file_download_outlined, '下载管理', null
                   // () {
                   //   Navigator.push(
                   //     context,
@@ -150,8 +147,8 @@ class _FilePageState extends State<FilePage> {
           SliverToBoxAdapter(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Text(
-                context.l10n.media_library,
+              child: const Text(
+                '媒体库',
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
               ),
             ),
@@ -184,8 +181,8 @@ class _FilePageState extends State<FilePage> {
           SliverToBoxAdapter(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Text(
-                context.l10n.collect,
+              child: const Text(
+                '收藏夹',
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
               ),
             ),
@@ -220,11 +217,11 @@ class _FilePageState extends State<FilePage> {
               ),
             ),
           ),
-          SliverToBoxAdapter(
+          const SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Text(
-                context.l10n.recently_played,
+                '最近播放',
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
               ),
             ),
@@ -240,20 +237,20 @@ class _FilePageState extends State<FilePage> {
                   ),
                   borderRadius: const BorderRadius.all(Radius.circular(20)),
                 ),
-                child: SizedBox(
+                child: const SizedBox(
                   height: 150,
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.upcoming_rounded,
                           size: 40,
                         ),
-                        const SizedBox(
+                        SizedBox(
                           width: 10,
                         ),
                         Text(
-                          context.l10n.no_recently_played,
+                          '没有最近播放',
                           style: TextStyle(fontSize: 20),
                         ),
                       ]),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:playboy/l10n/i10n.dart';
 import 'package:playboy/pages/search/search_result.dart';
 
 class SearchPage extends StatefulWidget {
@@ -28,7 +27,7 @@ class _SearchPage extends State<SearchPage> {
               titlePadding:
                   const EdgeInsetsDirectional.only(start: 16, bottom: 16),
               title: Text(
-                context.l10n.search,
+                '搜索',
                 style: TextStyle(
                     color: Theme.of(context).colorScheme.onPrimaryContainer,
                     fontSize: 25,
@@ -109,11 +108,11 @@ class _SearchPage extends State<SearchPage> {
               )),
             ),
           ),
-          SliverToBoxAdapter(
+          const SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Text(
-                context.l10n.recent_search,
+                '最近搜索',
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
               ),
             ),
@@ -129,7 +128,7 @@ class _SearchPage extends State<SearchPage> {
                   ),
                   borderRadius: const BorderRadius.all(Radius.circular(20)),
                 ),
-                child: SizedBox(
+                child: const SizedBox(
                   height: 150,
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -142,7 +141,7 @@ class _SearchPage extends State<SearchPage> {
                           width: 10,
                         ),
                         Text(
-                          context.l10n.no_recent_search,
+                          '没有最近搜索',
                           style: TextStyle(fontSize: 20),
                         ),
                       ]),

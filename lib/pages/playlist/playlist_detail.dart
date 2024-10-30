@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/storage.dart';
-import 'package:playboy/l10n/i10n.dart';
 import 'package:playboy/widgets/video_card.dart';
 
 class PlaylistDetail extends StatefulWidget {
@@ -118,7 +117,7 @@ class PlaylistDetailState extends State<PlaylistDetail> {
                                 AppStorage().openPlaylist(widget.info, false);
                               },
                               icon: const Icon(Icons.play_arrow),
-                              label: Text(context.l10n.play_in_order),
+                              label: const Text('顺序播放'),
                             ),
                             const SizedBox(
                               width: 10,
@@ -133,7 +132,7 @@ class PlaylistDetailState extends State<PlaylistDetail> {
                                 setState(() {});
                               },
                               icon: const Icon(Icons.shuffle),
-                              label: Text(context.l10n.play_randomly),
+                              label: const Text('随机播放'),
                             ),
                           ],
                         )
