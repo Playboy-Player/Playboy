@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:playboy/l10n/i10n.dart';
 
 class DownloadPage extends StatefulWidget {
   const DownloadPage({super.key});
@@ -26,7 +25,7 @@ class DownloadPageState extends State<DownloadPage> {
         titleSpacing: 0,
         scrolledUnderElevation: 0,
         backgroundColor: Theme.of(context).colorScheme.surface,
-        title: Text(context.l10n.download_manager),
+        title: const Text('下载管理'),
         actions: [
           IconButton(
             onPressed: () {},
@@ -50,7 +49,7 @@ class DownloadPageState extends State<DownloadPage> {
                 FilterChip(
                   showCheckmark: false,
                   avatar: const Icon(Icons.download_outlined),
-                  label: Text(context.l10n.downloading),
+                  label: const Text('下载中'),
                   onSelected: (value) {
                     setState(() {
                       choosed = 0;
@@ -64,7 +63,7 @@ class DownloadPageState extends State<DownloadPage> {
                 FilterChip(
                   showCheckmark: false,
                   avatar: const Icon(Icons.download_done),
-                  label: Text(context.l10n.completed),
+                  label: const Text('已完成'),
                   onSelected: (value) {
                     setState(() {
                       choosed = 1;
@@ -78,7 +77,7 @@ class DownloadPageState extends State<DownloadPage> {
                 FilterChip(
                   showCheckmark: false,
                   avatar: const Icon(Icons.error_outline),
-                  label: Text(context.l10n.download_failed),
+                  label: const Text('下载失败'),
                   onSelected: (value) {
                     setState(() {
                       choosed = 2;
@@ -92,7 +91,7 @@ class DownloadPageState extends State<DownloadPage> {
                 FilterChip(
                   showCheckmark: false,
                   avatar: const Icon(Icons.task_alt),
-                  label: Text(context.l10n.all_tasks),
+                  label: const Text('所有任务'),
                   onSelected: (value) {
                     setState(() {
                       choosed = 3;

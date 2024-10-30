@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/storage.dart';
@@ -70,8 +69,7 @@ class PlaylistState extends State<PlaylistPage> {
               Padding(
                 padding: const EdgeInsets.only(top: 10, bottom: 10),
                 child: FloatingActionButton(
-                  tooltip: Intl.message('新建播放列表',
-                      name: 'createPlaylist'), //'新建播放列表',
+                  tooltip: '新建播放列表',
                   heroTag: 'new_list',
                   elevation: 0,
                   hoverElevation: 0,
@@ -86,15 +84,14 @@ class PlaylistState extends State<PlaylistPage> {
                       context: context,
                       builder: (BuildContext context) => AlertDialog(
                         surfaceTintColor: Colors.transparent,
-                        title: Text(context.l10n.create_playlist),
+                        title: const Text('新建播放列表'),
                         content: TextField(
                           autofocus: true,
                           maxLines: 1,
                           controller: _editingController,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             border: OutlineInputBorder(),
-                            labelText:
-                                Intl.message('名称', name: 'labelName'), //'名称',
+                            labelText: '名称',
                           ),
                           onSubmitted: (value) {
                             var pl = PlaylistItem(
@@ -115,7 +112,7 @@ class PlaylistState extends State<PlaylistPage> {
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                            child: Text(context.l10n.cancel),
+                            child: const Text('取消'),
                           ),
                           TextButton(
                             onPressed: () {
@@ -131,7 +128,7 @@ class PlaylistState extends State<PlaylistPage> {
                               });
                               Navigator.pop(context);
                             },
-                            child: Text(context.l10n.confirm),
+                            child: const Text('确定'),
                           ),
                         ],
                       ),
@@ -144,7 +141,7 @@ class PlaylistState extends State<PlaylistPage> {
                 padding: const EdgeInsets.only(top: 10, bottom: 10, right: 10),
                 child: FloatingActionButton(
                   heroTag: 'view_list',
-                  tooltip: Intl.message('切换显示视图', name: "Toggle Display View"),
+                  tooltip: '切换显示视图',
                   elevation: 0,
                   hoverElevation: 0,
                   highlightElevation: 0,
@@ -176,7 +173,7 @@ class PlaylistState extends State<PlaylistPage> {
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(20)),
                           ),
-                          child: SizedBox(
+                          child: const SizedBox(
                             height: 200,
                             child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -189,7 +186,7 @@ class PlaylistState extends State<PlaylistPage> {
                                     width: 10,
                                   ),
                                   Text(
-                                    context.l10n.no_playlists,
+                                    '没有播放列表',
                                     style: TextStyle(fontSize: 20),
                                   ),
                                 ]),
@@ -417,7 +414,7 @@ class PlaylistState extends State<PlaylistPage> {
           Align(
             alignment: Alignment.centerRight,
             child: IconButton(
-              tooltip: Intl.message('播放', name: "Play"),
+              tooltip: '播放',
               onPressed: () {
                 AppStorage().openPlaylist(AppStorage().playlists[index], false);
               },
@@ -442,7 +439,7 @@ class PlaylistState extends State<PlaylistPage> {
               ),
               builder: (_, controller, child) {
                 return IconButton(
-                  tooltip: Intl.message('菜单', name: "Menu"),
+                  tooltip: '菜单',
                   onPressed: () {
                     if (controller.isOpen) {
                       controller.close();
@@ -481,9 +478,9 @@ class PlaylistState extends State<PlaylistPage> {
       const SizedBox(height: 10),
       _buildMenuItem(
         Icons.play_circle_outline_rounded,
-        Padding(
+        const Padding(
           padding: EdgeInsets.symmetric(horizontal: 6),
-          child: Text(context.l10n.play_in_order),
+          child: Text('顺序播放'),
         ),
         () {
           AppStorage().closeMedia();
@@ -492,9 +489,9 @@ class PlaylistState extends State<PlaylistPage> {
       ),
       _buildMenuItem(
         Icons.shuffle,
-        Padding(
+        const Padding(
           padding: EdgeInsets.symmetric(horizontal: 6),
-          child: Text(context.l10n.play_randomly),
+          child: Text('随机播放'),
         ),
         () {
           AppStorage().closeMedia();
@@ -506,9 +503,9 @@ class PlaylistState extends State<PlaylistPage> {
       ),
       _buildMenuItem(
         Icons.add_circle_outline,
-        Padding(
+        const Padding(
           padding: EdgeInsets.symmetric(horizontal: 6),
-          child: Text(context.l10n.append_to_current_list),
+          child: Text('追加到当前列表'),
         ),
         () {
           AppStorage().appendPlaylist(
@@ -519,16 +516,16 @@ class PlaylistState extends State<PlaylistPage> {
       const Divider(),
       _buildMenuItem(
         Icons.share,
-        Padding(
+        const Padding(
           padding: EdgeInsets.symmetric(horizontal: 6),
-          child: Text(context.l10n.export),
+          child: Text('导出'),
         ),
         () async {
           final originalFile = File(
             '${AppStorage().dataPath}/playlists/${AppStorage().playlists[index].uuid}.json',
           );
           String? newFilePath = await FilePicker.platform.saveFile(
-            dialogTitle: context.l10n.save_as,
+            dialogTitle: '另存为',
             fileName: '${AppStorage().playlists[index].uuid}.json',
           );
 
@@ -540,7 +537,7 @@ class PlaylistState extends State<PlaylistPage> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  '${context.l10n.file_saved_as} $newFilePath',
+                  '文件已另存为: $newFilePath',
                 ),
               ),
             );
@@ -549,9 +546,9 @@ class PlaylistState extends State<PlaylistPage> {
       ),
       _buildMenuItem(
         Icons.design_services_outlined,
-        Padding(
+        const Padding(
           padding: EdgeInsets.symmetric(horizontal: 6),
-          child: Text(context.l10n.modify_cover),
+          child: Text('修改封面'),
         ),
         () async {
           String? coverPath =
@@ -578,10 +575,10 @@ class PlaylistState extends State<PlaylistPage> {
       ),
       _buildMenuItem(
         Icons.cleaning_services,
-        Padding(
+        const Padding(
           padding: EdgeInsets.symmetric(horizontal: 6),
           child: Text(
-            context.l10n.clear_cover,
+            '清除封面',
           ),
         ),
         () async {
@@ -598,9 +595,9 @@ class PlaylistState extends State<PlaylistPage> {
       ),
       _buildMenuItem(
         Icons.drive_file_rename_outline,
-        Padding(
+        const Padding(
           padding: EdgeInsets.symmetric(horizontal: 6),
-          child: Text(context.l10n.rename),
+          child: Text('重命名'),
         ),
         () {
           _editingController.clear();
@@ -611,15 +608,15 @@ class PlaylistState extends State<PlaylistPage> {
             builder: (BuildContext context) => AlertDialog(
               surfaceTintColor: Colors.transparent,
               title: Text(
-                '${context.l10n.rename} ${AppStorage().playlists[index].title}',
+                '重命名 ${AppStorage().playlists[index].title}',
               ),
               content: TextField(
                 autofocus: true,
                 maxLines: 1,
                 controller: _editingController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: Intl.message('名称', name: "Name"),
+                  labelText: '名称',
                 ),
                 onSubmitted: (value) {
                   LibraryHelper.renamePlaylist(
@@ -635,7 +632,7 @@ class PlaylistState extends State<PlaylistPage> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text(context.l10n.cancel),
+                  child: const Text('取消'),
                 ),
                 TextButton(
                   onPressed: () {
@@ -647,7 +644,7 @@ class PlaylistState extends State<PlaylistPage> {
                     Navigator.pop(context);
                     Navigator.pop(context);
                   },
-                  child: Text(context.l10n.confirm),
+                  child: const Text('确定'),
                 ),
               ],
             ),
@@ -656,26 +653,26 @@ class PlaylistState extends State<PlaylistPage> {
       ),
       _buildMenuItem(
         Icons.delete_outline,
-        Padding(
+        const Padding(
           padding: EdgeInsets.symmetric(horizontal: 6),
-          child: Text(context.l10n.delete),
+          child: Text('删除'),
         ),
         () {
           showDialog(
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: Text(context.l10n.confirm_action),
-                content: Text(context.l10n.confirm_delete_playlist),
+                title: const Text("确认操作"),
+                content: const Text("确定要删除播放列表吗?"),
                 actions: [
                   TextButton(
-                    child: Text(context.l10n.cancel),
+                    child: const Text("取消"),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
                   ),
                   TextButton(
-                    child: Text(context.l10n.confirm),
+                    child: const Text("确认"),
                     onPressed: () {
                       LibraryHelper.deletePlaylist(
                         AppStorage().playlists[index],

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/storage.dart';
-import 'package:playboy/l10n/i10n.dart';
 
 class DisplaySettingsPage extends StatefulWidget {
   const DisplaySettingsPage({super.key});
@@ -18,7 +17,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
         Container(
           padding: const EdgeInsets.all(12),
           child: Text(
-            context.l10n.interface_settings,
+            '界面设置',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w500,
@@ -27,8 +26,8 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
           ),
         ),
         SwitchListTile(
-          title: Text(context.l10n.enable_wave_style_progress_bar),
-          subtitle: Text(context.l10n.video_mode_invalid),
+          title: const Text('启用波浪样式进度条'),
+          subtitle: const Text('视频模式下无效'),
           value: AppStorage().settings.wavySlider,
           onChanged: (bool value) {
             setState(() {
@@ -49,7 +48,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
         //   },
         // ),
         ListTile(
-          title: Text(context.l10n.initial_page),
+          title: const Text('初始页面'),
           trailing: SizedBox(
             height: 44,
             width: 150,
@@ -68,7 +67,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
                 fillColor: Theme.of(context).colorScheme.secondaryContainer,
               ),
               value: AppStorage().settings.initPage,
-              items: [
+              items: const [
                 DropdownMenuItem(
                   value: 0,
                   child: Row(
@@ -77,7 +76,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
                       SizedBox(
                         width: 10,
                       ),
-                      Text(context.l10n.playlist),
+                      Text('播放列表'),
                     ],
                   ),
                 ),
@@ -89,7 +88,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
                       SizedBox(
                         width: 10,
                       ),
-                      Text(context.l10n.music),
+                      Text('音乐'),
                     ],
                   ),
                 ),
@@ -101,7 +100,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
                       SizedBox(
                         width: 10,
                       ),
-                      Text(context.l10n.video),
+                      Text('视频'),
                     ],
                   ),
                 ),
@@ -113,7 +112,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
                       SizedBox(
                         width: 10,
                       ),
-                      Text(context.l10n.file),
+                      Text('文件'),
                     ],
                   ),
                 ),
@@ -125,7 +124,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
                       SizedBox(
                         width: 10,
                       ),
-                      Text(context.l10n.search),
+                      Text('搜索'),
                     ],
                   ),
                 ),
@@ -141,7 +140,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
           height: 4,
         ),
         ListTile(
-          title: Text(context.l10n.playlist_default_view),
+          title: const Text('播放列表默认视图'),
           trailing: SizedBox(
             height: 44,
             width: 150,
@@ -160,7 +159,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
                 fillColor: Theme.of(context).colorScheme.secondaryContainer,
               ),
               value: AppStorage().settings.playlistListview,
-              items: [
+              items: const [
                 DropdownMenuItem(
                   value: false,
                   child: Row(
@@ -169,7 +168,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
                       SizedBox(
                         width: 10,
                       ),
-                      Text(context.l10n.grid),
+                      Text('网格'),
                     ],
                   ),
                 ),
@@ -181,7 +180,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
                       SizedBox(
                         width: 10,
                       ),
-                      Text(context.l10n.list),
+                      Text('列表'),
                     ],
                   ),
                 ),
@@ -197,7 +196,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
           height: 4,
         ),
         ListTile(
-          title: Text(context.l10n.music_library_default_view),
+          title: const Text('音乐库默认视图'),
           trailing: SizedBox(
             height: 44,
             width: 150,
@@ -216,7 +215,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
                 fillColor: Theme.of(context).colorScheme.secondaryContainer,
               ),
               value: AppStorage().settings.musicLibListview,
-              items: [
+              items: const [
                 DropdownMenuItem(
                   value: false,
                   child: Row(
@@ -225,7 +224,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
                       SizedBox(
                         width: 10,
                       ),
-                      Text(context.l10n.grid),
+                      Text('网格'),
                     ],
                   ),
                 ),
@@ -237,7 +236,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
                       SizedBox(
                         width: 10,
                       ),
-                      Text(context.l10n.list),
+                      Text('列表'),
                     ],
                   ),
                 ),
@@ -253,7 +252,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
           height: 4,
         ),
         ListTile(
-          title: Text(context.l10n.video_library_default_view),
+          title: const Text('视频库默认视图'),
           trailing: SizedBox(
             height: 44,
             width: 150,
@@ -272,7 +271,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
                 fillColor: Theme.of(context).colorScheme.secondaryContainer,
               ),
               value: AppStorage().settings.videoLibListview,
-              items: [
+              items: const [
                 DropdownMenuItem(
                   value: false,
                   child: Row(
@@ -281,7 +280,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
                       SizedBox(
                         width: 10,
                       ),
-                      Text(context.l10n.grid),
+                      Text('网格'),
                     ],
                   ),
                 ),
@@ -293,7 +292,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
                       SizedBox(
                         width: 10,
                       ),
-                      Text(context.l10n.list),
+                      Text('列表'),
                     ],
                   ),
                 ),
@@ -308,7 +307,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
         Container(
           padding: const EdgeInsets.all(12),
           child: Text(
-            context.l10n.theme_settings,
+            '主题设置',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w500,
@@ -318,7 +317,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
         ),
         ListTile(
           leading: const Icon(Icons.color_lens_outlined),
-          title: Text(context.l10n.theme_color),
+          title: const Text('主题颜色'),
           trailing: SizedBox(
             height: 44,
             width: 150,
@@ -368,7 +367,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
           ),
         ),
         SwitchListTile(
-            title: Text(context.l10n.theme_mode_follow_system),
+            title: const Text('主题模式跟随系统'),
             value: AppStorage().settings.themeMode == ThemeMode.system,
             onChanged: (bool value) {
               if (value) {
@@ -389,7 +388,7 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
         AppStorage().settings.themeMode == ThemeMode.system
             ? const SizedBox()
             : SwitchListTile(
-                title: Text(context.l10n.enable_dark_mode),
+                title: const Text('启用深色模式'),
                 value: AppStorage().settings.themeMode == ThemeMode.dark,
                 onChanged: (bool value) {
                   if (value) {

@@ -1,11 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
-import 'package:playboy/l10n/i10n.dart';
 import 'package:playboy/pages/media/m_player.dart';
 import 'package:playboy/widgets/playlist_picker.dart';
 import 'package:playboy/widgets/video_card.dart';
@@ -66,7 +64,7 @@ class _VideoPageState extends State<VideoPage> {
               titlePadding:
                   const EdgeInsetsDirectional.only(start: 16, bottom: 16),
               title: Text(
-                context.l10n.video,
+                '视频',
                 style: TextStyle(
                     color: Theme.of(context).colorScheme.onPrimaryContainer,
                     fontSize: 25,
@@ -106,7 +104,7 @@ class _VideoPageState extends State<VideoPage> {
                 padding: const EdgeInsets.only(top: 10, bottom: 10, right: 10),
                 child: FloatingActionButton(
                   heroTag: 'view_video',
-                  tooltip: Intl.message('切换显示视图', name: "Toggle Display View"),
+                  tooltip: '切换显示视图',
                   elevation: 0,
                   hoverElevation: 0,
                   highlightElevation: 0,
@@ -138,21 +136,21 @@ class _VideoPageState extends State<VideoPage> {
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(20)),
                           ),
-                          child: SizedBox(
+                          child: const SizedBox(
                             height: 200,
                             child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Icon(
+                                  Icon(
                                     Icons.upcoming_rounded,
                                     size: 40,
                                   ),
-                                  const SizedBox(
+                                  SizedBox(
                                     width: 10,
                                   ),
                                   Text(
-                                    context.l10n.no_video,
-                                    style: const TextStyle(fontSize: 20),
+                                    '没有视频',
+                                    style: TextStyle(fontSize: 20),
                                   ),
                                 ]),
                           ),
@@ -196,7 +194,7 @@ class _VideoPageState extends State<VideoPage> {
                                         MenuItemButton(
                                           leadingIcon: const Icon(
                                               Icons.play_arrow_outlined),
-                                          child: Text(context.l10n.play),
+                                          child: const Text('播放'),
                                           onPressed: () async {
                                             await AppStorage()
                                                 .closeMedia()
@@ -219,20 +217,19 @@ class _VideoPageState extends State<VideoPage> {
                                         MenuItemButton(
                                           leadingIcon:
                                               const Icon(Icons.menu_open),
-                                          child: Text(context.l10n.insert_play),
+                                          child: const Text('插播'),
                                           onPressed: () {},
                                         ),
                                         MenuItemButton(
                                           leadingIcon:
                                               const Icon(Icons.last_page),
-                                          child: Text(context.l10n.last_played),
+                                          child: const Text('最后播放'),
                                           onPressed: () {},
                                         ),
                                         MenuItemButton(
                                           leadingIcon: const Icon(
                                               Icons.add_circle_outline),
-                                          child: Text(
-                                              context.l10n.add_to_playlist),
+                                          child: const Text('添加到播放列表'),
                                           onPressed: () {
                                             showDialog(
                                               barrierColor: colorScheme
@@ -244,8 +241,7 @@ class _VideoPageState extends State<VideoPage> {
                                                   AlertDialog(
                                                 surfaceTintColor:
                                                     Colors.transparent,
-                                                title: Text(context
-                                                    .l10n.add_to_playlist),
+                                                title: const Text('添加到播放列表'),
                                                 content: SizedBox(
                                                   width: 300,
                                                   height: 300,

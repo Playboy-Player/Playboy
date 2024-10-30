@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/contributor.dart';
-import 'package:playboy/l10n/i10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutPage extends StatefulWidget {
@@ -20,7 +19,7 @@ class _AboutPageState extends State<AboutPage> {
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
-              context.l10n.about,
+              '关于',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
@@ -80,7 +79,7 @@ class _AboutPageState extends State<AboutPage> {
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
-              context.l10n.contributors,
+              '贡献者',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
@@ -138,7 +137,7 @@ class _AboutPageState extends State<AboutPage> {
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
-              context.l10n.support,
+              '支持',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
@@ -150,7 +149,7 @@ class _AboutPageState extends State<AboutPage> {
             leading: const Icon(
               Icons.data_object,
             ),
-            title: Text(context.l10n.project_address),
+            title: const Text('项目地址'),
             trailing: const Icon(Icons.open_in_new),
             onTap: () {
               launchUrl(Uri.https('github.com', '/Playboy-Player/Playboy'));
@@ -160,7 +159,7 @@ class _AboutPageState extends State<AboutPage> {
             leading: const Icon(
               Icons.feedback_outlined,
             ),
-            title: Text(context.l10n.feedback),
+            title: const Text('反馈问题'),
             trailing: const Icon(Icons.open_in_new),
             onTap: () {
               launchUrl(Uri.https(

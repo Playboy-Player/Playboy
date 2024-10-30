@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/storage.dart';
-import 'package:playboy/l10n/i10n.dart';
 
 class DeveloperSettings extends StatefulWidget {
   const DeveloperSettings({super.key});
@@ -20,7 +19,7 @@ class DeveloperSettingsState extends State<DeveloperSettings> {
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
-              context.l10n.developer_settings,
+              'Developer Settings',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
@@ -36,7 +35,7 @@ class DeveloperSettingsState extends State<DeveloperSettings> {
           //   },
           // ),
           SwitchListTile(
-            title: Text(context.l10n.enable_tablet_ui),
+            title: const Text('Enable Tablet UI'),
             value: AppStorage().settings.tabletUI,
             onChanged: (bool value) {
               setState(() {
@@ -47,7 +46,7 @@ class DeveloperSettingsState extends State<DeveloperSettings> {
             },
           ),
           SwitchListTile(
-            title: Text(context.l10n.enable_custom_title_bar),
+            title: const Text('Enable Custom TitleBar'),
             value: AppStorage().settings.enableTitleBar,
             onChanged: (bool value) {
               setState(() {
@@ -59,8 +58,8 @@ class DeveloperSettingsState extends State<DeveloperSettings> {
           ),
           ListTile(
             leading: const Icon(Icons.height),
-            title: Text(context.l10n.title_bar_offset),
-            subtitle: Text(context.l10n.base),
+            title: const Text('TitleBar Offset'),
+            subtitle: const Text('base: 30'),
             trailing: Container(
               alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(horizontal: 10),

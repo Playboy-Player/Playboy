@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
-import 'package:playboy/l10n/i10n.dart';
 import 'package:playboy/pages/media/video_fullscreen.dart';
 import 'package:playboy/widgets/player_list.dart';
 import 'package:playboy/widgets/uni_image.dart';
@@ -620,7 +619,7 @@ class MPlayerState extends State<MPlayer> {
         titleSpacing: videoMode ? null : 8,
         scrolledUnderElevation: 0,
         title: Text(
-          context.l10n.playlist,
+          '播放列表',
           style: TextStyle(color: colorScheme.primary),
         ),
         actions: [
@@ -713,7 +712,7 @@ class MPlayerState extends State<MPlayer> {
         titleSpacing: videoMode ? null : 8,
         scrolledUnderElevation: 0,
         title: Text(
-          context.l10n.lyrics,
+          '歌词',
           style: TextStyle(color: colorScheme.primary),
         ),
         actions: [
