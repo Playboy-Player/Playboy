@@ -10,14 +10,19 @@ class Constants {
 
   static List<Contributor> maintainers = [
     Contributor(
-      avatar: 'res/maintainers/yui.jpg',
+      avatar: 'res/contributors/yui.jpg',
       name: 'YuiHrsw',
       url: 'https://github.com/YuiHrsw',
     ),
     Contributor(
-      avatar: 'res/maintainers/KernelInterrupt.jpg',
+      avatar: 'res/contributors/KernelInterrupt.jpg',
       name: 'KernelInterrupt',
       url: 'https://github.com/KernelInterrupt',
+    ),
+    Contributor(
+      avatar: 'res/contributors/rubbrt.jpg',
+      name: 'rubbrt',
+      url: 'https://github.com/rubbrt',
     )
   ];
 }

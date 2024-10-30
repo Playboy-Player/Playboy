@@ -68,7 +68,7 @@ flutter_launcher_icons:
 
 flutter:
   assets:
-    - res/maintainers/
+    - res/contributors/
   uses-material-design: true
   generate: true
 
