@@ -30,6 +30,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "appearance": MessageLookupByLibrary.simpleMessage("外观"),
         "autoDownloadVideo": MessageLookupByLibrary.simpleMessage("自动下载视频"),
         "autoPlayVideo": MessageLookupByLibrary.simpleMessage("自动播放视频"),
+        "cancel": MessageLookupByLibrary.simpleMessage("取消"),
         "changeCover": MessageLookupByLibrary.simpleMessage("修改封面"),
         "confirm": MessageLookupByLibrary.simpleMessage("确认操作"),
         "confirmDeletePlaylist":
@@ -38,6 +39,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "currentList": MessageLookupByLibrary.simpleMessage("当前列表"),
         "defaultMusicView": MessageLookupByLibrary.simpleMessage("默认音乐模式"),
         "delete": MessageLookupByLibrary.simpleMessage("删除"),
+        "disabledInVideoPlaying":
+            MessageLookupByLibrary.simpleMessage("视频播放时无效"),
         "displayLanguage": MessageLookupByLibrary.simpleMessage("显示语言"),
         "downloadFolder": MessageLookupByLibrary.simpleMessage("下载文件夹"),
         "downloadManager": MessageLookupByLibrary.simpleMessage("下载管理"),
@@ -70,6 +73,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "noRecentSearch": MessageLookupByLibrary.simpleMessage("没有最近搜索"),
         "noRecentlyPlayed": MessageLookupByLibrary.simpleMessage("没有最近播放"),
         "noVideo": MessageLookupByLibrary.simpleMessage("没有视频"),
+        "ok": MessageLookupByLibrary.simpleMessage("确定"),
         "openAppDataFolder": MessageLookupByLibrary.simpleMessage("打开应用数据文件夹"),
         "openFolder": MessageLookupByLibrary.simpleMessage("播放文件夹"),
         "openMediaFile": MessageLookupByLibrary.simpleMessage("播放本地文件"),
@@ -121,7 +125,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "videoFolder": MessageLookupByLibrary.simpleMessage("视频文件夹"),
         "videoLibraryDefaultView":
             MessageLookupByLibrary.simpleMessage("视频库默认视图"),
-        "videoModeInvalid": MessageLookupByLibrary.simpleMessage("视频模式下无效"),
         "volumeAndSpeed": MessageLookupByLibrary.simpleMessage("音量和倍速")
       };
 }

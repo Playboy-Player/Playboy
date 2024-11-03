@@ -450,11 +450,11 @@ class S {
     );
   }
 
-  /// `Ignored in video mode`
-  String get videoModeInvalid {
+  /// `Disabled in video playing`
+  String get disabledInVideoPlaying {
     return Intl.message(
-      'Ignored in video mode',
-      name: 'videoModeInvalid',
+      'Disabled in video playing',
+      name: 'disabledInVideoPlaying',
       desc: '',
       args: [],
     );
@@ -955,6 +955,26 @@ class S {
     return Intl.message(
       'No Recently Played',
       name: 'noRecentlyPlayed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ok`
+  String get ok {
+    return Intl.message(
+      'Ok',
+      name: 'ok',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancel`
+  String get cancel {
+    return Intl.message(
+      'Cancel',
+      name: 'cancel',
       desc: '',
       args: [],
     );

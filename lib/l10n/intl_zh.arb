@@ -44,7 +44,7 @@
   "english": "English",
   "uiSettings": "界面设置",
   "enableWavySlider": "启用波浪样式进度条",
-  "videoModeInvalid": "视频模式下无效",
+  "disabledInVideoPlaying": "视频播放时无效",
   "startupPage": "初始页面",
   "playlistDefaultView": "播放列表默认视图",
   "grid": "网格",
@@ -102,5 +102,8 @@
   "mediaLibrary": "媒体库",
 
   "recentlyPlayed": "最近播放",
-  "noRecentlyPlayed": "没有最近播放"
+  "noRecentlyPlayed": "没有最近播放",
+
+  "ok": "确定",
+  "cancel": "取消"
 }

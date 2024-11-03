@@ -32,6 +32,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "autoDownloadVideo":
             MessageLookupByLibrary.simpleMessage("Auto Download"),
         "autoPlayVideo": MessageLookupByLibrary.simpleMessage("Auto Play"),
+        "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "changeCover": MessageLookupByLibrary.simpleMessage("Change Cover"),
         "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
         "confirmDeletePlaylist": MessageLookupByLibrary.simpleMessage(
@@ -41,6 +42,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "defaultMusicView":
             MessageLookupByLibrary.simpleMessage("Default Music Mode"),
         "delete": MessageLookupByLibrary.simpleMessage("Delete"),
+        "disabledInVideoPlaying":
+            MessageLookupByLibrary.simpleMessage("Disabled in video playing"),
         "displayLanguage":
             MessageLookupByLibrary.simpleMessage("Display Language"),
         "downloadFolder":
@@ -80,6 +83,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "noRecentlyPlayed":
             MessageLookupByLibrary.simpleMessage("No Recently Played"),
         "noVideo": MessageLookupByLibrary.simpleMessage("No Video"),
+        "ok": MessageLookupByLibrary.simpleMessage("Ok"),
         "openAppDataFolder":
             MessageLookupByLibrary.simpleMessage("Open App Data Folder"),
         "openFolder": MessageLookupByLibrary.simpleMessage("Open Folder"),
@@ -142,8 +146,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "videoFolder": MessageLookupByLibrary.simpleMessage("Video Folders"),
         "videoLibraryDefaultView":
             MessageLookupByLibrary.simpleMessage("Video Library Default View"),
-        "videoModeInvalid":
-            MessageLookupByLibrary.simpleMessage("Ignored in video mode"),
         "volumeAndSpeed":
             MessageLookupByLibrary.simpleMessage("Volume and Speed")
       };

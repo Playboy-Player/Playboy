@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:playboy/l10n/i10n.dart';
 import 'package:playboy/pages/settings/about_app.dart';
 import 'package:playboy/pages/settings/bvtools_settings.dart';
 import 'package:playboy/pages/settings/display_settings.dart';
@@ -19,8 +20,8 @@ class SettingsPage extends StatefulWidget {
 }
 
 class SettingsPageState extends State<SettingsPage> {
-  int currentPage = 0;
-  List<IconData> icons = [
+  int _currentPage = 0;
+  final List<IconData> _icons = [
     Icons.color_lens_outlined,
     Icons.play_circle_outline,
     Icons.folder_outlined,
@@ -29,16 +30,7 @@ class SettingsPageState extends State<SettingsPage> {
     Icons.info_outline,
     Icons.code_outlined,
   ];
-  List<String> options = [
-    '外观',
-    '播放器',
-    '文件',
-    '语言',
-    'BV Tools',
-    '关于',
-    '开发者',
-  ];
-  List<Widget> pages = [
+  final List<Widget> _pages = [
     const DisplaySettingsPage(),
     const PlayerSettingsPage(),
     const StorageSettingsPage(),
@@ -53,6 +45,15 @@ class SettingsPageState extends State<SettingsPage> {
     // late final colorScheme = Theme.of(context).colorScheme;
     // late final backgroundColor = Color.alphaBlend(
     //     colorScheme.primary.withOpacity(0.08), colorScheme.surface);
+    List<String> options = [
+      context.l10n.appearance,
+      context.l10n.player,
+      context.l10n.storage,
+      context.l10n.language,
+      'BV Tools',
+      context.l10n.about,
+      'Developer',
+    ];
     return Scaffold(
       appBar: !AppStorage().settings.enableTitleBar
           ? AppBar(
@@ -146,7 +147,7 @@ class SettingsPageState extends State<SettingsPage> {
                       height: 36,
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Text(
-                        "设置",
+                        context.l10n.settings,
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w500,
@@ -157,7 +158,7 @@ class SettingsPageState extends State<SettingsPage> {
                     height: 10,
                   ),
                   Expanded(
-                    child: buildSettings(),
+                    child: buildSettings(options),
                   )
                 ],
               )),
@@ -165,7 +166,7 @@ class SettingsPageState extends State<SettingsPage> {
             child: SafeArea(
                 child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: pages[currentPage],
+              child: _pages[_currentPage],
             )),
           ),
         ],
@@ -180,17 +181,17 @@ class SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget buildSettings() {
+  Widget buildSettings(List<String> options) {
     late final colorScheme = Theme.of(context).colorScheme;
     Widget buildItem(int id, String name, IconData icon) {
-      final bool selected = id == currentPage;
+      final bool selected = id == _currentPage;
       return Material(
         color: selected ? colorScheme.secondary : null,
         borderRadius: BorderRadius.circular(14),
         child: InkWell(
           onTap: () {
             setState(() {
-              currentPage = id;
+              _currentPage = id;
             });
           },
           borderRadius: BorderRadius.circular(14),
@@ -226,9 +227,9 @@ class SettingsPageState extends State<SettingsPage> {
     }
 
     return ListView.separated(
-      itemCount: icons.length,
+      itemCount: _icons.length,
       itemBuilder: (context, index) =>
-          buildItem(index, options[index], icons[index]),
+          buildItem(index, options[index], _icons[index]),
       separatorBuilder: (context, index) {
         return const SizedBox(
           height: 6,

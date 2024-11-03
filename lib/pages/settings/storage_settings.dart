@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:playboy/l10n/i10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class StorageSettingsPage extends StatefulWidget {
@@ -24,7 +25,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
             child: Container(
               padding: const EdgeInsets.all(12),
               child: Text(
-                '扫描选项',
+                context.l10n.scanOptions,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w500,
@@ -40,7 +41,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                 AppStorage().updateMusicPage();
               },
               leading: const Icon(Icons.refresh),
-              title: const Text('重新扫描视频库和音乐库'),
+              title: Text(context.l10n.rescanMediaLibraries),
             ),
           ),
           SliverToBoxAdapter(
@@ -49,7 +50,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                 AppStorage().updateVideoPage();
               },
               leading: const Icon(Icons.video_library),
-              title: const Text('重新扫描视频库'),
+              title: Text(context.l10n.rescanVideoLibrary),
             ),
           ),
           SliverToBoxAdapter(
@@ -58,14 +59,14 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                 AppStorage().updateMusicPage();
               },
               leading: const Icon(Icons.library_music),
-              title: const Text('重新扫描音乐库'),
+              title: Text(context.l10n.rescanMusicLibrary),
             ),
           ),
           SliverToBoxAdapter(
             child: Container(
               padding: const EdgeInsets.all(12),
               child: Text(
-                '路径设置',
+                context.l10n.pathSettings,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w500,
@@ -79,30 +80,31 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               child: Row(
                 children: [
-                  const Text(
-                    '音乐文件夹',
-                    style: TextStyle(
+                  Text(
+                    context.l10n.musicFolder,
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   Expanded(
-                      child: Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton.icon(
-                      onPressed: () async {
-                        var res = await FilePicker.platform
-                            .getDirectoryPath(lockParentWindow: true);
-                        if (res != null) {
-                          AppStorage().settings.musicPaths.add(res);
-                          AppStorage().saveSettings();
-                          setState(() {});
-                        }
-                      },
-                      icon: const Icon(Icons.add),
-                      label: const Text('添加'),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton.icon(
+                        onPressed: () async {
+                          var res = await FilePicker.platform
+                              .getDirectoryPath(lockParentWindow: true);
+                          if (res != null) {
+                            AppStorage().settings.musicPaths.add(res);
+                            AppStorage().saveSettings();
+                            setState(() {});
+                          }
+                        },
+                        icon: const Icon(Icons.add),
+                        label: Text(context.l10n.add),
+                      ),
                     ),
-                  )),
+                  ),
                 ],
               ),
             ),
@@ -122,30 +124,31 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               child: Row(
                 children: [
-                  const Text(
-                    '视频文件夹',
-                    style: TextStyle(
+                  Text(
+                    context.l10n.videoFolder,
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   Expanded(
-                      child: Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton.icon(
-                      onPressed: () async {
-                        var res = await FilePicker.platform
-                            .getDirectoryPath(lockParentWindow: true);
-                        if (res != null) {
-                          AppStorage().settings.videoPaths.add(res);
-                          AppStorage().saveSettings();
-                          setState(() {});
-                        }
-                      },
-                      icon: const Icon(Icons.add),
-                      label: const Text('添加'),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton.icon(
+                        onPressed: () async {
+                          var res = await FilePicker.platform
+                              .getDirectoryPath(lockParentWindow: true);
+                          if (res != null) {
+                            AppStorage().settings.videoPaths.add(res);
+                            AppStorage().saveSettings();
+                            setState(() {});
+                          }
+                        },
+                        icon: const Icon(Icons.add),
+                        label: Text(context.l10n.add),
+                      ),
                     ),
-                  )),
+                  ),
                 ],
               ),
             ),
@@ -165,30 +168,31 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               child: Row(
                 children: [
-                  const Text(
-                    '收藏夹',
-                    style: TextStyle(
+                  Text(
+                    context.l10n.favorites,
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   Expanded(
-                      child: Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton.icon(
-                      onPressed: () async {
-                        var res = await FilePicker.platform
-                            .getDirectoryPath(lockParentWindow: true);
-                        if (res != null) {
-                          AppStorage().settings.favouritePaths.add(res);
-                          AppStorage().saveSettings();
-                          setState(() {});
-                        }
-                      },
-                      icon: const Icon(Icons.add),
-                      label: const Text('添加'),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton.icon(
+                        onPressed: () async {
+                          var res = await FilePicker.platform
+                              .getDirectoryPath(lockParentWindow: true);
+                          if (res != null) {
+                            AppStorage().settings.favouritePaths.add(res);
+                            AppStorage().saveSettings();
+                            setState(() {});
+                          }
+                        },
+                        icon: const Icon(Icons.add),
+                        label: Text(context.l10n.add),
+                      ),
                     ),
-                  )),
+                  ),
                 ],
               ),
             ),
@@ -198,9 +202,10 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: _buildPathCard(
-                    AppStorage().settings.favouritePaths[index],
-                    colorScheme,
-                    AppStorage().settings.favouritePaths),
+                  AppStorage().settings.favouritePaths[index],
+                  colorScheme,
+                  AppStorage().settings.favouritePaths,
+                ),
               );
             },
             itemCount: AppStorage().settings.favouritePaths.length,
@@ -223,7 +228,8 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
               child: Card(
                 elevation: 0,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
+                  borderRadius: BorderRadius.circular(14),
+                ),
                 color: colorScheme.secondaryContainer.withOpacity(0.4),
                 child: SizedBox(
                   height: 50,
@@ -270,9 +276,9 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
           SliverToBoxAdapter(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              child: const Text(
-                '下载文件夹',
-                style: TextStyle(
+              child: Text(
+                context.l10n.downloadFolder,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),
@@ -285,7 +291,8 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
               child: Card(
                 elevation: 0,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
+                  borderRadius: BorderRadius.circular(14),
+                ),
                 color: colorScheme.secondaryContainer.withOpacity(0.4),
                 child: SizedBox(
                   height: 50,
@@ -301,10 +308,10 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                         ),
                       ),
                       Expanded(
-                          child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          IconButton(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            IconButton(
                               onPressed: () async {
                                 var res = await FilePicker.platform
                                     .getDirectoryPath(lockParentWindow: true);
@@ -317,12 +324,14 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                               icon: Icon(
                                 Icons.edit,
                                 color: colorScheme.onSecondaryContainer,
-                              )),
-                          const SizedBox(
-                            width: 10,
-                          )
-                        ],
-                      ))
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                          ],
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -333,7 +342,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
             child: Container(
               padding: const EdgeInsets.all(12),
               child: Text(
-                '应用数据',
+                context.l10n.appData,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w500,
@@ -348,7 +357,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                 launchUrl(Uri.directory(AppStorage().dataPath));
               },
               leading: const Icon(Icons.folder),
-              title: const Text('打开应用数据文件夹'),
+              title: Text(context.l10n.openAppDataFolder),
               subtitle: Text(AppStorage().dataPath),
             ),
           ),
@@ -361,8 +370,8 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                 }
               },
               leading: const Icon(Icons.restore),
-              title: const Text('恢复默认设置'),
-              subtitle: const Text('不可恢复,重启后生效'),
+              title: Text(context.l10n.restoreDefaultSettings),
+              subtitle: Text(context.l10n.irreversibleWarning),
             ),
           ),
         ],
@@ -384,47 +393,49 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
               width: 10,
             ),
             Expanded(
-                child: Text(
-              path,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: colorScheme.onSecondaryContainer,
+              child: Text(
+                path,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: colorScheme.onSecondaryContainer,
+                ),
               ),
-            )),
+            ),
             SizedBox(
-                width: 80,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Expanded(
-                      child: IconButton(
-                        onPressed: () {
-                          launchUrl(Uri.directory(path));
-                        },
-                        icon: Icon(
-                          Icons.folder_outlined,
-                          color: colorScheme.onSecondaryContainer,
-                        ),
+              width: 80,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: IconButton(
+                      onPressed: () {
+                        launchUrl(Uri.directory(path));
+                      },
+                      icon: Icon(
+                        Icons.folder_outlined,
+                        color: colorScheme.onSecondaryContainer,
                       ),
                     ),
-                    Expanded(
-                      child: IconButton(
-                        onPressed: () {
-                          dst.remove(path);
-                          AppStorage().saveSettings();
-                          setState(() {});
-                        },
-                        icon: Icon(
-                          Icons.delete_outline,
-                          color: colorScheme.onSecondaryContainer,
-                        ),
+                  ),
+                  Expanded(
+                    child: IconButton(
+                      onPressed: () {
+                        dst.remove(path);
+                        AppStorage().saveSettings();
+                        setState(() {});
+                      },
+                      icon: Icon(
+                        Icons.delete_outline,
+                        color: colorScheme.onSecondaryContainer,
                       ),
                     ),
-                    const SizedBox(
-                      width: 10,
-                    )
-                  ],
-                ))
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  )
+                ],
+              ),
+            )
           ],
         ),
       ),

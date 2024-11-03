@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:playboy/l10n/i10n.dart';
 
 class DisplaySettingsPage extends StatefulWidget {
   const DisplaySettingsPage({super.key});
@@ -12,362 +13,362 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: ListView(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          child: Text(
-            '界面设置',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-          ),
-        ),
-        SwitchListTile(
-          title: const Text('启用波浪样式进度条'),
-          subtitle: const Text('视频模式下无效'),
-          value: AppStorage().settings.wavySlider,
-          onChanged: (bool value) {
-            setState(() {
-              AppStorage().settings.wavySlider = value;
-            });
-            AppStorage().saveSettings();
-            AppStorage().updateStatus();
-          },
-        ),
-        // SwitchListTile(
-        //   title: const Text('应用内显示媒体控制卡片'),
-        //   value: AppStorage().settings.showMediaCard,
-        //   onChanged: (bool value) {
-        //     setState(() {
-        //       AppStorage().settings.showMediaCard = value;
-        //     });
-        //     AppStorage().saveSettings();
-        //   },
-        // ),
-        ListTile(
-          title: const Text('初始页面'),
-          trailing: SizedBox(
-            height: 44,
-            width: 150,
-            child: DropdownButtonFormField(
-              borderRadius: BorderRadius.circular(16),
-              decoration: InputDecoration(
-                isDense: true,
-                filled: true,
-                border: OutlineInputBorder(
-                  borderSide: const BorderSide(
-                    width: 0,
-                    style: BorderStyle.none,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                fillColor: Theme.of(context).colorScheme.secondaryContainer,
+      body: ListView(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            child: Text(
+              context.l10n.appearance,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.secondary,
               ),
-              value: AppStorage().settings.initPage,
-              items: const [
-                DropdownMenuItem(
-                  value: 0,
-                  child: Row(
-                    children: [
-                      Icon(Icons.web_stories_outlined),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text('播放列表'),
-                    ],
-                  ),
-                ),
-                DropdownMenuItem(
-                  value: 1,
-                  child: Row(
-                    children: [
-                      Icon(Icons.music_note_outlined),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text('音乐'),
-                    ],
-                  ),
-                ),
-                DropdownMenuItem(
-                  value: 2,
-                  child: Row(
-                    children: [
-                      Icon(Icons.movie_filter_outlined),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text('视频'),
-                    ],
-                  ),
-                ),
-                DropdownMenuItem(
-                  value: 3,
-                  child: Row(
-                    children: [
-                      Icon(Icons.folder_outlined),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text('文件'),
-                    ],
-                  ),
-                ),
-                DropdownMenuItem(
-                  value: 4,
-                  child: Row(
-                    children: [
-                      Icon(Icons.search),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text('搜索'),
-                    ],
-                  ),
-                ),
-              ],
-              onChanged: (value) {
-                AppStorage().settings.initPage = value!;
-                AppStorage().saveSettings();
-              },
             ),
           ),
-        ),
-        const SizedBox(
-          height: 4,
-        ),
-        ListTile(
-          title: const Text('播放列表默认视图'),
-          trailing: SizedBox(
-            height: 44,
-            width: 150,
-            child: DropdownButtonFormField(
-              borderRadius: BorderRadius.circular(16),
-              decoration: InputDecoration(
-                isDense: true,
-                filled: true,
-                border: OutlineInputBorder(
-                  borderSide: const BorderSide(
-                    width: 0,
-                    style: BorderStyle.none,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                fillColor: Theme.of(context).colorScheme.secondaryContainer,
-              ),
-              value: AppStorage().settings.playlistListview,
-              items: const [
-                DropdownMenuItem(
-                  value: false,
-                  child: Row(
-                    children: [
-                      Icon(Icons.calendar_view_month),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text('网格'),
-                    ],
-                  ),
-                ),
-                DropdownMenuItem(
-                  value: true,
-                  child: Row(
-                    children: [
-                      Icon(Icons.view_agenda_outlined),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text('列表'),
-                    ],
-                  ),
-                ),
-              ],
-              onChanged: (value) {
-                AppStorage().settings.playlistListview = value!;
-                AppStorage().saveSettings();
-              },
-            ),
+          SwitchListTile(
+            title: Text(context.l10n.enableWavySlider),
+            subtitle: Text(context.l10n.disabledInVideoPlaying),
+            value: AppStorage().settings.wavySlider,
+            onChanged: (bool value) {
+              setState(() {
+                AppStorage().settings.wavySlider = value;
+              });
+              AppStorage().saveSettings();
+              AppStorage().updateStatus();
+            },
           ),
-        ),
-        const SizedBox(
-          height: 4,
-        ),
-        ListTile(
-          title: const Text('音乐库默认视图'),
-          trailing: SizedBox(
-            height: 44,
-            width: 150,
-            child: DropdownButtonFormField(
-              borderRadius: BorderRadius.circular(16),
-              decoration: InputDecoration(
-                isDense: true,
-                filled: true,
-                border: OutlineInputBorder(
-                  borderSide: const BorderSide(
-                    width: 0,
-                    style: BorderStyle.none,
+          // SwitchListTile(
+          //   title: const Text('应用内显示媒体控制卡片'),
+          //   value: AppStorage().settings.showMediaCard,
+          //   onChanged: (bool value) {
+          //     setState(() {
+          //       AppStorage().settings.showMediaCard = value;
+          //     });
+          //     AppStorage().saveSettings();
+          //   },
+          // ),
+          ListTile(
+            title: Text(context.l10n.startupPage),
+            trailing: SizedBox(
+              height: 44,
+              width: 150,
+              child: DropdownButtonFormField(
+                borderRadius: BorderRadius.circular(16),
+                decoration: InputDecoration(
+                  isDense: true,
+                  filled: true,
+                  border: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      width: 0,
+                      style: BorderStyle.none,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  borderRadius: BorderRadius.circular(16),
+                  fillColor: Theme.of(context).colorScheme.secondaryContainer,
                 ),
-                fillColor: Theme.of(context).colorScheme.secondaryContainer,
-              ),
-              value: AppStorage().settings.musicLibListview,
-              items: const [
-                DropdownMenuItem(
-                  value: false,
-                  child: Row(
-                    children: [
-                      Icon(Icons.calendar_view_month),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text('网格'),
-                    ],
-                  ),
-                ),
-                DropdownMenuItem(
-                  value: true,
-                  child: Row(
-                    children: [
-                      Icon(Icons.view_agenda_outlined),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text('列表'),
-                    ],
-                  ),
-                ),
-              ],
-              onChanged: (value) {
-                AppStorage().settings.musicLibListview = value!;
-                AppStorage().saveSettings();
-              },
-            ),
-          ),
-        ),
-        const SizedBox(
-          height: 4,
-        ),
-        ListTile(
-          title: const Text('视频库默认视图'),
-          trailing: SizedBox(
-            height: 44,
-            width: 150,
-            child: DropdownButtonFormField(
-              borderRadius: BorderRadius.circular(16),
-              decoration: InputDecoration(
-                isDense: true,
-                filled: true,
-                border: OutlineInputBorder(
-                  borderSide: const BorderSide(
-                    width: 0,
-                    style: BorderStyle.none,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                fillColor: Theme.of(context).colorScheme.secondaryContainer,
-              ),
-              value: AppStorage().settings.videoLibListview,
-              items: const [
-                DropdownMenuItem(
-                  value: false,
-                  child: Row(
-                    children: [
-                      Icon(Icons.calendar_view_month),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text('网格'),
-                    ],
-                  ),
-                ),
-                DropdownMenuItem(
-                  value: true,
-                  child: Row(
-                    children: [
-                      Icon(Icons.view_agenda_outlined),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text('列表'),
-                    ],
-                  ),
-                ),
-              ],
-              onChanged: (value) {
-                AppStorage().settings.videoLibListview = value!;
-                AppStorage().saveSettings();
-              },
-            ),
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.all(12),
-          child: Text(
-            '主题设置',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-          ),
-        ),
-        ListTile(
-          leading: const Icon(Icons.color_lens_outlined),
-          title: const Text('主题颜色'),
-          trailing: SizedBox(
-            height: 44,
-            width: 150,
-            child: DropdownButtonFormField(
-              // icon: const SizedBox(),
-              isExpanded: true,
-              borderRadius: BorderRadius.circular(16),
-              decoration: InputDecoration(
-                isDense: true,
-                filled: true,
-                border: OutlineInputBorder(
-                  borderSide: const BorderSide(
-                    width: 0,
-                    style: BorderStyle.none,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                fillColor: Theme.of(context).colorScheme.secondaryContainer,
-              ),
-              value: AppStorage().settings.themeCode,
-              items: List.generate(AppStorage().colors.length, (index) {
-                return DropdownMenuItem(
-                  value: index,
-                  child: Row(
-                    children: [
-                      ColoredBox(
-                        color: AppStorage().colors[index],
-                        child: const SizedBox(
-                          height: 16,
-                          width: 16,
+                value: AppStorage().settings.initPage,
+                items: [
+                  DropdownMenuItem(
+                    value: 0,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.web_stories_outlined),
+                        const SizedBox(
+                          width: 10,
                         ),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(AppStorage().themes[index]),
-                    ],
+                        Text(context.l10n.playlist),
+                      ],
+                    ),
                   ),
-                );
-              }),
-              onChanged: (value) {
-                AppStorage().settings.themeCode = value!;
-                AppStorage().saveSettings();
-                AppStorage().updateStatus();
-              },
+                  DropdownMenuItem(
+                    value: 1,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.music_note_outlined),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(context.l10n.music),
+                      ],
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: 2,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.movie_filter_outlined),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(context.l10n.video),
+                      ],
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: 3,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.folder_outlined),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(context.l10n.files),
+                      ],
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: 4,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.search),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(context.l10n.search),
+                      ],
+                    ),
+                  ),
+                ],
+                onChanged: (value) {
+                  AppStorage().settings.initPage = value!;
+                  AppStorage().saveSettings();
+                },
+              ),
             ),
           ),
-        ),
-        SwitchListTile(
-            title: const Text('主题模式跟随系统'),
+          const SizedBox(
+            height: 4,
+          ),
+          ListTile(
+            title: Text(context.l10n.playlistDefaultView),
+            trailing: SizedBox(
+              height: 44,
+              width: 150,
+              child: DropdownButtonFormField(
+                borderRadius: BorderRadius.circular(16),
+                decoration: InputDecoration(
+                  isDense: true,
+                  filled: true,
+                  border: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      width: 0,
+                      style: BorderStyle.none,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  fillColor: Theme.of(context).colorScheme.secondaryContainer,
+                ),
+                value: AppStorage().settings.playlistListview,
+                items: [
+                  DropdownMenuItem(
+                    value: false,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.calendar_view_month),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(context.l10n.grid),
+                      ],
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: true,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.view_agenda_outlined),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(context.l10n.list),
+                      ],
+                    ),
+                  ),
+                ],
+                onChanged: (value) {
+                  AppStorage().settings.playlistListview = value!;
+                  AppStorage().saveSettings();
+                },
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 4,
+          ),
+          ListTile(
+            title: Text(context.l10n.musicLibraryDefaultView),
+            trailing: SizedBox(
+              height: 44,
+              width: 150,
+              child: DropdownButtonFormField(
+                borderRadius: BorderRadius.circular(16),
+                decoration: InputDecoration(
+                  isDense: true,
+                  filled: true,
+                  border: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      width: 0,
+                      style: BorderStyle.none,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  fillColor: Theme.of(context).colorScheme.secondaryContainer,
+                ),
+                value: AppStorage().settings.musicLibListview,
+                items: [
+                  DropdownMenuItem(
+                    value: false,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.calendar_view_month),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(context.l10n.grid),
+                      ],
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: true,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.view_agenda_outlined),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(context.l10n.list),
+                      ],
+                    ),
+                  ),
+                ],
+                onChanged: (value) {
+                  AppStorage().settings.musicLibListview = value!;
+                  AppStorage().saveSettings();
+                },
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 4,
+          ),
+          ListTile(
+            title: Text(context.l10n.videoLibraryDefaultView),
+            trailing: SizedBox(
+              height: 44,
+              width: 150,
+              child: DropdownButtonFormField(
+                borderRadius: BorderRadius.circular(16),
+                decoration: InputDecoration(
+                  isDense: true,
+                  filled: true,
+                  border: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      width: 0,
+                      style: BorderStyle.none,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  fillColor: Theme.of(context).colorScheme.secondaryContainer,
+                ),
+                value: AppStorage().settings.videoLibListview,
+                items: [
+                  DropdownMenuItem(
+                    value: false,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.calendar_view_month),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(context.l10n.grid),
+                      ],
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: true,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.view_agenda_outlined),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(context.l10n.list),
+                      ],
+                    ),
+                  ),
+                ],
+                onChanged: (value) {
+                  AppStorage().settings.videoLibListview = value!;
+                  AppStorage().saveSettings();
+                },
+              ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(12),
+            child: Text(
+              context.l10n.themeSettings,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.color_lens_outlined),
+            title: Text(context.l10n.themeColor),
+            trailing: SizedBox(
+              height: 44,
+              width: 150,
+              child: DropdownButtonFormField(
+                // icon: const SizedBox(),
+                isExpanded: true,
+                borderRadius: BorderRadius.circular(16),
+                decoration: InputDecoration(
+                  isDense: true,
+                  filled: true,
+                  border: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      width: 0,
+                      style: BorderStyle.none,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  fillColor: Theme.of(context).colorScheme.secondaryContainer,
+                ),
+                value: AppStorage().settings.themeCode,
+                items: List.generate(AppStorage().colors.length, (index) {
+                  return DropdownMenuItem(
+                    value: index,
+                    child: Row(
+                      children: [
+                        ColoredBox(
+                          color: AppStorage().colors[index],
+                          child: const SizedBox(
+                            height: 16,
+                            width: 16,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(AppStorage().themes[index]),
+                      ],
+                    ),
+                  );
+                }),
+                onChanged: (value) {
+                  AppStorage().settings.themeCode = value!;
+                  AppStorage().saveSettings();
+                  AppStorage().updateStatus();
+                },
+              ),
+            ),
+          ),
+          SwitchListTile(
+            title: Text(context.l10n.themeModeFollowSystem),
             value: AppStorage().settings.themeMode == ThemeMode.system,
             onChanged: (bool value) {
               if (value) {
@@ -384,27 +385,29 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
               }
               AppStorage().saveSettings();
               AppStorage().updateStatus();
-            }),
-        AppStorage().settings.themeMode == ThemeMode.system
-            ? const SizedBox()
-            : SwitchListTile(
-                title: const Text('启用深色模式'),
-                value: AppStorage().settings.themeMode == ThemeMode.dark,
-                onChanged: (bool value) {
-                  if (value) {
-                    setState(() {
-                      AppStorage().settings.themeMode = ThemeMode.dark;
-                    });
-                  } else {
-                    setState(() {
-                      AppStorage().settings.themeMode = ThemeMode.light;
-                    });
-                  }
-                  AppStorage().saveSettings();
-                  AppStorage().updateStatus();
-                },
-              ),
-      ],
-    ));
+            },
+          ),
+          AppStorage().settings.themeMode == ThemeMode.system
+              ? const SizedBox()
+              : SwitchListTile(
+                  title: Text(context.l10n.enableDarkMode),
+                  value: AppStorage().settings.themeMode == ThemeMode.dark,
+                  onChanged: (bool value) {
+                    if (value) {
+                      setState(() {
+                        AppStorage().settings.themeMode = ThemeMode.dark;
+                      });
+                    } else {
+                      setState(() {
+                        AppStorage().settings.themeMode = ThemeMode.light;
+                      });
+                    }
+                    AppStorage().saveSettings();
+                    AppStorage().updateStatus();
+                  },
+                ),
+        ],
+      ),
+    );
   }
 }

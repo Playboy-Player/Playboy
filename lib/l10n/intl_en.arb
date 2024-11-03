@@ -44,7 +44,7 @@
   "english": "English",
   "uiSettings": "UI Settings",
   "enableWavySlider": "Enable wavy slider",
-  "videoModeInvalid": "Ignored in video mode",
+  "disabledInVideoPlaying": "Disabled in video playing",
   "startupPage": "Startup Page",
   "playlistDefaultView": "Playlist Default View",
   "grid": "Grid",
@@ -102,5 +102,8 @@
   "mediaLibrary": "Library",
 
   "recentlyPlayed": "Recently Played",
-  "noRecentlyPlayed": "No Recently Played"
+  "noRecentlyPlayed": "No Recently Played",
+
+  "ok": "Ok",
+  "cancel": "Cancel"
 }
