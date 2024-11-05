@@ -1,4 +1,4 @@
-# Playboy
+# $Playboy$ $Media$ $Player$
 
 [中文版本](./README.md)
 
@@ -19,26 +19,26 @@ A [Material You](https://m3.material.io/) style cross-platform media player deve
 <table>
   <tr>
     <td>
-      <img src='./screenshots/screenshot4.png'>
+      <img src='./screenshots/screenshot4.png' alt="playing">
     </td>
     <td>
-      <img src='./screenshots/screenshot1.png'>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <img src='./screenshots/screenshot5.png'>
-    </td>
-    <td>
-      <img src='./screenshots/screenshot2.png'>
+      <img src='./screenshots/screenshot1.png' alt="playing dark">
     </td>
   </tr>
   <tr>
     <td>
-      <img src='./screenshots/screenshot6.png'>
+      <img src='./screenshots/screenshot5.png' alt="video page">
     </td>
     <td>
-      <img src='./screenshots/screenshot3.png'>
+      <img src='./screenshots/screenshot2.png' alt="video page dark">
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img src='./screenshots/screenshot6.png' alt="music page">
+    </td>
+    <td>
+      <img src='./screenshots/screenshot3.png' alt="music page dark">
     </td>
   </tr>
 </table>
@@ -47,19 +47,19 @@ A [Material You](https://m3.material.io/) style cross-platform media player deve
 
 [Development Plans & Progress](https://github.com/orgs/Playboy-Player/projects/3)
 
-- [x] Theme color settings & dark mode support
-- [ ] Multi-language support
-- [x] Play local and online media
-- [x] Mini player mode (desktop)
+- [x] Theme & Dark mode Support
+- [x] Internationalization Support
+- [x] Open local media and network streaming
+- [x] Mini mode (desktop)
 - [x] Set as the system default app (desktop)
-- [x] Playlist (shuffle, single repeat)
-- [x] Speed adjustment (0-4x)
+- [x] Playlist features
+- [x] Playback speed (0-4x)
 - [ ] Lyrics and subtitles
 - [ ] Parse bilibili links
 - [ ] File download
-- [ ] Media file search
+- [ ] Search media files
 
-## Instructions
+## How to use
 
 The music and video libraries will scan all media files (including subdirectories) in the library directory.
 
@@ -67,7 +67,7 @@ For music, the `cover.jpg` in the same directory will be used as the cover. Vide
 
 Supported formats: `avi`, `flv`, `mkv`, `mov`, `mp4`, `mpeg`, `webm`, `wmv`, `aac`, `midi`, `mp3`, `ogg`, `wav`
 
-## Cross-Platform Support
+## Platform Support
 
 ### Windows
 

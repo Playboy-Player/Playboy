@@ -1,4 +1,4 @@
-# Playboy
+# $Playboy$ $Media$ $Player$
 
 [English version](./README_en.md)
 
@@ -19,26 +19,26 @@
 <table>
   <tr>
     <td>
-      <img src='./screenshots/screenshot4.png'>
+      <img src='./screenshots/screenshot4.png' alt="playing">
     </td>
     <td>
-      <img src='./screenshots/screenshot1.png'>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <img src='./screenshots/screenshot5.png'>
-    </td>
-    <td>
-      <img src='./screenshots/screenshot2.png'>
+      <img src='./screenshots/screenshot1.png' alt="playing dark">
     </td>
   </tr>
   <tr>
     <td>
-      <img src='./screenshots/screenshot6.png'>
+      <img src='./screenshots/screenshot5.png' alt="video page">
     </td>
     <td>
-      <img src='./screenshots/screenshot3.png'>
+      <img src='./screenshots/screenshot2.png' alt="video page dark">
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img src='./screenshots/screenshot6.png' alt="music page">
+    </td>
+    <td>
+      <img src='./screenshots/screenshot3.png' alt="music page dark">
     </td>
   </tr>
 </table>
@@ -48,15 +48,15 @@
 [查看开发计划 & 进度](https://github.com/orgs/Playboy-Player/projects/3)
 
 - [x] 主题颜色设置 & 深色模式支持
-- [ ] 多语言支持
+- [x] 多语言支持
 - [x] 播放本地和网络媒体
 - [x] 迷你播放器模式
 - [x] 设置为系统打开方式
-- [x] 播放列表 (随机播放, 单曲循环)
+- [x] 播放列表功能 (随机播放, 单曲循环)
 - [x] 倍速调节 (0-4倍速)
 - [ ] 歌词和字幕
-- [ ] 解析BV链接.
-- [ ] 文件下载功能.
+- [ ] 解析BV链接
+- [ ] 文件下载功能
 - [ ] 媒体文件搜索
 
 ## 使用说明

@@ -5,7 +5,6 @@
   "video": "Video",
   "files": "Files",
   "search": "Search",
-
   "scanOptions": "Scan Options",
   "rescanMediaLibraries": "Rescan Video and Music Libraries",
   "rescanVideoLibrary": "Rescan Video Library",
@@ -21,14 +20,12 @@
   "openAppDataFolder": "Open App Data Folder",
   "restoreDefaultSettings": "Restore Default Settings",
   "irreversibleWarning": "Irreversible, takes effect after restart",
-
-  "settings":"Settings",
+  "settings": "Settings",
   "appearance": "Appearance",
   "player": "Player",
   "storage": "Storage",
   "language": "Language",
   "about": "About",
-
   "playSettings": "Player Settings",
   "autoPlayVideo": "Auto Play",
   "autoDownloadVideo": "Auto Download",
@@ -38,7 +35,6 @@
   "playInAppBackground": "Continue Playing After Exit",
   "useMediaControlToStop": "Use Media Control Card to Stop",
   "mpvSettings": "MPV Settings (WIP)",
-
   "displayLanguage": "Display Language",
   "simplifiedChinese": "Simplified Chinese",
   "english": "English",
@@ -55,7 +51,6 @@
   "themeColor": "Theme Color",
   "themeModeFollowSystem": "Theme Mode Follows System",
   "enableDarkMode": "Enable Dark Mode",
-
   "contributors": "Contributors",
   "support": "Support",
   "projectWebsite": "Project Website",
@@ -76,34 +71,26 @@
   "delete": "Delete",
   "confirm": "Confirm",
   "confirmDeletePlaylist": "Are you sure you want to delete the playlist?",
-
   "history": "History",
   "searchResults": "Search Results",
   "searchPlaylistsMediaFiles": "Search Playlists, Media Files...",
   "recentSearch": "Recent Search",
   "noRecentSearch": "No Recent Searches",
-
   "noVideo": "No Video",
   "playNext": "Play Next",
   "playLast": "Play Last",
   "addToPlaylist": "Add to a Playlist...",
-
   "allEpisodes": "All Episodes",
   "currentList": "Current List",
   "lyrics": "Lyrics",
-
   "noMusic": "No Music",
-
   "downloadManager": "Downloads",
-
   "openFolder": "Open Folder",
   "openMediaFile": "Open File",
   "openUrl": "Open URL",
   "mediaLibrary": "Library",
-
   "recentlyPlayed": "Recently Played",
   "noRecentlyPlayed": "No Recently Played",
-
   "ok": "Ok",
   "cancel": "Cancel"
 }
