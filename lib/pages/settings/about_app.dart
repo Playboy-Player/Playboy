@@ -98,37 +98,40 @@ class _AboutPageState extends State<AboutPage> {
               },
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
-                return InkWell(
-                  hoverColor: Colors.transparent,
-                  focusColor: Colors.transparent,
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  onTap: () {
-                    if (Constants.maintainers[index].url == '') {
-                      return;
-                    }
-                    launchUrl(Uri.parse(Constants.maintainers[index].url));
-                  },
-                  child: SizedBox(
-                    height: 80,
-                    width: 60,
-                    child: Column(
-                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        CircleAvatar(
-                          backgroundImage: AssetImage(
-                            Constants.maintainers[index].avatar,
+                return Tooltip(
+                  message: Constants.maintainers[index].url,
+                  child: InkWell(
+                    hoverColor: Colors.transparent,
+                    focusColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    onTap: () {
+                      if (Constants.maintainers[index].url == '') {
+                        return;
+                      }
+                      launchUrl(Uri.parse(Constants.maintainers[index].url));
+                    },
+                    child: SizedBox(
+                      height: 80,
+                      width: 60,
+                      child: Column(
+                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CircleAvatar(
+                            backgroundImage: AssetImage(
+                              Constants.maintainers[index].avatar,
+                            ),
+                            radius: 28,
                           ),
-                          radius: 28,
-                        ),
-                        Text(
-                          Constants.maintainers[index].name,
-                          style: const TextStyle(
-                            // color: Colors.orange,
-                            fontWeight: FontWeight.w500,
+                          Text(
+                            Constants.maintainers[index].name,
+                            style: const TextStyle(
+                              // color: Colors.orange,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 );

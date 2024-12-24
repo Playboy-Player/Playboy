@@ -7,6 +7,7 @@ import 'package:media_kit/media_kit.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:media_kit_video/media_kit_video.dart';
+import 'package:playboy/backend/keymap_helper.dart';
 
 class FullscreenPlayPage extends StatefulWidget {
   const FullscreenPlayPage({super.key});
@@ -16,7 +17,7 @@ class FullscreenPlayPage extends StatefulWidget {
 }
 
 class FullscreenPlayer extends State<FullscreenPlayPage> {
-  late final controller = AppStorage().controller;
+  late final _controller = AppStorage().controller;
 
   // bool loop = false;
   // bool shuffle = false;
@@ -28,6 +29,7 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
 
   bool _isMouseHidden = false;
   Timer? _timer;
+  final FocusNode _focusNode = FocusNode();
 
   void _resetTimer() {
     _timer?.cancel();
@@ -43,6 +45,7 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
 
   @override
   void dispose() {
+    _focusNode.dispose();
     _timer?.cancel();
     super.dispose();
   }
@@ -52,85 +55,90 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
     late final colorScheme = Theme.of(context).colorScheme;
     late final backgroundColor = Color.alphaBlend(
         colorScheme.primary.withOpacity(0.08), colorScheme.surface);
-    return Scaffold(
-      body: Stack(
-        children: [
-          MouseRegion(
-            onHover: (_) {
-              _resetTimer();
-            },
-            cursor:
-                _isMouseHidden ? SystemMouseCursors.none : MouseCursor.defer,
-            child: Video(
-              controller: controller,
-              controls: NoVideoControls,
-              subtitleViewConfiguration: const SubtitleViewConfiguration(
-                style: TextStyle(
-                  fontSize: 60,
-                  color: Colors.white,
-                  shadows: <Shadow>[
-                    Shadow(
-                      blurRadius: 16,
-                      color: Colors.black,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: AnimatedOpacity(
-              duration: const Duration(milliseconds: 100),
-              opacity: _showControlBar ? 0.9 : 0,
-              child: MouseRegion(
-                onHover: (event) {
-                  setState(() {
-                    _showControlBar = true;
-                  });
-                },
-                onExit: (event) {
-                  setState(() {
-                    _showControlBar = false;
-                  });
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  // width: 400,
-                  height: 100,
-                  color: backgroundColor,
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          StreamBuilder(
-                              stream: AppStorage().playboy.stream.position,
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  return Text(
-                                      '${snapshot.data!.inSeconds ~/ 3600}:${(snapshot.data!.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(snapshot.data!.inSeconds % 60).toString().padLeft(2, '0')}');
-                                } else {
-                                  return Text(
-                                      '${AppStorage().position.inSeconds ~/ 3600}:${(AppStorage().position.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().position.inSeconds % 60).toString().padLeft(2, '0')}');
-                                }
-                              }),
-                          Expanded(child: _buildSeekbarFullscreen()),
-                          Text(
-                              '${AppStorage().duration.inSeconds ~/ 3600}:${(AppStorage().duration.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().duration.inSeconds % 60).toString().padLeft(2, '0')}'),
-                        ],
+    return KeyboardListener(
+      autofocus: true,
+      focusNode: _focusNode,
+      onKeyEvent: KeyMapHelper.handleKeyEvent,
+      child: Scaffold(
+        body: Stack(
+          children: [
+            MouseRegion(
+              onHover: (_) {
+                _resetTimer();
+              },
+              cursor:
+                  _isMouseHidden ? SystemMouseCursors.none : MouseCursor.defer,
+              child: Video(
+                controller: _controller,
+                controls: NoVideoControls,
+                subtitleViewConfiguration: const SubtitleViewConfiguration(
+                  style: TextStyle(
+                    fontSize: 60,
+                    color: Colors.white,
+                    shadows: <Shadow>[
+                      Shadow(
+                        blurRadius: 16,
+                        color: Colors.black,
                       ),
-                      const SizedBox(
-                        height: 4,
-                      ),
-                      _buildControlbarFullscreen(colorScheme),
                     ],
                   ),
                 ),
               ),
             ),
-          ),
-          // MouseRegion()
-        ],
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 100),
+                opacity: _showControlBar ? 0.9 : 0,
+                child: MouseRegion(
+                  onHover: (event) {
+                    setState(() {
+                      _showControlBar = true;
+                    });
+                  },
+                  onExit: (event) {
+                    setState(() {
+                      _showControlBar = false;
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    // width: 400,
+                    height: 100,
+                    color: backgroundColor,
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            StreamBuilder(
+                                stream: AppStorage().playboy.stream.position,
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    return Text(
+                                        '${snapshot.data!.inSeconds ~/ 3600}:${(snapshot.data!.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(snapshot.data!.inSeconds % 60).toString().padLeft(2, '0')}');
+                                  } else {
+                                    return Text(
+                                        '${AppStorage().position.inSeconds ~/ 3600}:${(AppStorage().position.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().position.inSeconds % 60).toString().padLeft(2, '0')}');
+                                  }
+                                }),
+                            Expanded(child: _buildSeekbarFullscreen()),
+                            Text(
+                                '${AppStorage().duration.inSeconds ~/ 3600}:${(AppStorage().duration.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().duration.inSeconds % 60).toString().padLeft(2, '0')}'),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 4,
+                        ),
+                        _buildControlbarFullscreen(colorScheme),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            // MouseRegion()
+          ],
+        ),
       ),
     );
   }

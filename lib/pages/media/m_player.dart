@@ -2,7 +2,9 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+// import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
+import 'package:playboy/backend/keymap_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/pages/media/video_fullscreen.dart';
@@ -26,9 +28,11 @@ class MPlayer extends StatefulWidget {
 class MPlayerState extends State<MPlayer> {
   VideoController controller = AppStorage().controller;
 
-  bool menuExpanded = false;
-  bool videoMode = !AppStorage().settings.defaultMusicMode;
-  int curPanel = 0;
+  bool _menuExpanded = false;
+  bool _videoMode = !AppStorage().settings.defaultMusicMode;
+  int _curPanel = 0;
+
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -37,6 +41,7 @@ class MPlayerState extends State<MPlayer> {
 
   @override
   void dispose() {
+    _focusNode.dispose();
     if (!AppStorage().settings.playAfterExit) {
       AppStorage().closeMedia();
     }
@@ -48,71 +53,77 @@ class MPlayerState extends State<MPlayer> {
     late final colorScheme = Theme.of(context).colorScheme;
     late final backgroundColor = Color.alphaBlend(
         colorScheme.primary.withOpacity(0.04), colorScheme.surface);
-    return Scaffold(
-      backgroundColor: backgroundColor,
-      appBar: _buildTitlebar(backgroundColor),
-      body: Column(
-        children: [
-          Expanded(
-            child: Row(
-              children: [
-                Expanded(
-                  // flex: 3,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: _buildPlayer(colorScheme),
+    return KeyboardListener(
+      autofocus: true,
+      focusNode: _focusNode,
+      onKeyEvent: KeyMapHelper.handleKeyEvent,
+      child: Scaffold(
+        backgroundColor: backgroundColor,
+        appBar: _buildTitlebar(backgroundColor),
+        body: Column(
+          children: [
+            Expanded(
+              child: Row(
+                children: [
+                  Expanded(
+                    // flex: 3,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: _buildPlayer(colorScheme),
+                    ),
                   ),
-                ),
-                menuExpanded
-                    ? Padding(
-                        // flex: 2,
-                        padding: const EdgeInsets.only(right: 10),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 100),
-                          width: videoMode
-                              ? 300
-                              : MediaQuery.of(context).size.width * 0.4,
-                          child: _buildSidePanel(colorScheme, backgroundColor),
-                        ))
-                    : const SizedBox(),
-              ],
+                  _menuExpanded
+                      ? Padding(
+                          // flex: 2,
+                          padding: const EdgeInsets.only(right: 10),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 100),
+                            width: _videoMode
+                                ? 300
+                                : MediaQuery.of(context).size.width * 0.4,
+                            child:
+                                _buildSidePanel(colorScheme, backgroundColor),
+                          ))
+                      : const SizedBox(),
+                ],
+              ),
             ),
-          ),
-          SizedBox(
-            width: videoMode
-                ? MediaQuery.of(context).size.width - 40
-                : MediaQuery.of(context).size.width - 80,
-            height: 25,
-            child: Row(
-              children: [
-                // Text(
-                //     '${AppStorage().position.inSeconds ~/ 3600}:${(AppStorage().position.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().position.inSeconds % 60).toString().padLeft(2, '0')}'),
-                StreamBuilder(
-                    stream: AppStorage().playboy.stream.position,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return Text(
-                            '${snapshot.data!.inSeconds ~/ 3600}:${(snapshot.data!.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(snapshot.data!.inSeconds % 60).toString().padLeft(2, '0')}');
-                      } else {
-                        return Text(
-                            '${AppStorage().position.inSeconds ~/ 3600}:${(AppStorage().position.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().position.inSeconds % 60).toString().padLeft(2, '0')}');
-                      }
-                    }),
-                Expanded(child: _buildSeekbar()),
-                Text(
-                    '${AppStorage().duration.inSeconds ~/ 3600}:${(AppStorage().duration.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().duration.inSeconds % 60).toString().padLeft(2, '0')}')
-              ],
+            SizedBox(
+              width: _videoMode
+                  ? MediaQuery.of(context).size.width - 40
+                  : MediaQuery.of(context).size.width - 80,
+              height: 25,
+              child: Row(
+                children: [
+                  // Text(
+                  //     '${AppStorage().position.inSeconds ~/ 3600}:${(AppStorage().position.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().position.inSeconds % 60).toString().padLeft(2, '0')}'),
+                  StreamBuilder(
+                      stream: AppStorage().playboy.stream.position,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Text(
+                              '${snapshot.data!.inSeconds ~/ 3600}:${(snapshot.data!.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(snapshot.data!.inSeconds % 60).toString().padLeft(2, '0')}');
+                        } else {
+                          return Text(
+                              '${AppStorage().position.inSeconds ~/ 3600}:${(AppStorage().position.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().position.inSeconds % 60).toString().padLeft(2, '0')}');
+                        }
+                      }),
+                  Expanded(child: _buildSeekbar()),
+                  Text(
+                      '${AppStorage().duration.inSeconds ~/ 3600}:${(AppStorage().duration.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().duration.inSeconds % 60).toString().padLeft(2, '0')}')
+                ],
+              ),
             ),
-          ),
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 100),
-            height: videoMode ? 60 : 100,
-            child: _buildControlbar(colorScheme),
-          ),
-          const SizedBox(
-            height: 10,
-          )
-        ],
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 100),
+              height: _videoMode ? 60 : 100,
+              child: _buildControlbar(colorScheme),
+            ),
+            const SizedBox(
+              height: 10,
+            )
+          ],
+        ),
       ),
     );
   }
@@ -156,7 +167,7 @@ class MPlayerState extends State<MPlayer> {
       // toolbarHeight: videoMode ? null : 70,
       backgroundColor: backgroundColor,
       scrolledUnderElevation: 0,
-      title: videoMode
+      title: _videoMode
           ? GestureDetector(
               behavior: HitTestBehavior.translucent,
               onPanStart: (details) {
@@ -174,18 +185,18 @@ class MPlayerState extends State<MPlayer> {
         IconButton(
           icon: const Icon(Icons.lyrics_outlined),
           onPressed: () {
-            if (!menuExpanded) {
+            if (!_menuExpanded) {
               setState(() {
-                menuExpanded = true;
-                curPanel = 0;
+                _menuExpanded = true;
+                _curPanel = 0;
               });
-            } else if (curPanel == 0) {
+            } else if (_curPanel == 0) {
               setState(() {
-                menuExpanded = false;
+                _menuExpanded = false;
               });
             } else {
               setState(() {
-                curPanel = 0;
+                _curPanel = 0;
               });
             }
           },
@@ -196,18 +207,18 @@ class MPlayerState extends State<MPlayer> {
             weight: 550,
           ),
           onPressed: () {
-            if (!menuExpanded) {
+            if (!_menuExpanded) {
               setState(() {
-                menuExpanded = true;
-                curPanel = 1;
+                _menuExpanded = true;
+                _curPanel = 1;
               });
-            } else if (curPanel == 1) {
+            } else if (_curPanel == 1) {
               setState(() {
-                menuExpanded = false;
+                _menuExpanded = false;
               });
             } else {
               setState(() {
-                curPanel = 1;
+                _curPanel = 1;
               });
             }
           },
@@ -253,7 +264,7 @@ class MPlayerState extends State<MPlayer> {
       borderRadius: const BorderRadius.all(Radius.circular(25)),
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 200),
-        child: videoMode
+        child: _videoMode
             ? ColoredBox(
                 color: Colors.black,
                 child: Center(
@@ -330,7 +341,7 @@ class MPlayerState extends State<MPlayer> {
         builder: (BuildContext context, AsyncSnapshot<Duration> snapshot) {
           return SquigglySlider(
             squiggleAmplitude:
-                !AppStorage().settings.wavySlider || videoMode ? 0 : 2,
+                !AppStorage().settings.wavySlider || _videoMode ? 0 : 2,
             squiggleWavelength: 5,
             squiggleSpeed: 0.05,
             max: AppStorage().duration.inMilliseconds.toDouble(),
@@ -377,7 +388,7 @@ class MPlayerState extends State<MPlayer> {
           children: [
             AnimatedContainer(
               duration: const Duration(milliseconds: 100),
-              width: videoMode ? 16 : 32,
+              width: _videoMode ? 16 : 32,
             ),
             IconButton(
                 onPressed: () {
@@ -502,12 +513,12 @@ class MPlayerState extends State<MPlayer> {
         width: 10,
       ),
       IconButton(
-        icon: videoMode
+        icon: _videoMode
             ? const Icon(Icons.music_note_outlined)
             : const Icon(Icons.music_video_outlined),
         onPressed: () {
           setState(() {
-            videoMode = !videoMode;
+            _videoMode = !_videoMode;
           });
         },
       ),
@@ -515,7 +526,7 @@ class MPlayerState extends State<MPlayer> {
         width: 10,
       ),
       IconButton(
-          onPressed: !videoMode
+          onPressed: !_videoMode
               ? null
               : () async {
                   if (Platform.isWindows &&
@@ -592,7 +603,7 @@ class MPlayerState extends State<MPlayer> {
                   : Icons.flash_on)),
           AnimatedContainer(
             duration: const Duration(milliseconds: 100),
-            width: videoMode ? 16 : 32,
+            width: _videoMode ? 16 : 32,
           ),
         ],
       )),
@@ -605,18 +616,18 @@ class MPlayerState extends State<MPlayer> {
       child: [
         _buildSubtitlePanel(colorScheme, backgroundColor),
         _buildPlaylistPanel(colorScheme, backgroundColor),
-      ][curPanel],
+      ][_curPanel],
     );
   }
 
   Widget _buildPlaylistPanel(ColorScheme colorScheme, Color backgroundColor) {
     return Scaffold(
-      backgroundColor: videoMode ? colorScheme.surface : backgroundColor,
+      backgroundColor: _videoMode ? colorScheme.surface : backgroundColor,
       appBar: AppBar(
-        backgroundColor: videoMode ? colorScheme.surface : backgroundColor,
+        backgroundColor: _videoMode ? colorScheme.surface : backgroundColor,
         automaticallyImplyLeading: false,
         toolbarHeight: 46,
-        titleSpacing: videoMode ? null : 8,
+        titleSpacing: _videoMode ? null : 8,
         scrolledUnderElevation: 0,
         title: Text(
           '播放列表',
@@ -626,7 +637,7 @@ class MPlayerState extends State<MPlayer> {
           IconButton(
             onPressed: () {
               setState(() {
-                menuExpanded = false;
+                _menuExpanded = false;
               });
             },
             icon: Icon(
@@ -704,12 +715,12 @@ class MPlayerState extends State<MPlayer> {
 
   Widget _buildSubtitlePanel(ColorScheme colorScheme, Color backgroundColor) {
     return Scaffold(
-      backgroundColor: videoMode ? colorScheme.surface : backgroundColor,
+      backgroundColor: _videoMode ? colorScheme.surface : backgroundColor,
       appBar: AppBar(
-        backgroundColor: videoMode ? colorScheme.surface : backgroundColor,
+        backgroundColor: _videoMode ? colorScheme.surface : backgroundColor,
         automaticallyImplyLeading: false,
         toolbarHeight: 46,
-        titleSpacing: videoMode ? null : 8,
+        titleSpacing: _videoMode ? null : 8,
         scrolledUnderElevation: 0,
         title: Text(
           '歌词',
@@ -719,7 +730,7 @@ class MPlayerState extends State<MPlayer> {
           IconButton(
             onPressed: () {
               setState(() {
-                menuExpanded = false;
+                _menuExpanded = false;
               });
             },
             icon: Icon(
