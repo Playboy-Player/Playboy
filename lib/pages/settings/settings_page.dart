@@ -6,6 +6,7 @@ import 'package:playboy/l10n/i10n.dart';
 import 'package:playboy/pages/settings/about_app.dart';
 import 'package:playboy/pages/settings/bvtools_settings.dart';
 import 'package:playboy/pages/settings/display_settings.dart';
+import 'package:playboy/pages/settings/keymap_settings.dart';
 import 'package:playboy/pages/settings/language_settings.dart';
 import 'package:playboy/pages/settings/player_settings.dart';
 import 'package:playboy/pages/settings/storage_settings.dart';
@@ -24,15 +25,17 @@ class SettingsPageState extends State<SettingsPage> {
   final List<IconData> _icons = [
     Icons.color_lens_outlined,
     Icons.play_circle_outline,
+    Icons.keyboard_command_key,
     Icons.folder_outlined,
     Icons.translate_rounded,
-    Icons.live_tv,
+    Icons.extension_outlined,
     Icons.info_outline,
     Icons.code_outlined,
   ];
   final List<Widget> _pages = [
     const DisplaySettingsPage(),
     const PlayerSettingsPage(),
+    const KeymapSettings(),
     const StorageSettingsPage(),
     const LanguageSettingsPage(),
     const ExtensionSettings(),
@@ -48,9 +51,10 @@ class SettingsPageState extends State<SettingsPage> {
     List<String> options = [
       context.l10n.appearance,
       context.l10n.player,
+      '快捷键',
       context.l10n.storage,
       context.l10n.language,
-      'BV Tools',
+      '扩展功能',
       context.l10n.about,
       'Developer',
     ];

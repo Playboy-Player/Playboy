@@ -223,10 +223,10 @@ class MPlayerState extends State<MPlayer> {
             }
           },
         ),
-        IconButton(
-          icon: const Icon(Icons.more_vert),
-          onPressed: () {},
-        ),
+        // IconButton(
+        //   icon: const Icon(Icons.more_vert),
+        //   onPressed: () {},
+        // ),
         IconButton(
             hoverColor: Colors.transparent,
             iconSize: 20,

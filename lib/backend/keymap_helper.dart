@@ -7,13 +7,11 @@ class KeyMapHelper {
     if (event is KeyDownEvent) {
       final position = AppStorage().position;
       if (event.physicalKey == PhysicalKeyboardKey.arrowLeft) {
-        // AppStorage().playboy.pause();
         AppStorage().playboy.seek(position - const Duration(seconds: 3));
-        // AppStorage().playboy.play();
       } else if (event.physicalKey == PhysicalKeyboardKey.arrowRight) {
-        // AppStorage().playboy.pause();
         AppStorage().playboy.seek(position + const Duration(seconds: 3));
-        // AppStorage().playboy.play();
+      } else if (event.physicalKey == PhysicalKeyboardKey.space) {
+        AppStorage().playboy.playOrPause();
       }
     }
   }

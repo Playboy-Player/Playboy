@@ -54,7 +54,7 @@ class MusicCard extends StatelessWidget {
                     AppStorage().updateStatus();
                   },
                   borderRadius: BorderRadius.circular(20),
-                  child: info.cover == null
+                  child: info.cover == null || !File(info.cover!).existsSync()
                       ? Ink(
                           width: double.infinity,
                           decoration: BoxDecoration(
@@ -128,7 +128,7 @@ class MusicListCard extends StatelessWidget {
               padding: const EdgeInsets.all(6),
               child: AspectRatio(
                 aspectRatio: 1,
-                child: info.cover == null
+                child: info.cover == null || !File(info.cover!).existsSync()
                     ? Ink(
                         width: double.infinity,
                         decoration: BoxDecoration(

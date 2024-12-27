@@ -35,10 +35,11 @@ class MikuMiku extends StatelessWidget {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           locale: Locale(value.settings.language),
-          debugShowCheckedModeBanner: false,
+          // debugShowCheckedModeBanner: false,
           title: 'Playboy',
           theme: ThemeData(
-            fontFamilyFallback: const ['SimHei'],
+            fontFamily: value.settings.font != '' ? value.settings.font : null,
+            fontFamilyFallback: [value.settings.fallbackfont],
             colorScheme: lightTheme,
             tooltipTheme: TooltipThemeData(
               decoration: BoxDecoration(
@@ -65,7 +66,8 @@ class MikuMiku extends StatelessWidget {
             ),
           ),
           darkTheme: ThemeData(
-            fontFamilyFallback: const ['SimHei'],
+            fontFamily: value.settings.font != '' ? value.settings.font : null,
+            fontFamilyFallback: [value.settings.fallbackfont],
             colorScheme: darkTheme,
             tooltipTheme: TooltipThemeData(
               decoration: BoxDecoration(

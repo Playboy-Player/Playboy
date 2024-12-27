@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/widgets/file_card.dart';
 import 'package:playboy/widgets/folder_card.dart';
 
@@ -68,7 +69,7 @@ class FileExplorerState extends State<FileExplorer> {
               itemBuilder: (context, index) {
                 var e = contents[index];
                 if (e is File) {
-                  if (extension(e.path) == '.mp4') {
+                  if (LibraryHelper.supportFormats.contains(extension(e.path))) {
                     return FileCard(
                         source: e.path, icon: Icons.audio_file_outlined);
                   } else {

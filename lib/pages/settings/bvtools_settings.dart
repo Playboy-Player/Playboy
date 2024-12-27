@@ -24,7 +24,7 @@ class _ExtensionSettingsState extends State<ExtensionSettings> {
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
-              'BV Tools 设置',
+              'BV Tools (不可用)',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,

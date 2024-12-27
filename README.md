@@ -132,3 +132,7 @@ Doctor summary (to see all details, run flutter doctor -v):
 
 如果您在使用中发现 bug 或者希望添加某些功能, 请 [新建一个 issue](https://github.com/Playboy-Player/Playboy/issues/new).  
 也欢迎直接 Pull Request 提交代码贡献.
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Playboy-Player/Playboy&type=Date)](https://star-history.com/#Playboy-Player/Playboy&Date)

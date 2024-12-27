@@ -9,8 +9,6 @@ class SearchResultPage extends StatefulWidget {
 }
 
 class SearchResultPageState extends State<SearchResultPage> {
-  int choosed = 0;
-
   bool gridview = true;
 
   @override
@@ -40,13 +38,6 @@ class SearchResultPageState extends State<SearchResultPage> {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.refresh),
-          ),
-          const SizedBox(
-            width: 4,
-          ),
-          IconButton(
             onPressed: () {
               setState(() {
                 gridview = !gridview;
@@ -61,102 +52,7 @@ class SearchResultPageState extends State<SearchResultPage> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          SizedBox(
-            height: 40,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                const SizedBox(
-                  width: 16,
-                ),
-                FilterChip(
-                  showCheckmark: false,
-                  avatar: const Icon(Icons.web_stories_outlined),
-                  label: const Text('播放列表'),
-                  onSelected: (value) {
-                    setState(() {
-                      choosed = 0;
-                    });
-                  },
-                  selected: choosed == 0,
-                ),
-                const SizedBox(
-                  width: 6,
-                ),
-                FilterChip(
-                  showCheckmark: false,
-                  avatar: const Icon(Icons.music_note_outlined),
-                  label: const Text('音乐'),
-                  onSelected: (value) {
-                    setState(() {
-                      choosed = 1;
-                    });
-                  },
-                  selected: choosed == 1,
-                ),
-                const SizedBox(
-                  width: 6,
-                ),
-                FilterChip(
-                  showCheckmark: false,
-                  avatar: const Icon(Icons.movie_filter_outlined),
-                  label: const Text('视频'),
-                  onSelected: (value) {
-                    setState(() {
-                      choosed = 2;
-                    });
-                  },
-                  selected: choosed == 2,
-                ),
-                const SizedBox(
-                  width: 6,
-                ),
-                FilterChip(
-                  showCheckmark: false,
-                  avatar: const Icon(Icons.folder_outlined),
-                  label: const Text('收藏夹'),
-                  onSelected: (value) {
-                    setState(() {
-                      choosed = 3;
-                    });
-                  },
-                  selected: choosed == 3,
-                ),
-                const SizedBox(
-                  width: 6,
-                ),
-                FilterChip(
-                  showCheckmark: false,
-                  avatar: const Icon(Icons.history),
-                  label: const Text('历史记录'),
-                  onSelected: (value) {
-                    setState(() {
-                      choosed = 4;
-                    });
-                  },
-                  selected: choosed == 4,
-                ),
-                const SizedBox(
-                  width: 6,
-                ),
-                FilterChip(
-                  showCheckmark: false,
-                  avatar: const Icon(Icons.live_tv),
-                  label: const Text('BV Tools'),
-                  onSelected: (value) {
-                    setState(() {
-                      choosed = 5;
-                    });
-                  },
-                  selected: choosed == 5,
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
+      body: Container(),
     );
   }
 }

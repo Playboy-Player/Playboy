@@ -81,7 +81,18 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
         Container(
           padding: const EdgeInsets.all(12),
           child: Text(
-            context.l10n.mpvSettings,
+            '播放器后端参数',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.all(12),
+          child: Text(
+            '字幕设置',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w500,

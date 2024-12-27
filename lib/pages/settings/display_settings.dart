@@ -10,11 +10,91 @@ class DisplaySettingsPage extends StatefulWidget {
 }
 
 class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
+  final TextEditingController _controller1 =
+      TextEditingController(); // primary font
+  final TextEditingController _controller2 =
+      TextEditingController(); // secondary font
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView(
         children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            child: Text(
+              '字体',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+          ),
+          ListTile(
+            title: const Text('首选字体'),
+            subtitle: const Text('留空以保持默认'),
+            trailing: Container(
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              width: 150,
+              height: 40,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Theme.of(context).colorScheme.secondaryContainer,
+              ),
+              child: TextField(
+                textAlign: TextAlign.center,
+                controller: _controller1,
+                maxLines: 1,
+                decoration: InputDecoration.collapsed(
+                  hintText: AppStorage().settings.font != ''
+                      ? AppStorage().settings.font
+                      : 'Default',
+                ),
+                onSubmitted: (value) {
+                  _controller1.clear();
+                  setState(() {
+                    AppStorage().settings.font = value;
+                  });
+                  AppStorage().saveSettings();
+                  AppStorage().updateStatus();
+                },
+              ),
+            ),
+          ),
+          ListTile(
+            title: const Text('备用字体'),
+            subtitle: const Text('默认为黑体(SimHei)'),
+            trailing: Container(
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              width: 150,
+              height: 40,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Theme.of(context).colorScheme.secondaryContainer,
+              ),
+              child: TextField(
+                textAlign: TextAlign.center,
+                controller: _controller2,
+                maxLines: 1,
+                decoration: InputDecoration.collapsed(
+                  hintText: AppStorage().settings.fallbackfont != ''
+                      ? AppStorage().settings.fallbackfont
+                      : "None",
+                ),
+                onSubmitted: (value) {
+                  _controller2.clear();
+                  setState(() {
+                    AppStorage().settings.fallbackfont = value;
+                  });
+                  AppStorage().saveSettings();
+                  AppStorage().updateStatus();
+                },
+              ),
+            ),
+          ),
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(

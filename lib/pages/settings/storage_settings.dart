@@ -25,6 +25,37 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
               child: Container(
                 padding: const EdgeInsets.all(12),
                 child: Text(
+                  '封面截取',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: SwitchListTile(
+                value: AppStorage().settings.getCoverOnScan,
+                onChanged: (value) {
+                  setState(() {
+                    AppStorage().settings.getCoverOnScan = value;
+                  });
+                  AppStorage().saveSettings();
+                },
+                title: const Row(
+                  children: [
+                    Icon(Icons.photo),
+                    SizedBox(width: 12),
+                    Text('扫描媒体时截取封面'),
+                  ],
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                child: Text(
                   context.l10n.scanOptions,
                   style: TextStyle(
                     fontSize: 20,

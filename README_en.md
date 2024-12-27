@@ -131,3 +131,7 @@ It is recommended to run the project in [Android Studio](https://developer.andro
 
 If you encounter bugs or would like to request features, please [create a new issue](https://github.com/Playboy-Player/Playboy/issues/new).  
 Contributions via Pull Requests are also welcome.
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Playboy-Player/Playboy&type=Date)](https://star-history.com/#Playboy-Player/Playboy&Date)

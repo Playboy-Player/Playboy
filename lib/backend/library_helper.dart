@@ -44,56 +44,48 @@ class LibraryHelper {
 
   static Future<List<PlayItem>> getMediaFromPaths(List<String> paths) async {
     List<PlayItem> res = [];
-    var distinctPaths = paths.toSet().toList();
-    for (var path in distinctPaths) {
-      // use bfs to scan the whole folder
-      Queue q = Queue();
+    var thumbnailsPath = "${AppStorage().dataPath}\\thumbnails";
+    var vis = <String>{};
+
+    Queue q = Queue();
+    for (var path in paths) {
+      if (vis.contains(path)) continue;
+      vis.add(path);
       q.add(path);
-      while (q.isNotEmpty) {
-        int n = q.length;
-        for (int i = 0; i < n; i++) {
-          var p = q.removeFirst();
-          var dir = Directory(p);
-          await for (var item in dir.list()) {
-            if (item is Directory) {
-              q.add(item.path);
-            } else if (supportFormats.contains(extension(item.path))) {
-              var cover = await saveThumbnail(item.path);
-              res.add(
-                PlayItem(
-                  source: item.path,
-                  cover: cover,
-                  title: basenameWithoutExtension(item.path),
-                ),
-              );
-            }
+    }
+
+    vis.clear();
+    while (q.isNotEmpty) {
+      int n = q.length;
+      for (int i = 0; i < n; i++) {
+        var p = q.removeFirst();
+        if (vis.contains(p)) continue;
+        vis.add(p);
+        var dir = Directory(p);
+        await for (var item in dir.list()) {
+          if (item is Directory) {
+            if (vis.contains(item.path)) continue;
+            q.add(item.path);
+          } else if (supportFormats.contains(extension(item.path))) {
+            if (AppStorage().settings.getCoverOnScan) await saveThumbnail(item.path);
+            var hashedPath = hashPath(item.path);
+            var outputPath = "$thumbnailsPath\\$hashedPath.jpg";
+            res.add(
+              PlayItem(
+                source: item.path,
+                cover: outputPath,
+                title: basenameWithoutExtension(item.path),
+              ),
+            );
           }
         }
       }
-
-      // var dir = Directory(path);
-      // var list = dir.list();
-      // await for (var item in list) {
-      //   if (item is Directory) {
-      //     var tmp = await getItemFromDirectory(item);
-      //     if (tmp != null) {
-      //       res.add(tmp);
-      //     }
-      //   } else if (supportFormats.contains(extension(item.path))) {
-      //     res.add(
-      //       PlayItem(
-      //         source: item.path,
-      //         cover: null,
-      //         title: basenameWithoutExtension(item.path),
-      //       ),
-      //     );
-      //   }
-      // }
     }
+
     return res;
   }
 
-  static Future<String> saveThumbnail(String path) async {
+  static Future<void> saveThumbnail(String path) async {
     var thumbnailsPath = "${AppStorage().dataPath}\\thumbnails";
     var fp = Directory(thumbnailsPath);
     if (!await fp.exists()) {
@@ -101,15 +93,16 @@ class LibraryHelper {
     }
     var hashedPath = hashPath(path);
     var outputPath = "$thumbnailsPath\\$hashedPath.jpg";
-    if (await File(outputPath).exists()) return outputPath;
+    if (await File(outputPath).exists()) return;
     var shell = Shell();
     try {
+      // call ffmpeg to get the frame at 00:00:05
       await shell.run(
           'ffmpeg -progress - -i "$path" -y -ss 0:00:05.000000 -frames:v 1 -q:v 1 "$outputPath"');
     } catch (e) {
       // print(e.toString());
     }
-    return outputPath;
+    // return outputPath;
   }
 
   static Future<PlayItem?> getItemFromDirectory(Directory dir) async {

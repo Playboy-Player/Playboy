@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/pages/media/m_player.dart';
@@ -24,7 +25,7 @@ class FileCard extends StatelessWidget {
             ),
             child: InkWell(
               onTap: () {
-                if (extension(source) == '.mp4') {
+                if (LibraryHelper.supportFormats.contains(extension(source))) {
                   AppStorage().closeMedia();
                   if (!context.mounted) return;
                   AppStorage().openMedia(

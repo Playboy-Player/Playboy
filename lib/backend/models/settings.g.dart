@@ -10,6 +10,8 @@ AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) => AppSettings(
       wbiKey: json['wbiKey'] as String? ?? 'none',
       keyTime: (json['keyTime'] as num?)?.toInt() ?? 1245974400,
       logined: json['logined'] as bool? ?? false,
+      font: json['font'] as String? ?? '',
+      fallbackfont: json['fallbackfont'] as String? ?? 'SimHei',
       wavySlider: json['wavySlider'] as bool? ?? false,
       showMediaCard: json['showMediaCard'] as bool? ?? true,
       initPage: (json['initPage'] as num?)?.toInt() ?? 0,
@@ -29,6 +31,7 @@ AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) => AppSettings(
       speed: (json['speed'] as num?)?.toDouble() ?? 1,
       rememberStatus: json['rememberStatus'] as bool? ?? true,
       playAfterExit: json['playAfterExit'] as bool? ?? true,
+      getCoverOnScan: json['getCoverOnScan'] as bool? ?? false,
       videoPaths: (json['videoPaths'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
@@ -56,6 +59,8 @@ Map<String, dynamic> _$AppSettingsToJson(AppSettings instance) =>
       'wbiKey': instance.wbiKey,
       'keyTime': instance.keyTime,
       'logined': instance.logined,
+      'font': instance.font,
+      'fallbackfont': instance.fallbackfont,
       'wavySlider': instance.wavySlider,
       'showMediaCard': instance.showMediaCard,
       'initPage': instance.initPage,
@@ -74,6 +79,7 @@ Map<String, dynamic> _$AppSettingsToJson(AppSettings instance) =>
       'speed': instance.speed,
       'rememberStatus': instance.rememberStatus,
       'playAfterExit': instance.playAfterExit,
+      'getCoverOnScan': instance.getCoverOnScan,
       'videoPaths': instance.videoPaths,
       'musicPaths': instance.musicPaths,
       'favouritePaths': instance.favouritePaths,

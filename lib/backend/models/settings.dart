@@ -8,54 +8,57 @@ part 'settings.g.dart';
 @JsonSerializable()
 class AppSettings {
   // Account Settings;
-  String wbiKey = 'none';
-  int keyTime = 1245974400;
-  bool logined = false;
+  String wbiKey;
+  int keyTime;
+  bool logined;
 
   // Display Settings;
-  bool wavySlider = false;
-  bool showMediaCard = true;
-  int initPage = 0;
-  bool playlistListview = false;
-  bool musicLibListview = false;
-  bool videoLibListview = false;
-  bool searchListview = false;
-  int defaultSearchOption = 0;
-  ThemeMode themeMode = ThemeMode.system;
-  int themeCode = 4;
+  String font;
+  String fallbackfont;
+  bool wavySlider;
+  bool showMediaCard;
+  int initPage;
+  bool playlistListview;
+  bool musicLibListview;
+  bool videoLibListview;
+  bool searchListview;
+  int defaultSearchOption;
+  ThemeMode themeMode;
+  int themeCode;
 
   // Player Settings
-  bool autoPlay = true;
-  bool autoDownload = false;
-  bool defaultMusicMode = false;
+  bool autoPlay;
+  bool autoDownload;
+  bool defaultMusicMode;
 
   // 0:ask 1:never 2:always
-  int continueToPlay = 0;
+  int continueToPlay;
 
   // int defaultQuality;
-  double volume = 100;
-  double speed = 1;
-  bool rememberStatus = true;
-  bool playAfterExit = true;
+  double volume;
+  double speed;
+  bool rememberStatus;
+  bool playAfterExit;
 
   // Storage Settings
-  List<String> videoPaths = [];
-  List<String> musicPaths = [];
-  List<String> favouritePaths = [];
-  String screenshotPath = '';
-  String downloadPath = '';
+  bool getCoverOnScan;
+  List<String> videoPaths;
+  List<String> musicPaths;
+  List<String> favouritePaths;
+  String screenshotPath;
+  String downloadPath;
 
   // Language Settings
-  String language = 'zh';
+  String language;
 
   // BvTools Settings
-  bool enableBvTools = false;
-  bool tryLook = true;
+  bool enableBvTools;
+  bool tryLook;
 
   // Dev Settings
-  bool tabletUI = true;
-  bool enableTitleBar = true;
-  double titleBarOffset = 0;
+  bool tabletUI;
+  bool enableTitleBar;
+  double titleBarOffset;
 
   AppSettings({
     // Account Settings;
@@ -64,6 +67,8 @@ class AppSettings {
     this.logined = false,
 
     // Display Settings,
+    this.font = '',
+    this.fallbackfont = 'SimHei', // 黑体
     this.wavySlider = false,
     this.showMediaCard = true,
     this.initPage = 0,
@@ -87,6 +92,7 @@ class AppSettings {
     this.playAfterExit = true,
 
     // Storage Settings
+    this.getCoverOnScan = false,
     this.videoPaths = const [],
     this.musicPaths = const [],
     this.favouritePaths = const [],

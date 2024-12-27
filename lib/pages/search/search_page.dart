@@ -12,6 +12,7 @@ class _SearchPage extends State<SearchPage> {
   bool isSearching = false;
   TextEditingController controller = TextEditingController();
   FocusNode inputNode = FocusNode();
+  int choosed = 0;
   @override
   Widget build(BuildContext context) {
     // late final colorScheme = Theme.of(context).colorScheme;

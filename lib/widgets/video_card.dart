@@ -40,7 +40,7 @@ class VideoCard extends StatelessWidget {
                 });
               },
               borderRadius: BorderRadius.circular(20),
-              child: info.cover == null
+              child: info.cover == null || !File(info.cover!).existsSync()
                   ? Ink(
                       width: double.infinity,
                       decoration: BoxDecoration(
@@ -114,7 +114,7 @@ class VideoListCard extends StatelessWidget {
               padding: const EdgeInsets.all(6),
               child: AspectRatio(
                 aspectRatio: 14 / 9,
-                child: info.cover == null
+                child: info.cover == null || !File(info.cover!).existsSync()
                     ? Ink(
                         width: double.infinity,
                         decoration: BoxDecoration(
