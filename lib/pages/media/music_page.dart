@@ -59,6 +59,7 @@ class _MusicPageState extends State<MusicPage> {
             scrolledUnderElevation: 0,
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             flexibleSpace: FlexibleSpaceBar(
+              centerTitle: false,
               titlePadding:
                   const EdgeInsetsDirectional.only(start: 16, bottom: 16),
               title: Text(

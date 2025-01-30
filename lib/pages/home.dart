@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -35,7 +36,7 @@ class MikuMiku extends StatelessWidget {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           locale: Locale(value.settings.language),
-          // debugShowCheckedModeBanner: false,
+          debugShowCheckedModeBanner: false,
           title: 'Playboy',
           theme: ThemeData(
             fontFamily: value.settings.font != '' ? value.settings.font : null,
@@ -206,22 +207,24 @@ class _HomeState extends State<Home> {
                     windowManager.startDragging();
                   },
                   child: Row(children: [
-                    IconButton(
-                        highlightColor: Colors.transparent,
-                        focusColor: Colors.transparent,
-                        hoverColor: Colors.transparent,
-                        splashColor: Colors.transparent,
-                        constraints: const BoxConstraints(),
-                        padding: EdgeInsets.zero,
-                        onPressed: () {
-                          if (!context.mounted) return;
-                          Navigator.of(context, rootNavigator: true).push(
-                            MaterialPageRoute(
-                              builder: (context) => const MPlayer(),
-                            ),
-                          );
-                        },
-                        icon: const Icon(Constants.appIcon)),
+                    Platform.isMacOS
+                        ? const SizedBox(width: 60)
+                        : IconButton(
+                            highlightColor: Colors.transparent,
+                            focusColor: Colors.transparent,
+                            hoverColor: Colors.transparent,
+                            splashColor: Colors.transparent,
+                            constraints: const BoxConstraints(),
+                            padding: EdgeInsets.zero,
+                            onPressed: () {
+                              if (!context.mounted) return;
+                              Navigator.of(context, rootNavigator: true).push(
+                                MaterialPageRoute(
+                                  builder: (context) => const MPlayer(),
+                                ),
+                              );
+                            },
+                            icon: const Icon(Constants.appIcon)),
                     const SizedBox(
                       width: 10,
                     ),
@@ -231,12 +234,10 @@ class _HomeState extends State<Home> {
                               stream: AppStorage().playboy.stream.playlist,
                               builder: ((context, snapshot) {
                                 return Text(
-                                  AppStorage().playingTitle == 'Not Playing'
-                                      ? Constants.appName
-                                      : AppStorage().playingTitle,
+                                  AppStorage().playingTitle,
                                   style: const TextStyle(
                                     fontSize: 18,
-                                    fontWeight: FontWeight.w500,
+                                    // fontWeight: FontWeight.w500,
                                   ),
                                 );
                               }))
@@ -244,58 +245,73 @@ class _HomeState extends State<Home> {
                     ),
                   ])),
               actions: [
-                AppStorage().settings.showMediaCard
-                    ? IconButton(
-                        hoverColor: Colors.transparent,
-                        onPressed: () {
-                          // setState(() {
-                          //   showMediaCard = !showMediaCard;
-                          // });
-                          if (_miniMode) {
-                            windowManager.setResizable(true);
-                            windowManager.setMinimumSize(const Size(360, 500));
-                            windowManager.setSize(const Size(900, 700));
-                            windowManager.setAlwaysOnTop(false);
-                            windowManager.center();
-                          } else {
-                            windowManager.setResizable(false);
-                            windowManager.setMinimumSize(const Size(300, 120));
-                            windowManager.setSize(const Size(300, 120));
-                            windowManager.setAlwaysOnTop(true);
-                          }
-                          setState(() {
-                            _miniMode = !_miniMode;
-                          });
-                        },
-                        icon: const Icon(
-                          Icons.headset_outlined,
-                        ))
-                    : const SizedBox(),
                 IconButton(
                     hoverColor: Colors.transparent,
-                    iconSize: 20,
                     onPressed: () {
-                      windowManager.minimize();
-                    },
-                    icon: const Icon(Icons.minimize)),
-                IconButton(
-                    hoverColor: Colors.transparent,
-                    iconSize: 20,
-                    onPressed: () async {
-                      if (await windowManager.isMaximized()) {
-                        windowManager.unmaximize();
+                      // setState(() {
+                      //   showMediaCard = !showMediaCard;
+                      // });
+                      if (_miniMode) {
+                        windowManager.setResizable(true);
+                        windowManager.setMinimumSize(const Size(360, 500));
+                        windowManager.setSize(const Size(900, 700));
+                        windowManager.setAlwaysOnTop(false);
+                        windowManager.center();
                       } else {
-                        windowManager.maximize();
+                        windowManager.setResizable(false);
+                        windowManager.setMinimumSize(const Size(300, 120));
+                        windowManager.setSize(const Size(300, 120));
+                        windowManager.setAlwaysOnTop(true);
                       }
+                      setState(() {
+                        _miniMode = !_miniMode;
+                      });
                     },
-                    icon: const Icon(Icons.crop_square)),
-                IconButton(
-                    hoverColor: Colors.transparent,
-                    iconSize: 20,
-                    onPressed: () {
-                      windowManager.close();
-                    },
-                    icon: const Icon(Icons.close)),
+                    icon: const Icon(
+                      Icons.headset_outlined,
+                    )),
+                if (Platform.isMacOS)
+                  IconButton(
+                      hoverColor: Colors.transparent,
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        if (!context.mounted) return;
+                        Navigator.of(context, rootNavigator: true).push(
+                          MaterialPageRoute(
+                            builder: (context) => const MPlayer(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.play_circle_outlined)),
+                const SizedBox(width: 10),
+                if (!Platform.isMacOS)
+                  IconButton(
+                      hoverColor: Colors.transparent,
+                      iconSize: 20,
+                      onPressed: () {
+                        windowManager.minimize();
+                      },
+                      icon: const Icon(Icons.minimize)),
+                if (!Platform.isMacOS)
+                  IconButton(
+                      hoverColor: Colors.transparent,
+                      iconSize: 20,
+                      onPressed: () async {
+                        if (await windowManager.isMaximized()) {
+                          windowManager.unmaximize();
+                        } else {
+                          windowManager.maximize();
+                        }
+                      },
+                      icon: const Icon(Icons.crop_square)),
+                if (!Platform.isMacOS)
+                  IconButton(
+                      hoverColor: Colors.transparent,
+                      iconSize: 20,
+                      onPressed: () {
+                        windowManager.close();
+                      },
+                      icon: const Icon(Icons.close)),
               ],
             ),
       body: tabletUI

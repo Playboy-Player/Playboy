@@ -107,7 +107,20 @@ Run `flutter build linux` in the project folder to generate the Linux executable
 
 ### macOS
 
-> [It can run](https://github.com/Playboy-Player/Playboy/issues/3), but requires more adaptation work. Development is currently on hold due to lack of a compilation environment.
+Example output of `flutter doctor`:
+
+```
+Doctor summary (to see all details, run flutter doctor -v):
+[✓] Flutter (Channel stable, 3.27.2, on macOS 15.2 24C101 darwin-arm64, locale
+    zh-Hans-CN)
+[!] Xcode - develop for iOS and macOS (Xcode 16.2)
+    ✗ Unable to get list of installed Simulator runtimes.
+[✓] VS Code (version 1.96.4)
+[✓] Connected device (3 available)
+[✓] Network resources
+```
+
+iOS SDK is not necessary.
 
 ### Android
 

@@ -68,14 +68,16 @@ class SettingsPageState extends State<SettingsPage> {
           : AppBar(
               leadingWidth: 40,
               automaticallyImplyLeading: false,
-              leading: IconButton(
-                iconSize: 20,
-                constraints: const BoxConstraints(),
-                icon: const Icon(Icons.arrow_back_ios_new),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
+              leading: Platform.isMacOS
+                  ? null
+                  : IconButton(
+                      iconSize: 20,
+                      constraints: const BoxConstraints(),
+                      icon: const Icon(Icons.arrow_back_ios_new),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
               titleSpacing: 0,
               backgroundColor: Theme.of(context).colorScheme.surface,
               scrolledUnderElevation: 0,
@@ -105,31 +107,43 @@ class SettingsPageState extends State<SettingsPage> {
               ),
               toolbarHeight: 40,
               actions: [
-                IconButton(
-                    hoverColor: Colors.transparent,
-                    iconSize: 20,
+                if (!Platform.isMacOS)
+                  IconButton(
+                      hoverColor: Colors.transparent,
+                      iconSize: 20,
+                      onPressed: () {
+                        windowManager.minimize();
+                      },
+                      icon: const Icon(Icons.minimize)),
+                if (!Platform.isMacOS)
+                  IconButton(
+                      hoverColor: Colors.transparent,
+                      iconSize: 20,
+                      onPressed: () async {
+                        if (await windowManager.isMaximized()) {
+                          windowManager.unmaximize();
+                        } else {
+                          windowManager.maximize();
+                        }
+                      },
+                      icon: const Icon(Icons.crop_square)),
+                if (!Platform.isMacOS)
+                  IconButton(
+                      hoverColor: Colors.transparent,
+                      iconSize: 20,
+                      onPressed: () {
+                        windowManager.close();
+                      },
+                      icon: const Icon(Icons.close)),
+                if (Platform.isMacOS)
+                  IconButton(
+                    constraints: const BoxConstraints(),
+                    icon: const Icon(Icons.close),
                     onPressed: () {
-                      windowManager.minimize();
+                      Navigator.pop(context);
                     },
-                    icon: const Icon(Icons.minimize)),
-                IconButton(
-                    hoverColor: Colors.transparent,
-                    iconSize: 20,
-                    onPressed: () async {
-                      if (await windowManager.isMaximized()) {
-                        windowManager.unmaximize();
-                      } else {
-                        windowManager.maximize();
-                      }
-                    },
-                    icon: const Icon(Icons.crop_square)),
-                IconButton(
-                    hoverColor: Colors.transparent,
-                    iconSize: 20,
-                    onPressed: () {
-                      windowManager.close();
-                    },
-                    icon: const Icon(Icons.close)),
+                  ),
+                if (Platform.isMacOS) const SizedBox(width: 8)
               ],
             ),
       // floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,

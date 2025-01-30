@@ -108,7 +108,20 @@ Doctor summary (to see all details, run flutter doctor -v):
 
 ### macOS
 
-> [可以运行](https://github.com/Playboy-Player/Playboy/issues/3), 但需要更多适配工作, 由于无编译环境, 开发进度暂时停滞.
+flutter doctor 输出内容示例:
+
+```
+Doctor summary (to see all details, run flutter doctor -v):
+[✓] Flutter (Channel stable, 3.27.2, on macOS 15.2 24C101 darwin-arm64, locale
+    zh-Hans-CN)
+[!] Xcode - develop for iOS and macOS (Xcode 16.2)
+    ✗ Unable to get list of installed Simulator runtimes.
+[✓] VS Code (version 1.96.4)
+[✓] Connected device (3 available)
+[✓] Network resources
+```
+
+如果仅需编译 macOS 应用, Xcode 无需安装 iOS SDK.
 
 ### android
 

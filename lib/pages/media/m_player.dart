@@ -131,15 +131,18 @@ class MPlayerState extends State<MPlayer> {
   PreferredSizeWidget _buildTitlebar(Color backgroundColor) {
     return AppBar(
       automaticallyImplyLeading: false,
-      leading: IconButton(
-        constraints: const BoxConstraints(),
-        icon: const Icon(Icons.arrow_back_ios_new),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
-      titleSpacing: 0,
-      toolbarHeight: 50,
+      leading: Platform.isMacOS
+          ? const SizedBox(width: 60)
+          : IconButton(
+              constraints: const BoxConstraints(),
+              icon: const Icon(Icons.arrow_back_ios_new),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+      centerTitle: Platform.isMacOS,
+      // titleSpacing: 0,
+      toolbarHeight: 40,
       flexibleSpace: Column(
         children: [
           SizedBox(
@@ -178,6 +181,7 @@ class MPlayerState extends State<MPlayer> {
                   builder: (context, snapshot) {
                     return Text(
                       AppStorage().playingTitle,
+                      style: const TextStyle(fontSize: 18),
                     );
                   }))
           : const SizedBox(),
@@ -227,34 +231,45 @@ class MPlayerState extends State<MPlayer> {
         //   icon: const Icon(Icons.more_vert),
         //   onPressed: () {},
         // ),
-        IconButton(
-            hoverColor: Colors.transparent,
-            iconSize: 20,
+        if (!Platform.isMacOS)
+          IconButton(
+              hoverColor: Colors.transparent,
+              iconSize: 20,
+              onPressed: () {
+                windowManager.minimize();
+              },
+              icon: const Icon(Icons.minimize)),
+        if (!Platform.isMacOS)
+          IconButton(
+              hoverColor: Colors.transparent,
+              iconSize: 20,
+              onPressed: () async {
+                if (await windowManager.isMaximized()) {
+                  windowManager.unmaximize();
+                } else {
+                  windowManager.maximize();
+                }
+              },
+              icon: const Icon(Icons.crop_square)),
+        if (!Platform.isMacOS)
+          IconButton(
+              hoverColor: Colors.transparent,
+              iconSize: 20,
+              onPressed: () {
+                windowManager.close();
+              },
+              icon: const Icon(Icons.close)),
+        if (Platform.isMacOS)
+          IconButton(
+            constraints: const BoxConstraints(),
+            icon: const Icon(Icons.video_library_outlined),
             onPressed: () {
-              windowManager.minimize();
+              Navigator.pop(context);
             },
-            icon: const Icon(Icons.minimize)),
-        IconButton(
-            hoverColor: Colors.transparent,
-            iconSize: 20,
-            onPressed: () async {
-              if (await windowManager.isMaximized()) {
-                windowManager.unmaximize();
-              } else {
-                windowManager.maximize();
-              }
-            },
-            icon: const Icon(Icons.crop_square)),
-        IconButton(
-            hoverColor: Colors.transparent,
-            iconSize: 20,
-            onPressed: () {
-              windowManager.close();
-            },
-            icon: const Icon(Icons.close)),
+          ),
         const SizedBox(
           width: 10,
-        )
+        ),
       ],
     );
   }

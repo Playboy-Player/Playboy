@@ -8,6 +8,8 @@ class MainFlutterWindow: NSWindow {
     self.contentViewController = flutterViewController
     self.setFrame(windowFrame, display: true)
 
+    self.toolbar = NSToolbar(identifier: "DummyToolbar")
+
     RegisterGeneratedPlugins(registry: flutterViewController)
 
     super.awakeFromNib()
