@@ -89,7 +89,7 @@ class _SearchPage extends State<SearchPage> {
                     fillColor: Theme.of(context)
                         .colorScheme
                         .secondaryContainer
-                        .withOpacity(0.4),
+                        .withValues(alpha: 0.4),
                   ),
                   onSubmitted: (value) {
                     Navigator.push(
@@ -110,47 +110,47 @@ class _SearchPage extends State<SearchPage> {
               )),
             ),
           ),
-          const SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Text(
-                '最近搜索',
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Card(
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
-                  borderRadius: const BorderRadius.all(Radius.circular(20)),
-                ),
-                child: const SizedBox(
-                  height: 150,
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.upcoming_rounded,
-                          size: 40,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          '没有最近搜索',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ]),
-                ),
-              ),
-            ),
-          ),
+          // const SliverToBoxAdapter(
+          //   child: Padding(
+          //     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          //     child: Text(
+          //       '最近搜索',
+          //       style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+          //     ),
+          //   ),
+          // ),
+          // SliverToBoxAdapter(
+          //   child: Padding(
+          //     padding: const EdgeInsets.symmetric(horizontal: 16),
+          //     child: Card(
+          //       elevation: 0,
+          //       shape: RoundedRectangleBorder(
+          //         side: BorderSide(
+          //           color: Theme.of(context).colorScheme.outline,
+          //         ),
+          //         borderRadius: const BorderRadius.all(Radius.circular(20)),
+          //       ),
+          //       child: const SizedBox(
+          //         height: 150,
+          //         child: Row(
+          //             mainAxisAlignment: MainAxisAlignment.center,
+          //             children: [
+          //               Icon(
+          //                 Icons.upcoming_rounded,
+          //                 size: 40,
+          //               ),
+          //               SizedBox(
+          //                 width: 10,
+          //               ),
+          //               Text(
+          //                 '没有最近搜索',
+          //                 style: TextStyle(fontSize: 20),
+          //               ),
+          //             ]),
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

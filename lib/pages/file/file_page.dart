@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 // import 'package:playboy/backend/biliapi/bilibili_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/utils/route.dart';
 // import 'package:playboy/pages/file/download_page.dart';
 // import 'package:playboy/pages/media/bili_player.dart';
 import 'package:playboy/pages/media/m_player.dart';
@@ -35,7 +36,7 @@ class _FilePageState extends State<FilePage> {
     int n = context.read<AppStorage>().settings.musicPaths.length;
     final width = MediaQuery.of(context).size.width;
     final cols = max((width / 150).round(), 2);
-    late final colorScheme = Theme.of(context).colorScheme;
+    // late final colorScheme = Theme.of(context).colorScheme;
     // late final backgroundColor = Color.alphaBlend(
     //     colorScheme.primary.withOpacity(0.08), colorScheme.surface);
     return Scaffold(
@@ -83,7 +84,6 @@ class _FilePageState extends State<FilePage> {
               _buildOption(Icons.link, '打开网络串流', () {
                 editingController.clear();
                 showDialog(
-                  barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
                   useRootNavigator: false,
                   context: context,
                   builder: (BuildContext context) => AlertDialog(
@@ -218,47 +218,47 @@ class _FilePageState extends State<FilePage> {
               ),
             ),
           ),
-          const SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Text(
-                '最近播放',
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Card(
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
-                  borderRadius: const BorderRadius.all(Radius.circular(20)),
-                ),
-                child: const SizedBox(
-                  height: 150,
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.upcoming_rounded,
-                          size: 40,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          '没有最近播放',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ]),
-                ),
-              ),
-            ),
-          ),
+          // const SliverToBoxAdapter(
+          //   child: Padding(
+          //     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          //     child: Text(
+          //       '最近播放',
+          //       style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+          //     ),
+          //   ),
+          // ),
+          // SliverToBoxAdapter(
+          //   child: Padding(
+          //     padding: const EdgeInsets.symmetric(horizontal: 16),
+          //     child: Card(
+          //       elevation: 0,
+          //       shape: RoundedRectangleBorder(
+          //         side: BorderSide(
+          //           color: Theme.of(context).colorScheme.outline,
+          //         ),
+          //         borderRadius: const BorderRadius.all(Radius.circular(20)),
+          //       ),
+          //       child: const SizedBox(
+          //         height: 150,
+          //         child: Row(
+          //             mainAxisAlignment: MainAxisAlignment.center,
+          //             children: [
+          //               Icon(
+          //                 Icons.upcoming_rounded,
+          //                 size: 40,
+          //               ),
+          //               SizedBox(
+          //                 width: 10,
+          //               ),
+          //               Text(
+          //                 '没有最近播放',
+          //                 style: TextStyle(fontSize: 20),
+          //               ),
+          //             ]),
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
@@ -304,15 +304,14 @@ class _FilePageState extends State<FilePage> {
     // }
     if (!context.mounted) return;
     AppStorage().closeMedia();
-    AppStorage()
-        .openMedia(PlayItem(source: source, cover: null, title: source));
-    Navigator.of(context, rootNavigator: true)
-        .push(
-      MaterialPageRoute(
-        builder: (context) => const MPlayer(),
-      ),
-    )
-        .then((value) {
+    AppStorage().openMedia(
+      PlayItem(source: source, cover: null, title: source),
+    );
+
+    pushRootPage(
+      context,
+      const MPlayer(),
+    ).then((value) {
       AppStorage().updateStatus();
     });
   }

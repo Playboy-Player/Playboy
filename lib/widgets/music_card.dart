@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
-import 'package:playboy/widgets/menu.dart';
+import 'package:playboy/widgets/menu_item.dart';
 import 'package:playboy/widgets/playlist_picker.dart';
 
 class MusicCard extends StatelessWidget {
@@ -132,7 +132,7 @@ class MusicListCard extends StatelessWidget {
                     ? Ink(
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(12),
                           color: colorScheme.secondaryContainer,
                         ),
                         child: Icon(
@@ -144,7 +144,7 @@ class MusicListCard extends StatelessWidget {
                     : Ink(
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(12),
                           color: colorScheme.secondaryContainer,
                           image: DecorationImage(
                             fit: BoxFit.cover,
@@ -166,7 +166,12 @@ class MusicListCard extends StatelessWidget {
           Expanded(
             child: Text(
               info.title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 18,
+                // fontWeight: FontWeight.w500,
+              ),
             ),
           ),
           Align(
@@ -225,38 +230,28 @@ List<Widget> _buildMenuItems(
     BuildContext context, ColorScheme colorScheme, PlayItem item) {
   return [
     const SizedBox(height: 10),
-    buildMenuItem(
-      Icons.play_circle_outline_rounded,
-      const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 6),
-        child: Text('播放'),
-      ),
-      () {
+    MMenuItem(
+      icon: Icons.play_circle_outline_rounded,
+      label: '播放',
+      onPressed: () {
         AppStorage().closeMedia();
         AppStorage().openMedia(item);
       },
     ),
-    buildMenuItem(
-      Icons.last_page,
-      const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 6),
-        child: Text('最后播放'),
-      ),
-      () {},
+    const MMenuItem(
+      icon: Icons.last_page,
+      label: '最后播放',
+      onPressed: null,
     ),
-    buildMenuItem(
-      Icons.add_circle_outline,
-      const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 6),
-        child: Text('添加到播放列表'),
-      ),
-      () {
+    MMenuItem(
+      icon: Icons.add_circle_outline,
+      label: '添加到播放列表',
+      onPressed: () {
         showDialog(
-          barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
           useRootNavigator: false,
           context: context,
           builder: (BuildContext context) => AlertDialog(
-            surfaceTintColor: Colors.transparent,
+            // surfaceTintColor: Colors.transparent,
             title: const Text('添加到播放列表'),
             content: SizedBox(
               width: 300,
@@ -287,21 +282,15 @@ List<Widget> _buildMenuItems(
       },
     ),
     const Divider(),
-    buildMenuItem(
-      Icons.design_services_outlined,
-      const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 6),
-        child: Text('修改封面'),
-      ),
-      null,
+    const MMenuItem(
+      icon: Icons.design_services_outlined,
+      label: '修改封面',
+      onPressed: null,
     ),
-    buildMenuItem(
-      Icons.info_outline,
-      const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 6),
-        child: Text('属性'),
-      ),
-      null,
+    const MMenuItem(
+      icon: Icons.info_outline,
+      label: '属性',
+      onPressed: null,
     ),
     const SizedBox(height: 10),
   ];

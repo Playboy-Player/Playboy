@@ -35,7 +35,7 @@ class _ExtensionSettingsState extends State<ExtensionSettings> {
           SwitchListTile(
             tileColor: AppStorage().settings.enableBvTools
                 ? colorScheme.primaryContainer
-                : colorScheme.primaryContainer.withOpacity(0.2),
+                : colorScheme.primaryContainer.withValues(alpha: 0.2),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             title: Container(
@@ -62,7 +62,6 @@ class _ExtensionSettingsState extends State<ExtensionSettings> {
                   onTap: () {
                     editingController.clear();
                     showDialog(
-                      barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
                       useRootNavigator: false,
                       context: context,
                       builder: (BuildContext context) => AlertDialog(
@@ -231,7 +230,6 @@ class _ExtensionSettingsState extends State<ExtensionSettings> {
   //                 editingController.clear();
 
   //                 showDialog(
-  //                   barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
   //                   useRootNavigator: false,
   //                   context: context,
   //                   builder: (BuildContext context) => AlertDialog(

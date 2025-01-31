@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/utils/route.dart';
 import 'package:playboy/pages/media/m_player.dart';
 import 'package:playboy/widgets/playlist_picker.dart';
 
@@ -28,13 +29,10 @@ class VideoCard extends StatelessWidget {
                 await AppStorage().closeMedia().then((value) {
                   if (!context.mounted) return;
                   AppStorage().openMedia(info);
-                  Navigator.of(context, rootNavigator: true)
-                      .push(
-                    MaterialPageRoute(
-                      builder: (context) => const MPlayer(),
-                    ),
-                  )
-                      .then((value) {
+                  pushRootPage(
+                    context,
+                    const MPlayer(),
+                  ).then((value) {
                     AppStorage().updateStatus();
                   });
                 });
@@ -97,13 +95,10 @@ class VideoListCard extends StatelessWidget {
         await AppStorage().closeMedia().then((value) {
           if (!context.mounted) return;
           AppStorage().openMedia(info);
-          Navigator.of(context, rootNavigator: true)
-              .push(
-            MaterialPageRoute(
-              builder: (context) => const MPlayer(),
-            ),
-          )
-              .then((value) {
+          pushRootPage(
+            context,
+            const MPlayer(),
+          ).then((value) {
             AppStorage().updateStatus();
           });
         });
@@ -163,10 +158,9 @@ class VideoListCard extends StatelessWidget {
                   if (!context.mounted) return;
                   AppStorage().openMedia(info);
 
-                  Navigator.of(context, rootNavigator: true).push(
-                    MaterialPageRoute(
-                      builder: (context) => const MPlayer(),
-                    ),
+                  pushRootPage(
+                    context,
+                    const MPlayer(),
                   );
                 });
               },
@@ -182,11 +176,10 @@ class VideoListCard extends StatelessWidget {
               tooltip: '添加到播放列表',
               onPressed: () {
                 showDialog(
-                  barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
                   useRootNavigator: false,
                   context: context,
                   builder: (BuildContext context) => AlertDialog(
-                    surfaceTintColor: Colors.transparent,
+                    // surfaceTintColor: Colors.transparent,
                     title: const Text('添加到播放列表'),
                     content: SizedBox(
                       width: 300,

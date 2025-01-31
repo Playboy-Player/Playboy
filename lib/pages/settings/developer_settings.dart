@@ -9,7 +9,7 @@ class DeveloperSettings extends StatefulWidget {
 }
 
 class DeveloperSettingsState extends State<DeveloperSettings> {
-  final TextEditingController _controller = TextEditingController();
+  // final TextEditingController _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {

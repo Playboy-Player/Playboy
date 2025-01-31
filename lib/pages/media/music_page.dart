@@ -51,7 +51,7 @@ class _MusicPageState extends State<MusicPage> {
     final cols = max((width / 160).round(), 2);
     late final colorScheme = Theme.of(context).colorScheme;
     late final backgroundColor = Color.alphaBlend(
-        colorScheme.primary.withOpacity(0.08), colorScheme.surface);
+        colorScheme.primary.withValues(alpha: 0.08), colorScheme.surface);
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -123,19 +123,18 @@ class _MusicPageState extends State<MusicPage> {
           ),
           loaded
               ? (playitems.isEmpty
-                  ? SliverToBoxAdapter(
+                  ? const SliverToBoxAdapter(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: EdgeInsets.symmetric(horizontal: 16),
                         child: Card(
                           elevation: 0,
                           shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                              color: Theme.of(context).colorScheme.outline,
-                            ),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(20)),
+                            // side: BorderSide(
+                            //   color: Theme.of(context).colorScheme.outline,
+                            // ),
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
-                          child: const SizedBox(
+                          child: SizedBox(
                             height: 200,
                             child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -178,7 +177,7 @@ class _MusicPageState extends State<MusicPage> {
                               delegate: SliverChildBuilderDelegate(
                                 (context, index) {
                                   return SizedBox(
-                                    height: 70,
+                                    height: 60,
                                     child:
                                         MusicListCard(info: playitems[index]),
                                   );

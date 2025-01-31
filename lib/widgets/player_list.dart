@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:playboy/backend/models/playitem.dart';
 
 class PlayerListCard extends StatelessWidget {
-  const PlayerListCard(
-      {super.key, required this.info, required this.isPlaying});
+  const PlayerListCard({
+    super.key,
+    required this.info,
+    required this.isPlaying,
+  });
   final PlayItem info;
   final bool isPlaying;
 
@@ -22,7 +25,7 @@ class PlayerListCard extends StatelessWidget {
                   ? Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(10),
                         color: colorScheme.secondaryContainer,
                       ),
                       child: Icon(
@@ -34,7 +37,7 @@ class PlayerListCard extends StatelessWidget {
                   : Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(10),
                         color: colorScheme.secondaryContainer,
                         image: DecorationImage(
                           fit: BoxFit.cover,
@@ -49,13 +52,14 @@ class PlayerListCard extends StatelessWidget {
           width: 10,
         ),
         Expanded(
-            child: Text(
-          info.title,
-          style: TextStyle(
-            fontSize: 14,
-            color: isPlaying ? colorScheme.primary : null,
+          child: Text(
+            info.title,
+            style: TextStyle(
+              fontSize: 14,
+              color: isPlaying ? colorScheme.primary : null,
+            ),
           ),
-        )),
+        ),
       ],
     );
   }

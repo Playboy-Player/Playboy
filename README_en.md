@@ -138,8 +138,6 @@ Doctor summary (to see all details, run flutter doctor -v):
 [✓] Network resources
 ```
 
-It is recommended to run the project in [Android Studio](https://developer.android.com/studio?hl=zh-cn#get-android-studio).
-
 ## Contributing to the Project
 
 If you encounter bugs or would like to request features, please [create a new issue](https://github.com/Playboy-Player/Playboy/issues/new).  

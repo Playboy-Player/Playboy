@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:media_kit/media_kit.dart';
-import 'package:playboy/backend/hash.dart';
+import 'package:playboy/backend/utils/hash.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:path/path.dart';
@@ -67,7 +67,9 @@ class LibraryHelper {
             if (vis.contains(item.path)) continue;
             q.add(item.path);
           } else if (supportFormats.contains(extension(item.path))) {
-            if (AppStorage().settings.getCoverOnScan) await saveThumbnail(item.path);
+            if (AppStorage().settings.getCoverOnScan) {
+              await saveThumbnail(item.path);
+            }
             var hashedPath = hashPath(item.path);
             var outputPath = "$thumbnailsPath\\$hashedPath.jpg";
             res.add(

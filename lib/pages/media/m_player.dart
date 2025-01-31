@@ -7,6 +7,7 @@ import 'package:path/path.dart' as p;
 import 'package:playboy/backend/keymap_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/utils/time_format.dart';
 import 'package:playboy/pages/media/video_fullscreen.dart';
 import 'package:playboy/widgets/player_list.dart';
 import 'package:playboy/widgets/uni_image.dart';
@@ -52,7 +53,9 @@ class MPlayerState extends State<MPlayer> {
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
     late final backgroundColor = Color.alphaBlend(
-        colorScheme.primary.withOpacity(0.04), colorScheme.surface);
+      colorScheme.primary.withValues(alpha: 0.04),
+      colorScheme.surface,
+    );
     return KeyboardListener(
       autofocus: true,
       focusNode: _focusNode,
@@ -97,26 +100,39 @@ class MPlayerState extends State<MPlayer> {
                 children: [
                   // Text(
                   //     '${AppStorage().position.inSeconds ~/ 3600}:${(AppStorage().position.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().position.inSeconds % 60).toString().padLeft(2, '0')}'),
-                  StreamBuilder(
-                      stream: AppStorage().playboy.stream.position,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return Text(
-                              '${snapshot.data!.inSeconds ~/ 3600}:${(snapshot.data!.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(snapshot.data!.inSeconds % 60).toString().padLeft(2, '0')}');
-                        } else {
-                          return Text(
-                              '${AppStorage().position.inSeconds ~/ 3600}:${(AppStorage().position.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().position.inSeconds % 60).toString().padLeft(2, '0')}');
-                        }
-                      }),
+                  SizedBox(
+                    width: 60,
+                    child: StreamBuilder(
+                        stream: AppStorage().playboy.stream.position,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Text(
+                              getTimeStr(snapshot.data!),
+                              // '${snapshot.data!.inSeconds ~/ 3600}:${(snapshot.data!.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(snapshot.data!.inSeconds % 60).toString().padLeft(2, '0')}',
+                            );
+                          } else {
+                            return Text(
+                              getTimeStr(AppStorage().position),
+                              // '${AppStorage().position.inSeconds ~/ 3600}:${(AppStorage().position.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().position.inSeconds % 60).toString().padLeft(2, '0')}',
+                            );
+                          }
+                        }),
+                  ),
                   Expanded(child: _buildSeekbar()),
-                  Text(
-                      '${AppStorage().duration.inSeconds ~/ 3600}:${(AppStorage().duration.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().duration.inSeconds % 60).toString().padLeft(2, '0')}')
+                  Container(
+                    alignment: Alignment.centerRight,
+                    width: 60,
+                    child: Text(
+                      getTimeStr(AppStorage().duration),
+                      // '${AppStorage().duration.inSeconds ~/ 3600}:${(AppStorage().duration.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().duration.inSeconds % 60).toString().padLeft(2, '0')}',
+                    ),
+                  )
                 ],
               ),
             ),
             AnimatedContainer(
               duration: const Duration(milliseconds: 100),
-              height: _videoMode ? 60 : 100,
+              height: _videoMode ? 50 : 80,
               child: _buildControlbar(colorScheme),
             ),
             const SizedBox(
@@ -456,9 +472,9 @@ class MPlayerState extends State<MPlayer> {
           icon: AppStorage().shuffle
               ? const Icon(Icons.shuffle_on)
               : const Icon(Icons.shuffle)),
-      const SizedBox(
-        width: 10,
-      ),
+      // const SizedBox(
+      //   width: 10,
+      // ),
       IconButton(
           onPressed: () {
             if (AppStorage().playboy.state.playlistMode ==
@@ -476,7 +492,7 @@ class MPlayerState extends State<MPlayer> {
         width: 10,
       ),
       IconButton.filledTonal(
-          iconSize: 30,
+          // iconSize: 25,
           onPressed: () {
             AppStorage().playboy.previous();
           },
@@ -489,9 +505,9 @@ class MPlayerState extends State<MPlayer> {
           backgroundColor: colorScheme.secondary,
           foregroundColor: colorScheme.onSecondary,
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         ),
-        iconSize: 40,
+        iconSize: 32,
         onPressed: () {
           setState(() {
             AppStorage().playboy.playOrPause();
@@ -519,7 +535,7 @@ class MPlayerState extends State<MPlayer> {
         width: 10,
       ),
       IconButton.filledTonal(
-          iconSize: 30,
+          // iconSize: 25,
           onPressed: () {
             AppStorage().playboy.next();
           },
@@ -537,9 +553,9 @@ class MPlayerState extends State<MPlayer> {
           });
         },
       ),
-      const SizedBox(
-        width: 10,
-      ),
+      // const SizedBox(
+      //   width: 10,
+      // ),
       IconButton(
           onPressed: !_videoMode
               ? null

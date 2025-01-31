@@ -8,6 +8,7 @@ import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/l10n/i10n.dart';
 import 'package:playboy/pages/playlist/playlist_detail.dart';
+import 'package:playboy/widgets/menu_item.dart';
 
 class PlaylistPage extends StatefulWidget {
   const PlaylistPage({super.key});
@@ -43,7 +44,7 @@ class PlaylistState extends State<PlaylistPage> {
     final cols = max((width / 180).round(), 2);
     late final colorScheme = Theme.of(context).colorScheme;
     late final backgroundColor = Color.alphaBlend(
-        colorScheme.primary.withOpacity(0.08), colorScheme.surface);
+        colorScheme.primary.withValues(alpha: 0.08), colorScheme.surface);
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -80,11 +81,10 @@ class PlaylistState extends State<PlaylistPage> {
                   onPressed: () {
                     _editingController.clear();
                     showDialog(
-                      barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
                       useRootNavigator: false,
                       context: context,
                       builder: (BuildContext context) => AlertDialog(
-                        surfaceTintColor: Colors.transparent,
+                        // surfaceTintColor: Colors.transparent,
                         title: Text(context.l10n.newPlaylist),
                         content: TextField(
                           autofocus: true,
@@ -167,12 +167,11 @@ class PlaylistState extends State<PlaylistPage> {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Card(
                           elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                              color: Theme.of(context).colorScheme.outline,
-                            ),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(20)),
+                          shape: const RoundedRectangleBorder(
+                            // side: BorderSide(
+                            //   color: Theme.of(context).colorScheme.outline,
+                            // ),
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
                           child: SizedBox(
                             height: 200,
@@ -246,7 +245,7 @@ class PlaylistState extends State<PlaylistPage> {
                           : SliverList.builder(
                               itemBuilder: (context, index) {
                                 return SizedBox(
-                                  height: 80,
+                                  height: 60,
                                   child: buildPlaylistListCard(
                                     index,
                                     colorScheme,
@@ -348,7 +347,7 @@ class PlaylistState extends State<PlaylistPage> {
       focusColor: Colors.transparent,
       borderRadius: BorderRadius.circular(20),
       onTap: () async {
-        final delete = await Navigator.push(
+        Navigator.push(
           context,
           // MaterialPageRoute(
           //     builder: (context) =>
@@ -360,11 +359,6 @@ class PlaylistState extends State<PlaylistPage> {
             reverseTransitionDuration: Duration.zero,
           ),
         );
-        if (delete != null && delete == true) {
-          LibraryHelper.deletePlaylist(AppStorage().playlists[index]);
-          AppStorage().playlists.removeAt(index);
-          setState(() {});
-        }
       },
       child: Row(
         children: [
@@ -376,7 +370,7 @@ class PlaylistState extends State<PlaylistPage> {
                     ? Ink(
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(12),
                           color: colorScheme.secondaryContainer,
                         ),
                         child: Icon(
@@ -388,7 +382,7 @@ class PlaylistState extends State<PlaylistPage> {
                     : Ink(
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(12),
                           color: colorScheme.secondaryContainer,
                           image: DecorationImage(
                             fit: BoxFit.cover,
@@ -408,10 +402,13 @@ class PlaylistState extends State<PlaylistPage> {
             width: 10,
           ),
           Expanded(
-              child: Text(
-            AppStorage().playlists[index].title,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-          )),
+            child: Text(
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              AppStorage().playlists[index].title,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+            ),
+          ),
           Align(
             alignment: Alignment.centerRight,
             child: IconButton(
@@ -462,39 +459,33 @@ class PlaylistState extends State<PlaylistPage> {
     );
   }
 
-  Widget _buildMenuItem(IconData icon, Widget label, Function()? onPressed) {
-    return MenuItemButton(
-      leadingIcon: Icon(
-        icon,
-        size: 18,
-      ),
-      onPressed: onPressed,
-      child: label,
-    );
-  }
+  // Widget _buildMenuItem(IconData icon, Widget label, Function()? onPressed) {
+  //   return MenuItemButton(
+  //     leadingIcon: Icon(
+  //       icon,
+  //       size: 18,
+  //     ),
+  //     onPressed: onPressed,
+  //     child: label,
+  //   );
+  // }
 
   List<Widget> _buildMenuItems(
       BuildContext context, ColorScheme colorScheme, int index) {
     return [
       const SizedBox(height: 10),
-      _buildMenuItem(
-        Icons.play_circle_outline_rounded,
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6),
-          child: Text(context.l10n.play),
-        ),
-        () {
+      MMenuItem(
+        icon: Icons.play_circle_outline_rounded,
+        label: context.l10n.play,
+        onPressed: () {
           AppStorage().closeMedia();
           AppStorage().openPlaylist(AppStorage().playlists[index], false);
         },
       ),
-      _buildMenuItem(
-        Icons.shuffle,
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6),
-          child: Text(context.l10n.shuffle),
-        ),
-        () {
+      MMenuItem(
+        icon: Icons.shuffle,
+        label: context.l10n.shuffle,
+        onPressed: () {
           AppStorage().closeMedia();
           AppStorage().openPlaylist(
             AppStorage().playlists[index],
@@ -502,26 +493,21 @@ class PlaylistState extends State<PlaylistPage> {
           );
         },
       ),
-      _buildMenuItem(
-        Icons.add_circle_outline,
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6),
-          child: Text(context.l10n.addToPlaylist),
-        ),
-        () {
-          AppStorage().appendPlaylist(
-            AppStorage().playlists[index],
-          );
-        },
+      MMenuItem(
+        icon: Icons.add_circle_outline,
+        label: context.l10n.addToPlaylist,
+        onPressed: null,
+        // () {
+        //   AppStorage().appendPlaylist(
+        //     AppStorage().playlists[index],
+        //   );
+        // },
       ),
       const Divider(),
-      _buildMenuItem(
-        Icons.share,
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6),
-          child: Text(context.l10n.export),
-        ),
-        () async {
+      MMenuItem(
+        icon: Icons.share,
+        label: context.l10n.export,
+        onPressed: () async {
           final originalFile = File(
             '${AppStorage().dataPath}/playlists/${AppStorage().playlists[index].uuid}.json',
           );
@@ -545,13 +531,10 @@ class PlaylistState extends State<PlaylistPage> {
           }
         },
       ),
-      _buildMenuItem(
-        Icons.design_services_outlined,
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6),
-          child: Text(context.l10n.changeCover),
-        ),
-        () async {
+      MMenuItem(
+        icon: Icons.design_services_outlined,
+        label: context.l10n.changeCover,
+        onPressed: () async {
           String? coverPath =
               await FilePicker.platform.pickFiles(type: FileType.image).then(
             (result) {
@@ -574,15 +557,10 @@ class PlaylistState extends State<PlaylistPage> {
           }
         },
       ),
-      _buildMenuItem(
-        Icons.cleaning_services,
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6),
-          child: Text(
-            context.l10n.removeCover,
-          ),
-        ),
-        () async {
+      MMenuItem(
+        icon: Icons.cleaning_services,
+        label: context.l10n.removeCover,
+        onPressed: () async {
           setState(() {
             AppStorage().playlists[index].cover = null;
           });
@@ -594,23 +572,18 @@ class PlaylistState extends State<PlaylistPage> {
           }
         },
       ),
-      _buildMenuItem(
-        Icons.drive_file_rename_outline,
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6),
-          child: Text(context.l10n.rename),
-        ),
-        () {
+      MMenuItem(
+        icon: Icons.drive_file_rename_outline,
+        label: context.l10n.rename,
+        onPressed: () {
           _editingController.clear();
+          _editingController.text = AppStorage().playlists[index].title;
           showDialog(
-            barrierColor: colorScheme.surfaceTint.withOpacity(0.12),
             useRootNavigator: false,
             context: context,
             builder: (BuildContext context) => AlertDialog(
               surfaceTintColor: Colors.transparent,
-              title: Text(
-                '${context.l10n.rename} "${AppStorage().playlists[index].title}"',
-              ),
+              title: Text(context.l10n.rename),
               content: TextField(
                 autofocus: true,
                 maxLines: 1,
@@ -652,13 +625,10 @@ class PlaylistState extends State<PlaylistPage> {
           );
         },
       ),
-      _buildMenuItem(
-        Icons.delete_outline,
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6),
-          child: Text(context.l10n.delete),
-        ),
-        () {
+      MMenuItem(
+        icon: Icons.delete_outline,
+        label: context.l10n.delete,
+        onPressed: () {
           showDialog(
             context: context,
             builder: (BuildContext context) {

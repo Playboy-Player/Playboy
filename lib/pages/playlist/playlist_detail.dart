@@ -33,21 +33,21 @@ class PlaylistDetailState extends State<PlaylistDetail> {
         // title: const Text('所有列表'),
         scrolledUnderElevation: 0,
         backgroundColor: Theme.of(context).colorScheme.surface,
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.pop(context, true);
-            },
-            icon: const Icon(Icons.delete_outline),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.more_vert),
-          ),
-          const SizedBox(
-            width: 10,
-          )
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {
+        //       Navigator.pop(context, true);
+        //     },
+        //     icon: const Icon(Icons.delete_outline),
+        //   ),
+        //   IconButton(
+        //     onPressed: () {},
+        //     icon: const Icon(Icons.more_vert),
+        //   ),
+        //   const SizedBox(
+        //     width: 10,
+        //   )
+        // ],
       ),
       body: CustomScrollView(
         slivers: [
@@ -101,8 +101,7 @@ class PlaylistDetailState extends State<PlaylistDetail> {
                       children: [
                         Text(
                           widget.info.title,
-                          style: const TextStyle(
-                              fontSize: 36, fontWeight: FontWeight.w500),
+                          style: const TextStyle(fontSize: 30),
                         ),
                         const SizedBox(
                           height: 10,

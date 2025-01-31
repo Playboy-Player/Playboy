@@ -3,6 +3,7 @@ import 'package:path/path.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/utils/route.dart';
 import 'package:playboy/pages/media/m_player.dart';
 
 class FileCard extends StatelessWidget {
@@ -31,13 +32,10 @@ class FileCard extends StatelessWidget {
                   AppStorage().openMedia(
                       PlayItem(source: source, cover: null, title: source));
 
-                  Navigator.of(context, rootNavigator: true)
-                      .push(
-                    MaterialPageRoute(
-                      builder: (context) => const MPlayer(),
-                    ),
-                  )
-                      .then((value) {
+                  pushRootPage(
+                    context,
+                    const MPlayer(),
+                  ).then((value) {
                     AppStorage().updateStatus();
                   });
                 }

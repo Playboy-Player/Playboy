@@ -265,7 +265,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                   ),
-                  color: colorScheme.secondaryContainer.withOpacity(0.4),
+                  color: colorScheme.secondaryContainer.withValues(alpha: 0.4),
                   child: SizedBox(
                     height: 50,
                     child: Row(
@@ -335,7 +335,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                   ),
-                  color: colorScheme.secondaryContainer.withOpacity(0.4),
+                  color: colorScheme.secondaryContainer.withValues(alpha: 0.04),
                   child: SizedBox(
                     height: 50,
                     child: Row(
@@ -434,7 +434,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      color: colorScheme.secondaryContainer.withOpacity(0.4),
+      color: colorScheme.secondaryContainer.withValues(alpha: 0.4),
       child: SizedBox(
         height: 50,
         child: Row(

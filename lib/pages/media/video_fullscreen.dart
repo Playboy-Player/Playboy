@@ -54,7 +54,7 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
     late final backgroundColor = Color.alphaBlend(
-        colorScheme.primary.withOpacity(0.08), colorScheme.surface);
+        colorScheme.primary.withValues(alpha: 0.08), colorScheme.surface);
     return KeyboardListener(
       autofocus: true,
       focusNode: _focusNode,

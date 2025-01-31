@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:playboy/backend/constants.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/utils/route.dart';
 import 'package:playboy/l10n/i10n.dart';
 import 'package:playboy/pages/media/m_player.dart';
 import 'package:playboy/pages/media/music_page.dart';
@@ -54,7 +55,8 @@ class MikuMiku extends StatelessWidget {
             ),
             dialogTheme: DialogTheme(
               surfaceTintColor: Colors.transparent,
-              barrierColor: lightTheme.surfaceTint.withOpacity(0.12),
+              barrierColor: lightTheme.surfaceTint.withValues(alpha: 0.1),
+              shadowColor: Colors.black,
             ),
             appBarTheme: AppBarTheme(
               scrolledUnderElevation: 0,
@@ -62,8 +64,13 @@ class MikuMiku extends StatelessWidget {
             ),
             navigationRailTheme: NavigationRailThemeData(
               backgroundColor: Color.alphaBlend(
-                  lightTheme.primary.withOpacity(0.04), lightTheme.surface),
+                lightTheme.primary.withValues(alpha: 0.04),
+                lightTheme.surface,
+              ),
               indicatorColor: lightTheme.primaryContainer,
+            ),
+            iconButtonTheme: const IconButtonThemeData(
+              style: ButtonStyle(iconSize: WidgetStatePropertyAll(22)),
             ),
           ),
           darkTheme: ThemeData(
@@ -82,7 +89,8 @@ class MikuMiku extends StatelessWidget {
             ),
             dialogTheme: DialogTheme(
               surfaceTintColor: Colors.transparent,
-              barrierColor: darkTheme.surfaceTint.withOpacity(0.12),
+              barrierColor: darkTheme.surfaceTint.withValues(alpha: 0.1),
+              shadowColor: Colors.black,
             ),
             appBarTheme: AppBarTheme(
               scrolledUnderElevation: 0,
@@ -90,8 +98,13 @@ class MikuMiku extends StatelessWidget {
             ),
             navigationRailTheme: NavigationRailThemeData(
               backgroundColor: Color.alphaBlend(
-                  darkTheme.primary.withOpacity(0.04), darkTheme.surface),
+                darkTheme.primary.withValues(alpha: 0.04),
+                darkTheme.surface,
+              ),
               indicatorColor: darkTheme.primaryContainer,
+            ),
+            iconButtonTheme: const IconButtonThemeData(
+              style: ButtonStyle(iconSize: WidgetStatePropertyAll(22)),
             ),
           ),
           themeMode: value.settings.themeMode,
@@ -134,7 +147,9 @@ class _HomeState extends State<Home> {
     bool tabletUI = AppStorage().settings.tabletUI;
     late final colorScheme = Theme.of(context).colorScheme;
     late final backgroundColor = Color.alphaBlend(
-        colorScheme.primary.withOpacity(0.04), colorScheme.surface);
+      colorScheme.primary.withValues(alpha: 0.04),
+      colorScheme.surface,
+    );
     if (_miniMode) {
       return Scaffold(
         body: GestureDetector(
@@ -167,153 +182,146 @@ class _HomeState extends State<Home> {
       );
     }
     return Scaffold(
-      appBar: !AppStorage().settings.enableTitleBar
-          ? AppBar(
-              scrolledUnderElevation: 0,
-              backgroundColor: backgroundColor,
-              toolbarHeight: 10 + AppStorage().settings.titleBarOffset,
-            )
-          : AppBar(
-              scrolledUnderElevation: 0,
-              backgroundColor: backgroundColor,
-              flexibleSpace: Column(
-                children: [
-                  SizedBox(
-                    height: 8,
-                    child: MouseRegion(
-                      cursor: SystemMouseCursors.resizeUp,
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        onPanStart: (details) {
-                          windowManager.startResizing(ResizeEdge.top);
-                        },
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onPanStart: (details) {
-                        windowManager.startDragging();
-                      },
-                    ),
-                  )
-                ],
-              ),
-              toolbarHeight: 40,
-              title: GestureDetector(
+      appBar: AppBar(
+        scrolledUnderElevation: 0,
+        backgroundColor: backgroundColor,
+        flexibleSpace: Column(
+          children: [
+            SizedBox(
+              height: 8,
+              child: MouseRegion(
+                cursor: SystemMouseCursors.resizeUp,
+                child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onPanStart: (details) {
-                    windowManager.startDragging();
+                    windowManager.startResizing(ResizeEdge.top);
                   },
-                  child: Row(children: [
-                    Platform.isMacOS
-                        ? const SizedBox(width: 60)
-                        : IconButton(
-                            highlightColor: Colors.transparent,
-                            focusColor: Colors.transparent,
-                            hoverColor: Colors.transparent,
-                            splashColor: Colors.transparent,
-                            constraints: const BoxConstraints(),
-                            padding: EdgeInsets.zero,
-                            onPressed: () {
-                              if (!context.mounted) return;
-                              Navigator.of(context, rootNavigator: true).push(
-                                MaterialPageRoute(
-                                  builder: (context) => const MPlayer(),
-                                ),
-                              );
-                            },
-                            icon: const Icon(Constants.appIcon)),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: tabletUI
-                          ? StreamBuilder(
-                              stream: AppStorage().playboy.stream.playlist,
-                              builder: ((context, snapshot) {
-                                return Text(
-                                  AppStorage().playingTitle,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    // fontWeight: FontWeight.w500,
-                                  ),
-                                );
-                              }))
-                          : const SizedBox(),
-                    ),
-                  ])),
-              actions: [
-                IconButton(
-                    hoverColor: Colors.transparent,
-                    onPressed: () {
-                      // setState(() {
-                      //   showMediaCard = !showMediaCard;
-                      // });
-                      if (_miniMode) {
-                        windowManager.setResizable(true);
-                        windowManager.setMinimumSize(const Size(360, 500));
-                        windowManager.setSize(const Size(900, 700));
-                        windowManager.setAlwaysOnTop(false);
-                        windowManager.center();
-                      } else {
-                        windowManager.setResizable(false);
-                        windowManager.setMinimumSize(const Size(300, 120));
-                        windowManager.setSize(const Size(300, 120));
-                        windowManager.setAlwaysOnTop(true);
-                      }
-                      setState(() {
-                        _miniMode = !_miniMode;
-                      });
-                    },
-                    icon: const Icon(
-                      Icons.headset_outlined,
-                    )),
-                if (Platform.isMacOS)
-                  IconButton(
+                ),
+              ),
+            ),
+            Expanded(
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onPanStart: (details) {
+                  windowManager.startDragging();
+                },
+              ),
+            )
+          ],
+        ),
+        toolbarHeight: 40,
+        title: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onPanStart: (details) {
+              windowManager.startDragging();
+            },
+            child: Row(children: [
+              Platform.isMacOS
+                  ? const SizedBox(width: 60)
+                  : IconButton(
+                      highlightColor: Colors.transparent,
+                      focusColor: Colors.transparent,
                       hoverColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                      constraints: const BoxConstraints(),
                       padding: EdgeInsets.zero,
                       onPressed: () {
                         if (!context.mounted) return;
-                        Navigator.of(context, rootNavigator: true).push(
-                          MaterialPageRoute(
-                            builder: (context) => const MPlayer(),
-                          ),
+                        pushRootPage(
+                          context,
+                          const MPlayer(),
                         );
                       },
-                      icon: const Icon(Icons.play_circle_outlined)),
-                const SizedBox(width: 10),
-                if (!Platform.isMacOS)
-                  IconButton(
-                      hoverColor: Colors.transparent,
-                      iconSize: 20,
-                      onPressed: () {
-                        windowManager.minimize();
-                      },
-                      icon: const Icon(Icons.minimize)),
-                if (!Platform.isMacOS)
-                  IconButton(
-                      hoverColor: Colors.transparent,
-                      iconSize: 20,
-                      onPressed: () async {
-                        if (await windowManager.isMaximized()) {
-                          windowManager.unmaximize();
-                        } else {
-                          windowManager.maximize();
-                        }
-                      },
-                      icon: const Icon(Icons.crop_square)),
-                if (!Platform.isMacOS)
-                  IconButton(
-                      hoverColor: Colors.transparent,
-                      iconSize: 20,
-                      onPressed: () {
-                        windowManager.close();
-                      },
-                      icon: const Icon(Icons.close)),
-              ],
+                      icon: const Icon(Constants.appIcon)),
+              const SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                child: tabletUI
+                    ? StreamBuilder(
+                        stream: AppStorage().playboy.stream.playlist,
+                        builder: ((context, snapshot) {
+                          return Text(
+                            AppStorage().playingTitle,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              // fontWeight: FontWeight.w500,
+                            ),
+                          );
+                        }))
+                    : const SizedBox(),
+              ),
+            ])),
+        actions: [
+          IconButton(
+              hoverColor: Colors.transparent,
+              onPressed: () {
+                // setState(() {
+                //   showMediaCard = !showMediaCard;
+                // });
+                if (_miniMode) {
+                  windowManager.setResizable(true);
+                  windowManager.setMinimumSize(const Size(360, 500));
+                  windowManager.setSize(const Size(900, 700));
+                  windowManager.setAlwaysOnTop(false);
+                  windowManager.center();
+                } else {
+                  windowManager.setResizable(false);
+                  windowManager.setMinimumSize(const Size(300, 120));
+                  windowManager.setSize(const Size(300, 120));
+                  windowManager.setAlwaysOnTop(true);
+                }
+                setState(() {
+                  _miniMode = !_miniMode;
+                });
+              },
+              icon: const Icon(
+                Icons.headset_outlined,
+              )),
+          if (Platform.isMacOS)
+            IconButton(
+              hoverColor: Colors.transparent,
+              padding: EdgeInsets.zero,
+              onPressed: () {
+                if (!context.mounted) return;
+                pushRootPage(
+                  context,
+                  const MPlayer(),
+                );
+              },
+              icon: const Icon(Icons.play_circle_outlined),
             ),
+          const SizedBox(width: 10),
+          if (!Platform.isMacOS)
+            IconButton(
+                hoverColor: Colors.transparent,
+                iconSize: 20,
+                onPressed: () {
+                  windowManager.minimize();
+                },
+                icon: const Icon(Icons.minimize)),
+          if (!Platform.isMacOS)
+            IconButton(
+                hoverColor: Colors.transparent,
+                iconSize: 20,
+                onPressed: () async {
+                  if (await windowManager.isMaximized()) {
+                    windowManager.unmaximize();
+                  } else {
+                    windowManager.maximize();
+                  }
+                },
+                icon: const Icon(Icons.crop_square)),
+          if (!Platform.isMacOS)
+            IconButton(
+                hoverColor: Colors.transparent,
+                iconSize: 20,
+                onPressed: () {
+                  windowManager.close();
+                },
+                icon: const Icon(Icons.close)),
+        ],
+      ),
       body: tabletUI
           ? Row(
               children: <Widget>[
@@ -344,14 +352,11 @@ class _HomeState extends State<Home> {
                               Icons.filter_vintage,
                             ),
                             onPressed: () {
-                              Navigator.push(
+                              pushPage(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (context) => const SettingsPage(),
-                                ),
+                                const SettingsPage(),
                               ).then((value) {
                                 AppStorage().updateFilePage();
-                              }).then((value) {
                                 setState(() {});
                               });
                             },
@@ -433,10 +438,9 @@ class _HomeState extends State<Home> {
                 InkWell(
                   onTap: () {
                     if (!context.mounted) return;
-                    Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute(
-                        builder: (context) => const MPlayer(),
-                      ),
+                    pushRootPage(
+                      context,
+                      const MPlayer(),
                     );
                   },
                   child: StreamBuilder(
@@ -551,7 +555,7 @@ class _HomeState extends State<Home> {
                         radius: 2,
                         // focalRadius: 1,
                         colors: [
-                          Colors.black.withOpacity(0.6),
+                          Colors.black.withValues(alpha: 0.6),
                           // Colors.black.withOpacity(0.1)
                           Colors.transparent
                         ],
@@ -709,7 +713,7 @@ class _HomeState extends State<Home> {
                       radius: 1.4,
                       // focalRadius: 1,
                       colors: [
-                        Colors.black.withOpacity(0.6),
+                        Colors.black.withValues(alpha: 0.6),
                         // Colors.black.withOpacity(0.1)
                         Colors.transparent
                       ],

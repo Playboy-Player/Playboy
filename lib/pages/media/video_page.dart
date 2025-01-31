@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/utils/route.dart';
 import 'package:playboy/pages/media/m_player.dart';
+import 'package:playboy/widgets/menu_item.dart';
 import 'package:playboy/widgets/playlist_picker.dart';
 import 'package:playboy/widgets/video_card.dart';
 
@@ -53,7 +55,7 @@ class _VideoPageState extends State<VideoPage> {
     final cols = max((width / 180).round(), 2);
     late final colorScheme = Theme.of(context).colorScheme;
     late final backgroundColor = Color.alphaBlend(
-        colorScheme.primary.withOpacity(0.08), colorScheme.surface);
+        colorScheme.primary.withValues(alpha: 0.08), colorScheme.surface);
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -125,19 +127,18 @@ class _VideoPageState extends State<VideoPage> {
           ),
           loaded
               ? (playitems.isEmpty
-                  ? SliverToBoxAdapter(
+                  ? const SliverToBoxAdapter(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: EdgeInsets.symmetric(horizontal: 16),
                         child: Card(
                           elevation: 0,
                           shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                              color: Theme.of(context).colorScheme.outline,
-                            ),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(20)),
+                            // side: BorderSide(
+                            //   color: Theme.of(context).colorScheme.outline,
+                            // ),
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
-                          child: const SizedBox(
+                          child: SizedBox(
                             height: 200,
                             child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -192,10 +193,10 @@ class _VideoPageState extends State<VideoPage> {
                                         ),
                                       ),
                                       menuChildren: [
-                                        MenuItemButton(
-                                          leadingIcon: const Icon(
-                                              Icons.play_arrow_outlined),
-                                          child: const Text('播放'),
+                                        const SizedBox(height: 10),
+                                        MMenuItem(
+                                          icon: Icons.play_arrow_outlined,
+                                          label: '播放',
                                           onPressed: () async {
                                             await AppStorage()
                                                 .closeMedia()
@@ -204,44 +205,39 @@ class _VideoPageState extends State<VideoPage> {
                                               AppStorage()
                                                   .openMedia(playitems[index]);
 
-                                              Navigator.of(context,
-                                                      rootNavigator: true)
-                                                  .push(
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const MPlayer(),
-                                                ),
+                                              // Navigator.of(
+                                              //   context,
+                                              //   rootNavigator: true,
+                                              // ).push(
+                                              //   MaterialPageRoute(
+                                              //     builder: (context) =>
+                                              //         const MPlayer(),
+                                              //   ),
+                                              // );
+                                              pushRootPage(
+                                                context,
+                                                const MPlayer(),
                                               );
                                             });
                                           },
                                         ),
-                                        MenuItemButton(
-                                          leadingIcon:
-                                              const Icon(Icons.menu_open),
-                                          child: const Text('插播'),
-                                          onPressed: () {},
+                                        const MMenuItem(
+                                          icon: Icons.last_page,
+                                          label: '最后播放',
+                                          onPressed: null,
                                         ),
-                                        MenuItemButton(
-                                          leadingIcon:
-                                              const Icon(Icons.last_page),
-                                          child: const Text('最后播放'),
-                                          onPressed: () {},
-                                        ),
-                                        MenuItemButton(
-                                          leadingIcon: const Icon(
-                                              Icons.add_circle_outline),
-                                          child: const Text('添加到播放列表'),
+                                        const Divider(),
+                                        MMenuItem(
+                                          icon: Icons.add_circle_outline,
+                                          label: '添加到播放列表',
                                           onPressed: () {
                                             showDialog(
-                                              barrierColor: colorScheme
-                                                  .surfaceTint
-                                                  .withOpacity(0.12),
                                               useRootNavigator: false,
                                               context: context,
                                               builder: (BuildContext context) =>
                                                   AlertDialog(
-                                                surfaceTintColor:
-                                                    Colors.transparent,
+                                                // surfaceTintColor:
+                                                //     Colors.transparent,
                                                 title: const Text('添加到播放列表'),
                                                 content: SizedBox(
                                                   width: 300,
@@ -282,6 +278,7 @@ class _VideoPageState extends State<VideoPage> {
                                             );
                                           },
                                         ),
+                                        const SizedBox(height: 10),
                                       ],
                                       child: VideoCard(info: playitems[index]),
                                     ),

@@ -38,7 +38,7 @@ class _AboutPageState extends State<AboutPage> {
                 bottomRight: Radius.circular(80),
               ),
             ),
-            color: colorScheme.primaryContainer.withOpacity(0.3),
+            color: colorScheme.primaryContainer.withValues(alpha: 0.3),
             child: SizedBox(
               height: 200,
               child: Row(
