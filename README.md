@@ -1,4 +1,4 @@
-# $Playboy$ $Media$ $Player$
+# Playboy Player
 
 [English version](./README_en.md)
 

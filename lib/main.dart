@@ -27,7 +27,7 @@ void main(List<String> arguments) async {
           : TitleBarStyle.normal,
     );
     windowManager.waitUntilReadyToShow(windowOptions, () async {
-      await windowManager.setHasShadow(false);
+      // await windowManager.setHasShadow(false);
       await windowManager.show();
       await windowManager.focus();
     });

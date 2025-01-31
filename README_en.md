@@ -1,4 +1,4 @@
-# $Playboy$ $Media$ $Player$
+# Playboy Player
 
 [中文版本](./README.md)
 

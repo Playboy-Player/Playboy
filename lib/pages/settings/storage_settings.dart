@@ -273,35 +273,41 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                         const SizedBox(
                           width: 10,
                         ),
-                        Text(
-                          AppStorage().settings.screenshotPath,
-                          style: TextStyle(
-                            color: colorScheme.onSecondaryContainer,
+                        Expanded(
+                          child: Text(
+                            AppStorage().settings.screenshotPath,
+                            style: TextStyle(
+                              overflow: TextOverflow.ellipsis,
+                              color: colorScheme.onSecondaryContainer,
+                            ),
                           ),
                         ),
-                        Expanded(
+                        SizedBox(
+                            width: 50,
                             child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            IconButton(
-                                onPressed: () async {
-                                  var res = await FilePicker.platform
-                                      .getDirectoryPath(lockParentWindow: true);
-                                  if (res != null) {
-                                    AppStorage().settings.screenshotPath = res;
-                                    AppStorage().saveSettings();
-                                    setState(() {});
-                                  }
-                                },
-                                icon: Icon(
-                                  Icons.edit,
-                                  color: colorScheme.onSecondaryContainer,
-                                )),
-                            const SizedBox(
-                              width: 10,
-                            )
-                          ],
-                        ))
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                IconButton(
+                                    onPressed: () async {
+                                      var res = await FilePicker.platform
+                                          .getDirectoryPath(
+                                              lockParentWindow: true);
+                                      if (res != null) {
+                                        AppStorage().settings.screenshotPath =
+                                            res;
+                                        AppStorage().saveSettings();
+                                        setState(() {});
+                                      }
+                                    },
+                                    icon: Icon(
+                                      Icons.edit,
+                                      color: colorScheme.onSecondaryContainer,
+                                    )),
+                                const SizedBox(
+                                  width: 10,
+                                )
+                              ],
+                            ))
                       ],
                     ),
                   ),
@@ -337,13 +343,17 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                         const SizedBox(
                           width: 10,
                         ),
-                        Text(
-                          AppStorage().settings.downloadPath,
-                          style: TextStyle(
-                            color: colorScheme.onSecondaryContainer,
+                        Expanded(
+                          child: Text(
+                            overflow: TextOverflow.ellipsis,
+                            AppStorage().settings.downloadPath,
+                            style: TextStyle(
+                              color: colorScheme.onSecondaryContainer,
+                            ),
                           ),
                         ),
-                        Expanded(
+                        SizedBox(
+                          width: 50,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
@@ -394,7 +404,10 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                 },
                 leading: const Icon(Icons.folder),
                 title: Text(context.l10n.openAppDataFolder),
-                subtitle: Text(AppStorage().dataPath),
+                subtitle: Text(
+                  AppStorage().dataPath,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ),
             SliverToBoxAdapter(
