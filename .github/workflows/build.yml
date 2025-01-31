@@ -92,7 +92,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: macos-build
-          path: build/macos/Build/Products/Release/playboy.app/
+          path: build/macos/Build/Products/Release/
 
   build-android:
     runs-on: ubuntu-latest

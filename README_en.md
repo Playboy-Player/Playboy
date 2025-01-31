@@ -2,7 +2,7 @@
 
 [中文版本](./README.md)
 
-> This project provides nightly builds for **android** and **Windows** through GitHub Actions, you can download [here](https://github.com/Playboy-Player/Playboy/actions).
+> This project provides nightly builds for **Windows**, **macOS** and **android** through GitHub Actions, you can download [here](https://github.com/Playboy-Player/Playboy/actions).
 
 A [Material You](https://m3.material.io/) style cross-platform media player developed with [Flutter](https://flutter.dev/).
 
