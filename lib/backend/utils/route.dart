@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
-Future<T> pushPage<T extends Object?>(BuildContext context, Widget page) async {
+Future<T> pushPage<T extends Object?>(
+  BuildContext context,
+  Widget page,
+) async {
   return await Navigator.of(
     context,
     rootNavigator: false,
@@ -12,7 +15,9 @@ Future<T> pushPage<T extends Object?>(BuildContext context, Widget page) async {
 }
 
 Future<T> pushRootPage<T extends Object?>(
-    BuildContext context, Widget page) async {
+  BuildContext context,
+  Widget page,
+) async {
   return await Navigator.of(
     context,
     rootNavigator: true,
