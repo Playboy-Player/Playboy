@@ -60,14 +60,15 @@ class _AboutPageState extends State<AboutPage> {
                       //   height: 12,
                       // ),
                       Text(
-                        'Playboy',
+                        Constants.appName,
                         style: TextStyle(
-                            fontSize: 40,
-                            color: colorScheme.primary,
-                            fontWeight: FontWeight.w500),
+                          fontSize: 40,
+                          color: colorScheme.primary,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                       Text(
-                        ' ${Constants.version} ${Constants.flag}',
+                        ' ${Constants.version}',
                         style: TextStyle(
                             color: colorScheme.primary,
                             fontWeight: FontWeight.w500),

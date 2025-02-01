@@ -24,89 +24,82 @@ class MikuMiku extends StatelessWidget {
 
   final String initMedia;
 
+  ThemeData _getThemeData(AppStorage value, ColorScheme colorScheme) {
+    return ThemeData(
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.windows: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.linux: CupertinoPageTransitionsBuilder(),
+        },
+      ),
+      fontFamily: value.settings.font != '' ? value.settings.font : null,
+      fontFamilyFallback: [value.settings.fallbackfont],
+      colorScheme: colorScheme,
+      tooltipTheme: TooltipThemeData(
+        decoration: BoxDecoration(
+          color: colorScheme.secondary,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        textStyle: TextStyle(
+          color: colorScheme.onSecondary,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      dialogTheme: DialogTheme(
+        surfaceTintColor: Colors.transparent,
+        barrierColor: colorScheme.surfaceTint.withValues(alpha: 0.1),
+        shadowColor: Colors.black,
+      ),
+      appBarTheme: AppBarTheme(
+        scrolledUnderElevation: 0,
+        backgroundColor: colorScheme.surface,
+      ),
+      navigationRailTheme: NavigationRailThemeData(
+        backgroundColor: Color.alphaBlend(
+          colorScheme.primary.withValues(alpha: 0.04),
+          colorScheme.surface,
+        ),
+        indicatorColor: colorScheme.primaryContainer,
+      ),
+      iconButtonTheme: const IconButtonThemeData(
+        style: ButtonStyle(
+          iconSize: WidgetStatePropertyAll(22),
+        ),
+      ),
+      menuTheme: MenuThemeData(
+        style: MenuStyle(
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<AppStorage>(
-      builder: (BuildContext context, AppStorage value, Widget? child) {
+      builder: (context, value, child) {
         MaterialColor themeColor = value.getColorTheme();
         var lightTheme = ColorScheme.fromSeed(
-            seedColor: themeColor, brightness: Brightness.light);
+          seedColor: themeColor,
+          brightness: Brightness.light,
+        );
         var darkTheme = ColorScheme.fromSeed(
-            seedColor: themeColor, brightness: Brightness.dark);
+          seedColor: themeColor,
+          brightness: Brightness.dark,
+        );
         return MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           locale: Locale(value.settings.language),
           debugShowCheckedModeBanner: false,
-          title: 'Playboy',
-          theme: ThemeData(
-            fontFamily: value.settings.font != '' ? value.settings.font : null,
-            fontFamilyFallback: [value.settings.fallbackfont],
-            colorScheme: lightTheme,
-            tooltipTheme: TooltipThemeData(
-              decoration: BoxDecoration(
-                color: lightTheme.secondary,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              textStyle: TextStyle(
-                color: lightTheme.onSecondary,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            dialogTheme: DialogTheme(
-              surfaceTintColor: Colors.transparent,
-              barrierColor: lightTheme.surfaceTint.withValues(alpha: 0.1),
-              shadowColor: Colors.black,
-            ),
-            appBarTheme: AppBarTheme(
-              scrolledUnderElevation: 0,
-              backgroundColor: lightTheme.surface,
-            ),
-            navigationRailTheme: NavigationRailThemeData(
-              backgroundColor: Color.alphaBlend(
-                lightTheme.primary.withValues(alpha: 0.04),
-                lightTheme.surface,
-              ),
-              indicatorColor: lightTheme.primaryContainer,
-            ),
-            iconButtonTheme: const IconButtonThemeData(
-              style: ButtonStyle(iconSize: WidgetStatePropertyAll(22)),
-            ),
-          ),
-          darkTheme: ThemeData(
-            fontFamily: value.settings.font != '' ? value.settings.font : null,
-            fontFamilyFallback: [value.settings.fallbackfont],
-            colorScheme: darkTheme,
-            tooltipTheme: TooltipThemeData(
-              decoration: BoxDecoration(
-                color: darkTheme.secondary,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              textStyle: TextStyle(
-                color: darkTheme.onSecondary,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            dialogTheme: DialogTheme(
-              surfaceTintColor: Colors.transparent,
-              barrierColor: darkTheme.surfaceTint.withValues(alpha: 0.1),
-              shadowColor: Colors.black,
-            ),
-            appBarTheme: AppBarTheme(
-              scrolledUnderElevation: 0,
-              backgroundColor: darkTheme.surface,
-            ),
-            navigationRailTheme: NavigationRailThemeData(
-              backgroundColor: Color.alphaBlend(
-                darkTheme.primary.withValues(alpha: 0.04),
-                darkTheme.surface,
-              ),
-              indicatorColor: darkTheme.primaryContainer,
-            ),
-            iconButtonTheme: const IconButtonThemeData(
-              style: ButtonStyle(iconSize: WidgetStatePropertyAll(22)),
-            ),
-          ),
+          title: Constants.appName,
+          theme: _getThemeData(value, lightTheme),
+          darkTheme: _getThemeData(value, darkTheme),
           themeMode: value.settings.themeMode,
           home: initMedia == '' ? const Home() : const MPlayer(),
         );
@@ -164,9 +157,9 @@ class _HomeState extends State<Home> {
                   ? _buildMediaCardContent(colorScheme)
                   : FutureBuilder(
                       future: ColorScheme.fromImageProvider(
-                        provider:
-                            UniImageProvider(url: AppStorage().playingCover!)
-                                .getImage(),
+                        provider: UniImageProvider(
+                          url: AppStorage().playingCover!,
+                        ).getImage(),
                       ),
                       builder: (context, snapshot) {
                         if (snapshot.hasData && snapshot.data != null) {

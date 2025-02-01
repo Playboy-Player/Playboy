@@ -1,9 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/l10n/i10n.dart';
+import 'package:playboy/widgets/cover.dart';
 import 'package:playboy/widgets/video_card.dart';
 
 class PlaylistDetail extends StatefulWidget {
@@ -63,32 +62,14 @@ class PlaylistDetailState extends State<PlaylistDetail> {
                 // crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   SizedBox(
-                    width: 140,
-                    child: AspectRatio(
-                      aspectRatio: 72 / 55,
-                      child: widget.info.cover == null
-                          ? Container(
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: colorScheme.secondaryContainer,
-                              ),
-                              child: Icon(
-                                Icons.playlist_play_rounded,
-                                color: colorScheme.onSecondaryContainer,
-                                size: 80,
-                              ),
-                            )
-                          : SizedBox(
-                              width: double.infinity,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: Image.file(
-                                  File(widget.info.cover!),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
+                    width: 110,
+                    child: MCover(
+                      aspectRatio: 1,
+                      cover: widget.info.cover,
+                      icon: Icons.playlist_play_rounded,
+                      iconSize: 60,
+                      borderRadius: 20,
+                      colorScheme: colorScheme,
                     ),
                   ),
                   const SizedBox(
@@ -101,7 +82,7 @@ class PlaylistDetailState extends State<PlaylistDetail> {
                       children: [
                         Text(
                           widget.info.title,
-                          style: const TextStyle(fontSize: 30),
+                          style: const TextStyle(fontSize: 26),
                         ),
                         const SizedBox(
                           height: 10,
@@ -110,8 +91,10 @@ class PlaylistDetailState extends State<PlaylistDetail> {
                           children: [
                             TextButton.icon(
                               style: ButtonStyle(
-                                  backgroundColor: WidgetStatePropertyAll(
-                                      colorScheme.primaryContainer)),
+                                backgroundColor: WidgetStatePropertyAll(
+                                  colorScheme.primaryContainer,
+                                ),
+                              ),
                               onPressed: () {
                                 AppStorage().closeMedia();
                                 AppStorage().openPlaylist(widget.info, false);
@@ -124,8 +107,10 @@ class PlaylistDetailState extends State<PlaylistDetail> {
                             ),
                             TextButton.icon(
                               style: ButtonStyle(
-                                  backgroundColor: WidgetStatePropertyAll(
-                                      colorScheme.primaryContainer)),
+                                backgroundColor: WidgetStatePropertyAll(
+                                  colorScheme.primaryContainer,
+                                ),
+                              ),
                               onPressed: () {
                                 AppStorage().closeMedia();
                                 AppStorage().openPlaylist(widget.info, true);

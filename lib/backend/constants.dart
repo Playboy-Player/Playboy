@@ -1,12 +1,11 @@
-import 'package:flutter/foundation.dart';
+// import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/models/maintainer.dart';
 
 class Constants {
   static const IconData appIcon = Icons.smart_display;
   static const String appName = 'Playboy';
-  static const String version = '2025.1';
-  static const String flag = kDebugMode ? 'debug' : 'release';
+  static const String version = 'βeta 2025.1';
 
   static List<Contributor> maintainers = [
     Contributor(

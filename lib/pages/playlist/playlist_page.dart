@@ -6,8 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/utils/route.dart';
+import 'package:playboy/backend/utils/time_format.dart';
 import 'package:playboy/l10n/i10n.dart';
 import 'package:playboy/pages/playlist/playlist_detail.dart';
+import 'package:playboy/widgets/empty_holder.dart';
+import 'package:playboy/widgets/interactive_wrapper.dart';
+import 'package:playboy/widgets/label_card.dart';
+import 'package:playboy/widgets/library_header.dart';
+import 'package:playboy/widgets/list_tile.dart';
+import 'package:playboy/widgets/loading.dart';
+import 'package:playboy/widgets/menu_button.dart';
 import 'package:playboy/widgets/menu_item.dart';
 
 class PlaylistPage extends StatefulWidget {
@@ -25,243 +34,194 @@ class PlaylistState extends State<PlaylistPage> {
   @override
   void initState() {
     super.initState();
-    _init();
-  }
-
-  void _init() async {
-    _gridview = !AppStorage().settings.playlistListview;
-    AppStorage().playlists.clear();
-    AppStorage().playlists.addAll(await LibraryHelper.loadPlaylists());
-    if (!mounted) return;
-    setState(() {
-      _loaded = true;
-    });
+    _loadLibrary();
   }
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final cols = max((width / 180).round(), 2);
-    late final colorScheme = Theme.of(context).colorScheme;
-    late final backgroundColor = Color.alphaBlend(
-        colorScheme.primary.withValues(alpha: 0.08), colorScheme.surface);
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
-            scrolledUnderElevation: 0,
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            flexibleSpace: FlexibleSpaceBar(
-              centerTitle: false,
-              titlePadding:
-                  const EdgeInsetsDirectional.only(start: 16, bottom: 16),
-              title: Text(
-                context.l10n.playlist,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    fontSize: 25,
-                    fontWeight: FontWeight.w500),
+          MLibraryHeader(
+            title: context.l10n.playlist,
+            actions: _buildLibraryActions(context),
+          ),
+          _buildLibraryview(context),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _buildLibraryActions(BuildContext context) {
+    late final colorScheme = Theme.of(context).colorScheme;
+    late final backgroundColor = Color.alphaBlend(
+      colorScheme.primary.withValues(alpha: 0.08),
+      colorScheme.surface,
+    );
+    return [
+      IconButton(
+        tooltip: context.l10n.newPlaylist,
+        hoverColor: backgroundColor,
+        onPressed: () {
+          _editingController.clear();
+          showDialog(
+            useRootNavigator: false,
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              // surfaceTintColor: Colors.transparent,
+              title: Text(context.l10n.newPlaylist),
+              content: TextField(
+                autofocus: true,
+                maxLines: 1,
+                controller: _editingController,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: context.l10n.name,
+                ),
+                onSubmitted: (value) {
+                  var pl = PlaylistItem(
+                    uuid: getCurrentTimeString(),
+                    items: [],
+                    title: value,
+                    cover: null,
+                  );
+                  LibraryHelper.savePlaylist(pl);
+                  setState(() {
+                    AppStorage().playlists.add(pl);
+                  });
+                  Navigator.pop(context);
+                },
               ),
-              // background:
-            ),
-            pinned: true,
-            expandedHeight: 80,
-            collapsedHeight: 60,
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(top: 10, bottom: 10),
-                child: FloatingActionButton(
-                  tooltip: context.l10n.newPlaylist,
-                  heroTag: 'new_list',
-                  elevation: 0,
-                  hoverElevation: 0,
-                  highlightElevation: 0,
-                  backgroundColor: colorScheme.surface,
-                  hoverColor: backgroundColor,
+              actions: <Widget>[
+                TextButton(
                   onPressed: () {
-                    _editingController.clear();
-                    showDialog(
-                      useRootNavigator: false,
-                      context: context,
-                      builder: (BuildContext context) => AlertDialog(
-                        // surfaceTintColor: Colors.transparent,
-                        title: Text(context.l10n.newPlaylist),
-                        content: TextField(
-                          autofocus: true,
-                          maxLines: 1,
-                          controller: _editingController,
-                          decoration: InputDecoration(
-                            border: const OutlineInputBorder(),
-                            labelText: context.l10n.name,
-                          ),
-                          onSubmitted: (value) {
-                            var pl = PlaylistItem(
-                              uuid: idGenerator(),
-                              items: [],
-                              title: value,
-                              cover: null,
-                            );
-                            LibraryHelper.savePlaylist(pl);
-                            setState(() {
-                              AppStorage().playlists.add(pl);
-                            });
-                            Navigator.pop(context);
-                          },
-                        ),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text(context.l10n.cancel),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              var pl = PlaylistItem(
-                                uuid: idGenerator(),
-                                items: [],
-                                title: _editingController.text,
-                                cover: null,
-                              );
-                              LibraryHelper.savePlaylist(pl);
-                              setState(() {
-                                AppStorage().playlists.add(pl);
-                              });
-                              Navigator.pop(context);
-                            },
-                            child: Text(context.l10n.ok),
-                          ),
-                        ],
-                      ),
+                    Navigator.pop(context);
+                  },
+                  child: Text(context.l10n.cancel),
+                ),
+                TextButton(
+                  onPressed: () {
+                    var pl = PlaylistItem(
+                      uuid: getCurrentTimeString(),
+                      items: [],
+                      title: _editingController.text,
+                      cover: null,
                     );
-                  },
-                  child: const Icon(Icons.add_circle_outline),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 10, bottom: 10, right: 10),
-                child: FloatingActionButton(
-                  heroTag: 'view_list',
-                  tooltip: context.l10n.toggleDisplayMode,
-                  elevation: 0,
-                  hoverElevation: 0,
-                  highlightElevation: 0,
-                  backgroundColor: colorScheme.surface,
-                  hoverColor: backgroundColor,
-                  onPressed: () {
+                    LibraryHelper.savePlaylist(pl);
                     setState(() {
-                      _gridview = !_gridview;
+                      AppStorage().playlists.add(pl);
                     });
+                    Navigator.pop(context);
                   },
-                  child: Icon(_gridview
-                      ? Icons.calendar_view_month
-                      : Icons.view_agenda_outlined),
+                  child: Text(context.l10n.ok),
                 ),
+              ],
+            ),
+          );
+        },
+        icon: Icon(
+          Icons.add_circle_outline,
+          color: colorScheme.onPrimaryContainer,
+        ),
+      ),
+      IconButton(
+        tooltip: '切换显示视图',
+        hoverColor: backgroundColor,
+        onPressed: () async {
+          setState(() {
+            _gridview = !_gridview;
+          });
+        },
+        icon: Icon(
+          _gridview ? Icons.calendar_view_month : Icons.view_agenda_outlined,
+          color: colorScheme.onPrimaryContainer,
+        ),
+      ),
+      const SizedBox(width: 10),
+    ];
+  }
+
+//
+  Widget _buildLibraryview(BuildContext context) {
+    if (!_loaded) return const MLoadingPlaceHolder();
+    if (AppStorage().playlists.isEmpty) return const MEmptyHolder();
+
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      sliver: _gridview ? _buildGridview(context) : _buildListview(context),
+    );
+  }
+
+  Widget _buildGridview(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final cols = max((width / 160).round(), 2);
+    late final colorScheme = Theme.of(context).colorScheme;
+    return SliverGrid(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisSpacing: 6,
+        crossAxisCount: cols,
+        childAspectRatio: 5 / 6,
+      ),
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          PlaylistItem info = AppStorage().playlists[index];
+          return MInteractiveWrapper(
+            menuController: MenuController(),
+            menuChildren: _buildMenuItems(context, colorScheme, index),
+            onTap: () async {
+              pushPage(
+                context,
+                PlaylistDetail(info: AppStorage().playlists[index]),
+              );
+            },
+            borderRadius: 20,
+            child: MLabelCard(
+              aspectRatio: 1,
+              icon: Icons.music_note,
+              cover: info.cover,
+              title: info.title,
+            ),
+          );
+        },
+        childCount: AppStorage().playlists.length,
+      ),
+    );
+  }
+
+  Widget _buildListview(BuildContext context) {
+    late final colorScheme = Theme.of(context).colorScheme;
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          PlaylistItem info = AppStorage().playlists[index];
+          return MListTile(
+            aspectRatio: 1,
+            height: 60,
+            cover: info.cover,
+            icon: Icons.music_note,
+            label: info.title,
+            onTap: () async {
+              pushPage(
+                context,
+                PlaylistDetail(info: AppStorage().playlists[index]),
+              );
+            },
+            actions: [
+              IconButton(
+                tooltip: '播放',
+                onPressed: () {
+                  AppStorage()
+                      .openPlaylist(AppStorage().playlists[index], false);
+                },
+                icon: const Icon(Icons.play_arrow),
+              ),
+              MMenuButton(
+                menuChildren: _buildMenuItems(context, colorScheme, index),
               ),
             ],
-          ),
-          _loaded
-              ? (AppStorage().playlists.isEmpty
-                  ? SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Card(
-                          elevation: 0,
-                          shape: const RoundedRectangleBorder(
-                            // side: BorderSide(
-                            //   color: Theme.of(context).colorScheme.outline,
-                            // ),
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                          ),
-                          child: SizedBox(
-                            height: 200,
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Icon(
-                                    Icons.upcoming_rounded,
-                                    size: 40,
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  Text(
-                                    context.l10n.noPlaylists,
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                ]),
-                          ),
-                        ),
-                      ),
-                    )
-                  : SliverPadding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      sliver: _gridview
-                          ? SliverGrid(
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisSpacing: 6,
-                                crossAxisCount: cols,
-                                childAspectRatio: 12 / 11,
-                              ),
-                              delegate: SliverChildBuilderDelegate(
-                                (BuildContext context, int index) {
-                                  MenuController menuController =
-                                      MenuController();
-                                  return GestureDetector(
-                                    onSecondaryTapDown: (details) {
-                                      menuController.open(
-                                        position: details.localPosition,
-                                      );
-                                    },
-                                    onLongPress: () {
-                                      menuController.open();
-                                    },
-                                    child: MenuAnchor(
-                                      controller: menuController,
-                                      style: MenuStyle(
-                                        shape: WidgetStatePropertyAll(
-                                          RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                        ),
-                                        // backgroundColor: WidgetStatePropertyAll(
-                                        //   colorScheme.tertiaryContainer,
-                                        // ),
-                                      ),
-                                      menuChildren: _buildMenuItems(
-                                          context, colorScheme, index),
-                                      child: buildPlaylistCard(
-                                        index,
-                                        colorScheme,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                childCount: AppStorage().playlists.length,
-                              ),
-                            )
-                          : SliverList.builder(
-                              itemBuilder: (context, index) {
-                                return SizedBox(
-                                  height: 60,
-                                  child: buildPlaylistListCard(
-                                    index,
-                                    colorScheme,
-                                  ),
-                                );
-                              },
-                              itemCount: AppStorage().playlists.length,
-                            ),
-                    ))
-              : const SliverToBoxAdapter(
-                  child: Center(
-                    heightFactor: 10,
-                    child: CircularProgressIndicator(),
-                  ),
-                )
-        ],
+          );
+        },
+        childCount: AppStorage().playlists.length,
       ),
     );
   }
@@ -278,23 +238,10 @@ class PlaylistState extends State<PlaylistPage> {
             ),
             child: InkWell(
               onTap: () async {
-                final delete = await Navigator.push(
+                pushPage(
                   context,
-                  // MaterialPageRoute(
-                  //     builder: (context) =>
-                  //         PlaylistDetail(info: AppStorage().playlists[index])),
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation1, animation2) =>
-                        PlaylistDetail(info: AppStorage().playlists[index]),
-                    transitionDuration: Duration.zero,
-                    reverseTransitionDuration: Duration.zero,
-                  ),
+                  PlaylistDetail(info: AppStorage().playlists[index]),
                 );
-                if (delete != null && delete == true) {
-                  LibraryHelper.deletePlaylist(AppStorage().playlists[index]);
-                  AppStorage().playlists.removeAt(index);
-                  setState(() {});
-                }
               },
               borderRadius: BorderRadius.circular(20),
               child: AppStorage().playlists[index].cover == null
@@ -347,57 +294,50 @@ class PlaylistState extends State<PlaylistPage> {
       focusColor: Colors.transparent,
       borderRadius: BorderRadius.circular(20),
       onTap: () async {
-        Navigator.push(
+        pushPage(
           context,
-          // MaterialPageRoute(
-          //     builder: (context) =>
-          //         PlaylistDetail(info: AppStorage().playlists[index])),
-          PageRouteBuilder(
-            pageBuilder: (context, animation1, animation2) =>
-                PlaylistDetail(info: AppStorage().playlists[index]),
-            transitionDuration: Duration.zero,
-            reverseTransitionDuration: Duration.zero,
-          ),
+          PlaylistDetail(info: AppStorage().playlists[index]),
         );
       },
       child: Row(
         children: [
           Padding(
-              padding: const EdgeInsets.all(6),
-              child: AspectRatio(
-                aspectRatio: 10 / 9,
-                child: AppStorage().playlists[index].cover == null
-                    ? Ink(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: colorScheme.secondaryContainer,
-                        ),
-                        child: Icon(
-                          Icons.playlist_play_rounded,
-                          color: colorScheme.secondary,
-                          size: 40,
-                        ),
-                      )
-                    : Ink(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: colorScheme.secondaryContainer,
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: FileImage(
-                              File(AppStorage().playlists[index].cover!),
-                            ),
+            padding: const EdgeInsets.all(6),
+            child: AspectRatio(
+              aspectRatio: 10 / 9,
+              child: AppStorage().playlists[index].cover == null
+                  ? Ink(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: colorScheme.secondaryContainer,
+                      ),
+                      child: Icon(
+                        Icons.playlist_play_rounded,
+                        color: colorScheme.secondary,
+                        size: 40,
+                      ),
+                    )
+                  : Ink(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: colorScheme.secondaryContainer,
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: FileImage(
+                            File(AppStorage().playlists[index].cover!),
                           ),
                         ),
-                        // child: Icon(
-                        //   Icons.playlist_play_rounded,
-                        //   color: colorScheme.onTertiaryContainer,
-                        //   size: 80,
-                        // ),
                       ),
-              )),
+                      // child: Icon(
+                      //   Icons.playlist_play_rounded,
+                      //   color: colorScheme.onTertiaryContainer,
+                      //   size: 80,
+                      // ),
+                    ),
+            ),
+          ),
           const SizedBox(
             width: 10,
           ),
@@ -425,16 +365,6 @@ class PlaylistState extends State<PlaylistPage> {
           Align(
             alignment: Alignment.centerRight,
             child: MenuAnchor(
-              style: MenuStyle(
-                shape: WidgetStatePropertyAll(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                // backgroundColor: WidgetStatePropertyAll(
-                //   colorScheme.tertiaryContainer,
-                // ),
-              ),
               builder: (_, controller, child) {
                 return IconButton(
                   tooltip: context.l10n.menu,
@@ -459,19 +389,23 @@ class PlaylistState extends State<PlaylistPage> {
     );
   }
 
-  // Widget _buildMenuItem(IconData icon, Widget label, Function()? onPressed) {
-  //   return MenuItemButton(
-  //     leadingIcon: Icon(
-  //       icon,
-  //       size: 18,
-  //     ),
-  //     onPressed: onPressed,
-  //     child: label,
-  //   );
-  // }
+//
+  void _loadLibrary() async {
+    _gridview = !AppStorage().settings.playlistListview;
+    AppStorage().playlists.clear();
+    AppStorage().playlists.addAll(await LibraryHelper.loadPlaylists());
+    if (!mounted) return;
+    setState(() {
+      _loaded = true;
+    });
+  }
 
+//
   List<Widget> _buildMenuItems(
-      BuildContext context, ColorScheme colorScheme, int index) {
+    BuildContext context,
+    ColorScheme colorScheme,
+    int index,
+  ) {
     return [
       const SizedBox(height: 10),
       MMenuItem(
@@ -662,9 +596,4 @@ class PlaylistState extends State<PlaylistPage> {
       const SizedBox(height: 10),
     ];
   }
-}
-
-String idGenerator() {
-  final now = DateTime.now();
-  return now.microsecondsSinceEpoch.toString();
 }

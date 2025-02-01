@@ -88,11 +88,11 @@ jobs:
       - name: Build macOS App
         run: flutter build macos
 
-      - name: Upload macOS Build Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: macos-build
-          path: build/macos/Build/Products/Release/
+      # - name: Upload macOS Build Artifacts
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: macos-build
+      #     path: build/macos/Build/Products/Release/
 
   build-android:
     runs-on: ubuntu-latest

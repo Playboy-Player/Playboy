@@ -107,12 +107,12 @@ class MPlayerState extends State<MPlayer> {
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return Text(
-                              getTimeStr(snapshot.data!),
+                              getProgressString(snapshot.data!),
                               // '${snapshot.data!.inSeconds ~/ 3600}:${(snapshot.data!.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(snapshot.data!.inSeconds % 60).toString().padLeft(2, '0')}',
                             );
                           } else {
                             return Text(
-                              getTimeStr(AppStorage().position),
+                              getProgressString(AppStorage().position),
                               // '${AppStorage().position.inSeconds ~/ 3600}:${(AppStorage().position.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().position.inSeconds % 60).toString().padLeft(2, '0')}',
                             );
                           }
@@ -123,7 +123,7 @@ class MPlayerState extends State<MPlayer> {
                     alignment: Alignment.centerRight,
                     width: 60,
                     child: Text(
-                      getTimeStr(AppStorage().duration),
+                      getProgressString(AppStorage().duration),
                       // '${AppStorage().duration.inSeconds ~/ 3600}:${(AppStorage().duration.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().duration.inSeconds % 60).toString().padLeft(2, '0')}',
                     ),
                   )
