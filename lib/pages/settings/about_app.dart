@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/constants.dart';
-import 'package:playboy/l10n/i10n.dart';
+import 'package:playboy/l10n/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutPage extends StatefulWidget {

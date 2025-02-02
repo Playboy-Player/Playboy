@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:playboy/widgets/cover.dart';
 
-class MLabelCard extends StatelessWidget {
-  const MLabelCard({
+class MCoverCard extends StatelessWidget {
+  const MCoverCard({
     super.key,
     required this.icon,
     required this.cover,

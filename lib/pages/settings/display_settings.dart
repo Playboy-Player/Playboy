@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/storage.dart';
-import 'package:playboy/l10n/i10n.dart';
+import 'package:playboy/l10n/l10n.dart';
 
 class DisplaySettingsPage extends StatefulWidget {
   const DisplaySettingsPage({super.key});

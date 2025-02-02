@@ -6,7 +6,7 @@ import 'package:media_kit/media_kit.dart';
 import 'package:playboy/backend/constants.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/backend/utils/route.dart';
-import 'package:playboy/l10n/i10n.dart';
+import 'package:playboy/l10n/l10n.dart';
 import 'package:playboy/pages/media/m_player.dart';
 import 'package:playboy/pages/media/music_page.dart';
 import 'package:playboy/pages/playlist/playlist_page.dart';
@@ -47,6 +47,7 @@ class MikuMiku extends StatelessWidget {
         ),
       ),
       dialogTheme: DialogTheme(
+        backgroundColor: colorScheme.surface,
         surfaceTintColor: Colors.transparent,
         barrierColor: colorScheme.surfaceTint.withValues(alpha: 0.1),
         shadowColor: Colors.black,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:playboy/l10n/i10n.dart';
+import 'package:playboy/l10n/l10n.dart';
 
 class MMenuButton extends StatelessWidget {
   const MMenuButton({

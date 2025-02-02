@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/models/playitem.dart';
+import 'package:playboy/widgets/cover.dart';
 
 class PlayerListCard extends StatelessWidget {
   const PlayerListCard({
@@ -18,42 +17,22 @@ class PlayerListCard extends StatelessWidget {
     return Row(
       children: [
         Padding(
-            padding: const EdgeInsets.all(6),
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: info.cover == null
-                  ? Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: colorScheme.secondaryContainer,
-                      ),
-                      child: Icon(
-                        Icons.music_note,
-                        color: colorScheme.onSecondaryContainer,
-                        size: 20,
-                      ),
-                    )
-                  : Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: colorScheme.secondaryContainer,
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: FileImage(
-                            File(info.cover!),
-                          ),
-                        ),
-                      ),
-                    ),
-            )),
-        const SizedBox(
-          width: 10,
+          padding: const EdgeInsets.all(6),
+          child: MCover(
+            icon: Icons.music_note,
+            iconSize: 20,
+            borderRadius: 10,
+            cover: info.cover,
+            aspectRatio: 1,
+            colorScheme: colorScheme,
+          ),
         ),
+        const SizedBox(width: 10),
         Expanded(
           child: Text(
             info.title,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontSize: 14,
               color: isPlaying ? colorScheme.primary : null,

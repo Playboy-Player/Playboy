@@ -64,14 +64,17 @@ class FileExplorerState extends State<FileExplorer> {
               padding: const EdgeInsets.symmetric(horizontal: 10),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: cols,
-                childAspectRatio: 12 / 11,
+                childAspectRatio: 5 / 6,
               ),
               itemBuilder: (context, index) {
                 var e = contents[index];
                 if (e is File) {
-                  if (LibraryHelper.supportFormats.contains(extension(e.path))) {
+                  if (LibraryHelper.supportFormats
+                      .contains(extension(e.path))) {
                     return FileCard(
-                        source: e.path, icon: Icons.audio_file_outlined);
+                      source: e.path,
+                      icon: Icons.audio_file_outlined,
+                    );
                   } else {
                     return FileCard(source: e.path, icon: null);
                   }

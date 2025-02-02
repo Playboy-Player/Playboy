@@ -5,17 +5,16 @@ import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/backend/utils/route.dart';
-import 'package:playboy/l10n/i10n.dart';
+import 'package:playboy/l10n/l10n.dart';
 import 'package:playboy/pages/media/m_player.dart';
+import 'package:playboy/pages/media/media_menu.dart';
 import 'package:playboy/widgets/empty_holder.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
-import 'package:playboy/widgets/label_card.dart';
+import 'package:playboy/widgets/cover_card.dart';
 import 'package:playboy/widgets/library_header.dart';
-import 'package:playboy/widgets/list_tile.dart';
+import 'package:playboy/widgets/cover_listtile.dart';
 import 'package:playboy/widgets/loading.dart';
 import 'package:playboy/widgets/menu_button.dart';
-import 'package:playboy/widgets/menu_item.dart';
-import 'package:playboy/widgets/playlist_picker.dart';
 
 class VideoPage extends StatefulWidget {
   const VideoPage({super.key});
@@ -121,7 +120,7 @@ class _VideoPageState extends State<VideoPage> {
           PlayItem info = _playitems[index];
           return MInteractiveWrapper(
             menuController: MenuController(),
-            menuChildren: _buildMenuItems(
+            menuChildren: buildMediaMenuItems(
               context,
               colorScheme,
               info,
@@ -130,10 +129,16 @@ class _VideoPageState extends State<VideoPage> {
               await AppStorage().closeMedia().then((value) {
                 AppStorage().openMedia(info);
               });
+
+              if (!context.mounted) return;
+              pushRootPage(
+                context,
+                const MPlayer(),
+              );
               AppStorage().updateStatus();
             },
             borderRadius: 20,
-            child: MLabelCard(
+            child: MCoverCard(
               aspectRatio: 16 / 9,
               icon: Icons.movie_filter_rounded,
               cover: info.cover,
@@ -152,7 +157,7 @@ class _VideoPageState extends State<VideoPage> {
       delegate: SliverChildBuilderDelegate(
         (context, index) {
           PlayItem info = _playitems[index];
-          return MListTile(
+          return MCoverListTile(
             aspectRatio: 4 / 3,
             height: 60,
             cover: info.cover,
@@ -186,7 +191,11 @@ class _VideoPageState extends State<VideoPage> {
                 icon: const Icon(Icons.play_arrow),
               ),
               MMenuButton(
-                menuChildren: _buildMenuItems(context, colorScheme, info),
+                menuChildren: buildMediaMenuItems(
+                  context,
+                  colorScheme,
+                  info,
+                ),
               ),
             ],
           );
@@ -194,84 +203,5 @@ class _VideoPageState extends State<VideoPage> {
         childCount: _playitems.length,
       ),
     );
-  }
-
-  List<Widget> _buildMenuItems(
-    BuildContext context,
-    ColorScheme colorScheme,
-    PlayItem item,
-  ) {
-    return [
-      const SizedBox(height: 10),
-      MMenuItem(
-        icon: Icons.play_circle_outline_rounded,
-        label: '播放',
-        onPressed: () {
-          AppStorage().closeMedia();
-          AppStorage().openMedia(item);
-
-          if (!context.mounted) return;
-          pushRootPage(
-            context,
-            const MPlayer(),
-          );
-        },
-      ),
-      const MMenuItem(
-        icon: Icons.last_page,
-        label: '最后播放',
-        onPressed: null,
-      ),
-      MMenuItem(
-        icon: Icons.add_circle_outline,
-        label: '添加到播放列表',
-        onPressed: () {
-          showDialog(
-            useRootNavigator: false,
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-              // surfaceTintColor: Colors.transparent,
-              title: const Text('添加到播放列表'),
-              content: SizedBox(
-                width: 300,
-                height: 300,
-                child: ListView.builder(
-                  itemBuilder: (context, indexList) {
-                    return SizedBox(
-                      height: 60,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(20),
-                        onTap: () {
-                          LibraryHelper.addItemToPlaylist(
-                            AppStorage().playlists[indexList],
-                            item,
-                          );
-                          Navigator.pop(context);
-                        },
-                        child: PlaylistPickerItem(
-                            info: AppStorage().playlists[indexList]),
-                      ),
-                    );
-                  },
-                  itemCount: AppStorage().playlists.length,
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-      const Divider(),
-      const MMenuItem(
-        icon: Icons.design_services_outlined,
-        label: '修改封面',
-        onPressed: null,
-      ),
-      const MMenuItem(
-        icon: Icons.info_outline,
-        label: '属性',
-        onPressed: null,
-      ),
-      const SizedBox(height: 10),
-    ];
   }
 }

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/storage.dart';
-import 'package:playboy/l10n/i10n.dart';
+import 'package:playboy/l10n/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class StorageSettingsPage extends StatefulWidget {
@@ -335,7 +335,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                   ),
-                  color: colorScheme.secondaryContainer.withValues(alpha: 0.04),
+                  color: colorScheme.secondaryContainer.withValues(alpha: 0.4),
                   child: SizedBox(
                     height: 50,
                     child: Row(

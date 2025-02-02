@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:playboy/widgets/cover.dart';
 
-class MListTile extends StatelessWidget {
-  const MListTile({
+class MCoverListTile extends StatelessWidget {
+  const MCoverListTile({
     super.key,
     required this.onTap,
     required this.height,
@@ -27,7 +27,7 @@ class MListTile extends StatelessWidget {
     late final colorScheme = Theme.of(context).colorScheme;
     return InkWell(
       focusColor: Colors.transparent,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(16),
       onTap: onTap,
       child: SizedBox(
         height: height,
@@ -39,7 +39,7 @@ class MListTile extends StatelessWidget {
                 cover: cover,
                 aspectRatio: aspectRatio,
                 icon: icon,
-                iconSize: 30,
+                iconSize: height / 2,
                 borderRadius: 12,
                 colorScheme: colorScheme,
               ),

@@ -8,13 +8,13 @@ import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/backend/utils/route.dart';
 import 'package:playboy/backend/utils/time_format.dart';
-import 'package:playboy/l10n/i10n.dart';
+import 'package:playboy/l10n/l10n.dart';
 import 'package:playboy/pages/playlist/playlist_detail.dart';
 import 'package:playboy/widgets/empty_holder.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
-import 'package:playboy/widgets/label_card.dart';
+import 'package:playboy/widgets/cover_card.dart';
 import 'package:playboy/widgets/library_header.dart';
-import 'package:playboy/widgets/list_tile.dart';
+import 'package:playboy/widgets/cover_listtile.dart';
 import 'package:playboy/widgets/loading.dart';
 import 'package:playboy/widgets/menu_button.dart';
 import 'package:playboy/widgets/menu_item.dart';
@@ -141,7 +141,6 @@ class PlaylistState extends State<PlaylistPage> {
     ];
   }
 
-//
   Widget _buildLibraryview(BuildContext context) {
     if (!_loaded) return const MLoadingPlaceHolder();
     if (AppStorage().playlists.isEmpty) return const MEmptyHolder();
@@ -175,7 +174,7 @@ class PlaylistState extends State<PlaylistPage> {
               );
             },
             borderRadius: 20,
-            child: MLabelCard(
+            child: MCoverCard(
               aspectRatio: 1,
               icon: Icons.music_note,
               cover: info.cover,
@@ -194,7 +193,7 @@ class PlaylistState extends State<PlaylistPage> {
       delegate: SliverChildBuilderDelegate(
         (context, index) {
           PlaylistItem info = AppStorage().playlists[index];
-          return MListTile(
+          return MCoverListTile(
             aspectRatio: 1,
             height: 60,
             cover: info.cover,
@@ -226,170 +225,6 @@ class PlaylistState extends State<PlaylistPage> {
     );
   }
 
-  Widget buildPlaylistCard(int index, ColorScheme colorScheme) {
-    return Column(
-      children: [
-        Expanded(
-          flex: 5,
-          child: Card(
-            elevation: 0,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20)),
-            ),
-            child: InkWell(
-              onTap: () async {
-                pushPage(
-                  context,
-                  PlaylistDetail(info: AppStorage().playlists[index]),
-                );
-              },
-              borderRadius: BorderRadius.circular(20),
-              child: AppStorage().playlists[index].cover == null
-                  ? Ink(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: colorScheme.secondaryContainer,
-                      ),
-                      child: Icon(
-                        Icons.playlist_play_rounded,
-                        color: colorScheme.secondary,
-                        size: 60,
-                      ),
-                    )
-                  : Ink(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: colorScheme.secondaryContainer,
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: MemoryImage(
-                            File(AppStorage().playlists[index].cover!)
-                                .readAsBytesSync(),
-                          ),
-                        ),
-                      ),
-                    ),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Tooltip(
-            message: AppStorage().playlists[index].title,
-            waitDuration: const Duration(seconds: 2),
-            child: Text(
-              AppStorage().playlists[index].title,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        )
-      ],
-    );
-  }
-
-  Widget buildPlaylistListCard(int index, ColorScheme colorScheme) {
-    return InkWell(
-      // overlayColor: WidgetStatePropertyAll(Colors.transparent),
-      focusColor: Colors.transparent,
-      borderRadius: BorderRadius.circular(20),
-      onTap: () async {
-        pushPage(
-          context,
-          PlaylistDetail(info: AppStorage().playlists[index]),
-        );
-      },
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(6),
-            child: AspectRatio(
-              aspectRatio: 10 / 9,
-              child: AppStorage().playlists[index].cover == null
-                  ? Ink(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: colorScheme.secondaryContainer,
-                      ),
-                      child: Icon(
-                        Icons.playlist_play_rounded,
-                        color: colorScheme.secondary,
-                        size: 40,
-                      ),
-                    )
-                  : Ink(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: colorScheme.secondaryContainer,
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: FileImage(
-                            File(AppStorage().playlists[index].cover!),
-                          ),
-                        ),
-                      ),
-                      // child: Icon(
-                      //   Icons.playlist_play_rounded,
-                      //   color: colorScheme.onTertiaryContainer,
-                      //   size: 80,
-                      // ),
-                    ),
-            ),
-          ),
-          const SizedBox(
-            width: 10,
-          ),
-          Expanded(
-            child: Text(
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              AppStorage().playlists[index].title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-            ),
-          ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: IconButton(
-              tooltip: context.l10n.play,
-              onPressed: () {
-                AppStorage().openPlaylist(AppStorage().playlists[index], false);
-              },
-              icon: const Icon(Icons.play_arrow),
-            ),
-          ),
-          const SizedBox(
-            width: 6,
-          ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: MenuAnchor(
-              builder: (_, controller, child) {
-                return IconButton(
-                  tooltip: context.l10n.menu,
-                  onPressed: () {
-                    if (controller.isOpen) {
-                      controller.close();
-                    } else {
-                      controller.open();
-                    }
-                  },
-                  icon: const Icon(Icons.more_vert),
-                );
-              },
-              menuChildren: _buildMenuItems(context, colorScheme, index),
-            ),
-          ),
-          const SizedBox(
-            width: 6,
-          ),
-        ],
-      ),
-    );
-  }
-
-//
   void _loadLibrary() async {
     _gridview = !AppStorage().settings.playlistListview;
     AppStorage().playlists.clear();
@@ -400,7 +235,6 @@ class PlaylistState extends State<PlaylistPage> {
     });
   }
 
-//
   List<Widget> _buildMenuItems(
     BuildContext context,
     ColorScheme colorScheme,

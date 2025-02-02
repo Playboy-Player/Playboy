@@ -5,7 +5,7 @@ import 'package:playboy/backend/models/maintainer.dart';
 class Constants {
   static const IconData appIcon = Icons.smart_display;
   static const String appName = 'Playboy';
-  static const String version = 'βeta 2025.1';
+  static const String version = 'βeta 2025.2';
 
   static List<Contributor> maintainers = [
     Contributor(

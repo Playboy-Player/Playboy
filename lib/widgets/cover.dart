@@ -22,6 +22,8 @@ class MCover extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color backgroundColor = colorScheme.primaryContainer.withValues(alpha: 0.4);
+    Color foregroundColor = colorScheme.onPrimaryContainer;
     return AspectRatio(
       aspectRatio: aspectRatio,
       child: cover == null || !File(cover!).existsSync()
@@ -29,11 +31,11 @@ class MCover extends StatelessWidget {
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(borderRadius),
-                color: colorScheme.secondaryContainer,
+                color: backgroundColor,
               ),
               child: Icon(
                 icon,
-                color: colorScheme.secondary,
+                color: foregroundColor,
                 size: iconSize,
               ),
             )
@@ -41,7 +43,7 @@ class MCover extends StatelessWidget {
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(borderRadius),
-                color: colorScheme.secondaryContainer,
+                color: backgroundColor,
                 image: DecorationImage(
                   fit: BoxFit.cover,
                   image: FileImage(File(cover!)),

@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/storage.dart';
-import 'package:playboy/l10n/i10n.dart';
+import 'package:playboy/l10n/l10n.dart';
 import 'package:playboy/pages/settings/about_app.dart';
 import 'package:playboy/pages/settings/bvtools_settings.dart';
 import 'package:playboy/pages/settings/display_settings.dart';

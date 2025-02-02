@@ -319,7 +319,11 @@ class MPlayerState extends State<MPlayer> {
               )
             : Container(
                 padding: const EdgeInsets.only(
-                    top: 50, left: 50, right: 50, bottom: 75),
+                  top: 50,
+                  left: 50,
+                  right: 50,
+                  bottom: 75,
+                ),
                 alignment: Alignment.center,
                 child: StreamBuilder(
                   stream: AppStorage().playboy.stream.playlist,
@@ -343,11 +347,9 @@ class MPlayerState extends State<MPlayer> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(40),
                                 image: DecorationImage(
-                                  image:
-                                      // FileImage(File(AppStorage().playingCover!)),
-                                      UniImageProvider(
-                                              url: AppStorage().playingCover!)
-                                          .getImage(),
+                                  image: UniImageProvider(
+                                    url: AppStorage().playingCover!,
+                                  ).getImage(),
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -696,7 +698,7 @@ class MPlayerState extends State<MPlayer> {
                       ),
                       Expanded(
                         child: InkWell(
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(12),
                           onTap: () {
                             AppStorage().playboy.jump(index);
                           },
