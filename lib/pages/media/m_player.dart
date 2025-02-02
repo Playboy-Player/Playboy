@@ -7,7 +7,7 @@ import 'package:path/path.dart' as p;
 import 'package:playboy/backend/keymap_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
-import 'package:playboy/backend/utils/time_format.dart';
+import 'package:playboy/backend/utils/time_utils.dart';
 import 'package:playboy/pages/media/video_fullscreen.dart';
 import 'package:playboy/widgets/player_list.dart';
 import 'package:playboy/widgets/uni_image.dart';

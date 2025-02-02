@@ -7,7 +7,7 @@ import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/backend/utils/route.dart';
-import 'package:playboy/backend/utils/time_format.dart';
+import 'package:playboy/backend/utils/time_utils.dart';
 import 'package:playboy/l10n/l10n.dart';
 import 'package:playboy/pages/playlist/playlist_detail.dart';
 import 'package:playboy/widgets/empty_holder.dart';
@@ -166,17 +166,17 @@ class PlaylistState extends State<PlaylistPage> {
           PlaylistItem info = AppStorage().playlists[index];
           return MInteractiveWrapper(
             menuController: MenuController(),
-            menuChildren: _buildMenuItems(context, colorScheme, index),
+            menuChildren: _buildMenuItems(context, colorScheme, info),
             onTap: () async {
               pushPage(
                 context,
-                PlaylistDetail(info: AppStorage().playlists[index]),
+                PlaylistDetail(info: info),
               );
             },
             borderRadius: 20,
             child: MCoverCard(
               aspectRatio: 1,
-              icon: Icons.music_note,
+              icon: Icons.playlist_play_rounded,
               cover: info.cover,
               title: info.title,
             ),
@@ -202,20 +202,19 @@ class PlaylistState extends State<PlaylistPage> {
             onTap: () async {
               pushPage(
                 context,
-                PlaylistDetail(info: AppStorage().playlists[index]),
+                PlaylistDetail(info: info),
               );
             },
             actions: [
               IconButton(
                 tooltip: '播放',
                 onPressed: () {
-                  AppStorage()
-                      .openPlaylist(AppStorage().playlists[index], false);
+                  AppStorage().openPlaylist(info, false);
                 },
                 icon: const Icon(Icons.play_arrow),
               ),
               MMenuButton(
-                menuChildren: _buildMenuItems(context, colorScheme, index),
+                menuChildren: _buildMenuItems(context, colorScheme, info),
               ),
             ],
           );
@@ -238,7 +237,7 @@ class PlaylistState extends State<PlaylistPage> {
   List<Widget> _buildMenuItems(
     BuildContext context,
     ColorScheme colorScheme,
-    int index,
+    PlaylistItem item,
   ) {
     return [
       const SizedBox(height: 10),
@@ -247,7 +246,7 @@ class PlaylistState extends State<PlaylistPage> {
         label: context.l10n.play,
         onPressed: () {
           AppStorage().closeMedia();
-          AppStorage().openPlaylist(AppStorage().playlists[index], false);
+          AppStorage().openPlaylist(item, false);
         },
       ),
       MMenuItem(
@@ -256,7 +255,7 @@ class PlaylistState extends State<PlaylistPage> {
         onPressed: () {
           AppStorage().closeMedia();
           AppStorage().openPlaylist(
-            AppStorage().playlists[index],
+            item,
             true,
           );
         },
@@ -267,7 +266,7 @@ class PlaylistState extends State<PlaylistPage> {
         onPressed: null,
         // () {
         //   AppStorage().appendPlaylist(
-        //     AppStorage().playlists[index],
+        //     item,
         //   );
         // },
       ),
@@ -277,11 +276,11 @@ class PlaylistState extends State<PlaylistPage> {
         label: context.l10n.export,
         onPressed: () async {
           final originalFile = File(
-            '${AppStorage().dataPath}/playlists/${AppStorage().playlists[index].uuid}.json',
+            '${AppStorage().dataPath}/playlists/${item.uuid}.json',
           );
           String? newFilePath = await FilePicker.platform.saveFile(
             dialogTitle: context.l10n.saveAs,
-            fileName: '${AppStorage().playlists[index].uuid}.json',
+            fileName: '${item.uuid}.json',
           );
 
           if (newFilePath != null) {
@@ -311,12 +310,12 @@ class PlaylistState extends State<PlaylistPage> {
           );
           if (coverPath != null) {
             var savePath =
-                '${AppStorage().dataPath}/playlists/${AppStorage().playlists[index].uuid}.cover.jpg';
+                '${AppStorage().dataPath}/playlists/${item.uuid}.cover.jpg';
             var originalFile = File(coverPath);
             var newFile = File(
               savePath,
             );
-            AppStorage().playlists[index].cover = savePath;
+            item.cover = savePath;
             await originalFile.copy(newFile.path).then(
               (value) {
                 setState(() {});
@@ -330,10 +329,10 @@ class PlaylistState extends State<PlaylistPage> {
         label: context.l10n.removeCover,
         onPressed: () async {
           setState(() {
-            AppStorage().playlists[index].cover = null;
+            item.cover = null;
           });
           var coverPath =
-              '${AppStorage().dataPath}/playlists/${AppStorage().playlists[index].uuid}.cover.jpg';
+              '${AppStorage().dataPath}/playlists/${item.uuid}.cover.jpg';
           var cover = File(coverPath);
           if (await cover.exists()) {
             await cover.delete();
@@ -345,7 +344,7 @@ class PlaylistState extends State<PlaylistPage> {
         label: context.l10n.rename,
         onPressed: () {
           _editingController.clear();
-          _editingController.text = AppStorage().playlists[index].title;
+          _editingController.text = item.title;
           showDialog(
             useRootNavigator: false,
             context: context,
@@ -362,7 +361,7 @@ class PlaylistState extends State<PlaylistPage> {
                 ),
                 onSubmitted: (value) {
                   LibraryHelper.renamePlaylist(
-                    AppStorage().playlists[index],
+                    item,
                     value,
                   );
                   setState(() {});
@@ -379,7 +378,7 @@ class PlaylistState extends State<PlaylistPage> {
                 TextButton(
                   onPressed: () {
                     LibraryHelper.renamePlaylist(
-                      AppStorage().playlists[index],
+                      item,
                       _editingController.text,
                     );
                     setState(() {});
@@ -414,9 +413,10 @@ class PlaylistState extends State<PlaylistPage> {
                     child: Text(context.l10n.ok),
                     onPressed: () {
                       LibraryHelper.deletePlaylist(
-                        AppStorage().playlists[index],
+                        item,
                       );
-                      AppStorage().playlists.removeAt(index);
+                      // AppStorage().playlists.removeAt(index);
+                      AppStorage().playlists.remove(item);
                       setState(() {});
                       Navigator.of(context).pop();
                     },

@@ -6,7 +6,7 @@ class MCoverCard extends StatelessWidget {
     super.key,
     required this.icon,
     required this.cover,
-    required this.aspectRatio,
+    this.aspectRatio = 1,
     required this.title,
   });
 

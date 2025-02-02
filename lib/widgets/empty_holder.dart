@@ -26,7 +26,7 @@ class MEmptyHolder extends StatelessWidget {
                   width: 10,
                 ),
                 Text(
-                  '这里啥也没有',
+                  '这里啥也没有 :)',
                   style: TextStyle(fontSize: 20),
                 ),
               ],

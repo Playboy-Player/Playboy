@@ -4,11 +4,14 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:playboy/backend/library_helper.dart';
-import 'package:playboy/widgets/file_card.dart';
-import 'package:playboy/widgets/folder_card.dart';
+import 'package:playboy/pages/file/file_card.dart';
+import 'package:playboy/pages/file/folder_card.dart';
 
 class FileExplorer extends StatefulWidget {
-  const FileExplorer({super.key, required this.path});
+  const FileExplorer({
+    super.key,
+    required this.path,
+  });
   final String path;
 
   @override
@@ -55,7 +58,10 @@ class FileExplorerState extends State<FileExplorer> {
           },
         ),
         titleSpacing: 0,
-        title: Text(name),
+        title: Tooltip(
+          message: widget.path,
+          child: Text(name),
+        ),
         scrolledUnderElevation: 0,
         backgroundColor: Theme.of(context).colorScheme.surface,
       ),

@@ -246,8 +246,11 @@ class SettingsPageState extends State<SettingsPage> {
 
     return ListView.separated(
       itemCount: _icons.length,
-      itemBuilder: (context, index) =>
-          buildItem(index, options[index], _icons[index]),
+      itemBuilder: (context, index) => buildItem(
+        index,
+        options[index],
+        _icons[index],
+      ),
       separatorBuilder: (context, index) {
         return const SizedBox(
           height: 6,

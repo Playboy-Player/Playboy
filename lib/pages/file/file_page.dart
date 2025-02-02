@@ -6,12 +6,13 @@ import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/backend/utils/route.dart';
 import 'package:playboy/l10n/l10n.dart';
+import 'package:playboy/pages/file/folder_card.dart';
 import 'package:playboy/pages/media/m_player.dart';
-import 'package:playboy/widgets/folder_card.dart';
+import 'package:playboy/widgets/empty_holder.dart';
 import 'package:playboy/widgets/library_header.dart';
 import 'package:playboy/widgets/library_listtile.dart';
 import 'package:playboy/widgets/library_title.dart';
-import 'package:provider/provider.dart';
+// import 'package:provider/provider.dart';
 
 class FilePage extends StatefulWidget {
   const FilePage({super.key});
@@ -33,7 +34,7 @@ class _FilePageState extends State<FilePage> {
 
   @override
   Widget build(BuildContext context) {
-    int n = context.read<AppStorage>().settings.musicPaths.length;
+    // int n = context.read<AppStorage>().settings.musicPaths.length;
     final width = MediaQuery.of(context).size.width;
     final cols = max((width / 150).round(), 2);
     return Scaffold(
@@ -44,32 +45,32 @@ class _FilePageState extends State<FilePage> {
             actions: null,
           ),
           _buildLibraryOptions(),
-          const MLibraryTitle(title: '媒体库'),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            sliver: SliverGrid(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: cols,
-                childAspectRatio: 5 / 6,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
-                  if (index >= n) {
-                    return FolderCard(
-                      source: AppStorage().settings.videoPaths[index - n],
-                      icon: Icons.movie_filter,
-                    );
-                  } else {
-                    return FolderCard(
-                      source: AppStorage().settings.musicPaths[index],
-                      icon: Icons.music_note,
-                    );
-                  }
-                },
-                childCount: n + AppStorage().settings.videoPaths.length,
-              ),
-            ),
-          ),
+          // const MLibraryTitle(title: '媒体库'),
+          // SliverPadding(
+          //   padding: const EdgeInsets.symmetric(horizontal: 16),
+          //   sliver: SliverGrid(
+          //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          //       crossAxisCount: cols,
+          //       childAspectRatio: 5 / 6,
+          //     ),
+          //     delegate: SliverChildBuilderDelegate(
+          //       (BuildContext context, int index) {
+          //         if (index >= n) {
+          //           return FolderCard(
+          //             source: AppStorage().settings.videoPaths[index - n],
+          //             icon: Icons.movie_filter,
+          //           );
+          //         } else {
+          //           return FolderCard(
+          //             source: AppStorage().settings.musicPaths[index],
+          //             icon: Icons.music_note,
+          //           );
+          //         }
+          //       },
+          //       childCount: n + AppStorage().settings.videoPaths.length,
+          //     ),
+          //   ),
+          // ),
           const MLibraryTitle(title: '收藏夹'),
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -101,8 +102,8 @@ class _FilePageState extends State<FilePage> {
               ),
             ),
           ),
-          // const MLibraryTitle(title: '最近播放'),
-          // const MEmptyHolder(),
+          const MLibraryTitle(title: '最近播放'),
+          const MEmptyHolder(),
           const SliverToBoxAdapter(
             child: SizedBox(height: 10),
           ),
