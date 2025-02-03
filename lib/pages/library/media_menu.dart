@@ -3,19 +3,18 @@ import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/backend/utils/route.dart';
-import 'package:playboy/pages/media/m_player.dart';
+import 'package:playboy/pages/media/player_page.dart';
 import 'package:playboy/widgets/menu_item.dart';
 import 'package:playboy/widgets/playlist_picker.dart';
 
-List<Widget> buildMediaMenuItems(
+List<Widget> buildCommonMediaMenuItems(
   BuildContext context,
   ColorScheme colorScheme,
   PlayItem item,
 ) {
   return [
-    const SizedBox(height: 10),
     MMenuItem(
-      icon: Icons.play_arrow_outlined,
+      icon: Icons.open_in_new,
       label: '播放器播放',
       onPressed: () {
         AppStorage().closeMedia();
@@ -24,14 +23,14 @@ List<Widget> buildMediaMenuItems(
         if (!context.mounted) return;
         pushRootPage(
           context,
-          const MPlayer(),
+          const PlayerPage(),
         );
         AppStorage().updateStatus();
       },
     ),
     MMenuItem(
       icon: Icons.play_circle_outline_rounded,
-      label: '背景播放',
+      label: '播放',
       onPressed: () {
         AppStorage().closeMedia();
         AppStorage().openMedia(item);
@@ -81,17 +80,5 @@ List<Widget> buildMediaMenuItems(
         );
       },
     ),
-    const Divider(),
-    const MMenuItem(
-      icon: Icons.design_services_outlined,
-      label: '修改封面',
-      onPressed: null,
-    ),
-    const MMenuItem(
-      icon: Icons.info_outline,
-      label: '属性',
-      onPressed: null,
-    ),
-    const SizedBox(height: 10),
   ];
 }

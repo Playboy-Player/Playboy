@@ -1,23 +1,8 @@
 import 'package:flutter/material.dart';
-// import 'package:playboy/backend/utils/route.dart';
-// import 'package:playboy/pages/search/search_result.dart';
+import 'package:playboy/backend/utils/route.dart';
+import 'package:playboy/pages/search/search_result.dart';
 import 'package:playboy/widgets/empty_holder.dart';
 import 'package:playboy/widgets/library_title.dart';
-
-enum SearchType {
-  playlist(id: 0, icon: Icons.menu, label: 'Playlist'),
-  music(id: 1, icon: Icons.music_note_outlined, label: 'Music'),
-  video(id: 2, icon: Icons.movie_filter_outlined, label: 'Video');
-
-  const SearchType({
-    required this.id,
-    required this.icon,
-    required this.label,
-  });
-  final int id;
-  final IconData icon;
-  final String label;
-}
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -30,7 +15,6 @@ class _SearchPage extends State<SearchPage> {
   bool _isSearching = false;
   final TextEditingController _controller = TextEditingController();
   final FocusNode _inputNode = FocusNode();
-  int _choosedMask = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +103,7 @@ class _SearchPage extends State<SearchPage> {
               ),
             ),
           ),
-          _buildSelector(),
+          // _buildSelector(),
           const MLibraryTitle(title: '最近搜索'),
           const MEmptyHolder(),
         ],
@@ -128,51 +112,13 @@ class _SearchPage extends State<SearchPage> {
   }
 
   void _confirmSearch(String value) {
-    // pushPage(
-    //   context,
-    //   SearchResultPage(
-    //     keyword: value,
-    //   ),
-    // ).then((value) {
-    //   _inputNode.requestFocus();
-    // });
-  }
-
-  Widget _buildSelector() {
-    return SliverToBoxAdapter(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        height: 50,
-        child: ListView.separated(
-          separatorBuilder: (context, index) => const SizedBox(width: 6),
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (context, index) {
-            return FilterChip(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18),
-              ),
-              label: Row(
-                children: [
-                  Icon(
-                    SearchType.values[index].icon,
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    size: 18,
-                  ),
-                  const SizedBox(width: 6),
-                  Text(SearchType.values[index].label),
-                ],
-              ),
-              onSelected: (value) {
-                setState(() {
-                  _choosedMask ^= 1 << SearchType.values[index].id;
-                });
-              },
-              selected: (_choosedMask >> SearchType.values[index].id & 1) == 1,
-            );
-          },
-          itemCount: SearchType.values.length,
-        ),
+    pushPage(
+      context,
+      SearchResultPage(
+        keyword: value,
       ),
-    );
+    ).then((value) {
+      _inputNode.requestFocus();
+    });
   }
 }

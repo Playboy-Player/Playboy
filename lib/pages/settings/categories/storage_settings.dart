@@ -106,51 +106,51 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                 ),
               ),
             ),
-            SliverToBoxAdapter(
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                child: Row(
-                  children: [
-                    Text(
-                      context.l10n.musicFolder,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton.icon(
-                          onPressed: () async {
-                            var res = await FilePicker.platform
-                                .getDirectoryPath(lockParentWindow: true);
-                            if (res != null) {
-                              AppStorage().settings.musicPaths.add(res);
-                              AppStorage().saveSettings();
-                              setState(() {});
-                            }
-                          },
-                          icon: const Icon(Icons.add),
-                          label: Text(context.l10n.add),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SliverList.builder(
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: _buildPathCard(AppStorage().settings.musicPaths[index],
-                      colorScheme, AppStorage().settings.musicPaths),
-                );
-              },
-              itemCount: AppStorage().settings.musicPaths.length,
-            ),
+            // SliverToBoxAdapter(
+            //   child: Container(
+            //     padding:
+            //         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            //     child: Row(
+            //       children: [
+            //         Text(
+            //           context.l10n.musicFolder,
+            //           style: const TextStyle(
+            //             fontSize: 16,
+            //             fontWeight: FontWeight.w500,
+            //           ),
+            //         ),
+            //         Expanded(
+            //           child: Align(
+            //             alignment: Alignment.centerRight,
+            //             child: TextButton.icon(
+            //               onPressed: () async {
+            //                 var res = await FilePicker.platform
+            //                     .getDirectoryPath(lockParentWindow: true);
+            //                 if (res != null) {
+            //                   AppStorage().settings.musicPaths.add(res);
+            //                   AppStorage().saveSettings();
+            //                   setState(() {});
+            //                 }
+            //               },
+            //               icon: const Icon(Icons.add),
+            //               label: Text(context.l10n.add),
+            //             ),
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
+            // SliverList.builder(
+            //   itemBuilder: (context, index) {
+            //     return Padding(
+            //       padding: const EdgeInsets.symmetric(horizontal: 10),
+            //       child: _buildPathCard(AppStorage().settings.musicPaths[index],
+            //           colorScheme, AppStorage().settings.musicPaths),
+            //     );
+            //   },
+            //   itemCount: AppStorage().settings.musicPaths.length,
+            // ),
             SliverToBoxAdapter(
               child: Container(
                 padding:

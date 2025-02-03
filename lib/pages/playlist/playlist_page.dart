@@ -10,6 +10,7 @@ import 'package:playboy/backend/utils/route.dart';
 import 'package:playboy/backend/utils/time_utils.dart';
 import 'package:playboy/l10n/l10n.dart';
 import 'package:playboy/pages/playlist/playlist_detail.dart';
+import 'package:playboy/pages/playlist/playlist_menu.dart';
 import 'package:playboy/widgets/empty_holder.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
 import 'package:playboy/widgets/cover_card.dart';
@@ -241,63 +242,12 @@ class PlaylistState extends State<PlaylistPage> {
   ) {
     return [
       const SizedBox(height: 10),
-      MMenuItem(
-        icon: Icons.play_circle_outline_rounded,
-        label: context.l10n.play,
-        onPressed: () {
-          AppStorage().closeMedia();
-          AppStorage().openPlaylist(item, false);
-        },
-      ),
-      MMenuItem(
-        icon: Icons.shuffle,
-        label: context.l10n.shuffle,
-        onPressed: () {
-          AppStorage().closeMedia();
-          AppStorage().openPlaylist(
-            item,
-            true,
-          );
-        },
-      ),
-      MMenuItem(
-        icon: Icons.add_circle_outline,
-        label: context.l10n.addToPlaylist,
-        onPressed: null,
-        // () {
-        //   AppStorage().appendPlaylist(
-        //     item,
-        //   );
-        // },
+      ...buildCommonPlaylistMenuItems(
+        context,
+        colorScheme,
+        item,
       ),
       const Divider(),
-      MMenuItem(
-        icon: Icons.share,
-        label: context.l10n.export,
-        onPressed: () async {
-          final originalFile = File(
-            '${AppStorage().dataPath}/playlists/${item.uuid}.json',
-          );
-          String? newFilePath = await FilePicker.platform.saveFile(
-            dialogTitle: context.l10n.saveAs,
-            fileName: '${item.uuid}.json',
-          );
-
-          if (newFilePath != null) {
-            final newFile = File(newFilePath);
-
-            await originalFile.copy(newFile.path);
-            if (!context.mounted) return;
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  '${context.l10n.fileSavedAs}: $newFilePath',
-                ),
-              ),
-            );
-          }
-        },
-      ),
       MMenuItem(
         icon: Icons.design_services_outlined,
         label: context.l10n.changeCover,
@@ -426,6 +376,12 @@ class PlaylistState extends State<PlaylistPage> {
             },
           );
         },
+      ),
+      const Divider(),
+      const MMenuItem(
+        icon: Icons.info_outline,
+        label: '属性',
+        onPressed: null,
       ),
       const SizedBox(height: 10),
     ];

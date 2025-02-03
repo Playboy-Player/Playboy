@@ -53,11 +53,10 @@ A [Material You](https://m3.material.io/) style cross-platform media player deve
 - [x] Mini mode (desktop)
 - [x] Set as the system default app (desktop)
 - [x] Playlist features
-- [x] Playback speed (0-4x)
+- [x] Playback speed
 - [ ] Lyrics and subtitles
-- [ ] Parse bilibili links
 - [ ] File download
-- [ ] Search media files
+- [x] Search playlist and media
 
 ## How to use
 

@@ -27,7 +27,7 @@ class MCover extends StatelessWidget {
     return AspectRatio(
       aspectRatio: aspectRatio,
       child: cover == null || !File(cover!).existsSync()
-          ? Ink(
+          ? Container(
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(borderRadius),
@@ -39,7 +39,7 @@ class MCover extends StatelessWidget {
                 size: iconSize,
               ),
             )
-          : Ink(
+          : Container(
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(borderRadius),

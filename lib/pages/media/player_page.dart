@@ -8,7 +8,7 @@ import 'package:playboy/backend/keymap_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/backend/utils/time_utils.dart';
-import 'package:playboy/pages/media/video_fullscreen.dart';
+import 'package:playboy/pages/media/fullscreen_play_page.dart';
 import 'package:playboy/widgets/player_list.dart';
 import 'package:playboy/widgets/uni_image.dart';
 import 'package:squiggly_slider/slider.dart';
@@ -17,16 +17,16 @@ import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:window_size/window_size.dart';
 
-class MPlayer extends StatefulWidget {
-  const MPlayer({
+class PlayerPage extends StatefulWidget {
+  const PlayerPage({
     super.key,
   });
 
   @override
-  MPlayerState createState() => MPlayerState();
+  PlayerPageState createState() => PlayerPageState();
 }
 
-class MPlayerState extends State<MPlayer> {
+class PlayerPageState extends State<PlayerPage> {
   VideoController controller = AppStorage().controller;
 
   bool _menuExpanded = false;

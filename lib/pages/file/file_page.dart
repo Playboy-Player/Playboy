@@ -7,7 +7,7 @@ import 'package:playboy/backend/storage.dart';
 import 'package:playboy/backend/utils/route.dart';
 import 'package:playboy/l10n/l10n.dart';
 import 'package:playboy/pages/file/folder_card.dart';
-import 'package:playboy/pages/media/m_player.dart';
+import 'package:playboy/pages/media/player_page.dart';
 import 'package:playboy/widgets/empty_holder.dart';
 import 'package:playboy/widgets/library_header.dart';
 import 'package:playboy/widgets/library_listtile.dart';
@@ -245,7 +245,7 @@ class _FilePageState extends State<FilePage> {
 
     pushRootPage(
       context,
-      const MPlayer(),
+      const PlayerPage(),
     ).then((value) {
       AppStorage().updateStatus();
     });

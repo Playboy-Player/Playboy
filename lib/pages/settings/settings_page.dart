@@ -3,14 +3,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/l10n/l10n.dart';
-import 'package:playboy/pages/settings/about_app.dart';
-import 'package:playboy/pages/settings/bvtools_settings.dart';
-import 'package:playboy/pages/settings/display_settings.dart';
-import 'package:playboy/pages/settings/keymap_settings.dart';
-import 'package:playboy/pages/settings/language_settings.dart';
-import 'package:playboy/pages/settings/player_settings.dart';
-import 'package:playboy/pages/settings/storage_settings.dart';
-import 'package:playboy/pages/settings/developer_settings.dart';
+import 'package:playboy/pages/settings/categories/about_app_settings.dart';
+import 'package:playboy/pages/settings/categories/bvtools_settings.dart';
+import 'package:playboy/pages/settings/categories/appearance_settings.dart';
+import 'package:playboy/pages/settings/categories/keymap_settings.dart';
+import 'package:playboy/pages/settings/categories/language_settings.dart';
+import 'package:playboy/pages/settings/categories/player_settings.dart';
+import 'package:playboy/pages/settings/categories/storage_settings.dart';
+import 'package:playboy/pages/settings/categories/developer_settings.dart';
 import 'package:window_manager/window_manager.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -33,7 +33,7 @@ class SettingsPageState extends State<SettingsPage> {
     Icons.code_outlined,
   ];
   final List<Widget> _pages = [
-    const DisplaySettingsPage(),
+    const AppearanceSettingsPage(),
     const PlayerSettingsPage(),
     const KeymapSettings(),
     const StorageSettingsPage(),

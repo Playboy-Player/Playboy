@@ -3,10 +3,11 @@ import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/l10n/l10n.dart';
-import 'package:playboy/pages/media/media_menu.dart';
+import 'package:playboy/pages/library/media_menu.dart';
 import 'package:playboy/widgets/cover.dart';
 import 'package:playboy/widgets/cover_listtile.dart';
 import 'package:playboy/widgets/menu_button.dart';
+import 'package:playboy/widgets/menu_item.dart';
 
 class PlaylistDetail extends StatefulWidget {
   const PlaylistDetail({super.key, required this.info});
@@ -153,7 +154,7 @@ class PlaylistDetailState extends State<PlaylistDetail> {
             },
             actions: [
               MMenuButton(
-                menuChildren: buildMediaMenuItems(
+                menuChildren: _buildMediaMenuItems(
                   context,
                   colorScheme,
                   info,
@@ -165,5 +166,34 @@ class PlaylistDetailState extends State<PlaylistDetail> {
         childCount: widget.info.items.length,
       ),
     );
+  }
+
+  List<Widget> _buildMediaMenuItems(
+    BuildContext context,
+    ColorScheme colorScheme,
+    PlayItem item,
+  ) {
+    return [
+      const SizedBox(height: 10),
+      ...buildCommonMediaMenuItems(context, colorScheme, item),
+      const Divider(),
+      const MMenuItem(
+        icon: Icons.design_services_outlined,
+        label: '修改封面',
+        onPressed: null,
+      ),
+      const MMenuItem(
+        icon: Icons.delete_outline,
+        label: '从播放列表移除',
+        onPressed: null,
+      ),
+      const Divider(),
+      const MMenuItem(
+        icon: Icons.info_outline,
+        label: '属性',
+        onPressed: null,
+      ),
+      const SizedBox(height: 10),
+    ];
   }
 }

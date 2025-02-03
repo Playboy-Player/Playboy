@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/l10n/l10n.dart';
 
-class DisplaySettingsPage extends StatefulWidget {
-  const DisplaySettingsPage({super.key});
+class AppearanceSettingsPage extends StatefulWidget {
+  const AppearanceSettingsPage({super.key});
 
   @override
-  State<StatefulWidget> createState() => _DisplaySettingsPageState();
+  State<StatefulWidget> createState() => _AppearanceSettingsPageState();
 }
 
-class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
+class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
   final TextEditingController _controller1 =
       TextEditingController(); // primary font
   final TextEditingController _controller2 =
@@ -161,18 +161,18 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
                       ],
                     ),
                   ),
-                  DropdownMenuItem(
-                    value: 1,
-                    child: Row(
-                      children: [
-                        const Icon(Icons.music_note_outlined),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text(context.l10n.music),
-                      ],
-                    ),
-                  ),
+                  // DropdownMenuItem(
+                  //   value: 1,
+                  //   child: Row(
+                  //     children: [
+                  //       const Icon(Icons.music_note_outlined),
+                  //       const SizedBox(
+                  //         width: 10,
+                  //       ),
+                  //       Text(context.l10n.music),
+                  //     ],
+                  //   ),
+                  // ),
                   DropdownMenuItem(
                     value: 2,
                     child: Row(
@@ -276,62 +276,62 @@ class _DisplaySettingsPageState extends State<DisplaySettingsPage> {
           const SizedBox(
             height: 4,
           ),
-          ListTile(
-            title: Text(context.l10n.musicLibraryDefaultView),
-            trailing: SizedBox(
-              height: 44,
-              width: 150,
-              child: DropdownButtonFormField(
-                borderRadius: BorderRadius.circular(16),
-                decoration: InputDecoration(
-                  isDense: true,
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      width: 0,
-                      style: BorderStyle.none,
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  fillColor: Theme.of(context).colorScheme.secondaryContainer,
-                ),
-                value: AppStorage().settings.musicLibListview,
-                items: [
-                  DropdownMenuItem(
-                    value: false,
-                    child: Row(
-                      children: [
-                        const Icon(Icons.calendar_view_month),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text(context.l10n.grid),
-                      ],
-                    ),
-                  ),
-                  DropdownMenuItem(
-                    value: true,
-                    child: Row(
-                      children: [
-                        const Icon(Icons.view_agenda_outlined),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text(context.l10n.list),
-                      ],
-                    ),
-                  ),
-                ],
-                onChanged: (value) {
-                  AppStorage().settings.musicLibListview = value!;
-                  AppStorage().saveSettings();
-                },
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 4,
-          ),
+          // ListTile(
+          //   title: Text(context.l10n.musicLibraryDefaultView),
+          //   trailing: SizedBox(
+          //     height: 44,
+          //     width: 150,
+          //     child: DropdownButtonFormField(
+          //       borderRadius: BorderRadius.circular(16),
+          //       decoration: InputDecoration(
+          //         isDense: true,
+          //         filled: true,
+          //         border: OutlineInputBorder(
+          //           borderSide: const BorderSide(
+          //             width: 0,
+          //             style: BorderStyle.none,
+          //           ),
+          //           borderRadius: BorderRadius.circular(16),
+          //         ),
+          //         fillColor: Theme.of(context).colorScheme.secondaryContainer,
+          //       ),
+          //       value: AppStorage().settings.musicLibListview,
+          //       items: [
+          //         DropdownMenuItem(
+          //           value: false,
+          //           child: Row(
+          //             children: [
+          //               const Icon(Icons.calendar_view_month),
+          //               const SizedBox(
+          //                 width: 10,
+          //               ),
+          //               Text(context.l10n.grid),
+          //             ],
+          //           ),
+          //         ),
+          //         DropdownMenuItem(
+          //           value: true,
+          //           child: Row(
+          //             children: [
+          //               const Icon(Icons.view_agenda_outlined),
+          //               const SizedBox(
+          //                 width: 10,
+          //               ),
+          //               Text(context.l10n.list),
+          //             ],
+          //           ),
+          //         ),
+          //       ],
+          //       onChanged: (value) {
+          //         AppStorage().settings.musicLibListview = value!;
+          //         AppStorage().saveSettings();
+          //       },
+          //     ),
+          //   ),
+          // ),
+          // const SizedBox(
+          //   height: 4,
+          // ),
           ListTile(
             title: Text(context.l10n.videoLibraryDefaultView),
             trailing: SizedBox(

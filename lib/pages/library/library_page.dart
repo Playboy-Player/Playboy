@@ -4,27 +4,30 @@ import 'package:flutter/material.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
-import 'package:playboy/l10n/l10n.dart';
-import 'package:playboy/pages/media/media_menu.dart';
+import 'package:playboy/backend/utils/route.dart';
+import 'package:playboy/pages/library/media_menu.dart';
+import 'package:playboy/pages/media/player_page.dart';
 import 'package:playboy/widgets/empty_holder.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
+import 'package:playboy/widgets/cover_card.dart';
 import 'package:playboy/widgets/library_header.dart';
+import 'package:playboy/widgets/cover_listtile.dart';
 import 'package:playboy/widgets/loading.dart';
 import 'package:playboy/widgets/menu_button.dart';
-import 'package:playboy/widgets/cover_card.dart';
-import 'package:playboy/widgets/cover_listtile.dart';
+import 'package:playboy/widgets/menu_item.dart';
 
-class MusicPage extends StatefulWidget {
-  const MusicPage({super.key});
+class LibraryPage extends StatefulWidget {
+  const LibraryPage({super.key});
 
   @override
-  State<MusicPage> createState() => _MusicPageState();
+  State<LibraryPage> createState() => _LibraryPageState();
 }
 
-class _MusicPageState extends State<MusicPage> {
+class _LibraryPageState extends State<LibraryPage> {
   final List<PlayItem> _playitems = [];
   bool _loaded = false;
   bool _gridview = true;
+  bool _videoview = true;
 
   @override
   void initState() {
@@ -38,7 +41,7 @@ class _MusicPageState extends State<MusicPage> {
       body: CustomScrollView(
         slivers: [
           MLibraryHeader(
-            title: context.l10n.music,
+            title: '媒体库',
             actions: _buildLibraryActions(context),
           ),
           _buildLibraryview(context),
@@ -49,20 +52,23 @@ class _MusicPageState extends State<MusicPage> {
 
   void _loadLibrary() async {
     _playitems.addAll(
-      await LibraryHelper.getMediaFromPaths(AppStorage().settings.musicPaths),
+      await LibraryHelper.getMediaFromPaths(AppStorage().settings.videoPaths),
     );
     if (!mounted) return;
     setState(() {
       _loaded = true;
     });
-    _gridview = !AppStorage().settings.musicLibListview;
-    AppStorage().updateMusicPage = () async {
+    _gridview = !AppStorage().settings.videoLibListview;
+    AppStorage().updateVideoPage = () async {
       setState(() {
         _loaded = false;
       });
       _playitems.clear();
-      _playitems.addAll(await LibraryHelper.getMediaFromPaths(
-          AppStorage().settings.musicPaths));
+      _playitems.addAll(
+        await LibraryHelper.getMediaFromPaths(
+          AppStorage().settings.videoPaths,
+        ),
+      );
       setState(() {
         _loaded = true;
       });
@@ -76,6 +82,19 @@ class _MusicPageState extends State<MusicPage> {
       colorScheme.surface,
     );
     return [
+      IconButton(
+        tooltip: '切换卡片显示比例',
+        hoverColor: backgroundColor,
+        onPressed: () async {
+          setState(() {
+            _videoview = !_videoview;
+          });
+        },
+        icon: Icon(
+          _videoview ? Icons.movie_outlined : Icons.music_note,
+          color: colorScheme.onPrimaryContainer,
+        ),
+      ),
       IconButton(
         tooltip: '切换显示视图',
         hoverColor: backgroundColor,
@@ -105,20 +124,20 @@ class _MusicPageState extends State<MusicPage> {
 
   Widget _buildGridview(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    final cols = max((width / 160).round(), 2);
+    final cols = max((width / (_videoview ? 180 : 160)).round(), 2);
     late final colorScheme = Theme.of(context).colorScheme;
     return SliverGrid(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisSpacing: 6,
         crossAxisCount: cols,
-        childAspectRatio: 5 / 6,
+        childAspectRatio: _videoview ? 8 / 7 : 5 / 6,
       ),
       delegate: SliverChildBuilderDelegate(
         (context, index) {
           PlayItem info = _playitems[index];
           return MInteractiveWrapper(
             menuController: MenuController(),
-            menuChildren: buildMediaMenuItems(
+            menuChildren: _buildMediaMenuItems(
               context,
               colorScheme,
               info,
@@ -127,12 +146,19 @@ class _MusicPageState extends State<MusicPage> {
               await AppStorage().closeMedia().then((value) {
                 AppStorage().openMedia(info);
               });
-              AppStorage().updateStatus();
+              if (_videoview) {
+                if (!context.mounted) return;
+                pushRootPage(
+                  context,
+                  const PlayerPage(),
+                );
+                AppStorage().updateStatus();
+              }
             },
             borderRadius: 20,
             child: MCoverCard(
-              aspectRatio: 1,
-              icon: Icons.music_note,
+              aspectRatio: _videoview ? 16 / 9 : 1,
+              icon: _videoview ? Icons.movie_outlined : Icons.music_note,
               cover: info.cover,
               title: info.title,
             ),
@@ -150,14 +176,21 @@ class _MusicPageState extends State<MusicPage> {
         (context, index) {
           PlayItem info = _playitems[index];
           return MCoverListTile(
-            aspectRatio: 1,
+            aspectRatio: _videoview ? 4 / 3 : 1,
             height: 60,
             cover: info.cover,
-            icon: Icons.music_note,
+            icon: _videoview ? Icons.movie_outlined : Icons.music_note,
             label: info.title,
             onTap: () async {
               await AppStorage().closeMedia().then((_) {
                 AppStorage().openMedia(info);
+                if (_videoview) {
+                  if (!context.mounted) return;
+                  pushRootPage(
+                    context,
+                    const PlayerPage(),
+                  );
+                }
               });
               AppStorage().updateStatus();
             },
@@ -167,11 +200,18 @@ class _MusicPageState extends State<MusicPage> {
                 onPressed: () {
                   AppStorage().closeMedia();
                   AppStorage().openMedia(info);
+                  if (_videoview) {
+                    if (!context.mounted) return;
+                    pushRootPage(
+                      context,
+                      const PlayerPage(),
+                    );
+                  }
                 },
                 icon: const Icon(Icons.play_arrow),
               ),
               MMenuButton(
-                menuChildren: buildMediaMenuItems(
+                menuChildren: _buildMediaMenuItems(
                   context,
                   colorScheme,
                   info,
@@ -183,5 +223,34 @@ class _MusicPageState extends State<MusicPage> {
         childCount: _playitems.length,
       ),
     );
+  }
+
+  List<Widget> _buildMediaMenuItems(
+    BuildContext context,
+    ColorScheme colorScheme,
+    PlayItem item,
+  ) {
+    return [
+      const SizedBox(height: 10),
+      ...buildCommonMediaMenuItems(context, colorScheme, item),
+      const Divider(),
+      const MMenuItem(
+        icon: Icons.design_services_outlined,
+        label: '修改封面',
+        onPressed: null,
+      ),
+      const MMenuItem(
+        icon: Icons.hide_source,
+        label: '隐藏',
+        onPressed: null,
+      ),
+      const Divider(),
+      const MMenuItem(
+        icon: Icons.info_outline,
+        label: '属性',
+        onPressed: null,
+      ),
+      const SizedBox(height: 10),
+    ];
   }
 }
