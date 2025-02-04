@@ -83,11 +83,10 @@ class SearchResultPageState extends State<SearchResultPage> {
               _gridview
                   ? Icons.calendar_view_month
                   : Icons.view_agenda_outlined,
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
             ),
           ),
-          const SizedBox(
-            width: 6,
-          ),
+          const SizedBox(width: 10),
         ],
       ),
       body: CustomScrollView(

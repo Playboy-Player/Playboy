@@ -226,7 +226,8 @@ class _HomeState extends State<Home> {
                           const PlayerPage(),
                         );
                       },
-                      icon: const Icon(Constants.appIcon)),
+                      icon: const Icon(Constants.appIcon),
+                    ),
               const SizedBox(
                 width: 10,
               ),

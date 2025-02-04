@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:macos_window_utils/macos_window_utils.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/backend/web_helper.dart';
@@ -31,6 +32,20 @@ void main(List<String> arguments) async {
       await windowManager.show();
       await windowManager.focus();
     });
+  }
+
+  // set auto hide toolbar to fix window_manager bug on macOS
+  if (Platform.isMacOS) {
+    await WindowManipulator.initialize(enableWindowDelegate: true);
+
+    final options = NSAppPresentationOptions.from({
+      NSAppPresentationOption.fullScreen,
+      NSAppPresentationOption.autoHideToolbar,
+      NSAppPresentationOption.autoHideMenuBar,
+      NSAppPresentationOption.autoHideDock,
+    });
+
+    options.applyAsFullScreenPresentationOptions();
   }
 
   if (AppStorage().settings.enableBvTools) {

@@ -142,7 +142,7 @@ class _FilePageState extends State<FilePage> {
         ),
         MLibraryListTile(
           icon: Icons.link,
-          title: '打开网络串流',
+          title: '播放网络串流',
           onTap: () {
             editingController.clear();
             showDialog(

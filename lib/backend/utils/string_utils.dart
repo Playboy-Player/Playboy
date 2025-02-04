@@ -4,7 +4,7 @@ bool isSubsequence(String target, String text) {
 
   int i = 0;
   for (int j = 0; j < m && i < n; j++) {
-    if (text[j] == target[i]) {
+    if (text[j].toLowerCase() == target[i].toLowerCase()) {
       i++;
     }
   }

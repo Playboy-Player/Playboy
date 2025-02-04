@@ -19,6 +19,9 @@ class MInteractiveWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onTap: () {
+        menuController.close();
+      },
       onSecondaryTapDown: (details) {
         menuController.open(position: details.localPosition);
       },

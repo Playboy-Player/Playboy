@@ -153,7 +153,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                     value: 0,
                     child: Row(
                       children: [
-                        const Icon(Icons.web_stories_outlined),
+                        const Icon(Icons.apps),
                         const SizedBox(
                           width: 10,
                         ),
@@ -161,32 +161,20 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                       ],
                     ),
                   ),
-                  // DropdownMenuItem(
-                  //   value: 1,
-                  //   child: Row(
-                  //     children: [
-                  //       const Icon(Icons.music_note_outlined),
-                  //       const SizedBox(
-                  //         width: 10,
-                  //       ),
-                  //       Text(context.l10n.music),
-                  //     ],
-                  //   ),
-                  // ),
-                  DropdownMenuItem(
-                    value: 2,
+                  const DropdownMenuItem(
+                    value: 1,
                     child: Row(
                       children: [
-                        const Icon(Icons.movie_filter_outlined),
-                        const SizedBox(
+                        Icon(Icons.smart_display_outlined),
+                        SizedBox(
                           width: 10,
                         ),
-                        Text(context.l10n.video),
+                        Text('媒体库'),
                       ],
                     ),
                   ),
                   DropdownMenuItem(
-                    value: 3,
+                    value: 2,
                     child: Row(
                       children: [
                         const Icon(Icons.folder_outlined),
@@ -198,7 +186,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                     ),
                   ),
                   DropdownMenuItem(
-                    value: 4,
+                    value: 3,
                     child: Row(
                       children: [
                         const Icon(Icons.search),

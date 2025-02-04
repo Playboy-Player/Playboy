@@ -83,7 +83,7 @@ class _LibraryPageState extends State<LibraryPage> {
     );
     return [
       IconButton(
-        tooltip: '切换卡片显示比例',
+        tooltip: '切换显示样式',
         hoverColor: backgroundColor,
         onPressed: () async {
           setState(() {

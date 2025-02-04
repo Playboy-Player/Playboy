@@ -25,13 +25,22 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
               child: Container(
                 padding: const EdgeInsets.all(12),
                 child: Text(
-                  '封面截取',
+                  context.l10n.scanOptions,
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
                     color: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: ListTile(
+                onTap: () {
+                  AppStorage().updateVideoPage();
+                },
+                leading: const Icon(Icons.scanner),
+                title: const Text('重新扫描媒体库'),
               ),
             ),
             SliverToBoxAdapter(
@@ -54,112 +63,13 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
             ),
             SliverToBoxAdapter(
               child: Container(
-                padding: const EdgeInsets.all(12),
-                child: Text(
-                  context.l10n.scanOptions,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                ),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: ListTile(
-                onTap: () {
-                  AppStorage().updateVideoPage();
-                  AppStorage().updateMusicPage();
-                },
-                leading: const Icon(Icons.refresh),
-                title: Text(context.l10n.rescanMediaLibraries),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: ListTile(
-                onTap: () {
-                  AppStorage().updateVideoPage();
-                },
-                leading: const Icon(Icons.video_library),
-                title: Text(context.l10n.rescanVideoLibrary),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: ListTile(
-                onTap: () {
-                  AppStorage().updateMusicPage();
-                },
-                leading: const Icon(Icons.library_music),
-                title: Text(context.l10n.rescanMusicLibrary),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                child: Text(
-                  context.l10n.pathSettings,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                ),
-              ),
-            ),
-            // SliverToBoxAdapter(
-            //   child: Container(
-            //     padding:
-            //         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            //     child: Row(
-            //       children: [
-            //         Text(
-            //           context.l10n.musicFolder,
-            //           style: const TextStyle(
-            //             fontSize: 16,
-            //             fontWeight: FontWeight.w500,
-            //           ),
-            //         ),
-            //         Expanded(
-            //           child: Align(
-            //             alignment: Alignment.centerRight,
-            //             child: TextButton.icon(
-            //               onPressed: () async {
-            //                 var res = await FilePicker.platform
-            //                     .getDirectoryPath(lockParentWindow: true);
-            //                 if (res != null) {
-            //                   AppStorage().settings.musicPaths.add(res);
-            //                   AppStorage().saveSettings();
-            //                   setState(() {});
-            //                 }
-            //               },
-            //               icon: const Icon(Icons.add),
-            //               label: Text(context.l10n.add),
-            //             ),
-            //           ),
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
-            // SliverList.builder(
-            //   itemBuilder: (context, index) {
-            //     return Padding(
-            //       padding: const EdgeInsets.symmetric(horizontal: 10),
-            //       child: _buildPathCard(AppStorage().settings.musicPaths[index],
-            //           colorScheme, AppStorage().settings.musicPaths),
-            //     );
-            //   },
-            //   itemCount: AppStorage().settings.musicPaths.length,
-            // ),
-            SliverToBoxAdapter(
-              child: Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 child: Row(
                   children: [
-                    Text(
-                      context.l10n.videoFolder,
-                      style: const TextStyle(
+                    const Text(
+                      '媒体库',
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
@@ -249,7 +159,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 child: const Text(
-                  '截图文件夹',
+                  '截图保存位置',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -318,9 +228,9 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
               child: Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                child: Text(
-                  context.l10n.downloadFolder,
-                  style: const TextStyle(
+                child: const Text(
+                  '下载保存位置',
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                   ),

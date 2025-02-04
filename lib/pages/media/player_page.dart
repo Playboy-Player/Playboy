@@ -9,6 +9,8 @@ import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/backend/utils/time_utils.dart';
 import 'package:playboy/pages/media/fullscreen_play_page.dart';
+import 'package:playboy/widgets/interactive_wrapper.dart';
+import 'package:playboy/widgets/menu_item.dart';
 import 'package:playboy/widgets/player_list.dart';
 import 'package:playboy/widgets/uni_image.dart';
 import 'package:squiggly_slider/slider.dart';
@@ -290,74 +292,93 @@ class PlayerPageState extends State<PlayerPage> {
     );
   }
 
+  List<Widget> _buildPlayerMenu() {
+    return [
+      const SizedBox(height: 10),
+      const MMenuItem(icon: Icons.download, label: '下载', onPressed: null),
+      const MMenuItem(icon: Icons.cut, label: '截图', onPressed: null),
+      const MMenuItem(icon: Icons.flash_on, label: '设置播放速度', onPressed: null),
+      const Divider(),
+      const MMenuItem(icon: Icons.info_outline, label: '属性', onPressed: null),
+      const SizedBox(height: 10),
+    ];
+  }
+
   Widget _buildPlayer(ColorScheme colorScheme) {
-    return ClipRRect(
-      borderRadius: const BorderRadius.all(Radius.circular(25)),
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 200),
-        child: _videoMode
-            ? ColoredBox(
-                color: Colors.black,
-                child: Center(
-                  child: Video(
-                    controller: controller,
-                    controls: NoVideoControls,
-                    subtitleViewConfiguration: const SubtitleViewConfiguration(
-                      style: TextStyle(
-                        fontSize: 60,
-                        color: Colors.white,
-                        shadows: <Shadow>[
-                          Shadow(
-                            blurRadius: 16,
-                            color: Colors.black,
-                          ),
-                        ],
+    return MInteractiveWrapper(
+      menuController: MenuController(),
+      menuChildren: _buildPlayerMenu(),
+      onTap: null,
+      borderRadius: 20,
+      child: ClipRRect(
+        borderRadius: const BorderRadius.all(Radius.circular(25)),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 200),
+          child: _videoMode
+              ? ColoredBox(
+                  color: Colors.black,
+                  child: Center(
+                    child: Video(
+                      controller: controller,
+                      controls: NoVideoControls,
+                      subtitleViewConfiguration:
+                          const SubtitleViewConfiguration(
+                        style: TextStyle(
+                          fontSize: 60,
+                          color: Colors.white,
+                          shadows: <Shadow>[
+                            Shadow(
+                              blurRadius: 16,
+                              color: Colors.black,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              )
-            : Container(
-                padding: const EdgeInsets.only(
-                  top: 50,
-                  left: 50,
-                  right: 50,
-                  bottom: 75,
-                ),
-                alignment: Alignment.center,
-                child: StreamBuilder(
-                  stream: AppStorage().playboy.stream.playlist,
-                  builder: (context, snapshot) {
-                    return AspectRatio(
-                      aspectRatio: 1,
-                      child: AppStorage().playingCover == null
-                          ? Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(40),
-                                color: colorScheme.secondaryContainer,
-                              ),
-                              // padding: const EdgeInsets.all(30),
-                              child: Icon(
-                                Icons.music_note,
-                                color: colorScheme.onSecondaryContainer,
-                                size: 120,
-                              ),
-                            )
-                          : DecoratedBox(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(40),
-                                image: DecorationImage(
-                                  image: UniImageProvider(
-                                    url: AppStorage().playingCover!,
-                                  ).getImage(),
-                                  fit: BoxFit.cover,
+                )
+              : Container(
+                  padding: const EdgeInsets.only(
+                    top: 50,
+                    left: 50,
+                    right: 50,
+                    bottom: 75,
+                  ),
+                  alignment: Alignment.center,
+                  child: StreamBuilder(
+                    stream: AppStorage().playboy.stream.playlist,
+                    builder: (context, snapshot) {
+                      return AspectRatio(
+                        aspectRatio: 1,
+                        child: AppStorage().playingCover == null
+                            ? Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(40),
+                                  color: colorScheme.secondaryContainer,
+                                ),
+                                // padding: const EdgeInsets.all(30),
+                                child: Icon(
+                                  Icons.music_note,
+                                  color: colorScheme.onSecondaryContainer,
+                                  size: 120,
+                                ),
+                              )
+                            : DecoratedBox(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(40),
+                                  image: DecorationImage(
+                                    image: UniImageProvider(
+                                      url: AppStorage().playingCover!,
+                                    ).getImage(),
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
-                            ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
-              ),
+        ),
       ),
     );
   }
