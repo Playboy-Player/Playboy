@@ -12,7 +12,7 @@ import 'package:playboy/pages/media/fullscreen_play_page.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
 import 'package:playboy/widgets/menu_item.dart';
 import 'package:playboy/widgets/player_list.dart';
-import 'package:playboy/widgets/uni_image.dart';
+import 'package:playboy/widgets/image.dart';
 import 'package:squiggly_slider/slider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:media_kit/media_kit.dart';
@@ -297,6 +297,7 @@ class PlayerPageState extends State<PlayerPage> {
       const SizedBox(height: 10),
       const MMenuItem(icon: Icons.download, label: '下载', onPressed: null),
       const MMenuItem(icon: Icons.cut, label: '截图', onPressed: null),
+      const MMenuItem(icon: Icons.cut, label: '将当前画面设为封面', onPressed: null),
       const MMenuItem(icon: Icons.flash_on, label: '设置播放速度', onPressed: null),
       const Divider(),
       const MMenuItem(icon: Icons.info_outline, label: '属性', onPressed: null),
@@ -367,7 +368,7 @@ class PlayerPageState extends State<PlayerPage> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(40),
                                   image: DecorationImage(
-                                    image: UniImageProvider(
+                                    image: MImageProvider(
                                       url: AppStorage().playingCover!,
                                     ).getImage(),
                                     fit: BoxFit.cover,

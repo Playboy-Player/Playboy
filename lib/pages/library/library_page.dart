@@ -240,6 +240,11 @@ class _LibraryPageState extends State<LibraryPage> {
         onPressed: null,
       ),
       const MMenuItem(
+        icon: Icons.cleaning_services,
+        label: '清除封面',
+        onPressed: null,
+      ),
+      const MMenuItem(
         icon: Icons.hide_source,
         label: '隐藏',
         onPressed: null,

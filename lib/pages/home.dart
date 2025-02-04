@@ -13,7 +13,7 @@ import 'package:playboy/pages/playlist/playlist_page.dart';
 import 'package:playboy/pages/search/search_page.dart';
 import 'package:playboy/pages/settings/settings_page.dart';
 import 'package:playboy/pages/library/library_page.dart';
-import 'package:playboy/widgets/uni_image.dart';
+import 'package:playboy/widgets/image.dart';
 import 'package:provider/provider.dart';
 import 'package:squiggly_slider/slider.dart';
 import 'package:window_manager/window_manager.dart';
@@ -158,7 +158,7 @@ class _HomeState extends State<Home> {
                   ? _buildMediaCardContent(colorScheme)
                   : FutureBuilder(
                       future: ColorScheme.fromImageProvider(
-                        provider: UniImageProvider(
+                        provider: MImageProvider(
                           url: AppStorage().playingCover!,
                         ).getImage(),
                       ),
@@ -579,7 +579,7 @@ class _HomeState extends State<Home> {
                     blendMode: BlendMode.dstIn,
                     child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
-                        child: UniImage(url: AppStorage().playingCover!)),
+                        child: MImage(url: AppStorage().playingCover!)),
                   ),
             Column(
               children: [
@@ -680,7 +680,7 @@ class _HomeState extends State<Home> {
               ? _buildFixedMediaBarContent(colorScheme)
               : FutureBuilder(
                   future: ColorScheme.fromImageProvider(
-                    provider: UniImageProvider(url: AppStorage().playingCover!)
+                    provider: MImageProvider(url: AppStorage().playingCover!)
                         .getImage(),
                   ),
                   builder: (context, snapshot) {
@@ -915,7 +915,7 @@ class _HomeState extends State<Home> {
                   blendMode: BlendMode.dstIn,
                   child: ClipRRect(
                       borderRadius: BorderRadius.circular(_miniMode ? 0 : 20),
-                      child: UniImage(url: AppStorage().playingCover!)),
+                      child: MImage(url: AppStorage().playingCover!)),
                 ),
           Column(
             children: [

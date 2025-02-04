@@ -100,7 +100,7 @@ class AppStorage extends ChangeNotifier {
           return;
         } else {
           playingTitle = basenameWithoutExtension(src);
-          var coverPath = '${dirname(src)}/cover.jpg';
+          var coverPath = '$src.cover.jpg';
           if (File(coverPath).existsSync()) {
             playingCover = coverPath;
           } else {

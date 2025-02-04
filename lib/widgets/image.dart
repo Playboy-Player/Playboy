@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-class UniImageProvider {
-  const UniImageProvider({required this.url});
+class MImageProvider {
+  const MImageProvider({required this.url});
   final String url;
 
   ImageProvider getImage() {
@@ -13,8 +13,8 @@ class UniImageProvider {
   }
 }
 
-class UniImage extends StatelessWidget {
-  const UniImage({super.key, required this.url});
+class MImage extends StatelessWidget {
+  const MImage({super.key, required this.url});
   final String url;
   @override
   Widget build(BuildContext context) {

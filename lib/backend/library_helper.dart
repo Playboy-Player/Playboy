@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:media_kit/media_kit.dart';
-import 'package:playboy/backend/utils/hash.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:path/path.dart';
@@ -44,7 +43,6 @@ class LibraryHelper {
 
   static Future<List<PlayItem>> getMediaFromPaths(List<String> paths) async {
     List<PlayItem> res = [];
-    var thumbnailsPath = "${AppStorage().dataPath}\\thumbnails";
     var vis = <String>{};
 
     Queue q = Queue();
@@ -67,11 +65,11 @@ class LibraryHelper {
             if (vis.contains(item.path)) continue;
             q.add(item.path);
           } else if (supportFormats.contains(extension(item.path))) {
+            var outputPath = "${item.path}.cover.jpg";
             if (AppStorage().settings.getCoverOnScan) {
               await saveThumbnail(item.path);
             }
-            var hashedPath = hashPath(item.path);
-            var outputPath = "$thumbnailsPath\\$hashedPath.jpg";
+            // var hashedPath = hashPath(item.path);
             res.add(
               PlayItem(
                 source: item.path,
@@ -88,58 +86,27 @@ class LibraryHelper {
   }
 
   static Future<void> saveThumbnail(String path) async {
-    var thumbnailsPath = "${AppStorage().dataPath}\\thumbnails";
-    var fp = Directory(thumbnailsPath);
-    if (!await fp.exists()) {
-      await fp.create();
-    }
-    var hashedPath = hashPath(path);
-    var outputPath = "$thumbnailsPath\\$hashedPath.jpg";
+    var outputPath = "$path.cover.jpg";
     if (await File(outputPath).exists()) return;
     var shell = Shell();
     try {
       // call ffmpeg to get the frame at 00:00:05
       await shell.run(
-          'ffmpeg -progress - -i "$path" -y -ss 0:00:05.000000 -frames:v 1 -q:v 1 "$outputPath"');
+        'ffmpeg -progress - -i "$path" -y -ss 0:00:05.000000 -frames:v 1 -q:v 1 "$outputPath"',
+      );
     } catch (e) {
       // print(e.toString());
     }
     // return outputPath;
   }
 
-  static Future<PlayItem?> getItemFromDirectory(Directory dir) async {
-    String source = dir.path;
-    String title = basenameWithoutExtension(source);
-    // source += '/$title.mp4';
-    bool found = false;
-    String media = '';
-    for (var ext in supportFormats) {
-      media = '$source/$title.$ext';
-      if (await File(media).exists()) {
-        found = true;
-        break;
-      }
-    }
-    if (!found) {
-      return null;
-    }
-    String cover = '${dir.path}/cover.jpg';
-    if (!await File(cover).exists()) {
-      return PlayItem(source: media, cover: null, title: title);
-    } else {
-      return PlayItem(source: media, cover: cover, title: title);
-    }
-  }
-
   static Future<PlayItem> getItemFromFile(String src) async {
-    var coverPath = '${dirname(src)}/cover.jpg';
-    if (await File(coverPath).exists()) {
-      return PlayItem(
-          source: src, cover: coverPath, title: basenameWithoutExtension(src));
-    } else {
-      return PlayItem(
-          source: src, cover: null, title: basenameWithoutExtension(src));
-    }
+    var coverPath = '$src.cover.jpg';
+    return PlayItem(
+      source: src,
+      cover: coverPath,
+      title: basenameWithoutExtension(src),
+    );
   }
 
   static Future<List<PlaylistItem>> loadPlaylists() async {
