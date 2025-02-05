@@ -2,27 +2,19 @@
 
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:playboy/backend/models/playitem.dart';
 
 part 'settings.g.dart';
 
 @JsonSerializable()
 class AppSettings {
-  // Account Settings;
-  String wbiKey;
-  int keyTime;
-  bool logined;
-
-  // Display Settings;
+  // Appearance Settings;
   String font;
-  String fallbackfont;
   bool wavySlider;
-  bool showMediaCard;
   int initPage;
   bool playlistListview;
-  bool musicLibListview;
   bool videoLibListview;
   bool searchListview;
-  int defaultSearchOption;
   ThemeMode themeMode;
   int themeCode;
 
@@ -34,7 +26,6 @@ class AppSettings {
   // 0:ask 1:never 2:always
   int continueToPlay;
 
-  // int defaultQuality;
   double volume;
   double speed;
   bool rememberStatus;
@@ -43,40 +34,33 @@ class AppSettings {
   // Storage Settings
   bool getCoverOnScan;
   List<String> videoPaths;
-  List<String> musicPaths;
   List<String> favouritePaths;
   String screenshotPath;
   String downloadPath;
 
+  bool recordRecentSearched;
+  List<String> recentSearched;
+  bool recordRecentPlayed;
+  List<PlayItem> recentPlayed;
+
   // Language Settings
   String language;
 
-  // BvTools Settings
-  bool enableBvTools;
-  bool tryLook;
+  // RemotePlay Settings
+  bool discoverable;
 
   // Dev Settings
   bool tabletUI;
   bool enableTitleBar;
-  double titleBarOffset;
 
   AppSettings({
-    // Account Settings;
-    this.wbiKey = 'none',
-    this.keyTime = 1245974400,
-    this.logined = false,
-
     // Display Settings,
     this.font = '',
-    this.fallbackfont = 'SimHei', // 黑体
     this.wavySlider = false,
-    this.showMediaCard = true,
     this.initPage = 0,
     this.playlistListview = false,
-    this.musicLibListview = false,
     this.videoLibListview = false,
     this.searchListview = false,
-    this.defaultSearchOption = 0,
     this.themeMode = ThemeMode.system,
     this.themeCode = 4,
 
@@ -94,22 +78,23 @@ class AppSettings {
     // Storage Settings
     this.getCoverOnScan = false,
     this.videoPaths = const [],
-    this.musicPaths = const [],
     this.favouritePaths = const [],
     this.screenshotPath = '',
     this.downloadPath = '',
+    this.recordRecentSearched = false,
+    this.recentSearched = const [],
+    this.recordRecentPlayed = false,
+    this.recentPlayed = const [],
 
     // Language Settings
     this.language = 'zh',
 
-    // BvTools Settings
-    this.enableBvTools = false,
-    this.tryLook = true,
+    // RemotePlay Settings
+    this.discoverable = false,
 
     // Dev Settings
     this.tabletUI = true,
     this.enableTitleBar = true,
-    this.titleBarOffset = 0,
   });
 
   factory AppSettings.fromJson(Map<String, dynamic> json) =>

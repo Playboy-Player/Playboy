@@ -13,7 +13,6 @@ import 'package:playboy/widgets/interactive_wrapper.dart';
 import 'package:playboy/widgets/menu_item.dart';
 import 'package:playboy/widgets/player_list.dart';
 import 'package:playboy/widgets/image.dart';
-import 'package:squiggly_slider/slider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
@@ -205,7 +204,7 @@ class PlayerPageState extends State<PlayerPage> {
           : const SizedBox(),
       actions: [
         IconButton(
-          icon: const Icon(Icons.lyrics_outlined),
+          icon: const Icon(Icons.subtitles_outlined),
           onPressed: () {
             if (!_menuExpanded) {
               setState(() {
@@ -245,38 +244,37 @@ class PlayerPageState extends State<PlayerPage> {
             }
           },
         ),
-        // IconButton(
-        //   icon: const Icon(Icons.more_vert),
-        //   onPressed: () {},
-        // ),
         if (!Platform.isMacOS)
           IconButton(
-              hoverColor: Colors.transparent,
-              iconSize: 20,
-              onPressed: () {
-                windowManager.minimize();
-              },
-              icon: const Icon(Icons.minimize)),
+            hoverColor: Colors.transparent,
+            iconSize: 20,
+            onPressed: () {
+              windowManager.minimize();
+            },
+            icon: const Icon(Icons.minimize),
+          ),
         if (!Platform.isMacOS)
           IconButton(
-              hoverColor: Colors.transparent,
-              iconSize: 20,
-              onPressed: () async {
-                if (await windowManager.isMaximized()) {
-                  windowManager.unmaximize();
-                } else {
-                  windowManager.maximize();
-                }
-              },
-              icon: const Icon(Icons.crop_square)),
+            hoverColor: Colors.transparent,
+            iconSize: 20,
+            onPressed: () async {
+              if (await windowManager.isMaximized()) {
+                windowManager.unmaximize();
+              } else {
+                windowManager.maximize();
+              }
+            },
+            icon: const Icon(Icons.crop_square),
+          ),
         if (!Platform.isMacOS)
           IconButton(
-              hoverColor: Colors.transparent,
-              iconSize: 20,
-              onPressed: () {
-                windowManager.close();
-              },
-              icon: const Icon(Icons.close)),
+            hoverColor: Colors.transparent,
+            iconSize: 20,
+            onPressed: () {
+              windowManager.close();
+            },
+            icon: const Icon(Icons.close),
+          ),
         if (Platform.isMacOS)
           IconButton(
             constraints: const BoxConstraints(),
@@ -387,18 +385,14 @@ class PlayerPageState extends State<PlayerPage> {
   Widget _buildSeekbar() {
     return SliderTheme(
       data: SliderThemeData(
-        // trackHeight: videoMode ? 8 : null,
-        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+        trackHeight: 2,
+        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
         overlayShape: SliderComponentShape.noOverlay,
       ),
       child: StreamBuilder(
         stream: AppStorage().playboy.stream.position,
         builder: (BuildContext context, AsyncSnapshot<Duration> snapshot) {
-          return SquigglySlider(
-            squiggleAmplitude:
-                !AppStorage().settings.wavySlider || _videoMode ? 0 : 2,
-            squiggleWavelength: 5,
-            squiggleSpeed: 0.05,
+          return Slider(
             max: AppStorage().duration.inMilliseconds.toDouble(),
             value: AppStorage().seeking
                 ? AppStorage().seekingPos
@@ -462,7 +456,7 @@ class PlayerPageState extends State<PlayerPage> {
                 data: SliderThemeData(
                   activeTrackColor: colorScheme.secondaryContainer,
                   thumbColor: colorScheme.secondary,
-                  trackHeight: 4,
+                  trackHeight: 2,
                   thumbShape:
                       const RoundSliderThumbShape(enabledThumbRadius: 6),
                   overlayShape: SliderComponentShape.noOverlay,
@@ -528,8 +522,9 @@ class PlayerPageState extends State<PlayerPage> {
         style: IconButton.styleFrom(
           backgroundColor: colorScheme.secondary,
           foregroundColor: colorScheme.onSecondary,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
         ),
         iconSize: 32,
         onPressed: () {
@@ -625,7 +620,7 @@ class PlayerPageState extends State<PlayerPage> {
                 data: SliderThemeData(
                   activeTrackColor: colorScheme.secondaryContainer,
                   thumbColor: colorScheme.secondary,
-                  trackHeight: 4,
+                  trackHeight: 2,
                   thumbShape:
                       const RoundSliderThumbShape(enabledThumbRadius: 6),
                   overlayShape: SliderComponentShape.noOverlay,
@@ -646,16 +641,19 @@ class PlayerPageState extends State<PlayerPage> {
                 )),
           ),
           IconButton(
-              onPressed: () {
-                setState(() {
-                  AppStorage().playboy.setRate(1);
-                  AppStorage().settings.speed = 1;
-                  AppStorage().saveSettings();
-                });
-              },
-              icon: Icon(AppStorage().playboy.state.rate == 1
+            onPressed: () {
+              setState(() {
+                AppStorage().playboy.setRate(1);
+                AppStorage().settings.speed = 1;
+                AppStorage().saveSettings();
+              });
+            },
+            icon: Icon(
+              AppStorage().playboy.state.rate == 1
                   ? Icons.flash_off
-                  : Icons.flash_on)),
+                  : Icons.flash_on,
+            ),
+          ),
           AnimatedContainer(
             duration: const Duration(milliseconds: 100),
             width: _videoMode ? 16 : 32,

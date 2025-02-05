@@ -68,7 +68,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                 child: Row(
                   children: [
                     const Text(
-                      '媒体库',
+                      '扫描位置',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -105,6 +105,19 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                 );
               },
               itemCount: AppStorage().settings.videoPaths.length,
+            ),
+            SliverToBoxAdapter(
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                child: Text(
+                  '文件夹',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                ),
+              ),
             ),
             SliverToBoxAdapter(
               child: Container(

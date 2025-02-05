@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/storage.dart';
 
-class ExtensionSettings extends StatefulWidget {
-  const ExtensionSettings({super.key});
+class RemotePlaySettings extends StatefulWidget {
+  const RemotePlaySettings({super.key});
 
   @override
-  State<StatefulWidget> createState() => _ExtensionSettingsState();
+  State<StatefulWidget> createState() => _RemotePlaySettingsState();
 }
 
-class _ExtensionSettingsState extends State<ExtensionSettings> {
+class _RemotePlaySettingsState extends State<RemotePlaySettings> {
   final TextEditingController editingController = TextEditingController();
 
   @override
@@ -21,7 +21,7 @@ class _ExtensionSettingsState extends State<ExtensionSettings> {
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
-              '扩展功能',
+              '远程播放设置',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
@@ -30,7 +30,7 @@ class _ExtensionSettingsState extends State<ExtensionSettings> {
             ),
           ),
           SwitchListTile(
-            tileColor: AppStorage().settings.enableBvTools
+            tileColor: AppStorage().settings.discoverable
                 ? colorScheme.primaryContainer
                 : colorScheme.primaryContainer.withValues(alpha: 0.2),
             shape:
@@ -38,12 +38,12 @@ class _ExtensionSettingsState extends State<ExtensionSettings> {
             title: Container(
               alignment: Alignment.centerLeft,
               height: 40,
-              child: const Text('启用'),
+              child: const Text('允许本设备接收局域网媒体'),
             ),
-            value: AppStorage().settings.enableBvTools,
+            value: AppStorage().settings.discoverable,
             onChanged: (bool value) {
               setState(() {
-                AppStorage().settings.enableBvTools = value;
+                AppStorage().settings.discoverable = value;
               });
               AppStorage().saveSettings();
             },

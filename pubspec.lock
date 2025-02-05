@@ -138,10 +138,10 @@ packages:
     dependency: transitive
     description:
       name: cli_util
-      sha256: c05b7406fdabc7a49a3929d4af76bcaccbbffcbcdcf185b082e1ae07da323d19
+      sha256: ff6785f7e9e3c38ac98b2fb035701789de90154024a75b6cb926445e83197d1c
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.1"
+    version: "0.4.2"
   clock:
     dependency: transitive
     description:
@@ -831,14 +831,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.0"
-  squiggly_slider:
-    dependency: "direct main"
-    description:
-      name: squiggly_slider
-      sha256: "68c08cb1b6c6bccafa8707844e36f3e61fa2860f32ed47bf11b3cd7af338ad46"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.5"
   stack_trace:
     dependency: transitive
     description:
@@ -1121,5 +1113,5 @@ packages:
     source: hosted
     version: "3.1.2"
 sdks:
-  dart: ">=3.5.0 <3.20.0"
+  dart: ">=3.5.0 <4.0.0"
   flutter: ">=3.24.0"

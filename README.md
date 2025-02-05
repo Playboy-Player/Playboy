@@ -3,8 +3,8 @@
 
 Material 3 风格的跨平台媒体播放器.
 
-![build](https://img.shields.io/github/actions/workflow/status/Playboy-Player/Playboy/build.yml?style=for-the-badge) 
-![release](https://img.shields.io/badge/beta-2025.2-blue?link=https://github.com/Playboy-Player/Playboy/release&style=for-the-badge) ![roadmap](https://img.shields.io/badge/loadmap-grey?link=https://github.com/orgs/Playboy-Player/projects/3&style=for-the-badge)
+[![build](https://img.shields.io/github/actions/workflow/status/Playboy-Player/Playboy/build.yml?style=for-the-badge)](https://github.com/Playboy-Player/Playboy/actions) 
+[![release](https://img.shields.io/badge/beta-2025.2-blue?style=for-the-badge)](https://github.com/Playboy-Player/Playboy/actions) [![roadmap](https://img.shields.io/badge/loadmap-grey?style=for-the-badge)](https://github.com/orgs/Playboy-Player/projects/3)
 
 ![](https://m3-markdown-badges.vercel.app/stars/7/2/Playboy-Player/Playboy)
 ![](https://m3-markdown-badges.vercel.app/issues/1/2/Playboy-Player/Playboy)  

@@ -1,10 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:playboy/backend/storage.dart';
 import 'package:playboy/l10n/l10n.dart';
 import 'package:playboy/pages/settings/categories/about_app_settings.dart';
-import 'package:playboy/pages/settings/categories/extension_settings.dart';
+import 'package:playboy/pages/settings/categories/remote_play_settings.dart';
 import 'package:playboy/pages/settings/categories/appearance_settings.dart';
 import 'package:playboy/pages/settings/categories/keymap_settings.dart';
 import 'package:playboy/pages/settings/categories/language_settings.dart';
@@ -28,9 +27,9 @@ class SettingsPageState extends State<SettingsPage> {
     Icons.keyboard_command_key,
     Icons.folder_outlined,
     Icons.translate_rounded,
-    Icons.extension_outlined,
+    Icons.cast,
     Icons.info_outline,
-    Icons.code_outlined,
+    Icons.bug_report_outlined,
   ];
   final List<Widget> _pages = [
     const AppearanceSettingsPage(),
@@ -38,7 +37,7 @@ class SettingsPageState extends State<SettingsPage> {
     const KeymapSettings(),
     const StorageSettingsPage(),
     const LanguageSettingsPage(),
-    const ExtensionSettings(),
+    const RemotePlaySettings(),
     const AboutPage(),
     const DeveloperSettings(),
   ];
@@ -51,98 +50,92 @@ class SettingsPageState extends State<SettingsPage> {
       '快捷键',
       context.l10n.storage,
       context.l10n.language,
-      '扩展功能',
+      '远程播放',
       context.l10n.about,
-      'Developer',
+      '调试',
     ];
     return Scaffold(
-      appBar: !AppStorage().settings.enableTitleBar
-          ? AppBar(
-              automaticallyImplyLeading: false,
-              scrolledUnderElevation: 0,
-              toolbarHeight: 10 + AppStorage().settings.titleBarOffset,
-            )
-          : AppBar(
-              leadingWidth: 40,
-              automaticallyImplyLeading: false,
-              leading: Platform.isMacOS
-                  ? null
-                  : IconButton(
-                      iconSize: 20,
-                      constraints: const BoxConstraints(),
-                      icon: const Icon(Icons.arrow_back_ios_new),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-              titleSpacing: 0,
-              backgroundColor: Theme.of(context).colorScheme.surface,
-              scrolledUnderElevation: 0,
-              flexibleSpace: Column(
-                children: [
-                  SizedBox(
-                    height: 8,
-                    child: MouseRegion(
-                      cursor: SystemMouseCursors.resizeUp,
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        onPanStart: (details) {
-                          windowManager.startResizing(ResizeEdge.top);
-                        },
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onPanStart: (details) {
-                        windowManager.startDragging();
-                      },
-                    ),
-                  )
-                ],
+      appBar: AppBar(
+        leadingWidth: 40,
+        automaticallyImplyLeading: false,
+        leading: Platform.isMacOS
+            ? null
+            : IconButton(
+                iconSize: 20,
+                constraints: const BoxConstraints(),
+                icon: const Icon(Icons.arrow_back_ios_new),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
               ),
-              toolbarHeight: 40,
-              actions: [
-                if (!Platform.isMacOS)
-                  IconButton(
-                      hoverColor: Colors.transparent,
-                      iconSize: 20,
-                      onPressed: () {
-                        windowManager.minimize();
-                      },
-                      icon: const Icon(Icons.minimize)),
-                if (!Platform.isMacOS)
-                  IconButton(
-                      hoverColor: Colors.transparent,
-                      iconSize: 20,
-                      onPressed: () async {
-                        if (await windowManager.isMaximized()) {
-                          windowManager.unmaximize();
-                        } else {
-                          windowManager.maximize();
-                        }
-                      },
-                      icon: const Icon(Icons.crop_square)),
-                if (!Platform.isMacOS)
-                  IconButton(
-                      hoverColor: Colors.transparent,
-                      iconSize: 20,
-                      onPressed: () {
-                        windowManager.close();
-                      },
-                      icon: const Icon(Icons.close)),
-                if (Platform.isMacOS)
-                  IconButton(
-                    constraints: const BoxConstraints(),
-                    icon: const Icon(Icons.close),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                if (Platform.isMacOS) const SizedBox(width: 8)
-              ],
+        titleSpacing: 0,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        scrolledUnderElevation: 0,
+        flexibleSpace: Column(
+          children: [
+            SizedBox(
+              height: 8,
+              child: MouseRegion(
+                cursor: SystemMouseCursors.resizeUp,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onPanStart: (details) {
+                    windowManager.startResizing(ResizeEdge.top);
+                  },
+                ),
+              ),
             ),
+            Expanded(
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onPanStart: (details) {
+                  windowManager.startDragging();
+                },
+              ),
+            )
+          ],
+        ),
+        toolbarHeight: 40,
+        actions: [
+          if (!Platform.isMacOS)
+            IconButton(
+                hoverColor: Colors.transparent,
+                iconSize: 20,
+                onPressed: () {
+                  windowManager.minimize();
+                },
+                icon: const Icon(Icons.minimize)),
+          if (!Platform.isMacOS)
+            IconButton(
+                hoverColor: Colors.transparent,
+                iconSize: 20,
+                onPressed: () async {
+                  if (await windowManager.isMaximized()) {
+                    windowManager.unmaximize();
+                  } else {
+                    windowManager.maximize();
+                  }
+                },
+                icon: const Icon(Icons.crop_square)),
+          if (!Platform.isMacOS)
+            IconButton(
+                hoverColor: Colors.transparent,
+                iconSize: 20,
+                onPressed: () {
+                  windowManager.close();
+                },
+                icon: const Icon(Icons.close)),
+          if (Platform.isMacOS)
+            IconButton(
+              constraints: const BoxConstraints(),
+              icon: const Icon(Icons.close),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          if (Platform.isMacOS) const SizedBox(width: 8)
+        ],
+      ),
       // floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       body: Row(
         children: [

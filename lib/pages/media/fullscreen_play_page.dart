@@ -216,7 +216,7 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
                 data: SliderThemeData(
                   activeTrackColor: colorScheme.secondaryContainer,
                   thumbColor: colorScheme.secondary,
-                  trackHeight: 4,
+                  trackHeight: 2,
                   thumbShape:
                       const RoundSliderThumbShape(enabledThumbRadius: 6),
                   overlayShape: SliderComponentShape.noOverlay,
@@ -351,7 +351,7 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
                 data: SliderThemeData(
                   activeTrackColor: colorScheme.secondaryContainer,
                   thumbColor: colorScheme.secondary,
-                  trackHeight: 4,
+                  trackHeight: 2,
                   thumbShape:
                       const RoundSliderThumbShape(enabledThumbRadius: 6),
                   overlayShape: SliderComponentShape.noOverlay,

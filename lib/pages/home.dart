@@ -8,14 +8,12 @@ import 'package:playboy/backend/storage.dart';
 import 'package:playboy/backend/utils/route_utils.dart';
 import 'package:playboy/l10n/l10n.dart';
 import 'package:playboy/pages/media/player_page.dart';
-// import 'package:playboy/pages/media/music_page.dart';
 import 'package:playboy/pages/playlist/playlist_page.dart';
 import 'package:playboy/pages/search/search_page.dart';
 import 'package:playboy/pages/settings/settings_page.dart';
 import 'package:playboy/pages/library/library_page.dart';
 import 'package:playboy/widgets/image.dart';
 import 'package:provider/provider.dart';
-import 'package:squiggly_slider/slider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'file/file_page.dart';
 
@@ -34,7 +32,7 @@ class MikuMiku extends StatelessWidget {
         },
       ),
       fontFamily: value.settings.font != '' ? value.settings.font : null,
-      fontFamilyFallback: [value.settings.fallbackfont],
+      fontFamilyFallback: Platform.isWindows ? ['Microsoft YaHei UI'] : null,
       colorScheme: colorScheme,
       tooltipTheme: TooltipThemeData(
         decoration: BoxDecoration(
@@ -123,7 +121,6 @@ class _HomeState extends State<Home> {
   bool _miniMode = false;
 
   final _playlistPageKey = GlobalKey<NavigatorState>();
-  // final _musicPageKey = GlobalKey<NavigatorState>();
   final _videoPageKey = GlobalKey<NavigatorState>();
   final _filePageKey = GlobalKey<NavigatorState>();
   final _searchPageKey = GlobalKey<NavigatorState>();
@@ -145,35 +142,7 @@ class _HomeState extends State<Home> {
       colorScheme.surface,
     );
     if (_miniMode) {
-      return Scaffold(
-        body: GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onPanStart: (details) {
-            windowManager.startDragging();
-          },
-          child: StreamBuilder(
-            stream: AppStorage().playboy.stream.playlist,
-            builder: (context, snapshot) {
-              return AppStorage().playingCover == null
-                  ? _buildMediaCardContent(colorScheme)
-                  : FutureBuilder(
-                      future: ColorScheme.fromImageProvider(
-                        provider: MImageProvider(
-                          url: AppStorage().playingCover!,
-                        ).getImage(),
-                      ),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData && snapshot.data != null) {
-                          return _buildMediaCardContent(snapshot.data!);
-                        } else {
-                          return _buildMediaCardContent(colorScheme);
-                        }
-                      },
-                    );
-            },
-          ),
-        ),
-      );
+      return _buildMiniModeCard(colorScheme);
     }
     return Scaffold(
       appBar: AppBar(
@@ -249,30 +218,28 @@ class _HomeState extends State<Home> {
             ])),
         actions: [
           IconButton(
-              hoverColor: Colors.transparent,
-              onPressed: () {
-                // setState(() {
-                //   showMediaCard = !showMediaCard;
-                // });
-                if (_miniMode) {
-                  windowManager.setResizable(true);
-                  windowManager.setMinimumSize(const Size(360, 500));
-                  windowManager.setSize(const Size(900, 700));
-                  windowManager.setAlwaysOnTop(false);
-                  windowManager.center();
-                } else {
-                  windowManager.setResizable(false);
-                  windowManager.setMinimumSize(const Size(300, 120));
-                  windowManager.setSize(const Size(300, 120));
-                  windowManager.setAlwaysOnTop(true);
-                }
-                setState(() {
-                  _miniMode = !_miniMode;
-                });
-              },
-              icon: const Icon(
-                Icons.headset_outlined,
-              )),
+            hoverColor: Colors.transparent,
+            onPressed: () {
+              if (_miniMode) {
+                windowManager.setResizable(true);
+                windowManager.setMinimumSize(const Size(360, 500));
+                windowManager.setSize(const Size(900, 700));
+                windowManager.setAlwaysOnTop(false);
+                windowManager.center();
+              } else {
+                windowManager.setResizable(false);
+                windowManager.setMinimumSize(const Size(300, 120));
+                windowManager.setSize(const Size(300, 120));
+                windowManager.setAlwaysOnTop(true);
+              }
+              setState(() {
+                _miniMode = !_miniMode;
+              });
+            },
+            icon: const Icon(
+              Icons.headset_outlined,
+            ),
+          ),
           if (Platform.isMacOS)
             IconButton(
               hoverColor: Colors.transparent,
@@ -289,24 +256,26 @@ class _HomeState extends State<Home> {
           const SizedBox(width: 10),
           if (!Platform.isMacOS)
             IconButton(
-                hoverColor: Colors.transparent,
-                iconSize: 20,
-                onPressed: () {
-                  windowManager.minimize();
-                },
-                icon: const Icon(Icons.minimize)),
+              hoverColor: Colors.transparent,
+              iconSize: 20,
+              onPressed: () {
+                windowManager.minimize();
+              },
+              icon: const Icon(Icons.minimize),
+            ),
           if (!Platform.isMacOS)
             IconButton(
-                hoverColor: Colors.transparent,
-                iconSize: 20,
-                onPressed: () async {
-                  if (await windowManager.isMaximized()) {
-                    windowManager.unmaximize();
-                  } else {
-                    windowManager.maximize();
-                  }
-                },
-                icon: const Icon(Icons.crop_square)),
+              hoverColor: Colors.transparent,
+              iconSize: 20,
+              onPressed: () async {
+                if (await windowManager.isMaximized()) {
+                  windowManager.unmaximize();
+                } else {
+                  windowManager.maximize();
+                }
+              },
+              icon: const Icon(Icons.crop_square),
+            ),
           if (!Platform.isMacOS)
             IconButton(
               hoverColor: Colors.transparent,
@@ -333,6 +302,38 @@ class _HomeState extends State<Home> {
             ),
       floatingActionButton: _buildFloatingMediaBar(colorScheme),
       bottomNavigationBar: tabletUI ? null : _buildNavigationBar(context),
+    );
+  }
+
+  Widget _buildMiniModeCard(ColorScheme colorScheme) {
+    return Scaffold(
+      body: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onPanStart: (details) {
+          windowManager.startDragging();
+        },
+        child: StreamBuilder(
+          stream: AppStorage().playboy.stream.playlist,
+          builder: (context, snapshot) {
+            return AppStorage().playingCover == null
+                ? _buildMediaCardContent(colorScheme)
+                : FutureBuilder(
+                    future: ColorScheme.fromImageProvider(
+                      provider: MImageProvider(
+                        url: AppStorage().playingCover!,
+                      ).getImage(),
+                    ),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData && snapshot.data != null) {
+                        return _buildMediaCardContent(snapshot.data!);
+                      } else {
+                        return _buildMediaCardContent(colorScheme);
+                      }
+                    },
+                  );
+          },
+        ),
+      ),
     );
   }
 
@@ -699,7 +700,7 @@ class _HomeState extends State<Home> {
   Widget _buildFloatingMediaBarContent(ColorScheme colorScheme) {
     return Container(
       width: 360,
-      height: 48,
+      height: 40,
       decoration: BoxDecoration(
         color: colorScheme.primary,
         borderRadius: BorderRadius.circular(20),
@@ -707,8 +708,20 @@ class _HomeState extends State<Home> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          const SizedBox(
-            width: 6,
+          const SizedBox(width: 10),
+          IconButton(
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            constraints: const BoxConstraints(),
+            color: colorScheme.primaryContainer,
+            iconSize: 18,
+            onPressed: () {
+              if (!context.mounted) return;
+              pushRootPage(
+                context,
+                const PlayerPage(),
+              );
+            },
+            icon: const Icon(Icons.open_in_full_rounded),
           ),
           IconButton(
             padding: const EdgeInsets.symmetric(horizontal: 2),
@@ -724,7 +737,9 @@ class _HomeState extends State<Home> {
               stream: AppStorage().playboy.stream.playing,
               builder: (context, snapshot) {
                 return Icon(
-                  AppStorage().playing ? Icons.pause : Icons.play_arrow,
+                  AppStorage().playing
+                      ? Icons.pause_rounded
+                      : Icons.play_arrow_rounded,
                 );
               },
             ),
@@ -739,7 +754,7 @@ class _HomeState extends State<Home> {
               setState(() {});
             },
             icon: const Icon(
-              Icons.skip_previous,
+              Icons.skip_previous_rounded,
               // size: 30,
             ),
           ),
@@ -756,11 +771,7 @@ class _HomeState extends State<Home> {
               child: StreamBuilder(
                 stream: AppStorage().playboy.stream.position,
                 builder: (context, snapshot) {
-                  return SquigglySlider(
-                    squiggleAmplitude:
-                        AppStorage().settings.wavySlider ? 1.4 : 0,
-                    squiggleWavelength: 4,
-                    squiggleSpeed: 0.05,
+                  return Slider(
                     max: AppStorage().duration.inMilliseconds.toDouble(),
                     value: AppStorage().seeking
                         ? AppStorage().seekingPos
@@ -819,7 +830,7 @@ class _HomeState extends State<Home> {
               setState(() {});
             },
             icon: const Icon(
-              Icons.skip_next,
+              Icons.skip_next_rounded,
             ),
           ),
           IconButton(
@@ -834,8 +845,8 @@ class _HomeState extends State<Home> {
               );
             },
             icon: AppStorage().shuffle
-                ? const Icon(Icons.shuffle_on)
-                : const Icon(Icons.shuffle),
+                ? const Icon(Icons.shuffle_on_rounded)
+                : const Icon(Icons.shuffle_rounded),
             iconSize: 20,
           ),
           IconButton(
@@ -852,8 +863,8 @@ class _HomeState extends State<Home> {
               setState(() {});
             },
             icon: AppStorage().playboy.state.playlistMode == PlaylistMode.single
-                ? const Icon(Icons.repeat_one_on)
-                : const Icon(Icons.repeat_one),
+                ? const Icon(Icons.repeat_one_on_rounded)
+                : const Icon(Icons.repeat_one_rounded),
             iconSize: 20,
           ),
           IconButton(
@@ -864,13 +875,9 @@ class _HomeState extends State<Home> {
               AppStorage().closeMedia();
               setState(() {});
             },
-            icon: const Icon(
-              Icons.stop,
-            ),
+            icon: const Icon(Icons.stop_rounded),
           ),
-          const SizedBox(
-            width: 6,
-          ),
+          const SizedBox(width: 10),
         ],
       ),
     );
@@ -914,8 +921,9 @@ class _HomeState extends State<Home> {
                   },
                   blendMode: BlendMode.dstIn,
                   child: ClipRRect(
-                      borderRadius: BorderRadius.circular(_miniMode ? 0 : 20),
-                      child: MImage(url: AppStorage().playingCover!)),
+                    borderRadius: BorderRadius.circular(_miniMode ? 0 : 20),
+                    child: MImage(url: AppStorage().playingCover!),
+                  ),
                 ),
           Column(
             children: [
@@ -961,7 +969,8 @@ class _HomeState extends State<Home> {
                       style: IconButton.styleFrom(
                         backgroundColor: colorScheme.primaryContainer,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16)),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                       ),
                       iconSize: 24,
                       onPressed: () {
@@ -1049,11 +1058,7 @@ class _HomeState extends State<Home> {
                         child: StreamBuilder(
                           stream: AppStorage().playboy.stream.position,
                           builder: (context, snapshot) {
-                            return SquigglySlider(
-                              squiggleAmplitude:
-                                  AppStorage().settings.wavySlider ? 1.4 : 0,
-                              squiggleWavelength: 4,
-                              squiggleSpeed: 0.05,
+                            return Slider(
                               max: AppStorage()
                                   .duration
                                   .inMilliseconds

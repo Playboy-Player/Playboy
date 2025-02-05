@@ -10,10 +10,7 @@ class AppearanceSettingsPage extends StatefulWidget {
 }
 
 class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
-  final TextEditingController _controller1 =
-      TextEditingController(); // primary font
-  final TextEditingController _controller2 =
-      TextEditingController(); // secondary font
+  final _controller1 = TextEditingController(); // primary font
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +29,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
             ),
           ),
           ListTile(
-            title: const Text('首选字体'),
+            title: const Text('显示字体'),
             subtitle: const Text('留空以保持默认'),
             trailing: Container(
               alignment: Alignment.center,
@@ -63,38 +60,6 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
               ),
             ),
           ),
-          ListTile(
-            title: const Text('备用字体'),
-            subtitle: const Text('默认为黑体(SimHei)'),
-            trailing: Container(
-              alignment: Alignment.center,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              width: 150,
-              height: 40,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                color: Theme.of(context).colorScheme.secondaryContainer,
-              ),
-              child: TextField(
-                textAlign: TextAlign.center,
-                controller: _controller2,
-                maxLines: 1,
-                decoration: InputDecoration.collapsed(
-                  hintText: AppStorage().settings.fallbackfont != ''
-                      ? AppStorage().settings.fallbackfont
-                      : "None",
-                ),
-                onSubmitted: (value) {
-                  _controller2.clear();
-                  setState(() {
-                    AppStorage().settings.fallbackfont = value;
-                  });
-                  AppStorage().saveSettings();
-                  AppStorage().updateStatus();
-                },
-              ),
-            ),
-          ),
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
@@ -106,28 +71,6 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
               ),
             ),
           ),
-          SwitchListTile(
-            title: Text(context.l10n.enableWavySlider),
-            subtitle: Text(context.l10n.disabledInVideoPlaying),
-            value: AppStorage().settings.wavySlider,
-            onChanged: (bool value) {
-              setState(() {
-                AppStorage().settings.wavySlider = value;
-              });
-              AppStorage().saveSettings();
-              AppStorage().updateStatus();
-            },
-          ),
-          // SwitchListTile(
-          //   title: const Text('应用内显示媒体控制卡片'),
-          //   value: AppStorage().settings.showMediaCard,
-          //   onChanged: (bool value) {
-          //     setState(() {
-          //       AppStorage().settings.showMediaCard = value;
-          //     });
-          //     AppStorage().saveSettings();
-          //   },
-          // ),
           ListTile(
             title: Text(context.l10n.startupPage),
             trailing: SizedBox(
