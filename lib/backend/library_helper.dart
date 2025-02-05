@@ -65,7 +65,7 @@ class LibraryHelper {
             if (vis.contains(item.path)) continue;
             q.add(item.path);
           } else if (supportFormats.contains(extension(item.path))) {
-            var outputPath = "${item.path}.cover.jpg";
+            var outputPath = "${withoutExtension(item.path)}.cover.jpg";
             if (AppStorage().settings.getCoverOnScan) {
               await saveThumbnail(item.path);
             }
@@ -86,7 +86,7 @@ class LibraryHelper {
   }
 
   static Future<void> saveThumbnail(String path) async {
-    var outputPath = "$path.cover.jpg";
+    var outputPath = "${withoutExtension(path)}.cover.jpg";
     if (await File(outputPath).exists()) return;
     var shell = Shell();
     try {
@@ -101,7 +101,7 @@ class LibraryHelper {
   }
 
   static Future<PlayItem> getItemFromFile(String src) async {
-    var coverPath = '$src.cover.jpg';
+    var coverPath = '${withoutExtension(src)}.cover.jpg';
     return PlayItem(
       source: src,
       cover: coverPath,

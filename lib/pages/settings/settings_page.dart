@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/l10n/l10n.dart';
 import 'package:playboy/pages/settings/categories/about_app_settings.dart';
-import 'package:playboy/pages/settings/categories/bvtools_settings.dart';
+import 'package:playboy/pages/settings/categories/extension_settings.dart';
 import 'package:playboy/pages/settings/categories/appearance_settings.dart';
 import 'package:playboy/pages/settings/categories/keymap_settings.dart';
 import 'package:playboy/pages/settings/categories/language_settings.dart';
@@ -45,9 +45,6 @@ class SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    // late final colorScheme = Theme.of(context).colorScheme;
-    // late final backgroundColor = Color.alphaBlend(
-    //     colorScheme.primary.withOpacity(0.08), colorScheme.surface);
     List<String> options = [
       context.l10n.appearance,
       context.l10n.player,

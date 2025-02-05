@@ -6,6 +6,7 @@ import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
@@ -59,7 +60,6 @@ class AppStorage extends ChangeNotifier {
   late AppSettings settings;
 
   late Function() updateFilePage;
-  late Function() updateMusicPage;
   late Function() updateVideoPage;
 
   late final Player playboy;
@@ -100,7 +100,7 @@ class AppStorage extends ChangeNotifier {
           return;
         } else {
           playingTitle = basenameWithoutExtension(src);
-          var coverPath = '$src.cover.jpg';
+          var coverPath = '${withoutExtension(src)}.cover.jpg';
           if (File(coverPath).existsSync()) {
             playingCover = coverPath;
           } else {
@@ -160,9 +160,6 @@ class AppStorage extends ChangeNotifier {
 
   Future<void> closeMedia() async {
     playboy.stop();
-    if (playboy.platform is NativePlayer) {
-      (playboy.platform as NativePlayer).setProperty('audio-files', '');
-    }
     playingTitle = 'Not Playing';
     playingCover = null;
     shuffle = false;

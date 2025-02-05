@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/storage.dart';
-import 'package:playboy/backend/utils/route.dart';
+import 'package:playboy/backend/utils/route_utils.dart';
 import 'package:playboy/backend/utils/time_utils.dart';
 import 'package:playboy/l10n/l10n.dart';
 import 'package:playboy/pages/playlist/playlist_detail.dart';

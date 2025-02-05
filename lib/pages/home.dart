@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:playboy/backend/constants.dart';
 import 'package:playboy/backend/storage.dart';
-import 'package:playboy/backend/utils/route.dart';
+import 'package:playboy/backend/utils/route_utils.dart';
 import 'package:playboy/l10n/l10n.dart';
 import 'package:playboy/pages/media/player_page.dart';
 // import 'package:playboy/pages/media/music_page.dart';

@@ -11,37 +11,38 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # UI
+  provider: ^6.1.1
   squiggly_slider: ^1.0.5
 
-  dio: ^5.3.3
-  dio_cookie_manager: ^3.1.1
-  cookie_jar: ^4.0.8
-  crypto: ^3.0.3
-
+  # File System
+  path: ^1.8.3
   path_provider: ^2.1.1
   json_annotation: ^4.8.1
-  provider: ^6.1.1
-  path: ^1.8.3
   file_picker: ^8.3.1
 
+  # Desktop Window Control
   window_manager: ^0.3.8
   macos_window_utils: ^1.6.1
-  url_launcher: ^6.2.5
   window_size:
     git:
       url: https://github.com/google/flutter-desktop-embedding.git
       path: plugins/window_size
       ref: a738913c8ce2c9f47515382d40827e794a334274
 
+  # Media
   media_kit: ^1.1.10
   media_kit_video: ^1.2.4
   media_kit_libs_video: ^1.0.4
 
-  process_run: ^1.1.0
-
+  # Localization
   flutter_localizations:
     sdk: flutter
   intl: any
+
+  # Misc
+  url_launcher: ^6.2.5
+  process_run: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -62,9 +63,6 @@ flutter_launcher_icons:
     generate: true
     image_path: "res/images/icon512.png"
     icon_size: 256
-  # macos:
-  #   generate: true
-  #   image_path: "path/to/image.png"
 
 flutter:
   assets:
