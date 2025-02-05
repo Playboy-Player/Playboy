@@ -1,14 +1,13 @@
 # Playboy Player
+中文 | [English](./README_en.md)  
 
-[English version](./README_en.md)
+Material 3 风格的跨平台媒体播放器.
 
-> 本项目目前通过 Github Actions 自动编译 **Windows**, ~~**macOS**~~ 和 **android** 测试版本, 可[在此](https://github.com/Playboy-Player/Playboy/actions)下载体验.
-
-使用 [Flutter](https://flutter.dev/) 开发的媒体播放器, 界面使用 [Material You](https://m3.material.io/) 设计风格.
+![build](https://img.shields.io/github/actions/workflow/status/Playboy-Player/Playboy/build.yml?style=for-the-badge) 
+![release](https://img.shields.io/badge/beta-2025.2-blue?link=https://github.com/Playboy-Player/Playboy/release&style=for-the-badge) ![roadmap](https://img.shields.io/badge/loadmap-grey?link=https://github.com/orgs/Playboy-Player/projects/3&style=for-the-badge)
 
 ![](https://m3-markdown-badges.vercel.app/stars/7/2/Playboy-Player/Playboy)
-![](https://m3-markdown-badges.vercel.app/issues/1/2/Playboy-Player/Playboy)
-
+![](https://m3-markdown-badges.vercel.app/issues/1/2/Playboy-Player/Playboy)  
 ![](https://ziadoua.github.io/m3-Markdown-Badges/badges/Windows/windows3.svg)
 ![](https://ziadoua.github.io/m3-Markdown-Badges/badges/Linux/linux3.svg)
 ![](https://ziadoua.github.io/m3-Markdown-Badges/badges/macOS/macos3.svg)
@@ -45,20 +44,19 @@
 
 ## 功能
 
-[查看开发计划 & 进度](https://github.com/orgs/Playboy-Player/projects/3)
-
 - [x] 主题颜色设置 & 深色模式支持
-- [ ] 多语言支持
 - [x] 播放本地和网络媒体
 - [x] 迷你播放器模式 (Windows & macOS)
 - [x] 设置为系统打开方式 (Windows)
 - [x] 播放列表功能 (随机播放, 单曲循环)
 - [x] 任意倍速调节
-- [ ] 歌词和字幕
-- [ ] 文件下载功能
 - [x] 搜索媒体文件和播放列表
+- [ ] 多语言支持
+- [ ] 歌词和字幕
+- [ ] 局域网播放
+- [ ] 文件下载功能
 
-## 跨平台支持情况
+## For Developers
 
 ### Windows
 
@@ -68,7 +66,7 @@ flutter doctor 输出内容示例:
 
 ```
 Doctor summary (to see all details, run flutter doctor -v):
-[✓] Flutter (Channel stable, 3.24.1, on Microsoft Windows [版本 10.0.22631.4037], locale zh-CN)
+[✓] Flutter (Channel stable, 3.27.3, on Microsoft Windows [版本 10.0.22631.4751], locale zh-CN)
 [✓] Windows Version (Installed version of Windows is version 10 or higher)
 [✓] Visual Studio - develop Windows apps (Visual Studio 生成工具 2022 17.11.1)
 [✓] Connected device (3 available)
@@ -115,7 +113,7 @@ Doctor summary (to see all details, run flutter doctor -v):
 
 ### android
 
-> 针对手机的布局优化尚未完成, 建议在平板设备上体验.
+> 请在平板设备上运行.
 
 flutter doctor 输出内容示例:
 

@@ -1,14 +1,14 @@
 # Playboy Player
 
-[中文版本](./README.md)
+[中文](./README.md) | English
 
-> This project provides nightly builds for **Windows**, ~~**macOS**~~ and **android** through GitHub Actions, you can download [here](https://github.com/Playboy-Player/Playboy/actions).
+A Material 3 style cross-platform media player.
 
-A [Material You](https://m3.material.io/) style cross-platform media player developed with [Flutter](https://flutter.dev/).
+![build](https://img.shields.io/github/actions/workflow/status/Playboy-Player/Playboy/build.yml?style=for-the-badge) 
+![release](https://img.shields.io/badge/beta-2025.2-blue?link=https://github.com/Playboy-Player/Playboy/release&style=for-the-badge) ![roadmap](https://img.shields.io/badge/loadmap-grey?link=https://github.com/orgs/Playboy-Player/projects/3&style=for-the-badge)
 
 ![](https://m3-markdown-badges.vercel.app/stars/7/2/Playboy-Player/Playboy)
-![](https://m3-markdown-badges.vercel.app/issues/1/2/Playboy-Player/Playboy)
-
+![](https://m3-markdown-badges.vercel.app/issues/1/2/Playboy-Player/Playboy)  
 ![](https://ziadoua.github.io/m3-Markdown-Badges/badges/Windows/windows3.svg)
 ![](https://ziadoua.github.io/m3-Markdown-Badges/badges/Linux/linux3.svg)
 ![](https://ziadoua.github.io/m3-Markdown-Badges/badges/macOS/macos3.svg)
@@ -45,22 +45,21 @@ A [Material You](https://m3.material.io/) style cross-platform media player deve
 
 ## Features
 
-[Development Plans & Progress](https://github.com/orgs/Playboy-Player/projects/3)
-
 - [x] Theme & Dark mode Support
-- [ ] Internationalization Support
 - [x] Open local media and network streaming
 - [x] Mini mode (Windows & macOS)
 - [x] Set as the system default app (Windows)
 - [x] Playlist features
 - [x] Playback speed
-- [ ] Lyrics and subtitles
-- [ ] File download
 - [x] Search playlist and media
+- [ ] Internationalization Support
+- [ ] Lyrics and subtitles
+- [ ] Play media on local devices.
+- [ ] File download
 
-## Platform Support
+## For Developer
 
-### Windows
+### Windows 
 
 Requires installation of [Flutter](https://docs.flutter.dev/get-started/install/windows/desktop?tab=vscode) and [Visual Studio 2022](https://visualstudio.microsoft.com/zh-hans/downloads/) with C++ workload (or install [VS 2022 Build Tools](https://aka.ms/vs/17/release/vs_BuildTools.exe)).
 
@@ -115,7 +114,7 @@ iOS SDK is not necessary.
 
 ### Android
 
-> Layout optimization for phones is incomplete; it is recommended to use it on tablet.
+> Please run on tablet devices
 
 Example output of `flutter doctor`:
 
