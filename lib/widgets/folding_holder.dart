@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
 
-class MEmptyHolder extends StatelessWidget {
-  const MEmptyHolder({super.key});
+class MFoldingHolder extends StatelessWidget {
+  const MFoldingHolder({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +18,9 @@ class MEmptyHolder extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.upcoming_rounded),
+              const Icon(Icons.visibility_off),
               const SizedBox(width: 10),
-              Text('无内容'.l10n),
+              Text('已折叠'.l10n),
             ],
           ),
         ),

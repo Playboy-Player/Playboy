@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:playboy/l10n/l10n.dart';
 
 class MMenuButton extends StatelessWidget {
   const MMenuButton({
@@ -14,7 +13,7 @@ class MMenuButton extends StatelessWidget {
     return MenuAnchor(
       builder: (context, controller, child) {
         return IconButton(
-          tooltip: context.l10n.menu,
+          tooltip: '菜单',
           onPressed: () {
             if (controller.isOpen) {
               controller.close();

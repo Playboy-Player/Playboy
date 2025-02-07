@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/storage.dart';
-import 'package:playboy/l10n/l10n.dart';
+import 'package:playboy/backend/utils/l10n_utils.dart';
 
 class AppearanceSettingsPage extends StatefulWidget {
   const AppearanceSettingsPage({super.key});
@@ -20,7 +20,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
-              '字体',
+              '字体'.l10n,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
@@ -29,8 +29,8 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
             ),
           ),
           ListTile(
-            title: const Text('显示字体'),
-            subtitle: const Text('留空以保持默认'),
+            title: Text('显示字体'.l10n),
+            subtitle: Text('留空以保持默认'.l10n),
             trailing: Container(
               alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -63,7 +63,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
-              context.l10n.appearance,
+              '外观'.l10n,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
@@ -72,7 +72,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
             ),
           ),
           ListTile(
-            title: Text(context.l10n.startupPage),
+            title: Text('启动页面'.l10n),
             trailing: SizedBox(
               height: 44,
               width: 150,
@@ -100,19 +100,19 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                         const SizedBox(
                           width: 10,
                         ),
-                        Text(context.l10n.playlist),
+                        Text('播放列表'.l10n),
                       ],
                     ),
                   ),
-                  const DropdownMenuItem(
+                  DropdownMenuItem(
                     value: 1,
                     child: Row(
                       children: [
-                        Icon(Icons.smart_display_outlined),
-                        SizedBox(
+                        const Icon(Icons.smart_display_outlined),
+                        const SizedBox(
                           width: 10,
                         ),
-                        Text('媒体库'),
+                        Text('媒体库'.l10n),
                       ],
                     ),
                   ),
@@ -124,7 +124,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                         const SizedBox(
                           width: 10,
                         ),
-                        Text(context.l10n.files),
+                        Text('文件'.l10n),
                       ],
                     ),
                   ),
@@ -136,7 +136,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                         const SizedBox(
                           width: 10,
                         ),
-                        Text(context.l10n.search),
+                        Text('搜索'.l10n),
                       ],
                     ),
                   ),
@@ -152,7 +152,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
             height: 4,
           ),
           ListTile(
-            title: Text(context.l10n.playlistDefaultView),
+            title: Text('默认播放列表视图'.l10n),
             trailing: SizedBox(
               height: 44,
               width: 150,
@@ -180,7 +180,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                         const SizedBox(
                           width: 10,
                         ),
-                        Text(context.l10n.grid),
+                        Text('网格'.l10n),
                       ],
                     ),
                   ),
@@ -192,7 +192,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                         const SizedBox(
                           width: 10,
                         ),
-                        Text(context.l10n.list),
+                        Text('列表'.l10n),
                       ],
                     ),
                   ),
@@ -207,64 +207,8 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
           const SizedBox(
             height: 4,
           ),
-          // ListTile(
-          //   title: Text(context.l10n.musicLibraryDefaultView),
-          //   trailing: SizedBox(
-          //     height: 44,
-          //     width: 150,
-          //     child: DropdownButtonFormField(
-          //       borderRadius: BorderRadius.circular(16),
-          //       decoration: InputDecoration(
-          //         isDense: true,
-          //         filled: true,
-          //         border: OutlineInputBorder(
-          //           borderSide: const BorderSide(
-          //             width: 0,
-          //             style: BorderStyle.none,
-          //           ),
-          //           borderRadius: BorderRadius.circular(16),
-          //         ),
-          //         fillColor: Theme.of(context).colorScheme.secondaryContainer,
-          //       ),
-          //       value: AppStorage().settings.musicLibListview,
-          //       items: [
-          //         DropdownMenuItem(
-          //           value: false,
-          //           child: Row(
-          //             children: [
-          //               const Icon(Icons.calendar_view_month),
-          //               const SizedBox(
-          //                 width: 10,
-          //               ),
-          //               Text(context.l10n.grid),
-          //             ],
-          //           ),
-          //         ),
-          //         DropdownMenuItem(
-          //           value: true,
-          //           child: Row(
-          //             children: [
-          //               const Icon(Icons.view_agenda_outlined),
-          //               const SizedBox(
-          //                 width: 10,
-          //               ),
-          //               Text(context.l10n.list),
-          //             ],
-          //           ),
-          //         ),
-          //       ],
-          //       onChanged: (value) {
-          //         AppStorage().settings.musicLibListview = value!;
-          //         AppStorage().saveSettings();
-          //       },
-          //     ),
-          //   ),
-          // ),
-          // const SizedBox(
-          //   height: 4,
-          // ),
           ListTile(
-            title: Text(context.l10n.videoLibraryDefaultView),
+            title: Text('默认媒体库视图'.l10n),
             trailing: SizedBox(
               height: 44,
               width: 150,
@@ -292,7 +236,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                         const SizedBox(
                           width: 10,
                         ),
-                        Text(context.l10n.grid),
+                        Text('网格'.l10n),
                       ],
                     ),
                   ),
@@ -304,7 +248,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                         const SizedBox(
                           width: 10,
                         ),
-                        Text(context.l10n.list),
+                        Text('列表'.l10n),
                       ],
                     ),
                   ),
@@ -319,7 +263,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
-              context.l10n.themeSettings,
+              '主题'.l10n,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
@@ -329,7 +273,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
           ),
           ListTile(
             leading: const Icon(Icons.color_lens_outlined),
-            title: Text(context.l10n.themeColor),
+            title: Text('主题颜色'.l10n),
             trailing: SizedBox(
               height: 44,
               width: 150,
@@ -350,26 +294,29 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                   fillColor: Theme.of(context).colorScheme.secondaryContainer,
                 ),
                 value: AppStorage().settings.themeCode,
-                items: List.generate(AppStorage().colors.length, (index) {
-                  return DropdownMenuItem(
-                    value: index,
-                    child: Row(
-                      children: [
-                        ColoredBox(
-                          color: AppStorage().colors[index],
-                          child: const SizedBox(
-                            height: 16,
-                            width: 16,
+                items: List.generate(
+                  AppStorage().colors.length,
+                  (index) {
+                    return DropdownMenuItem(
+                      value: index,
+                      child: Row(
+                        children: [
+                          ColoredBox(
+                            color: AppStorage().colors[index],
+                            child: const SizedBox(
+                              height: 16,
+                              width: 16,
+                            ),
                           ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text(AppStorage().themes[index]),
-                      ],
-                    ),
-                  );
-                }),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(AppStorage().themes[index]),
+                        ],
+                      ),
+                    );
+                  },
+                ),
                 onChanged: (value) {
                   AppStorage().settings.themeCode = value!;
                   AppStorage().saveSettings();
@@ -379,20 +326,24 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
             ),
           ),
           SwitchListTile(
-            title: Text(context.l10n.themeModeFollowSystem),
+            title: Text('使用系统主题'.l10n),
             value: AppStorage().settings.themeMode == ThemeMode.system,
             onChanged: (bool value) {
               if (value) {
-                setState(() {
-                  AppStorage().settings.themeMode = ThemeMode.system;
-                });
+                setState(
+                  () {
+                    AppStorage().settings.themeMode = ThemeMode.system;
+                  },
+                );
               } else {
-                setState(() {
-                  AppStorage().settings.themeMode =
-                      Theme.of(context).brightness == Brightness.dark
-                          ? ThemeMode.dark
-                          : ThemeMode.light;
-                });
+                setState(
+                  () {
+                    AppStorage().settings.themeMode =
+                        Theme.of(context).brightness == Brightness.dark
+                            ? ThemeMode.dark
+                            : ThemeMode.light;
+                  },
+                );
               }
               AppStorage().saveSettings();
               AppStorage().updateStatus();
@@ -401,7 +352,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
           AppStorage().settings.themeMode == ThemeMode.system
               ? const SizedBox()
               : SwitchListTile(
-                  title: Text(context.l10n.enableDarkMode),
+                  title: Text('深色模式'.l10n),
                   value: AppStorage().settings.themeMode == ThemeMode.dark,
                   onChanged: (bool value) {
                     if (value) {

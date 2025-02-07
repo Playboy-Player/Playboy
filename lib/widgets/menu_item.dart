@@ -14,15 +14,18 @@ class MMenuItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MenuItemButton(
-      leadingIcon: Icon(
-        icon,
-        size: 18,
-      ),
-      onPressed: onPressed,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 6),
-        child: Text(label),
+    return SizedBox(
+      height: 34,
+      child: MenuItemButton(
+        leadingIcon: Icon(
+          icon,
+          size: 18,
+        ),
+        onPressed: onPressed,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 6),
+          child: Text(label),
+        ),
       ),
     );
   }

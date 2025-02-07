@@ -1,14 +1,16 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/backend/utils/route_utils.dart';
+import 'package:playboy/backend/utils/sliver_utils.dart';
 import 'package:playboy/backend/utils/string_utils.dart';
+import 'package:playboy/pages/home.dart';
 import 'package:playboy/pages/library/media_menu.dart';
-import 'package:playboy/pages/media/player_page.dart';
 import 'package:playboy/pages/playlist/playlist_detail.dart';
 import 'package:playboy/pages/playlist/playlist_menu.dart';
 import 'package:playboy/pages/search/search_type.dart';
@@ -16,7 +18,7 @@ import 'package:playboy/widgets/cover_card.dart';
 import 'package:playboy/widgets/cover_listtile.dart';
 import 'package:playboy/widgets/empty_holder.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
-import 'package:playboy/widgets/loading.dart';
+import 'package:playboy/widgets/loading_holder.dart';
 import 'package:playboy/widgets/menu_button.dart';
 import 'package:playboy/widgets/menu_item.dart';
 
@@ -126,7 +128,7 @@ class SearchResultPageState extends State<SearchResultPage> {
     late final colorScheme = Theme.of(context).colorScheme;
     if (_choosed == SearchType.playlist.id) {
       if (!_playlistLoaded) return const MLoadingPlaceHolder();
-      if (_playlistResult.isEmpty) return const MEmptyHolder();
+      if (_playlistResult.isEmpty) return const MEmptyHolder().toSliver();
 
       return SliverPadding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -198,7 +200,7 @@ class SearchResultPageState extends State<SearchResultPage> {
 
     if (_choosed == SearchType.media.id) {
       if (!_mediaLoaded) return const MLoadingPlaceHolder();
-      if (_mediaResult.isEmpty) return const MEmptyHolder();
+      if (_mediaResult.isEmpty) return const MEmptyHolder().toSliver();
 
       return SliverPadding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -220,12 +222,13 @@ class SearchResultPageState extends State<SearchResultPage> {
                         await AppStorage().closeMedia().then((value) {
                           AppStorage().openMedia(info);
                         });
-                        if (!context.mounted) return;
-                        pushRootPage(
-                          context,
-                          const PlayerPage(),
-                        );
-                        AppStorage().updateStatus();
+                        // if (!context.mounted) return;
+                        // pushRootPage(
+                        //   context,
+                        //   const PlayerPage(),
+                        // );
+                        // AppStorage().updateStatus();
+                        HomePage.switchView?.call();
                       },
                       borderRadius: 20,
                       child: MCoverCard(
@@ -253,11 +256,12 @@ class SearchResultPageState extends State<SearchResultPage> {
                       onTap: () async {
                         await AppStorage().closeMedia().then((_) {
                           AppStorage().openMedia(info);
-                          if (!context.mounted) return;
-                          pushRootPage(
-                            context,
-                            const PlayerPage(),
-                          );
+                          // if (!context.mounted) return;
+                          // pushRootPage(
+                          //   context,
+                          //   const PlayerPage(),
+                          // );
+                          HomePage.switchView?.call();
                         });
                         AppStorage().updateStatus();
                       },
@@ -267,11 +271,12 @@ class SearchResultPageState extends State<SearchResultPage> {
                           onPressed: () {
                             AppStorage().closeMedia();
                             AppStorage().openMedia(info);
-                            if (!context.mounted) return;
-                            pushRootPage(
-                              context,
-                              const PlayerPage(),
-                            );
+                            // if (!context.mounted) return;
+                            // pushRootPage(
+                            //   context,
+                            //   const PlayerPage(),
+                            // );
+                            HomePage.switchView?.call();
                           },
                           icon: const Icon(Icons.play_arrow),
                         ),
@@ -290,7 +295,7 @@ class SearchResultPageState extends State<SearchResultPage> {
       );
     }
 
-    return const MEmptyHolder();
+    return const MEmptyHolder().toSliver();
   }
 
   Widget _buildGridview(BuildContext context, List<Widget> items) {

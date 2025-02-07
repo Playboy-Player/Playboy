@@ -1,19 +1,21 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:macos_window_utils/macos_window_utils.dart';
-import 'package:playboy/backend/library_helper.dart';
-import 'package:playboy/backend/storage.dart';
-import 'package:provider/provider.dart';
-import 'pages/home.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:macos_window_utils/macos_window_utils.dart';
+
+import 'package:playboy/backend/library_helper.dart';
+import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/utils/l10n_utils.dart';
+import 'package:playboy/pages/home.dart';
 
 void main(List<String> arguments) async {
   WidgetsFlutterBinding.ensureInitialized();
   MediaKit.ensureInitialized();
 
   await AppStorage().init();
+  await AppTranslation.init();
 
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     await windowManager.ensureInitialized();
@@ -58,18 +60,11 @@ void main(List<String> arguments) async {
   //   );
   // }
 
-  String initMedia = '';
   if (arguments.isNotEmpty) {
-    initMedia = arguments[0];
-    AppStorage().openMedia(await LibraryHelper.getItemFromFile(initMedia));
+    String mediaToOpen = arguments[0];
+    AppStorage().openMedia(await LibraryHelper.getItemFromFile(mediaToOpen));
+    runApp(const HomePage(playerView: true));
+  } else {
+    runApp(const HomePage());
   }
-
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => AppStorage(),
-      child: MikuMiku(
-        initMedia: initMedia,
-      ),
-    ),
-  );
 }

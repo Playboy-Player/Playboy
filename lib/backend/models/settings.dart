@@ -10,7 +10,6 @@ part 'settings.g.dart';
 class AppSettings {
   // Appearance Settings;
   String font;
-  bool wavySlider;
   int initPage;
   bool playlistListview;
   bool videoLibListview;
@@ -46,17 +45,14 @@ class AppSettings {
   // Language Settings
   String language;
 
-  // RemotePlay Settings
-  bool discoverable;
-
   // Dev Settings
+  bool enableDevSettings;
   bool tabletUI;
   bool enableTitleBar;
 
   AppSettings({
     // Display Settings,
     this.font = '',
-    this.wavySlider = false,
     this.initPage = 0,
     this.playlistListview = false,
     this.videoLibListview = false,
@@ -87,12 +83,10 @@ class AppSettings {
     this.recentPlayed = const [],
 
     // Language Settings
-    this.language = 'zh',
-
-    // RemotePlay Settings
-    this.discoverable = false,
+    this.language = 'zh_hans',
 
     // Dev Settings
+    this.enableDevSettings = false,
     this.tabletUI = true,
     this.enableTitleBar = true,
   });

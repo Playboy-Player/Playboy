@@ -19,8 +19,9 @@ class FileExplorer extends StatefulWidget {
 }
 
 class FileExplorerState extends State<FileExplorer> {
-  bool loaded = false;
-  List<FileSystemEntity> contents = [];
+  bool _loaded = false;
+  // String _errMsg = '';
+  final List<FileSystemEntity> _contents = [];
 
   @override
   void initState() {
@@ -33,12 +34,17 @@ class FileExplorerState extends State<FileExplorer> {
     if (!await dir.exists()) {
       return;
     }
-    await for (var item in dir.list()) {
-      contents.add(item);
+
+    try {
+      await for (var item in dir.list()) {
+        _contents.add(item);
+      }
+    } catch (e) {
+      // _errMsg = e.toString();
     }
 
     setState(() {
-      loaded = true;
+      _loaded = true;
     });
   }
 
@@ -60,12 +66,15 @@ class FileExplorerState extends State<FileExplorer> {
         titleSpacing: 0,
         title: Tooltip(
           message: widget.path,
-          child: Text(name),
+          child: Text(
+            name,
+            style: const TextStyle(fontSize: 18),
+          ),
         ),
         scrolledUnderElevation: 0,
         backgroundColor: Theme.of(context).colorScheme.surface,
       ),
-      body: loaded
+      body: _loaded
           ? GridView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -73,13 +82,14 @@ class FileExplorerState extends State<FileExplorer> {
                 childAspectRatio: 5 / 6,
               ),
               itemBuilder: (context, index) {
-                var e = contents[index];
+                var e = _contents[index];
                 if (e is File) {
-                  if (LibraryHelper.supportFormats
-                      .contains(extension(e.path))) {
+                  if (LibraryHelper.supportFormats.contains(
+                    extension(e.path),
+                  )) {
                     return FileCard(
                       source: e.path,
-                      icon: Icons.audio_file_outlined,
+                      icon: Icons.video_file_outlined,
                     );
                   } else {
                     return FileCard(source: e.path, icon: null);
@@ -89,7 +99,7 @@ class FileExplorerState extends State<FileExplorer> {
                 }
                 return null;
               },
-              itemCount: contents.length,
+              itemCount: _contents.length,
             )
           : const Center(
               heightFactor: 10,

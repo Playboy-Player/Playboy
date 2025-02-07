@@ -3,24 +3,145 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:playboy/widgets/animated_cross_slide.dart';
+import 'package:window_manager/window_manager.dart';
+
 import 'package:playboy/backend/constants.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/route_utils.dart';
-import 'package:playboy/l10n/l10n.dart';
 import 'package:playboy/pages/media/player_page.dart';
 import 'package:playboy/pages/playlist/playlist_page.dart';
 import 'package:playboy/pages/search/search_page.dart';
 import 'package:playboy/pages/settings/settings_page.dart';
+import 'package:playboy/pages/file/file_page.dart';
 import 'package:playboy/pages/library/library_page.dart';
 import 'package:playboy/widgets/image.dart';
-import 'package:provider/provider.dart';
-import 'package:window_manager/window_manager.dart';
-import 'file/file_page.dart';
 
-class MikuMiku extends StatelessWidget {
-  const MikuMiku({super.key, required this.initMedia});
+class HomePage extends StatefulWidget {
+  const HomePage({
+    super.key,
+    this.playerView = false,
+  });
 
-  final String initMedia;
+  final bool playerView;
+  static void Function()? refresh;
+  static void Function()? switchView;
+
+  @override
+  State<StatefulWidget> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _currentPageIndex = 0;
+  bool _forceRebuild = false;
+  bool _playerView = false;
+
+  bool _miniMode = false;
+
+  final _playlistPageKey = GlobalKey<NavigatorState>();
+  final _videoPageKey = GlobalKey<NavigatorState>();
+  final _filePageKey = GlobalKey<NavigatorState>();
+  final _searchPageKey = GlobalKey<NavigatorState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _playerView = widget.playerView;
+    _currentPageIndex = AppStorage().settings.initPage;
+
+    HomePage.refresh = () => setState(() => _forceRebuild = true);
+    HomePage.switchView = () => setState(() {
+          _playerView = !_playerView;
+        });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_forceRebuild) {
+      _forceRebuild = false;
+      void rebuild(Element e) {
+        e.markNeedsBuild();
+        e.visitChildren(rebuild);
+      }
+
+      (context as Element).visitChildren(rebuild);
+    }
+
+    MaterialColor themeColor = AppStorage().getColorTheme();
+    var lightTheme = ColorScheme.fromSeed(
+      seedColor: themeColor,
+      brightness: Brightness.light,
+    );
+    var darkTheme = ColorScheme.fromSeed(
+      seedColor: themeColor,
+      brightness: Brightness.dark,
+    );
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: Constants.appName,
+      theme: _getThemeData(AppStorage(), lightTheme),
+      darkTheme: _getThemeData(AppStorage(), darkTheme),
+      themeMode: AppStorage().settings.themeMode,
+      home: Builder(
+        builder: (context) {
+          if (_miniMode) {
+            return _buildMiniModeCard(context);
+          }
+
+          Size size = MediaQuery.of(context).size;
+          return AnimatedCrossSlide(
+            firstChild: SizedBox(
+              height: size.height,
+              width: size.width,
+              child: Scaffold(
+                appBar: _buildTitleBar(context),
+                body: Row(
+                  children: [
+                    _buildNavigationRail(context),
+                    _buildPage(context),
+                  ],
+                ),
+                floatingActionButton: _buildFloatingMediaBar(context),
+              ),
+            ),
+            secondChild: SizedBox(
+              height: size.height,
+              width: size.width,
+              child: const PlayerPage(),
+            ),
+            crossFadeState: _playerView
+                ? CrossFadeState.showFirst
+                : CrossFadeState.showSecond,
+            duration: const Duration(
+              milliseconds: 200,
+            ),
+          );
+        },
+      ),
+    );
+
+    // return _miniMode
+    //     ? _buildMiniModeCard(colorScheme)
+    //     : Scaffold(
+    //         appBar: _buildTitleBar(),
+    //         body: tabletUI
+    //             ? Row(
+    //                 children: [
+    //                   _buildNavigationRail(context),
+    //                   _buildPage(context),
+    //                 ],
+    //               )
+    //             : Column(
+    //                 children: [
+    //                   Expanded(child: _buildPageContent()),
+    //                   _buildFixedMediaBar(colorScheme),
+    //                 ],
+    //               ),
+    //         floatingActionButton: _buildFloatingMediaBar(colorScheme),
+    //         bottomNavigationBar: tabletUI ? null : _buildNavigationBar(context),
+    //       );
+  }
 
   ThemeData _getThemeData(AppStorage value, ColorScheme colorScheme) {
     return ThemeData(
@@ -78,62 +199,7 @@ class MikuMiku extends StatelessWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<AppStorage>(
-      builder: (context, value, child) {
-        MaterialColor themeColor = value.getColorTheme();
-        var lightTheme = ColorScheme.fromSeed(
-          seedColor: themeColor,
-          brightness: Brightness.light,
-        );
-        var darkTheme = ColorScheme.fromSeed(
-          seedColor: themeColor,
-          brightness: Brightness.dark,
-        );
-        return MaterialApp(
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          locale: Locale(value.settings.language),
-          debugShowCheckedModeBanner: false,
-          title: Constants.appName,
-          theme: _getThemeData(value, lightTheme),
-          darkTheme: _getThemeData(value, darkTheme),
-          themeMode: value.settings.themeMode,
-          home: initMedia == '' ? const Home() : const PlayerPage(),
-        );
-      },
-    );
-  }
-}
-
-class Home extends StatefulWidget {
-  const Home({super.key});
-
-  @override
-  State<StatefulWidget> createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
-  int _currentPageIndex = 0;
-
-  // bool showMediaCard = false;
-  bool _miniMode = false;
-
-  final _playlistPageKey = GlobalKey<NavigatorState>();
-  final _videoPageKey = GlobalKey<NavigatorState>();
-  final _filePageKey = GlobalKey<NavigatorState>();
-  final _searchPageKey = GlobalKey<NavigatorState>();
-
-  @override
-  void initState() {
-    super.initState();
-    // showMediaCard = AppStorage().settings.showMediaCard;
-    _currentPageIndex = AppStorage().settings.initPage;
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  PreferredSizeWidget _buildTitleBar(BuildContext context) {
     // bool tabletUI = MediaQuery.of(context).size.width > 500;
     bool tabletUI = AppStorage().settings.tabletUI;
     late final colorScheme = Theme.of(context).colorScheme;
@@ -141,171 +207,455 @@ class _HomeState extends State<Home> {
       colorScheme.primary.withValues(alpha: 0.04),
       colorScheme.surface,
     );
-    if (_miniMode) {
-      return _buildMiniModeCard(colorScheme);
-    }
-    return Scaffold(
-      appBar: AppBar(
-        scrolledUnderElevation: 0,
-        backgroundColor: backgroundColor,
-        flexibleSpace: Column(
-          children: [
-            SizedBox(
-              height: 8,
-              child: MouseRegion(
-                cursor: SystemMouseCursors.resizeUp,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onPanStart: (details) {
-                    windowManager.startResizing(ResizeEdge.top);
-                  },
-                ),
-              ),
-            ),
-            Expanded(
+    return AppBar(
+      scrolledUnderElevation: 0,
+      backgroundColor: backgroundColor,
+      flexibleSpace: Column(
+        children: [
+          SizedBox(
+            height: 8,
+            child: MouseRegion(
+              cursor: SystemMouseCursors.resizeUp,
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onPanStart: (details) {
-                  windowManager.startDragging();
+                  windowManager.startResizing(ResizeEdge.top);
                 },
               ),
-            )
-          ],
-        ),
-        toolbarHeight: 40,
-        title: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onPanStart: (details) {
-              windowManager.startDragging();
-            },
-            child: Row(children: [
-              Platform.isMacOS
-                  ? const SizedBox(width: 60)
-                  : IconButton(
-                      highlightColor: Colors.transparent,
-                      focusColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      splashColor: Colors.transparent,
-                      constraints: const BoxConstraints(),
-                      padding: EdgeInsets.zero,
-                      onPressed: () {
-                        if (!context.mounted) return;
-                        pushRootPage(
-                          context,
-                          const PlayerPage(),
-                        );
-                      },
-                      icon: const Icon(Constants.appIcon),
-                    ),
-              const SizedBox(
-                width: 10,
-              ),
-              Expanded(
-                child: tabletUI
-                    ? StreamBuilder(
-                        stream: AppStorage().playboy.stream.playlist,
-                        builder: ((context, snapshot) {
-                          return Text(
-                            AppStorage().playingTitle,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              // fontWeight: FontWeight.w500,
-                            ),
-                          );
-                        }))
-                    : const SizedBox(),
-              ),
-            ])),
-        actions: [
-          IconButton(
-            hoverColor: Colors.transparent,
-            onPressed: () {
-              if (_miniMode) {
-                windowManager.setResizable(true);
-                windowManager.setMinimumSize(const Size(360, 500));
-                windowManager.setSize(const Size(900, 700));
-                windowManager.setAlwaysOnTop(false);
-                windowManager.center();
-              } else {
-                windowManager.setResizable(false);
-                windowManager.setMinimumSize(const Size(300, 120));
-                windowManager.setSize(const Size(300, 120));
-                windowManager.setAlwaysOnTop(true);
-              }
-              setState(() {
-                _miniMode = !_miniMode;
-              });
-            },
-            icon: const Icon(
-              Icons.headset_outlined,
             ),
           ),
-          if (Platform.isMacOS)
-            IconButton(
-              hoverColor: Colors.transparent,
-              padding: EdgeInsets.zero,
-              onPressed: () {
-                if (!context.mounted) return;
-                pushRootPage(
-                  context,
-                  const PlayerPage(),
-                );
+          Expanded(
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onPanStart: (details) {
+                windowManager.startDragging();
               },
-              icon: const Icon(Icons.play_circle_outlined),
             ),
-          const SizedBox(width: 10),
-          if (!Platform.isMacOS)
-            IconButton(
-              hoverColor: Colors.transparent,
-              iconSize: 20,
-              onPressed: () {
-                windowManager.minimize();
-              },
-              icon: const Icon(Icons.minimize),
-            ),
-          if (!Platform.isMacOS)
-            IconButton(
-              hoverColor: Colors.transparent,
-              iconSize: 20,
-              onPressed: () async {
-                if (await windowManager.isMaximized()) {
-                  windowManager.unmaximize();
-                } else {
-                  windowManager.maximize();
-                }
-              },
-              icon: const Icon(Icons.crop_square),
-            ),
-          if (!Platform.isMacOS)
-            IconButton(
-              hoverColor: Colors.transparent,
-              iconSize: 20,
-              onPressed: () {
-                windowManager.close();
-              },
-              icon: const Icon(Icons.close),
-            ),
+          )
         ],
       ),
-      body: tabletUI
-          ? Row(
-              children: [
-                _buildNavigationRail(context),
-                _buildPage(context),
-              ],
-            )
-          : Column(
-              children: [
-                Expanded(child: _buildPageContent()),
-                _buildFixedMediaBar(colorScheme),
-              ],
+      toolbarHeight: 40,
+      title: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onPanStart: (details) {
+          windowManager.startDragging();
+        },
+        child: Row(
+          children: [
+            Platform.isMacOS
+                ? const SizedBox(width: 60)
+                : IconButton(
+                    highlightColor: Colors.transparent,
+                    focusColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    constraints: const BoxConstraints(),
+                    padding: EdgeInsets.zero,
+                    onPressed: () {
+                      // if (!context.mounted) return;
+                      // pushRootPage(
+                      //   context,
+                      //   const PlayerPage(),
+                      // );
+                      HomePage.switchView?.call();
+                    },
+                    icon: const Icon(Constants.appIcon),
+                  ),
+            const SizedBox(
+              width: 10,
             ),
-      floatingActionButton: _buildFloatingMediaBar(colorScheme),
-      bottomNavigationBar: tabletUI ? null : _buildNavigationBar(context),
+            Expanded(
+              child: tabletUI
+                  ? StreamBuilder(
+                      stream: AppStorage().playboy.stream.playlist,
+                      builder: (context, snapshot) {
+                        return Text(
+                          AppStorage().playingTitle,
+                          style: const TextStyle(
+                            fontSize: 18,
+                          ),
+                        );
+                      },
+                    )
+                  : const SizedBox(),
+            ),
+          ],
+        ),
+      ),
+      actions: _buildTitleBarActions(context),
     );
   }
 
-  Widget _buildMiniModeCard(ColorScheme colorScheme) {
+  List<Widget> _buildTitleBarActions(BuildContext context) {
+    return [
+      IconButton(
+        hoverColor: Colors.transparent,
+        onPressed: () {
+          if (_miniMode) {
+            windowManager.setResizable(true);
+            windowManager.setMinimumSize(const Size(360, 500));
+            windowManager.setSize(const Size(900, 700));
+            windowManager.setAlwaysOnTop(false);
+            windowManager.center();
+          } else {
+            windowManager.setResizable(false);
+            windowManager.setMinimumSize(const Size(300, 120));
+            windowManager.setSize(const Size(300, 120));
+            windowManager.setAlwaysOnTop(true);
+          }
+          setState(() {
+            _miniMode = !_miniMode;
+          });
+        },
+        icon: const Icon(
+          Icons.headset_outlined,
+        ),
+      ),
+      if (Platform.isMacOS)
+        IconButton(
+          hoverColor: Colors.transparent,
+          padding: EdgeInsets.zero,
+          onPressed: () {
+            // if (!context.mounted) return;
+            // pushRootPage(
+            //   context,
+            //   const PlayerPage(),
+            // );
+            HomePage.switchView?.call();
+          },
+          icon: const Icon(Icons.play_circle_outlined),
+        ),
+      const SizedBox(width: 10),
+      if (!Platform.isMacOS)
+        IconButton(
+          hoverColor: Colors.transparent,
+          iconSize: 20,
+          onPressed: () {
+            windowManager.minimize();
+          },
+          icon: const Icon(Icons.minimize),
+        ),
+      if (!Platform.isMacOS)
+        IconButton(
+          hoverColor: Colors.transparent,
+          iconSize: 20,
+          onPressed: () async {
+            if (await windowManager.isMaximized()) {
+              windowManager.unmaximize();
+            } else {
+              windowManager.maximize();
+            }
+          },
+          icon: const Icon(Icons.crop_square),
+        ),
+      if (!Platform.isMacOS)
+        IconButton(
+          hoverColor: Colors.transparent,
+          iconSize: 20,
+          onPressed: () {
+            windowManager.close();
+          },
+          icon: const Icon(Icons.close),
+        ),
+    ];
+  }
+
+  Widget _buildMiniModeCard(BuildContext context) {
+    Widget buildMediaCardContent(ColorScheme colorScheme) {
+      return Container(
+        // color: colorScheme.primary,
+        decoration: BoxDecoration(
+            color: colorScheme.primary,
+            borderRadius: BorderRadius.circular(_miniMode ? 0 : 20)),
+        child: Stack(
+          children: [
+            AppStorage().playingCover == null
+                ? const SizedBox()
+                : ShaderMask(
+                    shaderCallback: (Rect bounds) {
+                      return RadialGradient(
+                        radius: 1.4,
+                        // focalRadius: 1,
+                        colors: [
+                          Colors.black.withValues(alpha: 0.6),
+                          // Colors.black.withOpacity(0.1)
+                          Colors.transparent
+                        ],
+                        // stops: [0, 0.6],
+                        // tileMode: TileMode.mirror,
+                      ).createShader(bounds);
+                    },
+                    blendMode: BlendMode.dstIn,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(_miniMode ? 0 : 20),
+                      child: MImage(url: AppStorage().playingCover!),
+                    ),
+                  ),
+            Column(
+              children: [
+                Expanded(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      const SizedBox(
+                        width: 16,
+                      ),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              AppStorage().playingTitle,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: colorScheme.primaryContainer,
+                              ),
+                              maxLines: 1,
+                            ),
+                            // Text(
+                            //   'author',
+                            //   style: TextStyle(
+                            //     fontSize: 12,
+                            //     color: colorScheme.primaryContainer,
+                            //   ),
+                            // )
+                            const SizedBox(
+                              height: 8,
+                            )
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      IconButton.filled(
+                        style: IconButton.styleFrom(
+                          backgroundColor: colorScheme.primaryContainer,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        iconSize: 24,
+                        onPressed: () {
+                          setState(() {
+                            AppStorage().playboy.playOrPause();
+                          });
+                        },
+                        icon: StreamBuilder(
+                          stream: AppStorage().playboy.stream.playing,
+                          builder: (context, snapshot) {
+                            return Icon(
+                              AppStorage().playing
+                                  ? Icons.pause_circle_outline
+                                  : Icons.play_arrow_outlined,
+                              color: colorScheme.onPrimaryContainer,
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 12,
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 48,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      const SizedBox(
+                        width: 6,
+                      ),
+                      IconButton(
+                          padding: const EdgeInsets.symmetric(horizontal: 2),
+                          constraints: const BoxConstraints(),
+                          color: colorScheme.primaryContainer,
+                          // iconSize: 30,
+                          onPressed: () {
+                            if (_miniMode) {
+                              windowManager.setResizable(true);
+                              windowManager
+                                  .setMinimumSize(const Size(360, 500));
+                              windowManager.setSize(const Size(900, 700));
+                              windowManager.setAlwaysOnTop(false);
+                              windowManager.center();
+                            } else {
+                              windowManager.setResizable(false);
+                              windowManager
+                                  .setMinimumSize(const Size(300, 120));
+                              windowManager.setSize(const Size(300, 120));
+                              windowManager.setAlwaysOnTop(true);
+                            }
+                            setState(() {
+                              _miniMode = !_miniMode;
+                            });
+                          },
+                          icon: Icon(
+                            _miniMode
+                                ? Icons.fullscreen
+                                : Icons.fullscreen_exit,
+                            // size: 30,
+                          )),
+                      IconButton(
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        constraints: const BoxConstraints(),
+                        color: colorScheme.primaryContainer,
+                        // iconSize: 30,
+                        onPressed: () {
+                          AppStorage().playboy.previous();
+                          setState(() {});
+                        },
+                        icon: const Icon(
+                          Icons.skip_previous,
+                          // size: 30,
+                        ),
+                      ),
+                      Expanded(
+                        // width: 120,
+                        child: SliderTheme(
+                          data: SliderThemeData(
+                            trackHeight: 2,
+                            thumbShape: const RoundSliderThumbShape(
+                                enabledThumbRadius: 6),
+                            overlayShape: SliderComponentShape.noOverlay,
+                            thumbColor: colorScheme.primaryContainer,
+                            activeTrackColor: colorScheme.primaryContainer,
+                          ),
+                          child: StreamBuilder(
+                            stream: AppStorage().playboy.stream.position,
+                            builder: (context, snapshot) {
+                              return Slider(
+                                max: AppStorage()
+                                    .duration
+                                    .inMilliseconds
+                                    .toDouble(),
+                                value: AppStorage().seeking
+                                    ? AppStorage().seekingPos
+                                    : min(
+                                        snapshot.hasData
+                                            ? snapshot.data!.inMilliseconds
+                                                .toDouble()
+                                            : AppStorage()
+                                                .position
+                                                .inMilliseconds
+                                                .toDouble(),
+                                        AppStorage()
+                                            .duration
+                                            .inMilliseconds
+                                            .toDouble()),
+                                onChanged: (value) {
+                                  setState(() {
+                                    AppStorage().seekingPos = value;
+                                  });
+                                },
+                                onChangeStart: (value) {
+                                  setState(
+                                    () {
+                                      AppStorage().seeking = true;
+                                    },
+                                  );
+                                },
+                                onChangeEnd: (value) {
+                                  AppStorage()
+                                      .playboy
+                                      .seek(
+                                          Duration(milliseconds: value.toInt()))
+                                      .then(
+                                        (value) => {
+                                          setState(
+                                            () {
+                                              AppStorage().seeking = false;
+                                            },
+                                          )
+                                        },
+                                      );
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        constraints: const BoxConstraints(),
+                        color: colorScheme.primaryContainer,
+                        onPressed: () {
+                          AppStorage().playboy.next();
+                          setState(() {});
+                        },
+                        icon: const Icon(
+                          Icons.skip_next,
+                        ),
+                      ),
+                      IconButton(
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        constraints: const BoxConstraints(),
+                        color: colorScheme.primaryContainer,
+                        onPressed: () {
+                          setState(
+                            () {
+                              AppStorage().shuffle = !AppStorage().shuffle;
+                            },
+                          );
+                        },
+                        icon: AppStorage().shuffle
+                            ? const Icon(Icons.shuffle_on)
+                            : const Icon(Icons.shuffle),
+                        iconSize: 20,
+                      ),
+                      IconButton(
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        constraints: const BoxConstraints(),
+                        color: colorScheme.primaryContainer,
+                        onPressed: () {
+                          if (AppStorage().playboy.state.playlistMode ==
+                              PlaylistMode.single) {
+                            AppStorage()
+                                .playboy
+                                .setPlaylistMode(PlaylistMode.none);
+                          } else {
+                            AppStorage()
+                                .playboy
+                                .setPlaylistMode(PlaylistMode.single);
+                          }
+                          setState(() {});
+                        },
+                        icon: AppStorage().playboy.state.playlistMode ==
+                                PlaylistMode.single
+                            ? const Icon(Icons.repeat_one_on)
+                            : const Icon(Icons.repeat_one),
+                        iconSize: 20,
+                      ),
+                      IconButton(
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        constraints: const BoxConstraints(),
+                        color: colorScheme.primaryContainer,
+                        onPressed: () {
+                          AppStorage().closeMedia();
+                          setState(() {});
+                        },
+                        icon: const Icon(
+                          Icons.stop,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 6,
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ],
+        ),
+      );
+    }
+
+    late final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       body: GestureDetector(
         behavior: HitTestBehavior.translucent,
@@ -316,7 +666,7 @@ class _HomeState extends State<Home> {
           stream: AppStorage().playboy.stream.playlist,
           builder: (context, snapshot) {
             return AppStorage().playingCover == null
-                ? _buildMediaCardContent(colorScheme)
+                ? buildMediaCardContent(colorScheme)
                 : FutureBuilder(
                     future: ColorScheme.fromImageProvider(
                       provider: MImageProvider(
@@ -325,9 +675,9 @@ class _HomeState extends State<Home> {
                     ),
                     builder: (context, snapshot) {
                       if (snapshot.hasData && snapshot.data != null) {
-                        return _buildMediaCardContent(snapshot.data!);
+                        return buildMediaCardContent(snapshot.data!);
                       } else {
-                        return _buildMediaCardContent(colorScheme);
+                        return buildMediaCardContent(colorScheme);
                       }
                     },
                   );
@@ -409,115 +759,108 @@ class _HomeState extends State<Home> {
         NavigationRailDestination(
           selectedIcon: const Icon(Icons.apps),
           icon: const Icon(Icons.apps),
-          label: Text(context.l10n.playlist),
+          label: Text('播放列表'.l10n),
         ),
-        const NavigationRailDestination(
-          selectedIcon: Icon(Icons.smart_display),
-          icon: Icon(Icons.smart_display_outlined),
-          label: Text('媒体库'),
+        NavigationRailDestination(
+          selectedIcon: const Icon(Icons.smart_display),
+          icon: const Icon(Icons.smart_display_outlined),
+          label: Text('媒体库'.l10n),
         ),
         NavigationRailDestination(
           selectedIcon: const Icon(Icons.folder),
           icon: const Icon(Icons.folder_outlined),
-          label: Text(context.l10n.files),
+          label: Text('文件'.l10n),
         ),
         NavigationRailDestination(
           selectedIcon: const Icon(Icons.search),
           icon: const Icon(Icons.search),
-          label: Text(context.l10n.search),
+          label: Text('搜索'.l10n),
         ),
       ],
     );
   }
 
-  Widget _buildNavigationBar(BuildContext context) {
-    return NavigationBar(
-      height: 70,
-      labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-      onDestinationSelected: (int index) {
-        setState(() {
-          _currentPageIndex = index;
-        });
-      },
-      selectedIndex: _currentPageIndex,
-      destinations: [
-        const NavigationDestination(
-          selectedIcon: Icon(Icons.apps),
-          icon: Icon(Icons.apps),
-          label: '播放列表',
-        ),
-        const NavigationDestination(
-          selectedIcon: Icon(Icons.smart_display),
-          icon: Icon(Icons.smart_display_outlined),
-          label: '媒体库',
-        ),
-        const NavigationDestination(
-          selectedIcon: Icon(Icons.folder),
-          icon: Icon(Icons.folder_outlined),
-          label: '文件',
-        ),
-        if (AppStorage().settings.tabletUI)
-          const NavigationDestination(
-            selectedIcon: Icon(Icons.search),
-            icon: Icon(Icons.search),
-            label: '搜索',
-          ),
-        const NavigationDestination(
-          selectedIcon: Icon(Icons.settings),
-          icon: Icon(Icons.settings_outlined),
-          label: '设置',
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPageContent() {
-    return IndexedStack(
-      index: _currentPageIndex,
-      children: [
-        Navigator(
-          key: _playlistPageKey,
-          onGenerateRoute: (route) => MaterialPageRoute(
-            settings: route,
-            builder: (context) => const PlaylistPage(),
-          ),
-        ),
-        // Navigator(
-        //   key: _musicPageKey,
-        //   onGenerateRoute: (route) => MaterialPageRoute(
-        //     settings: route,
-        //     builder: (context) => const MusicPage(),
-        //   ),
-        // ),
-        Navigator(
-          key: _videoPageKey,
-          onGenerateRoute: (route) => MaterialPageRoute(
-            settings: route,
-            builder: (context) => const LibraryPage(),
-          ),
-        ),
-        Navigator(
-          key: _filePageKey,
-          onGenerateRoute: (route) => MaterialPageRoute(
-            settings: route,
-            builder: (context) => const FilePage(),
-          ),
-        ),
-        if (AppStorage().settings.tabletUI)
-          Navigator(
-            key: _searchPageKey,
-            onGenerateRoute: (route) => MaterialPageRoute(
-              settings: route,
-              builder: (context) => const SearchPage(),
-            ),
-          )
-        else
-          const SettingsPage(),
-      ],
-    );
-  }
+  // Widget _buildNavigationBar(BuildContext context) {
+  //   return NavigationBar(
+  //     height: 70,
+  //     labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+  //     onDestinationSelected: (int index) {
+  //       setState(() {
+  //         _currentPageIndex = index;
+  //       });
+  //     },
+  //     selectedIndex: _currentPageIndex,
+  //     destinations: [
+  //       const NavigationDestination(
+  //         selectedIcon: Icon(Icons.apps),
+  //         icon: Icon(Icons.apps),
+  //         label: '播放列表',
+  //       ),
+  //       const NavigationDestination(
+  //         selectedIcon: Icon(Icons.smart_display),
+  //         icon: Icon(Icons.smart_display_outlined),
+  //         label: '媒体库',
+  //       ),
+  //       const NavigationDestination(
+  //         selectedIcon: Icon(Icons.folder),
+  //         icon: Icon(Icons.folder_outlined),
+  //         label: '文件',
+  //       ),
+  //       if (AppStorage().settings.tabletUI)
+  //         const NavigationDestination(
+  //           selectedIcon: Icon(Icons.search),
+  //           icon: Icon(Icons.search),
+  //           label: '搜索',
+  //         ),
+  //       const NavigationDestination(
+  //         selectedIcon: Icon(Icons.settings),
+  //         icon: Icon(Icons.settings_outlined),
+  //         label: '设置',
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget _buildPage(BuildContext context) {
+    Widget buildPageContent(BuildContext context) {
+      return IndexedStack(
+        index: _currentPageIndex,
+        children: [
+          Navigator(
+            key: _playlistPageKey,
+            onGenerateRoute: (route) => MaterialPageRoute(
+              settings: route,
+              builder: (context) => const PlaylistPage(),
+            ),
+          ),
+          Navigator(
+            key: _videoPageKey,
+            onGenerateRoute: (route) => MaterialPageRoute(
+              settings: route,
+              builder: (context) => const LibraryPage(),
+            ),
+          ),
+          Navigator(
+            key: _filePageKey,
+            onGenerateRoute: (route) => MaterialPageRoute(
+              settings: route,
+              builder: (context) => const FilePage(),
+            ),
+          ),
+          if (AppStorage().settings.tabletUI)
+            Navigator(
+              key: _searchPageKey,
+              onGenerateRoute: (route) => MaterialPageRoute(
+                settings: route,
+                builder: (context) => const SearchPage(),
+              ),
+            )
+          else
+            const SettingsPage(),
+        ],
+      );
+    }
+
     late final colorScheme = Theme.of(context).colorScheme;
     late final backgroundColor = Color.alphaBlend(
       colorScheme.primary.withValues(alpha: 0.04),
@@ -532,7 +875,7 @@ class _HomeState extends State<Home> {
             topLeft: Radius.circular(25),
             topRight: Radius.circular(25),
           ),
-          child: _buildPageContent(),
+          child: buildPageContent(context),
         ),
       ),
     );
@@ -550,637 +893,353 @@ class _HomeState extends State<Home> {
   //   );
   // }
 
-  Widget _buildFixedMediaBarContent(ColorScheme colorScheme) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-        color: colorScheme.primary,
-      ),
-      child: SizedBox(
-        height: 70,
-        child: Stack(
-          children: [
-            AppStorage().playingCover == null
-                ? const SizedBox()
-                : ShaderMask(
-                    shaderCallback: (Rect bounds) {
-                      return RadialGradient(
-                        radius: 2,
-                        // focalRadius: 1,
-                        colors: [
-                          Colors.black.withValues(alpha: 0.6),
-                          // Colors.black.withOpacity(0.1)
-                          Colors.transparent
-                        ],
-                        // stops: [0, 0.6],
-                        // tileMode: TileMode.mirror,
-                      ).createShader(bounds);
-                    },
-                    blendMode: BlendMode.dstIn,
-                    child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: MImage(url: AppStorage().playingCover!)),
-                  ),
-            Column(
-              children: [
-                Expanded(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const SizedBox(
-                        width: 16,
-                      ),
-                      Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              AppStorage().playingTitle,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: colorScheme.primaryContainer,
-                              ),
-                              maxLines: 1,
-                            ),
-                            // Text(
-                            //   'author',
-                            //   style: TextStyle(
-                            //     fontSize: 12,
-                            //     color: colorScheme.primaryContainer,
-                            //   ),
-                            // ),
-                            const SizedBox(
-                              height: 8,
-                            ),
-                          ],
-                        ),
-                      ),
-                      IconButton(
-                          color: colorScheme.primaryContainer,
-                          onPressed: () {
-                            AppStorage().playboy.next();
-                            setState(() {});
-                          },
-                          icon: const Icon(
-                            Icons.skip_next_outlined,
-                          )),
-                      IconButton.filled(
-                        style: IconButton.styleFrom(
-                          backgroundColor: colorScheme.primaryContainer,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16)),
-                        ),
-                        iconSize: 24,
-                        onPressed: () {
-                          setState(() {
-                            AppStorage().playboy.playOrPause();
-                          });
-                        },
-                        icon: StreamBuilder(
-                          stream: AppStorage().playboy.stream.playing,
-                          builder: (context, snapshot) {
-                            return Icon(
-                              AppStorage().playing
-                                  ? Icons.pause_circle_outline
-                                  : Icons.play_arrow_outlined,
-                              color: colorScheme.onPrimaryContainer,
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 12,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ],
+  // Widget _buildFixedMediaBarContent(ColorScheme colorScheme) {
+  //   return Container(
+  //     decoration: BoxDecoration(
+  //       borderRadius: const BorderRadius.only(
+  //           topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+  //       color: colorScheme.primary,
+  //     ),
+  //     child: SizedBox(
+  //       height: 70,
+  //       child: Stack(
+  //         children: [
+  //           AppStorage().playingCover == null
+  //               ? const SizedBox()
+  //               : ShaderMask(
+  //                   shaderCallback: (Rect bounds) {
+  //                     return RadialGradient(
+  //                       radius: 2,
+  //                       // focalRadius: 1,
+  //                       colors: [
+  //                         Colors.black.withValues(alpha: 0.6),
+  //                         // Colors.black.withOpacity(0.1)
+  //                         Colors.transparent
+  //                       ],
+  //                       // stops: [0, 0.6],
+  //                       // tileMode: TileMode.mirror,
+  //                     ).createShader(bounds);
+  //                   },
+  //                   blendMode: BlendMode.dstIn,
+  //                   child: ClipRRect(
+  //                       borderRadius: BorderRadius.circular(20),
+  //                       child: MImage(url: AppStorage().playingCover!)),
+  //                 ),
+  //           Column(
+  //             children: [
+  //               Expanded(
+  //                 child: Row(
+  //                   crossAxisAlignment: CrossAxisAlignment.center,
+  //                   children: [
+  //                     const SizedBox(
+  //                       width: 16,
+  //                     ),
+  //                     Expanded(
+  //                       child: Column(
+  //                         mainAxisAlignment: MainAxisAlignment.center,
+  //                         crossAxisAlignment: CrossAxisAlignment.start,
+  //                         children: [
+  //                           Text(
+  //                             AppStorage().playingTitle,
+  //                             style: TextStyle(
+  //                               fontSize: 16,
+  //                               fontWeight: FontWeight.w500,
+  //                               color: colorScheme.primaryContainer,
+  //                             ),
+  //                             maxLines: 1,
+  //                           ),
+  //                           // Text(
+  //                           //   'author',
+  //                           //   style: TextStyle(
+  //                           //     fontSize: 12,
+  //                           //     color: colorScheme.primaryContainer,
+  //                           //   ),
+  //                           // ),
+  //                           const SizedBox(
+  //                             height: 8,
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                     IconButton(
+  //                         color: colorScheme.primaryContainer,
+  //                         onPressed: () {
+  //                           AppStorage().playboy.next();
+  //                           setState(() {});
+  //                         },
+  //                         icon: const Icon(
+  //                           Icons.skip_next_outlined,
+  //                         )),
+  //                     IconButton.filled(
+  //                       style: IconButton.styleFrom(
+  //                         backgroundColor: colorScheme.primaryContainer,
+  //                         shape: RoundedRectangleBorder(
+  //                             borderRadius: BorderRadius.circular(16)),
+  //                       ),
+  //                       iconSize: 24,
+  //                       onPressed: () {
+  //                         setState(() {
+  //                           AppStorage().playboy.playOrPause();
+  //                         });
+  //                       },
+  //                       icon: StreamBuilder(
+  //                         stream: AppStorage().playboy.stream.playing,
+  //                         builder: (context, snapshot) {
+  //                           return Icon(
+  //                             AppStorage().playing
+  //                                 ? Icons.pause_circle_outline
+  //                                 : Icons.play_arrow_outlined,
+  //                             color: colorScheme.onPrimaryContainer,
+  //                           );
+  //                         },
+  //                       ),
+  //                     ),
+  //                     const SizedBox(
+  //                       width: 12,
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  // Widget _buildFixedMediaBar(ColorScheme colorScheme) {
+  //   return InkWell(
+  //     onTap: () {
+  //       if (!context.mounted) return;
+  //       pushRootPage(
+  //         context,
+  //         const PlayerPage(),
+  //       );
+  //     },
+  //     child: StreamBuilder(
+  //       stream: AppStorage().playboy.stream.playlist,
+  //       builder: (context, snapshot) {
+  //         return AppStorage().playingCover == null
+  //             ? _buildFixedMediaBarContent(colorScheme)
+  //             : FutureBuilder(
+  //                 future: ColorScheme.fromImageProvider(
+  //                   provider: MImageProvider(url: AppStorage().playingCover!)
+  //                       .getImage(),
+  //                 ),
+  //                 builder: (context, snapshot) {
+  //                   if (snapshot.hasData && snapshot.data != null) {
+  //                     return _buildFixedMediaBarContent(snapshot.data!);
+  //                   } else {
+  //                     return _buildFixedMediaBarContent(colorScheme);
+  //                   }
+  //                 },
+  //               );
+  //       },
+  //     ),
+  //   );
+  // }
+
+  Widget _buildFloatingMediaBar(BuildContext context) {
+    Widget buildFloatingMediaBarContent(BuildContext context) {
+      late final colorScheme = Theme.of(context).colorScheme;
+      return Container(
+        width: 360,
+        height: 40,
+        decoration: BoxDecoration(
+          color: colorScheme.primary,
+          borderRadius: BorderRadius.circular(20),
         ),
-      ),
-    );
-  }
-
-  Widget _buildFixedMediaBar(ColorScheme colorScheme) {
-    return InkWell(
-      onTap: () {
-        if (!context.mounted) return;
-        pushRootPage(
-          context,
-          const PlayerPage(),
-        );
-      },
-      child: StreamBuilder(
-        stream: AppStorage().playboy.stream.playlist,
-        builder: (context, snapshot) {
-          return AppStorage().playingCover == null
-              ? _buildFixedMediaBarContent(colorScheme)
-              : FutureBuilder(
-                  future: ColorScheme.fromImageProvider(
-                    provider: MImageProvider(url: AppStorage().playingCover!)
-                        .getImage(),
-                  ),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData && snapshot.data != null) {
-                      return _buildFixedMediaBarContent(snapshot.data!);
-                    } else {
-                      return _buildFixedMediaBarContent(colorScheme);
-                    }
-                  },
-                );
-        },
-      ),
-    );
-  }
-
-  Widget _buildFloatingMediaBarContent(ColorScheme colorScheme) {
-    return Container(
-      width: 360,
-      height: 40,
-      decoration: BoxDecoration(
-        color: colorScheme.primary,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          const SizedBox(width: 10),
-          IconButton(
-            padding: const EdgeInsets.symmetric(horizontal: 2),
-            constraints: const BoxConstraints(),
-            color: colorScheme.primaryContainer,
-            iconSize: 18,
-            onPressed: () {
-              if (!context.mounted) return;
-              pushRootPage(
-                context,
-                const PlayerPage(),
-              );
-            },
-            icon: const Icon(Icons.open_in_full_rounded),
-          ),
-          IconButton(
-            padding: const EdgeInsets.symmetric(horizontal: 2),
-            constraints: const BoxConstraints(),
-            color: colorScheme.primaryContainer,
-            // iconSize: 30,
-            onPressed: () {
-              setState(() {
-                AppStorage().playboy.playOrPause();
-              });
-            },
-            icon: StreamBuilder(
-              stream: AppStorage().playboy.stream.playing,
-              builder: (context, snapshot) {
-                return Icon(
-                  AppStorage().playing
-                      ? Icons.pause_rounded
-                      : Icons.play_arrow_rounded,
-                );
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            const SizedBox(width: 10),
+            IconButton(
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              constraints: const BoxConstraints(),
+              color: colorScheme.primaryContainer,
+              iconSize: 18,
+              onPressed: () {
+                // if (!context.mounted) return;
+                // pushRootPage(
+                //   context,
+                //   const PlayerPage(),
+                // );
+                HomePage.switchView?.call();
               },
+              icon: const Icon(Icons.open_in_full_rounded),
             ),
-          ),
-          IconButton(
-            padding: const EdgeInsets.symmetric(horizontal: 2),
-            constraints: const BoxConstraints(),
-            color: colorScheme.primaryContainer,
-            // iconSize: 30,
-            onPressed: () {
-              AppStorage().playboy.previous();
-              setState(() {});
-            },
-            icon: const Icon(
-              Icons.skip_previous_rounded,
-              // size: 30,
-            ),
-          ),
-          Expanded(
-            // width: 120,
-            child: SliderTheme(
-              data: SliderThemeData(
-                trackHeight: 2,
-                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
-                overlayShape: SliderComponentShape.noOverlay,
-                thumbColor: colorScheme.primaryContainer,
-                activeTrackColor: colorScheme.primaryContainer,
-              ),
-              child: StreamBuilder(
-                stream: AppStorage().playboy.stream.position,
+            IconButton(
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              constraints: const BoxConstraints(),
+              color: colorScheme.primaryContainer,
+              // iconSize: 30,
+              onPressed: () {
+                setState(() {
+                  AppStorage().playboy.playOrPause();
+                });
+              },
+              icon: StreamBuilder(
+                stream: AppStorage().playboy.stream.playing,
                 builder: (context, snapshot) {
-                  return Slider(
-                    max: AppStorage().duration.inMilliseconds.toDouble(),
-                    value: AppStorage().seeking
-                        ? AppStorage().seekingPos
-                        : max(
-                            min(
-                                snapshot.hasData
-                                    ? snapshot.data!.inMilliseconds.toDouble()
-                                    : AppStorage()
-                                        .position
-                                        .inMilliseconds
-                                        .toDouble(),
-                                AppStorage()
-                                    .duration
-                                    .inMilliseconds
-                                    .toDouble()),
-                            0),
-                    onChanged: (value) {
-                      setState(
-                        () {
-                          AppStorage().seekingPos = value;
-                        },
-                      );
-                    },
-                    onChangeStart: (value) {
-                      setState(
-                        () {
-                          AppStorage().seeking = true;
-                        },
-                      );
-                    },
-                    onChangeEnd: (value) {
-                      AppStorage()
-                          .playboy
-                          .seek(Duration(milliseconds: value.toInt()))
-                          .then(
-                            (value) => {
-                              setState(
-                                () {
-                                  AppStorage().seeking = false;
-                                },
-                              )
-                            },
-                          );
-                    },
+                  return Icon(
+                    AppStorage().playing
+                        ? Icons.pause_rounded
+                        : Icons.play_arrow_rounded,
                   );
                 },
               ),
             ),
-          ),
-          IconButton(
-            padding: const EdgeInsets.symmetric(horizontal: 2),
-            constraints: const BoxConstraints(),
-            color: colorScheme.primaryContainer,
-            onPressed: () {
-              AppStorage().playboy.next();
-              setState(() {});
-            },
-            icon: const Icon(
-              Icons.skip_next_rounded,
+            IconButton(
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              constraints: const BoxConstraints(),
+              color: colorScheme.primaryContainer,
+              // iconSize: 30,
+              onPressed: () {
+                AppStorage().playboy.previous();
+                setState(() {});
+              },
+              icon: const Icon(
+                Icons.skip_previous_rounded,
+                // size: 30,
+              ),
             ),
-          ),
-          IconButton(
-            padding: const EdgeInsets.symmetric(horizontal: 2),
-            constraints: const BoxConstraints(),
-            color: colorScheme.primaryContainer,
-            onPressed: () {
-              setState(
-                () {
-                  AppStorage().shuffle = !AppStorage().shuffle;
-                },
-              );
-            },
-            icon: AppStorage().shuffle
-                ? const Icon(Icons.shuffle_on_rounded)
-                : const Icon(Icons.shuffle_rounded),
-            iconSize: 20,
-          ),
-          IconButton(
-            padding: const EdgeInsets.symmetric(horizontal: 2),
-            constraints: const BoxConstraints(),
-            color: colorScheme.primaryContainer,
-            onPressed: () {
-              if (AppStorage().playboy.state.playlistMode ==
-                  PlaylistMode.single) {
-                AppStorage().playboy.setPlaylistMode(PlaylistMode.none);
-              } else {
-                AppStorage().playboy.setPlaylistMode(PlaylistMode.single);
-              }
-              setState(() {});
-            },
-            icon: AppStorage().playboy.state.playlistMode == PlaylistMode.single
-                ? const Icon(Icons.repeat_one_on_rounded)
-                : const Icon(Icons.repeat_one_rounded),
-            iconSize: 20,
-          ),
-          IconButton(
-            padding: const EdgeInsets.symmetric(horizontal: 2),
-            constraints: const BoxConstraints(),
-            color: colorScheme.primaryContainer,
-            onPressed: () {
-              AppStorage().closeMedia();
-              setState(() {});
-            },
-            icon: const Icon(Icons.stop_rounded),
-          ),
-          const SizedBox(width: 10),
-        ],
-      ),
-    );
-  }
+            Expanded(
+              // width: 120,
+              child: SliderTheme(
+                data: SliderThemeData(
+                  trackHeight: 2,
+                  thumbShape:
+                      const RoundSliderThumbShape(enabledThumbRadius: 6),
+                  overlayShape: SliderComponentShape.noOverlay,
+                  thumbColor: colorScheme.primaryContainer,
+                  activeTrackColor: colorScheme.primaryContainer,
+                ),
+                child: StreamBuilder(
+                  stream: AppStorage().playboy.stream.position,
+                  builder: (context, snapshot) {
+                    return Slider(
+                      max: AppStorage().duration.inMilliseconds.toDouble(),
+                      value: AppStorage().seeking
+                          ? AppStorage().seekingPos
+                          : max(
+                              min(
+                                  snapshot.hasData
+                                      ? snapshot.data!.inMilliseconds.toDouble()
+                                      : AppStorage()
+                                          .position
+                                          .inMilliseconds
+                                          .toDouble(),
+                                  AppStorage()
+                                      .duration
+                                      .inMilliseconds
+                                      .toDouble()),
+                              0),
+                      onChanged: (value) {
+                        setState(
+                          () {
+                            AppStorage().seekingPos = value;
+                          },
+                        );
+                      },
+                      onChangeStart: (value) {
+                        setState(
+                          () {
+                            AppStorage().seeking = true;
+                          },
+                        );
+                      },
+                      onChangeEnd: (value) {
+                        AppStorage()
+                            .playboy
+                            .seek(Duration(milliseconds: value.toInt()))
+                            .then(
+                              (value) => {
+                                setState(
+                                  () {
+                                    AppStorage().seeking = false;
+                                  },
+                                )
+                              },
+                            );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
+            IconButton(
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              constraints: const BoxConstraints(),
+              color: colorScheme.primaryContainer,
+              onPressed: () {
+                AppStorage().playboy.next();
+                setState(() {});
+              },
+              icon: const Icon(
+                Icons.skip_next_rounded,
+              ),
+            ),
+            IconButton(
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              constraints: const BoxConstraints(),
+              color: colorScheme.primaryContainer,
+              onPressed: () {
+                setState(
+                  () {
+                    AppStorage().shuffle = !AppStorage().shuffle;
+                  },
+                );
+              },
+              icon: AppStorage().shuffle
+                  ? const Icon(Icons.shuffle_on_rounded)
+                  : const Icon(Icons.shuffle_rounded),
+              iconSize: 20,
+            ),
+            IconButton(
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              constraints: const BoxConstraints(),
+              color: colorScheme.primaryContainer,
+              onPressed: () {
+                if (AppStorage().playboy.state.playlistMode ==
+                    PlaylistMode.single) {
+                  AppStorage().playboy.setPlaylistMode(PlaylistMode.none);
+                } else {
+                  AppStorage().playboy.setPlaylistMode(PlaylistMode.single);
+                }
+                setState(() {});
+              },
+              icon:
+                  AppStorage().playboy.state.playlistMode == PlaylistMode.single
+                      ? const Icon(Icons.repeat_one_on_rounded)
+                      : const Icon(Icons.repeat_one_rounded),
+              iconSize: 20,
+            ),
+            IconButton(
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              constraints: const BoxConstraints(),
+              color: colorScheme.primaryContainer,
+              onPressed: () {
+                AppStorage().closeMedia();
+                setState(() {});
+              },
+              icon: const Icon(Icons.stop_rounded),
+            ),
+            const SizedBox(width: 10),
+          ],
+        ),
+      );
+    }
 
-  Widget _buildFloatingMediaBar(ColorScheme colorScheme) {
+    // late final colorScheme = Theme.of(context).colorScheme;
     return StreamBuilder(
       stream: AppStorage().playboy.stream.playlist,
       builder: (context, snapshot) {
         return AppStorage().playingTitle != 'Not Playing' &&
                 AppStorage().settings.tabletUI
-            ? _buildFloatingMediaBarContent(colorScheme)
+            ? buildFloatingMediaBarContent(context)
             : const SizedBox();
       },
-    );
-  }
-
-  Widget _buildMediaCardContent(ColorScheme colorScheme) {
-    return Container(
-      // color: colorScheme.primary,
-      decoration: BoxDecoration(
-          color: colorScheme.primary,
-          borderRadius: BorderRadius.circular(_miniMode ? 0 : 20)),
-      child: Stack(
-        children: [
-          AppStorage().playingCover == null
-              ? const SizedBox()
-              : ShaderMask(
-                  shaderCallback: (Rect bounds) {
-                    return RadialGradient(
-                      radius: 1.4,
-                      // focalRadius: 1,
-                      colors: [
-                        Colors.black.withValues(alpha: 0.6),
-                        // Colors.black.withOpacity(0.1)
-                        Colors.transparent
-                      ],
-                      // stops: [0, 0.6],
-                      // tileMode: TileMode.mirror,
-                    ).createShader(bounds);
-                  },
-                  blendMode: BlendMode.dstIn,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(_miniMode ? 0 : 20),
-                    child: MImage(url: AppStorage().playingCover!),
-                  ),
-                ),
-          Column(
-            children: [
-              Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    const SizedBox(
-                      width: 16,
-                    ),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            AppStorage().playingTitle,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: colorScheme.primaryContainer,
-                            ),
-                            maxLines: 1,
-                          ),
-                          // Text(
-                          //   'author',
-                          //   style: TextStyle(
-                          //     fontSize: 12,
-                          //     color: colorScheme.primaryContainer,
-                          //   ),
-                          // )
-                          const SizedBox(
-                            height: 8,
-                          )
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    IconButton.filled(
-                      style: IconButton.styleFrom(
-                        backgroundColor: colorScheme.primaryContainer,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                      iconSize: 24,
-                      onPressed: () {
-                        setState(() {
-                          AppStorage().playboy.playOrPause();
-                        });
-                      },
-                      icon: StreamBuilder(
-                        stream: AppStorage().playboy.stream.playing,
-                        builder: (context, snapshot) {
-                          return Icon(
-                            AppStorage().playing
-                                ? Icons.pause_circle_outline
-                                : Icons.play_arrow_outlined,
-                            color: colorScheme.onPrimaryContainer,
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 12,
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 48,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    const SizedBox(
-                      width: 6,
-                    ),
-                    IconButton(
-                        padding: const EdgeInsets.symmetric(horizontal: 2),
-                        constraints: const BoxConstraints(),
-                        color: colorScheme.primaryContainer,
-                        // iconSize: 30,
-                        onPressed: () {
-                          if (_miniMode) {
-                            windowManager.setResizable(true);
-                            windowManager.setMinimumSize(const Size(360, 500));
-                            windowManager.setSize(const Size(900, 700));
-                            windowManager.setAlwaysOnTop(false);
-                            windowManager.center();
-                          } else {
-                            windowManager.setResizable(false);
-                            windowManager.setMinimumSize(const Size(300, 120));
-                            windowManager.setSize(const Size(300, 120));
-                            windowManager.setAlwaysOnTop(true);
-                          }
-                          setState(() {
-                            _miniMode = !_miniMode;
-                          });
-                        },
-                        icon: Icon(
-                          _miniMode ? Icons.fullscreen : Icons.fullscreen_exit,
-                          // size: 30,
-                        )),
-                    IconButton(
-                      padding: const EdgeInsets.symmetric(horizontal: 2),
-                      constraints: const BoxConstraints(),
-                      color: colorScheme.primaryContainer,
-                      // iconSize: 30,
-                      onPressed: () {
-                        AppStorage().playboy.previous();
-                        setState(() {});
-                      },
-                      icon: const Icon(
-                        Icons.skip_previous,
-                        // size: 30,
-                      ),
-                    ),
-                    Expanded(
-                      // width: 120,
-                      child: SliderTheme(
-                        data: SliderThemeData(
-                          trackHeight: 2,
-                          thumbShape: const RoundSliderThumbShape(
-                              enabledThumbRadius: 6),
-                          overlayShape: SliderComponentShape.noOverlay,
-                          thumbColor: colorScheme.primaryContainer,
-                          activeTrackColor: colorScheme.primaryContainer,
-                        ),
-                        child: StreamBuilder(
-                          stream: AppStorage().playboy.stream.position,
-                          builder: (context, snapshot) {
-                            return Slider(
-                              max: AppStorage()
-                                  .duration
-                                  .inMilliseconds
-                                  .toDouble(),
-                              value: AppStorage().seeking
-                                  ? AppStorage().seekingPos
-                                  : min(
-                                      snapshot.hasData
-                                          ? snapshot.data!.inMilliseconds
-                                              .toDouble()
-                                          : AppStorage()
-                                              .position
-                                              .inMilliseconds
-                                              .toDouble(),
-                                      AppStorage()
-                                          .duration
-                                          .inMilliseconds
-                                          .toDouble()),
-                              onChanged: (value) {
-                                setState(() {
-                                  AppStorage().seekingPos = value;
-                                });
-                              },
-                              onChangeStart: (value) {
-                                setState(
-                                  () {
-                                    AppStorage().seeking = true;
-                                  },
-                                );
-                              },
-                              onChangeEnd: (value) {
-                                AppStorage()
-                                    .playboy
-                                    .seek(Duration(milliseconds: value.toInt()))
-                                    .then(
-                                      (value) => {
-                                        setState(
-                                          () {
-                                            AppStorage().seeking = false;
-                                          },
-                                        )
-                                      },
-                                    );
-                              },
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      padding: const EdgeInsets.symmetric(horizontal: 2),
-                      constraints: const BoxConstraints(),
-                      color: colorScheme.primaryContainer,
-                      onPressed: () {
-                        AppStorage().playboy.next();
-                        setState(() {});
-                      },
-                      icon: const Icon(
-                        Icons.skip_next,
-                      ),
-                    ),
-                    IconButton(
-                      padding: const EdgeInsets.symmetric(horizontal: 2),
-                      constraints: const BoxConstraints(),
-                      color: colorScheme.primaryContainer,
-                      onPressed: () {
-                        setState(
-                          () {
-                            AppStorage().shuffle = !AppStorage().shuffle;
-                          },
-                        );
-                      },
-                      icon: AppStorage().shuffle
-                          ? const Icon(Icons.shuffle_on)
-                          : const Icon(Icons.shuffle),
-                      iconSize: 20,
-                    ),
-                    IconButton(
-                      padding: const EdgeInsets.symmetric(horizontal: 2),
-                      constraints: const BoxConstraints(),
-                      color: colorScheme.primaryContainer,
-                      onPressed: () {
-                        if (AppStorage().playboy.state.playlistMode ==
-                            PlaylistMode.single) {
-                          AppStorage()
-                              .playboy
-                              .setPlaylistMode(PlaylistMode.none);
-                        } else {
-                          AppStorage()
-                              .playboy
-                              .setPlaylistMode(PlaylistMode.single);
-                        }
-                        setState(() {});
-                      },
-                      icon: AppStorage().playboy.state.playlistMode ==
-                              PlaylistMode.single
-                          ? const Icon(Icons.repeat_one_on)
-                          : const Icon(Icons.repeat_one),
-                      iconSize: 20,
-                    ),
-                    IconButton(
-                      padding: const EdgeInsets.symmetric(horizontal: 2),
-                      constraints: const BoxConstraints(),
-                      color: colorScheme.primaryContainer,
-                      onPressed: () {
-                        AppStorage().closeMedia();
-                        setState(() {});
-                      },
-                      icon: const Icon(
-                        Icons.stop,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 6,
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
-        ],
-      ),
     );
   }
 }

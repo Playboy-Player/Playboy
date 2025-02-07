@@ -1,16 +1,16 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:playboy/l10n/l10n.dart';
+import 'package:window_manager/window_manager.dart';
+
+import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/pages/settings/categories/about_app_settings.dart';
-import 'package:playboy/pages/settings/categories/remote_play_settings.dart';
 import 'package:playboy/pages/settings/categories/appearance_settings.dart';
 import 'package:playboy/pages/settings/categories/keymap_settings.dart';
 import 'package:playboy/pages/settings/categories/language_settings.dart';
 import 'package:playboy/pages/settings/categories/player_settings.dart';
 import 'package:playboy/pages/settings/categories/storage_settings.dart';
 import 'package:playboy/pages/settings/categories/developer_settings.dart';
-import 'package:window_manager/window_manager.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -21,13 +21,13 @@ class SettingsPage extends StatefulWidget {
 
 class SettingsPageState extends State<SettingsPage> {
   int _currentPage = 0;
+  final double _sizebarWidth = 200;
   final List<IconData> _icons = [
     Icons.color_lens_outlined,
     Icons.play_circle_outline,
     Icons.keyboard_command_key,
     Icons.folder_outlined,
     Icons.translate_rounded,
-    Icons.cast,
     Icons.info_outline,
     Icons.bug_report_outlined,
   ];
@@ -37,23 +37,26 @@ class SettingsPageState extends State<SettingsPage> {
     const KeymapSettings(),
     const StorageSettingsPage(),
     const LanguageSettingsPage(),
-    const RemotePlaySettings(),
     const AboutPage(),
     const DeveloperSettings(),
+  ];
+  final List<String> _options = [
+    '外观'.l10n,
+    '播放器'.l10n,
+    '快捷键'.l10n,
+    '存储'.l10n,
+    '语言'.l10n,
+    '关于'.l10n,
+    '调试'.l10n,
   ];
 
   @override
   Widget build(BuildContext context) {
-    List<String> options = [
-      context.l10n.appearance,
-      context.l10n.player,
-      '快捷键',
-      context.l10n.storage,
-      context.l10n.language,
-      '远程播放',
-      context.l10n.about,
-      '调试',
-    ];
+    late final colorScheme = Theme.of(context).colorScheme;
+    late final backgroundColor = Color.alphaBlend(
+      colorScheme.primary.withValues(alpha: 0.04),
+      colorScheme.surface,
+    );
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 40,
@@ -69,6 +72,15 @@ class SettingsPageState extends State<SettingsPage> {
                 },
               ),
         titleSpacing: 0,
+        title: Row(
+          children: [
+            Container(
+              color: backgroundColor,
+              width: _sizebarWidth,
+              height: 40,
+            )
+          ],
+        ),
         backgroundColor: Theme.of(context).colorScheme.surface,
         scrolledUnderElevation: 0,
         flexibleSpace: Column(
@@ -99,32 +111,35 @@ class SettingsPageState extends State<SettingsPage> {
         actions: [
           if (!Platform.isMacOS)
             IconButton(
-                hoverColor: Colors.transparent,
-                iconSize: 20,
-                onPressed: () {
-                  windowManager.minimize();
-                },
-                icon: const Icon(Icons.minimize)),
+              hoverColor: Colors.transparent,
+              iconSize: 20,
+              onPressed: () {
+                windowManager.minimize();
+              },
+              icon: const Icon(Icons.minimize),
+            ),
           if (!Platform.isMacOS)
             IconButton(
-                hoverColor: Colors.transparent,
-                iconSize: 20,
-                onPressed: () async {
-                  if (await windowManager.isMaximized()) {
-                    windowManager.unmaximize();
-                  } else {
-                    windowManager.maximize();
-                  }
-                },
-                icon: const Icon(Icons.crop_square)),
+              hoverColor: Colors.transparent,
+              iconSize: 20,
+              onPressed: () async {
+                if (await windowManager.isMaximized()) {
+                  windowManager.unmaximize();
+                } else {
+                  windowManager.maximize();
+                }
+              },
+              icon: const Icon(Icons.crop_square),
+            ),
           if (!Platform.isMacOS)
             IconButton(
-                hoverColor: Colors.transparent,
-                iconSize: 20,
-                onPressed: () {
-                  windowManager.close();
-                },
-                icon: const Icon(Icons.close)),
+              hoverColor: Colors.transparent,
+              iconSize: 20,
+              onPressed: () {
+                windowManager.close();
+              },
+              icon: const Icon(Icons.close),
+            ),
           if (Platform.isMacOS)
             IconButton(
               constraints: const BoxConstraints(),
@@ -136,66 +151,59 @@ class SettingsPageState extends State<SettingsPage> {
           if (Platform.isMacOS) const SizedBox(width: 8)
         ],
       ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       body: Row(
         children: [
-          const SizedBox(
-            width: 10,
-          ),
-          SizedBox(
-              width: 160,
-              child: Column(
-                children: [
-                  if (Platform.isAndroid)
-                    const SizedBox(
-                      height: 40,
+          Container(
+            color: backgroundColor,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            width: _sizebarWidth,
+            child: Column(
+              children: [
+                if (Platform.isAndroid) const SizedBox(height: 40),
+                Container(
+                  alignment: Alignment.topCenter,
+                  height: 50,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    '设置'.l10n,
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
-                  Container(
-                      alignment: Alignment.topLeft,
-                      height: 36,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Text(
-                        context.l10n.settings,
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w500,
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
-                      )),
-                  const SizedBox(
-                    height: 10,
                   ),
-                  Expanded(
-                    child: buildSettings(options),
-                  )
-                ],
-              )),
+                ),
+                const SizedBox(height: 10),
+                Expanded(
+                  child: _buildSettingsSideBar(_options),
+                )
+              ],
+            ),
+          ),
           Expanded(
             child: SafeArea(
-                child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: _pages[_currentPage],
-            )),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: _pages[_currentPage],
+              ),
+            ),
           ),
         ],
       ),
-      // floatingActionButton: FloatingActionButton(
-      //     heroTag: 'settings',
-      //     backgroundColor: colorScheme.onTertiary,
-      //     onPressed: () {
-      //       Navigator.pop(context);
-      //     },
-      //     child: const Icon(Icons.home_filled)),
     );
   }
 
-  Widget buildSettings(List<String> options) {
+  Widget _buildSettingsSideBar(List<String> options) {
     late final colorScheme = Theme.of(context).colorScheme;
+    late final backgroundColor = Color.alphaBlend(
+      colorScheme.primary.withValues(alpha: 0.04),
+      colorScheme.surface,
+    );
     Widget buildItem(int id, String name, IconData icon) {
       final bool selected = id == _currentPage;
       return Material(
-        color: selected ? colorScheme.secondary : null,
-        borderRadius: BorderRadius.circular(14),
+        color: selected ? colorScheme.secondary : backgroundColor,
+        borderRadius: BorderRadius.circular(12),
         child: InkWell(
           onTap: () {
             setState(() {
@@ -204,31 +212,32 @@ class SettingsPageState extends State<SettingsPage> {
           },
           borderRadius: BorderRadius.circular(14),
           child: Container(
-            height: 44,
+            height: 40,
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: Center(
-                child: Row(
-              children: [
-                const SizedBox(
-                  width: 10,
-                ),
-                Icon(
-                  icon,
-                  color: selected ? colorScheme.onSecondary : null,
-                  size: 22,
-                ),
-                const SizedBox(
-                  width: 14,
-                ),
-                Text(
-                  name,
-                  style: TextStyle(
-                    color: selected ? colorScheme.onSecondary : null,
-                    fontSize: 16,
+              child: Row(
+                children: [
+                  const SizedBox(
+                    width: 10,
                   ),
-                )
-              ],
-            )),
+                  Icon(
+                    icon,
+                    color: selected ? colorScheme.onSecondary : null,
+                    size: 22,
+                  ),
+                  const SizedBox(
+                    width: 14,
+                  ),
+                  Text(
+                    name,
+                    style: TextStyle(
+                      color: selected ? colorScheme.onSecondary : null,
+                      fontSize: 15,
+                    ),
+                  )
+                ],
+              ),
+            ),
           ),
         ),
       );

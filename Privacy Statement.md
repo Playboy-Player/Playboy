@@ -1,16 +1,21 @@
-# Playboy Player Privacy Statement
+### Privacy Statement
 
-## What information do we collect?
-We will NOT collect any personal information from you, including your in-App data or your shared information in the App.
+We take your privacy seriously. This Privacy Statement outlines how we collect, use, and protect your personal data while interacting with our open-source software project.
 
-## What information do third-party collect?
-Any thrid party libraies (e.g. Google Flutter) may collect telemetry diagnosis data to be able to find problems in code. But any of the libraries would not collect our personal information.
+#### 1. Data Collection
+We do not collect any personal data from users of the software by default. However, if the software integrates with third-party services, these services may collect data as outlined in their respective privacy policies.
 
-## Your consent
-By using this App, you consent to our privacy policy.
+#### 2. Usage of Data
+We do not store or use any personal data for any purposes beyond the functioning of the software itself. Any data collected through third-party services is subject to those services' privacy practices.
 
-## Changes to our privacy policy
-If we decide to change our privacy policy, we will post those changes on this page, and/or update the privacy policy modification data below.
+#### 3. Third-Party Services
+Our open-source project may integrate with third-party services for additional functionality (such as analytics, crash reporting, or user authentication). When interacting with these services, data may be shared according to their privacy policies.
 
-This policy was last modified on 4/2/2024
- 
+#### 4. Data Security
+We prioritize the security of your data. Any data collected by third-party services is processed according to their security protocols. Our open-source project does not store or process personal data outside of necessary operations.
+
+#### 5. Changes to This Privacy Statement
+We may update this Privacy Statement as necessary to reflect changes in the software or our privacy practices. The latest version of the Privacy Statement will be available in the repository.
+
+#### 6. Contact Us
+If you have any questions or concerns about your privacy in relation to this project, please feel free to reach out to us at yuihrsw@outlook.com.

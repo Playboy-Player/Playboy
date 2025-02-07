@@ -51,16 +51,15 @@ Material 3 风格的跨平台媒体播放器.
 - [x] 播放列表功能 (随机播放, 单曲循环)
 - [x] 任意倍速调节
 - [x] 搜索媒体文件和播放列表
-- [ ] 多语言支持
+- [x] 播放局域网文件
+- [x] 多语言支持
 - [ ] 歌词和字幕
-- [ ] 局域网播放
-- [ ] 文件下载功能
 
 ## For Developers
 
-### Windows
+首先, 根据 [官方教程](https://docs.flutter.dev/get-started/install/) 配置 flutter 环境. 请使用不低于 **3.27.2** 的 flutter 版本.
 
-需要安装 [Flutter](https://docs.flutter.dev/get-started/install/windows/desktop?tab=vscode), [Visual Studio 2022](https://visualstudio.microsoft.com/zh-hans/downloads/) C++ 工作负载 (或安装 [VS 2022 生成工具](https://aka.ms/vs/17/release/vs_BuildTools.exe))
+### Windows
 
 flutter doctor 输出内容示例:
 
@@ -79,18 +78,7 @@ Doctor summary (to see all details, run flutter doctor -v):
 
 > 目前 Linux 版本存在较多 Bug, 如播放时切换页面可能导致应用崩溃, 迷你播放器显示尺寸错误等
 
-需要安装 [Flutter](https://docs.flutter.dev/get-started/install/linux), libmpv-dev.
-
-flutter doctor 输出内容示例:
-
-```
-Doctor summary (to see all details, run flutter doctor -v):
-[✓] Flutter (Channel stable, 3.22.2, on Debian GNU/Linux 12 (bookworm) 5.15.153.1-microsoft-standard-WSL2, locale
-    en_US.UTF-8)
-[✓] Linux toolchain - develop for Linux desktop
-[✓] Connected device (1 available)
-[✓] Network resources 
-```
+配置完 flutter 后, 请通过系统包管理器或其他途径安装 `libmpv-dev`.
 
 在项目文件夹下运行 `flutter build linux` 以生成 Linux 可执行程序
 
@@ -108,8 +96,7 @@ Doctor summary (to see all details, run flutter doctor -v):
 [✓] Connected device (3 available)
 [✓] Network resources
 ```
-
-如果仅需编译 macOS 应用, Xcode 无需安装 iOS SDK.
+在项目文件夹下运行 `flutter build macos` 以生成 macOS 可执行程序  
 
 ### android
 
@@ -119,13 +106,16 @@ flutter doctor 输出内容示例:
 
 ```
 Doctor summary (to see all details, run flutter doctor -v):
-[✓] Flutter (Channel stable, 3.24.1, on Microsoft Windows [版本 10.0.22631.4169], locale zh-CN)
-[✓] Windows Version (Installed version of Windows is version 10 or higher)
-[✓] Android toolchain - develop for Android devices (Android SDK version 34.0.0)
+[✓] Flutter (Channel stable, 3.27.2, on macOS 15.3 24D60 darwin-arm64, locale
+    zh-Hans-CN)
+[✓] Android toolchain - develop for Android devices (Android SDK version 35.0.1)
 [✓] Android Studio (version 2024.2)
+[✓] VS Code (version 1.96.4)
 [✓] Connected device (3 available)
 [✓] Network resources
 ```
+
+运行 `flutter build apk` 以生成 apk 安装包文件
 
 ## 为本项目做出贡献
 

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
-import 'package:playboy/backend/utils/route_utils.dart';
-import 'package:playboy/pages/media/player_page.dart';
+import 'package:playboy/backend/utils/l10n_utils.dart';
+import 'package:playboy/pages/home.dart';
 import 'package:playboy/widgets/menu_item.dart';
 import 'package:playboy/widgets/playlist_picker.dart';
 
@@ -15,42 +15,43 @@ List<Widget> buildCommonMediaMenuItems(
   return [
     MMenuItem(
       icon: Icons.open_in_new,
-      label: '播放器播放',
+      label: '播放器播放'.l10n,
       onPressed: () {
         AppStorage().closeMedia();
         AppStorage().openMedia(item);
 
-        if (!context.mounted) return;
-        pushRootPage(
-          context,
-          const PlayerPage(),
-        );
-        AppStorage().updateStatus();
+        // if (!context.mounted) return;
+        // pushRootPage(
+        //   context,
+        //   const PlayerPage(),
+        // );
+        // AppStorage().updateStatus();
+        HomePage.switchView?.call();
       },
     ),
     MMenuItem(
       icon: Icons.play_circle_outline_rounded,
-      label: '播放',
+      label: '播放'.l10n,
       onPressed: () {
         AppStorage().closeMedia();
         AppStorage().openMedia(item);
       },
     ),
-    const MMenuItem(
+    MMenuItem(
       icon: Icons.last_page,
-      label: '最后播放',
+      label: '最后播放'.l10n,
       onPressed: null,
     ),
     MMenuItem(
       icon: Icons.add_circle_outline,
-      label: '添加到播放列表',
+      label: '添加到播放列表'.l10n,
       onPressed: () {
         showDialog(
           useRootNavigator: false,
           context: context,
           builder: (BuildContext context) => AlertDialog(
             // surfaceTintColor: Colors.transparent,
-            title: const Text('添加到播放列表'),
+            title: Text('添加到播放列表'.l10n),
             content: SizedBox(
               width: 300,
               height: 300,

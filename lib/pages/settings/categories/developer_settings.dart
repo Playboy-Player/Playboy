@@ -13,6 +13,7 @@ class DeveloperSettingsState extends State<DeveloperSettings> {
 
   @override
   Widget build(BuildContext context) {
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       body: ListView(
         children: [
@@ -26,6 +27,25 @@ class DeveloperSettingsState extends State<DeveloperSettings> {
                 color: Theme.of(context).colorScheme.secondary,
               ),
             ),
+          ),
+          SwitchListTile(
+            tileColor: AppStorage().settings.enableDevSettings
+                ? colorScheme.primaryContainer
+                : colorScheme.primaryContainer.withValues(alpha: 0.2),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            title: Container(
+              alignment: Alignment.centerLeft,
+              height: 40,
+              child: const Text('Developer Setting'),
+            ),
+            value: AppStorage().settings.enableDevSettings,
+            onChanged: (bool value) {
+              setState(() {
+                AppStorage().settings.enableDevSettings = value;
+              });
+              AppStorage().saveSettings();
+            },
           ),
           SwitchListTile(
             title: const Text('Enable Tablet UI'),

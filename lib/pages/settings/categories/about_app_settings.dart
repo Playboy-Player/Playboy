@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/constants.dart';
-import 'package:playboy/l10n/l10n.dart';
+import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutPage extends StatefulWidget {
@@ -20,7 +20,7 @@ class _AboutPageState extends State<AboutPage> {
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
-              context.l10n.about,
+              '关于'.l10n,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
@@ -31,12 +31,13 @@ class _AboutPageState extends State<AboutPage> {
           Card(
             elevation: 0,
             shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(80),
-                topRight: Radius.circular(30),
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(80),
-              ),
+              // borderRadius: BorderRadius.only(
+              //   topLeft: Radius.circular(80),
+              //   topRight: Radius.circular(30),
+              //   bottomLeft: Radius.circular(30),
+              //   bottomRight: Radius.circular(80),
+              // ),
+              borderRadius: BorderRadius.all(Radius.circular(30)),
             ),
             color: colorScheme.primaryContainer.withValues(alpha: 0.3),
             child: SizedBox(
@@ -45,13 +46,11 @@ class _AboutPageState extends State<AboutPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.smart_display,
+                    Constants.appIcon,
                     size: 80,
                     color: colorScheme.primary,
                   ),
-                  const SizedBox(
-                    width: 10,
-                  ),
+                  const SizedBox(width: 10),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,8 +69,9 @@ class _AboutPageState extends State<AboutPage> {
                       Text(
                         ' ${Constants.version}',
                         style: TextStyle(
-                            color: colorScheme.primary,
-                            fontWeight: FontWeight.w500),
+                          color: colorScheme.primary,
+                          fontWeight: FontWeight.w500,
+                        ),
                       )
                     ],
                   )
@@ -79,17 +79,18 @@ class _AboutPageState extends State<AboutPage> {
               ),
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(12),
-            child: Text(
-              context.l10n.contributors,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-            ),
-          ),
+          // Container(
+          //   padding: const EdgeInsets.all(12),
+          //   child: Text(
+          //     '贡献者',
+          //     style: TextStyle(
+          //       fontSize: 20,
+          //       fontWeight: FontWeight.w500,
+          //       color: Theme.of(context).colorScheme.secondary,
+          //     ),
+          //   ),
+          // ),
+          const SizedBox(height: 30),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             height: 100,
@@ -143,7 +144,7 @@ class _AboutPageState extends State<AboutPage> {
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
-              context.l10n.support,
+              '帮助'.l10n,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
@@ -155,7 +156,7 @@ class _AboutPageState extends State<AboutPage> {
             leading: const Icon(
               Icons.data_object,
             ),
-            title: Text(context.l10n.projectWebsite),
+            title: Text('项目主页'.l10n),
             trailing: const Icon(Icons.open_in_new),
             onTap: () {
               launchUrl(Uri.https('github.com', '/Playboy-Player/Playboy'));
@@ -165,7 +166,7 @@ class _AboutPageState extends State<AboutPage> {
             leading: const Icon(
               Icons.feedback_outlined,
             ),
-            title: Text(context.l10n.feedback),
+            title: Text('反馈'.l10n),
             trailing: const Icon(Icons.open_in_new),
             onTap: () {
               launchUrl(

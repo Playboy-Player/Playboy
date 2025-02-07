@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/route_utils.dart';
+import 'package:playboy/backend/utils/sliver_utils.dart';
 import 'package:playboy/pages/search/search_result.dart';
 import 'package:playboy/widgets/empty_holder.dart';
 import 'package:playboy/widgets/library_title.dart';
@@ -32,7 +34,7 @@ class _SearchPage extends State<SearchPage> {
               titlePadding:
                   const EdgeInsetsDirectional.only(start: 16, bottom: 16),
               title: Text(
-                '搜索',
+                '搜索'.l10n,
                 style: TextStyle(
                     color: Theme.of(context).colorScheme.onPrimaryContainer,
                     fontSize: 25,
@@ -79,8 +81,8 @@ class _SearchPage extends State<SearchPage> {
                               ),
                             )
                           : null,
-                      labelText: '搜索播放列表, 媒体文件...',
-                      hintText: '按回车以确认',
+                      labelText: '搜索播放列表, 媒体文件...'.l10n,
+                      hintText: '按回车以确认'.l10n,
                       floatingLabelBehavior: FloatingLabelBehavior.never,
                       border: OutlineInputBorder(
                         borderSide: const BorderSide(
@@ -104,8 +106,8 @@ class _SearchPage extends State<SearchPage> {
             ),
           ),
           // _buildSelector(),
-          const MLibraryTitle(title: '最近搜索'),
-          const MEmptyHolder(),
+          MLibraryTitle(title: '最近搜索'.l10n),
+          const MEmptyHolder().toSliver(),
         ],
       ),
     );

@@ -8,7 +8,6 @@ part of 'settings.dart';
 
 AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) => AppSettings(
       font: json['font'] as String? ?? '',
-      wavySlider: json['wavySlider'] as bool? ?? false,
       initPage: (json['initPage'] as num?)?.toInt() ?? 0,
       playlistListview: json['playlistListview'] as bool? ?? false,
       videoLibListview: json['videoLibListview'] as bool? ?? false,
@@ -45,8 +44,8 @@ AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) => AppSettings(
               ?.map((e) => PlayItem.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
-      language: json['language'] as String? ?? 'zh',
-      discoverable: json['discoverable'] as bool? ?? false,
+      language: json['language'] as String? ?? 'zh_hans',
+      enableDevSettings: json['enableDevSettings'] as bool? ?? false,
       tabletUI: json['tabletUI'] as bool? ?? true,
       enableTitleBar: json['enableTitleBar'] as bool? ?? true,
     );
@@ -54,7 +53,6 @@ AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) => AppSettings(
 Map<String, dynamic> _$AppSettingsToJson(AppSettings instance) =>
     <String, dynamic>{
       'font': instance.font,
-      'wavySlider': instance.wavySlider,
       'initPage': instance.initPage,
       'playlistListview': instance.playlistListview,
       'videoLibListview': instance.videoLibListview,
@@ -79,7 +77,7 @@ Map<String, dynamic> _$AppSettingsToJson(AppSettings instance) =>
       'recordRecentPlayed': instance.recordRecentPlayed,
       'recentPlayed': instance.recentPlayed,
       'language': instance.language,
-      'discoverable': instance.discoverable,
+      'enableDevSettings': instance.enableDevSettings,
       'tabletUI': instance.tabletUI,
       'enableTitleBar': instance.enableTitleBar,
     };

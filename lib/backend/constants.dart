@@ -1,6 +1,6 @@
 // import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:playboy/backend/models/maintainer.dart';
+import 'package:playboy/backend/models/contributor.dart';
 
 class Constants {
   static const IconData appIcon = Icons.smart_display;

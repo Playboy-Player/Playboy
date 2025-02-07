@@ -11,6 +11,7 @@ import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/models/settings.dart';
+import 'package:playboy/pages/home.dart';
 
 class AppStorage extends ChangeNotifier {
   List<MaterialColor> colors = [
@@ -155,7 +156,7 @@ class AppStorage extends ChangeNotifier {
   }
 
   void updateStatus() {
-    notifyListeners();
+    HomePage.refresh?.call();
   }
 
   Future<void> closeMedia() async {

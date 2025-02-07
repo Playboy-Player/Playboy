@@ -11,14 +11,11 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # UI
-  provider: ^6.1.1
-
   # File System
   path: ^1.8.3
   path_provider: ^2.1.1
-  json_annotation: ^4.8.1
   file_picker: ^8.3.1
+  json_annotation: ^4.8.1
 
   # Desktop Window Control
   window_manager: ^0.3.8
@@ -34,36 +31,19 @@ dependencies:
   media_kit_video: ^1.2.4
   media_kit_libs_video: ^1.0.4
 
-  # Localization
-  flutter_localizations:
-    sdk: flutter
-  intl: any
-
   # Misc
   url_launcher: ^6.2.5
-  process_run: ^1.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_lints: ^3.0.1
   build_runner: ^2.3.3
   json_serializable: ^6.7.1
-  msix: ^3.16.7
 
 flutter:
   assets:
     - res/contributors/
+    - l10n/
   uses-material-design: true
   generate: true
-
-msix_config:
-  display_name: Playboy Player
-  identity_name: YuiHrsw.PlayboyPlayer
-  msix_version: 1.24.0.0
-  logo_path: res/images/icon512.png
-  trim_logo: false
-  file_extension: .avi, .flv, .mkv, .mov, .mp4, .mpeg, .webm, .wmv, .aac, .midi, .mp3, .ogg, .wav
-flutter_intl:
-  enabled: true

@@ -3,12 +3,14 @@ import 'dart:math';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/route_utils.dart';
+import 'package:playboy/backend/utils/sliver_utils.dart';
 import 'package:playboy/backend/utils/time_utils.dart';
-import 'package:playboy/l10n/l10n.dart';
 import 'package:playboy/pages/playlist/playlist_detail.dart';
 import 'package:playboy/pages/playlist/playlist_menu.dart';
 import 'package:playboy/widgets/empty_holder.dart';
@@ -16,7 +18,7 @@ import 'package:playboy/widgets/interactive_wrapper.dart';
 import 'package:playboy/widgets/cover_card.dart';
 import 'package:playboy/widgets/library_header.dart';
 import 'package:playboy/widgets/cover_listtile.dart';
-import 'package:playboy/widgets/loading.dart';
+import 'package:playboy/widgets/loading_holder.dart';
 import 'package:playboy/widgets/menu_button.dart';
 import 'package:playboy/widgets/menu_item.dart';
 
@@ -44,7 +46,7 @@ class PlaylistState extends State<PlaylistPage> {
       body: CustomScrollView(
         slivers: [
           MLibraryHeader(
-            title: context.l10n.playlist,
+            title: '播放列表'.l10n,
             actions: _buildLibraryActions(context),
           ),
           _buildLibraryview(context),
@@ -61,7 +63,7 @@ class PlaylistState extends State<PlaylistPage> {
     );
     return [
       IconButton(
-        tooltip: context.l10n.newPlaylist,
+        tooltip: '新建播放列表'.l10n,
         hoverColor: backgroundColor,
         onPressed: () {
           _editingController.clear();
@@ -70,14 +72,14 @@ class PlaylistState extends State<PlaylistPage> {
             context: context,
             builder: (BuildContext context) => AlertDialog(
               // surfaceTintColor: Colors.transparent,
-              title: Text(context.l10n.newPlaylist),
+              title: Text('新建播放列表'.l10n),
               content: TextField(
                 autofocus: true,
                 maxLines: 1,
                 controller: _editingController,
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
-                  labelText: context.l10n.name,
+                  labelText: '名称'.l10n,
                 ),
                 onSubmitted: (value) {
                   var pl = PlaylistItem(
@@ -98,7 +100,7 @@ class PlaylistState extends State<PlaylistPage> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text(context.l10n.cancel),
+                  child: Text('取消'.l10n),
                 ),
                 TextButton(
                   onPressed: () {
@@ -114,7 +116,7 @@ class PlaylistState extends State<PlaylistPage> {
                     });
                     Navigator.pop(context);
                   },
-                  child: Text(context.l10n.ok),
+                  child: Text('确定'.l10n),
                 ),
               ],
             ),
@@ -126,7 +128,7 @@ class PlaylistState extends State<PlaylistPage> {
         ),
       ),
       IconButton(
-        tooltip: '切换显示视图',
+        tooltip: '切换显示视图'.l10n,
         hoverColor: backgroundColor,
         onPressed: () async {
           setState(() {
@@ -144,7 +146,7 @@ class PlaylistState extends State<PlaylistPage> {
 
   Widget _buildLibraryview(BuildContext context) {
     if (!_loaded) return const MLoadingPlaceHolder();
-    if (AppStorage().playlists.isEmpty) return const MEmptyHolder();
+    if (AppStorage().playlists.isEmpty) return const MEmptyHolder().toSliver();
 
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -250,7 +252,7 @@ class PlaylistState extends State<PlaylistPage> {
       const Divider(),
       MMenuItem(
         icon: Icons.design_services_outlined,
-        label: context.l10n.changeCover,
+        label: '修改封面'.l10n,
         onPressed: () async {
           String? coverPath =
               await FilePicker.platform.pickFiles(type: FileType.image).then(
@@ -276,7 +278,7 @@ class PlaylistState extends State<PlaylistPage> {
       ),
       MMenuItem(
         icon: Icons.cleaning_services,
-        label: context.l10n.removeCover,
+        label: '清除封面'.l10n,
         onPressed: () async {
           setState(() {
             item.cover = null;
@@ -291,7 +293,7 @@ class PlaylistState extends State<PlaylistPage> {
       ),
       MMenuItem(
         icon: Icons.drive_file_rename_outline,
-        label: context.l10n.rename,
+        label: '重命名'.l10n,
         onPressed: () {
           _editingController.clear();
           _editingController.text = item.title;
@@ -300,14 +302,14 @@ class PlaylistState extends State<PlaylistPage> {
             context: context,
             builder: (BuildContext context) => AlertDialog(
               surfaceTintColor: Colors.transparent,
-              title: Text(context.l10n.rename),
+              title: Text('重命名'.l10n),
               content: TextField(
                 autofocus: true,
                 maxLines: 1,
                 controller: _editingController,
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
-                  labelText: context.l10n.name,
+                  labelText: '名称'.l10n,
                 ),
                 onSubmitted: (value) {
                   LibraryHelper.renamePlaylist(
@@ -323,7 +325,7 @@ class PlaylistState extends State<PlaylistPage> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text(context.l10n.cancel),
+                  child: Text('取消'.l10n),
                 ),
                 TextButton(
                   onPressed: () {
@@ -335,7 +337,7 @@ class PlaylistState extends State<PlaylistPage> {
                     Navigator.pop(context);
                     Navigator.pop(context);
                   },
-                  child: Text(context.l10n.ok),
+                  child: Text('确定'.l10n),
                 ),
               ],
             ),
@@ -344,23 +346,23 @@ class PlaylistState extends State<PlaylistPage> {
       ),
       MMenuItem(
         icon: Icons.delete_outline,
-        label: context.l10n.delete,
+        label: '删除'.l10n,
         onPressed: () {
           showDialog(
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: Text(context.l10n.confirm),
-                content: Text(context.l10n.confirmDeletePlaylist),
+                title: Text('操作确认'.l10n),
+                content: Text('确定要删除播放列表吗?'.l10n),
                 actions: [
                   TextButton(
-                    child: Text(context.l10n.cancel),
+                    child: Text('取消'.l10n),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
                   ),
                   TextButton(
-                    child: Text(context.l10n.ok),
+                    child: Text('确定'.l10n),
                     onPressed: () {
                       LibraryHelper.deletePlaylist(
                         item,
@@ -378,9 +380,9 @@ class PlaylistState extends State<PlaylistPage> {
         },
       ),
       const Divider(),
-      const MMenuItem(
+      MMenuItem(
         icon: Icons.info_outline,
-        label: '属性',
+        label: '属性'.l10n,
         onPressed: null,
       ),
       const SizedBox(height: 10),

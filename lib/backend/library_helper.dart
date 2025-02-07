@@ -2,12 +2,12 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:media_kit/media_kit.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
-import 'package:path/path.dart';
 import 'package:playboy/backend/storage.dart';
-import 'package:process_run/process_run.dart';
+
+import 'package:path/path.dart';
+import 'package:media_kit/media_kit.dart';
 
 class LibraryHelper {
   static const supportFormats = [
@@ -66,10 +66,9 @@ class LibraryHelper {
             q.add(item.path);
           } else if (supportFormats.contains(extension(item.path))) {
             var outputPath = "${withoutExtension(item.path)}.cover.jpg";
-            if (AppStorage().settings.getCoverOnScan) {
-              await saveThumbnail(item.path);
-            }
-            // var hashedPath = hashPath(item.path);
+            // if (AppStorage().settings.getCoverOnScan) {
+            //   await saveThumbnail(item.path);
+            // }
             res.add(
               PlayItem(
                 source: item.path,
@@ -85,20 +84,20 @@ class LibraryHelper {
     return res;
   }
 
-  static Future<void> saveThumbnail(String path) async {
-    var outputPath = "${withoutExtension(path)}.cover.jpg";
-    if (await File(outputPath).exists()) return;
-    var shell = Shell();
-    try {
-      // call ffmpeg to get the frame at 00:00:05
-      await shell.run(
-        'ffmpeg -progress - -i "$path" -y -ss 0:00:05.000000 -frames:v 1 -q:v 1 "$outputPath"',
-      );
-    } catch (e) {
-      // print(e.toString());
-    }
-    // return outputPath;
-  }
+  // static Future<void> saveThumbnail(String path) async {
+  //   var outputPath = "${withoutExtension(path)}.cover.jpg";
+  //   if (await File(outputPath).exists()) return;
+  //   var shell = Shell();
+  //   try {
+  //     // call ffmpeg to get the frame at 00:00:05
+  //     await shell.run(
+  //       'ffmpeg -progress - -i "$path" -y -ss 0:00:05.000000 -frames:v 1 -q:v 1 "$outputPath"',
+  //     );
+  //   } catch (e) {
+  //     // print(e.toString());
+  //   }
+  //   // return outputPath;
+  // }
 
   static Future<PlayItem> getItemFromFile(String src) async {
     var coverPath = '${withoutExtension(src)}.cover.jpg';

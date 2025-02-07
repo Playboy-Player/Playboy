@@ -1,18 +1,20 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
-import 'package:playboy/backend/utils/route_utils.dart';
+import 'package:playboy/backend/utils/l10n_utils.dart';
+import 'package:playboy/backend/utils/sliver_utils.dart';
+import 'package:playboy/pages/home.dart';
 import 'package:playboy/pages/library/media_menu.dart';
-import 'package:playboy/pages/media/player_page.dart';
 import 'package:playboy/widgets/empty_holder.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
 import 'package:playboy/widgets/cover_card.dart';
 import 'package:playboy/widgets/library_header.dart';
 import 'package:playboy/widgets/cover_listtile.dart';
-import 'package:playboy/widgets/loading.dart';
+import 'package:playboy/widgets/loading_holder.dart';
 import 'package:playboy/widgets/menu_button.dart';
 import 'package:playboy/widgets/menu_item.dart';
 
@@ -41,7 +43,7 @@ class _LibraryPageState extends State<LibraryPage> {
       body: CustomScrollView(
         slivers: [
           MLibraryHeader(
-            title: '媒体库',
+            title: '媒体库'.l10n,
             actions: _buildLibraryActions(context),
           ),
           _buildLibraryview(context),
@@ -83,7 +85,7 @@ class _LibraryPageState extends State<LibraryPage> {
     );
     return [
       IconButton(
-        tooltip: '切换显示样式',
+        tooltip: '切换显示样式'.l10n,
         hoverColor: backgroundColor,
         onPressed: () async {
           setState(() {
@@ -96,7 +98,7 @@ class _LibraryPageState extends State<LibraryPage> {
         ),
       ),
       IconButton(
-        tooltip: '切换显示视图',
+        tooltip: '切换显示视图'.l10n,
         hoverColor: backgroundColor,
         onPressed: () async {
           setState(() {
@@ -114,7 +116,7 @@ class _LibraryPageState extends State<LibraryPage> {
 
   Widget _buildLibraryview(BuildContext context) {
     if (!_loaded) return const MLoadingPlaceHolder();
-    if (_playitems.isEmpty) return const MEmptyHolder();
+    if (_playitems.isEmpty) return const MEmptyHolder().toSliver();
 
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -147,12 +149,13 @@ class _LibraryPageState extends State<LibraryPage> {
                 AppStorage().openMedia(info);
               });
               if (_videoview) {
-                if (!context.mounted) return;
-                pushRootPage(
-                  context,
-                  const PlayerPage(),
-                );
-                AppStorage().updateStatus();
+                // if (!context.mounted) return;
+                // pushRootPage(
+                //   context,
+                //   const PlayerPage(),
+                // );
+                // AppStorage().updateStatus();
+                HomePage.switchView?.call();
               }
             },
             borderRadius: 20,
@@ -185,11 +188,12 @@ class _LibraryPageState extends State<LibraryPage> {
               await AppStorage().closeMedia().then((_) {
                 AppStorage().openMedia(info);
                 if (_videoview) {
-                  if (!context.mounted) return;
-                  pushRootPage(
-                    context,
-                    const PlayerPage(),
-                  );
+                  // if (!context.mounted) return;
+                  // pushRootPage(
+                  //   context,
+                  //   const PlayerPage(),
+                  // );
+                  HomePage.switchView?.call();
                 }
               });
               AppStorage().updateStatus();
@@ -201,11 +205,12 @@ class _LibraryPageState extends State<LibraryPage> {
                   AppStorage().closeMedia();
                   AppStorage().openMedia(info);
                   if (_videoview) {
-                    if (!context.mounted) return;
-                    pushRootPage(
-                      context,
-                      const PlayerPage(),
-                    );
+                    // if (!context.mounted) return;
+                    // pushRootPage(
+                    //   context,
+                    //   const PlayerPage(),
+                    // );
+                    HomePage.switchView?.call();
                   }
                 },
                 icon: const Icon(Icons.play_arrow),
@@ -234,25 +239,25 @@ class _LibraryPageState extends State<LibraryPage> {
       const SizedBox(height: 10),
       ...buildCommonMediaMenuItems(context, colorScheme, item),
       const Divider(),
-      const MMenuItem(
+      MMenuItem(
         icon: Icons.design_services_outlined,
-        label: '修改封面',
+        label: '修改封面'.l10n,
         onPressed: null,
       ),
-      const MMenuItem(
+      MMenuItem(
         icon: Icons.cleaning_services,
-        label: '清除封面',
+        label: '清除封面'.l10n,
         onPressed: null,
       ),
-      const MMenuItem(
+      MMenuItem(
         icon: Icons.hide_source,
-        label: '隐藏',
+        label: '隐藏'.l10n,
         onPressed: null,
       ),
       const Divider(),
-      const MMenuItem(
+      MMenuItem(
         icon: Icons.info_outline,
-        label: '属性',
+        label: '属性'.l10n,
         onPressed: null,
       ),
       const SizedBox(height: 10),

@@ -4,7 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/storage.dart';
-import 'package:playboy/l10n/l10n.dart';
+import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/widgets/menu_item.dart';
 
 List<Widget> buildCommonPlaylistMenuItems(
@@ -15,7 +15,7 @@ List<Widget> buildCommonPlaylistMenuItems(
   return [
     MMenuItem(
       icon: Icons.play_circle_outline_rounded,
-      label: context.l10n.play,
+      label: '播放'.l10n,
       onPressed: () {
         AppStorage().closeMedia();
         AppStorage().openPlaylist(item, false);
@@ -23,7 +23,7 @@ List<Widget> buildCommonPlaylistMenuItems(
     ),
     MMenuItem(
       icon: Icons.shuffle,
-      label: context.l10n.shuffle,
+      label: '随机播放'.l10n,
       onPressed: () {
         AppStorage().closeMedia();
         AppStorage().openPlaylist(
@@ -32,9 +32,9 @@ List<Widget> buildCommonPlaylistMenuItems(
         );
       },
     ),
-    const MMenuItem(
+    MMenuItem(
       icon: Icons.add_circle_outline,
-      label: '追加到播放列表',
+      label: '追加到播放列表'.l10n,
       onPressed: null,
       // () {
       //   AppStorage().appendPlaylist(
@@ -44,13 +44,13 @@ List<Widget> buildCommonPlaylistMenuItems(
     ),
     MMenuItem(
       icon: Icons.share,
-      label: context.l10n.export,
+      label: '导出'.l10n,
       onPressed: () async {
         final originalFile = File(
           '${AppStorage().dataPath}/playlists/${item.uuid}.json',
         );
         String? newFilePath = await FilePicker.platform.saveFile(
-          dialogTitle: context.l10n.saveAs,
+          dialogTitle: '另存为',
           fileName: '${item.uuid}.json',
         );
 
@@ -62,7 +62,7 @@ List<Widget> buildCommonPlaylistMenuItems(
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                '${context.l10n.fileSavedAs}: $newFilePath',
+                '已经保存到: $newFilePath',
               ),
             ),
           );

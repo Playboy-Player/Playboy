@@ -1,8 +1,7 @@
 # Playboy Player
+[中文](./README.md) | English  
 
-[中文](./README.md) | English
-
-A Material 3 style cross-platform media player.
+A cross-platform media player with Material 3 design.
 
 [![build](https://img.shields.io/github/actions/workflow/status/Playboy-Player/Playboy/build.yml?style=for-the-badge)](https://github.com/Playboy-Player/Playboy/actions) 
 [![release](https://img.shields.io/badge/beta-2025.2-blue?style=for-the-badge)](https://github.com/Playboy-Player/Playboy/actions) [![roadmap](https://img.shields.io/badge/roadmap-grey?style=for-the-badge)](https://github.com/orgs/Playboy-Player/projects/3)
@@ -45,55 +44,43 @@ A Material 3 style cross-platform media player.
 
 ## Features
 
-- [x] Theme & Dark mode Support
-- [x] Open local media and network streaming
-- [x] Mini mode (Windows & macOS)
-- [x] Set as the system default app (Windows)
-- [x] Playlist features
-- [x] Playback speed
-- [x] Search playlist and media
-- [ ] Internationalization Support
+- [x] Theme color settings & Dark mode support
+- [x] Play local and online media
+- [x] Mini player mode (Windows & macOS)
+- [x] Set as default system player (Windows)
+- [x] Playlist features (Shuffle, Repeat)
+- [x] Adjustable playback speed
+- [x] Search media files and playlists
+- [x] Play files over LAN
+- [x] Multi-language support
 - [ ] Lyrics and subtitles
-- [ ] Play media on local devices.
-- [ ] File download
 
-## For Developer
+## For Developers
 
-### Windows 
+First, set up the Flutter environment according to the [official guide](https://docs.flutter.dev/get-started/install/). Please use Flutter version **3.27.2** or higher.
 
-Requires installation of [Flutter](https://docs.flutter.dev/get-started/install/windows/desktop?tab=vscode) and [Visual Studio 2022](https://visualstudio.microsoft.com/zh-hans/downloads/) with C++ workload (or install [VS 2022 Build Tools](https://aka.ms/vs/17/release/vs_BuildTools.exe)).
+### Windows
 
 Example output of `flutter doctor`:
 
 ```
 Doctor summary (to see all details, run flutter doctor -v):
-[✓] Flutter (Channel stable, 3.24.1, on Microsoft Windows [Version 10.0.22631.4037], locale zh-CN)
+[✓] Flutter (Channel stable, 3.27.3, on Microsoft Windows [Version 10.0.22631.4751], locale zh-CN)
 [✓] Windows Version (Installed version of Windows is version 10 or higher)
 [✓] Visual Studio - develop Windows apps (Visual Studio Build Tools 2022 17.11.1)
 [✓] Connected device (3 available)
 [✓] Network resources
 ```
 
-Run `flutter build windows` in the project folder to generate the Windows executable.
+Run `flutter build windows` in the project directory to generate the Windows executable.
 
 ### Linux
 
-> The current Linux version has some bugs, such as crashes when switching pages during playback and incorrect mini player display size.
+> The Linux version currently has several bugs, such as crashes when switching pages during playback and incorrect mini player display size.
 
-Requires installation of [Flutter](https://docs.flutter.dev/get-started/install/linux) and `libmpv-dev`.
+After setting up Flutter, install `libmpv-dev` via your system package manager or other means.
 
-Example output of `flutter doctor`:
-
-```
-Doctor summary (to see all details, run flutter doctor -v):
-[✓] Flutter (Channel stable, 3.22.2, on Debian GNU/Linux 12 (bookworm) 5.15.153.1-microsoft-standard-WSL2, locale
-    en_US.UTF-8)
-[✓] Linux toolchain - develop for Linux desktop
-[✓] Connected device (1 available)
-[✓] Network resources 
-```
-
-Run `flutter build linux` in the project folder to generate the Linux executable.
+Run `flutter build linux` in the project directory to generate the Linux executable.
 
 ### macOS
 
@@ -110,28 +97,31 @@ Doctor summary (to see all details, run flutter doctor -v):
 [✓] Network resources
 ```
 
-iOS SDK is not necessary.
+Run `flutter build macos` in the project directory to generate the macOS executable.
 
 ### Android
 
-> Please run on tablet devices
+> Please run on tablet devices.
 
 Example output of `flutter doctor`:
 
 ```
 Doctor summary (to see all details, run flutter doctor -v):
-[✓] Flutter (Channel stable, 3.24.1, on Microsoft Windows [Version 10.0.22631.4169], locale zh-CN)
-[✓] Windows Version (Installed version of Windows is version 10 or higher)
-[✓] Android toolchain - develop for Android devices (Android SDK version 34.0.0)
+[✓] Flutter (Channel stable, 3.27.2, on macOS 15.3 24D60 darwin-arm64, locale
+    zh-Hans-CN)
+[✓] Android toolchain - develop for Android devices (Android SDK version 35.0.1)
 [✓] Android Studio (version 2024.2)
+[✓] VS Code (version 1.96.4)
 [✓] Connected device (3 available)
 [✓] Network resources
 ```
 
-## Contributing to the Project
+Run `flutter build apk` to generate the APK installation file.
 
-If you encounter bugs or would like to request features, please [create a new issue](https://github.com/Playboy-Player/Playboy/issues/new).  
-Contributions via Pull Requests are also welcome.
+## Contributing to This Project
+
+If you find a bug or want to suggest a feature, please [create a new issue](https://github.com/Playboy-Player/Playboy/issues/new).  
+Pull requests with code contributions are also welcome.
 
 ## Star History
 

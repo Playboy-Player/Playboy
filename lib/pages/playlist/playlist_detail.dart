@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/storage.dart';
-import 'package:playboy/l10n/l10n.dart';
+import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/pages/library/media_menu.dart';
 import 'package:playboy/widgets/cover.dart';
 import 'package:playboy/widgets/cover_listtile.dart';
@@ -102,7 +102,7 @@ class PlaylistDetailState extends State<PlaylistDetail> {
                           AppStorage().openPlaylist(widget.info, false);
                         },
                         icon: const Icon(Icons.play_arrow),
-                        label: Text(context.l10n.play),
+                        label: Text('播放'.l10n),
                       ),
                       const SizedBox(
                         width: 10,
@@ -121,7 +121,7 @@ class PlaylistDetailState extends State<PlaylistDetail> {
                           setState(() {});
                         },
                         icon: const Icon(Icons.shuffle),
-                        label: Text(context.l10n.shuffle),
+                        label: Text('随机播放'.l10n),
                       ),
                     ],
                   )
@@ -177,20 +177,20 @@ class PlaylistDetailState extends State<PlaylistDetail> {
       const SizedBox(height: 10),
       ...buildCommonMediaMenuItems(context, colorScheme, item),
       const Divider(),
-      const MMenuItem(
+      MMenuItem(
         icon: Icons.design_services_outlined,
-        label: '修改封面',
+        label: '修改封面'.l10n,
         onPressed: null,
       ),
-      const MMenuItem(
+      MMenuItem(
         icon: Icons.delete_outline,
-        label: '从播放列表移除',
+        label: '从播放列表移除'.l10n,
         onPressed: null,
       ),
       const Divider(),
-      const MMenuItem(
+      MMenuItem(
         icon: Icons.info_outline,
-        label: '属性',
+        label: '属性'.l10n,
         onPressed: null,
       ),
       const SizedBox(height: 10),
