@@ -5,9 +5,11 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/utils/time_utils.dart';
+import 'package:playboy/pages/media/player_menu.dart';
+import 'package:playboy/widgets/menu_button.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:media_kit_video/media_kit_video.dart';
-import 'package:playboy/backend/keymap_helper.dart';
 
 class FullscreenPlayPage extends StatefulWidget {
   const FullscreenPlayPage({super.key});
@@ -18,12 +20,6 @@ class FullscreenPlayPage extends StatefulWidget {
 
 class FullscreenPlayer extends State<FullscreenPlayPage> {
   late final _controller = AppStorage().controller;
-
-  // bool loop = false;
-  // bool shuffle = false;
-
-  // bool seeking = false;
-  // double seekingPos = 0;
 
   bool _showControlBar = false;
 
@@ -54,91 +50,85 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
     late final backgroundColor = Color.alphaBlend(
-        colorScheme.primary.withValues(alpha: 0.08), colorScheme.surface);
-    return KeyboardListener(
-      autofocus: true,
-      focusNode: _focusNode,
-      onKeyEvent: KeyMapHelper.handleKeyEvent,
-      child: Scaffold(
-        body: Stack(
-          children: [
-            MouseRegion(
-              onHover: (_) {
-                _resetTimer();
-              },
-              cursor:
-                  _isMouseHidden ? SystemMouseCursors.none : MouseCursor.defer,
-              child: Video(
-                controller: _controller,
-                controls: NoVideoControls,
-                subtitleViewConfiguration: const SubtitleViewConfiguration(
-                  style: TextStyle(
-                    fontSize: 60,
-                    color: Colors.white,
-                    shadows: <Shadow>[
-                      Shadow(
-                        blurRadius: 16,
-                        color: Colors.black,
+      colorScheme.primary.withValues(alpha: 0.08),
+      colorScheme.surface,
+    );
+    return Scaffold(
+      body: Stack(
+        children: [
+          MouseRegion(
+            onHover: (_) {
+              _resetTimer();
+            },
+            cursor:
+                _isMouseHidden ? SystemMouseCursors.none : MouseCursor.defer,
+            child: Video(
+              controller: _controller,
+              controls: NoVideoControls,
+              subtitleViewConfiguration: const SubtitleViewConfiguration(
+                style: TextStyle(
+                  fontSize: 60,
+                  color: Colors.white,
+                  shadows: <Shadow>[
+                    Shadow(
+                      blurRadius: 8,
+                      color: Colors.black,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 100),
+              opacity: _showControlBar ? 0.9 : 0,
+              child: MouseRegion(
+                onHover: (event) {
+                  setState(() {
+                    _showControlBar = true;
+                  });
+                },
+                onExit: (event) {
+                  setState(() {
+                    _showControlBar = false;
+                  });
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  height: 90,
+                  color: backgroundColor,
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          StreamBuilder(
+                              stream: AppStorage().playboy.stream.position,
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  return Text(
+                                    getProgressString(snapshot.data!),
+                                  );
+                                } else {
+                                  return Text(
+                                    getProgressString(AppStorage().position),
+                                  );
+                                }
+                              }),
+                          Expanded(child: _buildSeekbarFullscreen()),
+                          Text(getProgressString(AppStorage().duration)),
+                        ],
                       ),
+                      _buildControlbarFullscreen(colorScheme),
                     ],
                   ),
                 ),
               ),
             ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 100),
-                opacity: _showControlBar ? 0.9 : 0,
-                child: MouseRegion(
-                  onHover: (event) {
-                    setState(() {
-                      _showControlBar = true;
-                    });
-                  },
-                  onExit: (event) {
-                    setState(() {
-                      _showControlBar = false;
-                    });
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    // width: 400,
-                    height: 100,
-                    color: backgroundColor,
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            StreamBuilder(
-                                stream: AppStorage().playboy.stream.position,
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasData) {
-                                    return Text(
-                                        '${snapshot.data!.inSeconds ~/ 3600}:${(snapshot.data!.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(snapshot.data!.inSeconds % 60).toString().padLeft(2, '0')}');
-                                  } else {
-                                    return Text(
-                                        '${AppStorage().position.inSeconds ~/ 3600}:${(AppStorage().position.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().position.inSeconds % 60).toString().padLeft(2, '0')}');
-                                  }
-                                }),
-                            Expanded(child: _buildSeekbarFullscreen()),
-                            Text(
-                                '${AppStorage().duration.inSeconds ~/ 3600}:${(AppStorage().duration.inSeconds % 3600 ~/ 60).toString().padLeft(2, '0')}:${(AppStorage().duration.inSeconds % 60).toString().padLeft(2, '0')}'),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 4,
-                        ),
-                        _buildControlbarFullscreen(colorScheme),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            // MouseRegion()
-          ],
-        ),
+          ),
+          // MouseRegion()
+        ],
       ),
     );
   }
@@ -146,8 +136,8 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
   Widget _buildSeekbarFullscreen() {
     return SliderTheme(
       data: SliderThemeData(
-        // trackHeight: videoMode ? 8 : null,
-        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+        trackHeight: 2,
+        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
         overlayShape: SliderComponentShape.noOverlay,
       ),
       child: StreamBuilder(
@@ -165,7 +155,6 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
                         AppStorage().duration.inMilliseconds.toDouble()),
                     0),
             onChanged: (value) {
-              // player.seek(Duration(milliseconds: value.toInt()));
               setState(() {
                 AppStorage().seekingPos = value;
               });
@@ -196,20 +185,21 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
       Expanded(
         child: Row(
           children: [
-            const SizedBox(
-              width: 16,
-            ),
+            const SizedBox(width: 16),
             IconButton(
-                onPressed: () {
-                  setState(() {
-                    AppStorage().playboy.setVolume(0);
-                  });
-                  AppStorage().settings.volume = 0;
-                  AppStorage().saveSettings();
-                },
-                icon: Icon(AppStorage().playboy.state.volume == 0
+              onPressed: () {
+                setState(() {
+                  AppStorage().playboy.setVolume(0);
+                });
+                AppStorage().settings.volume = 0;
+                AppStorage().saveSettings();
+              },
+              icon: Icon(
+                AppStorage().playboy.state.volume == 0
                     ? Icons.volume_off
-                    : Icons.volume_up)),
+                    : Icons.volume_up,
+              ),
+            ),
             SizedBox(
               width: 100,
               child: SliderTheme(
@@ -217,8 +207,9 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
                   activeTrackColor: colorScheme.secondaryContainer,
                   thumbColor: colorScheme.secondary,
                   trackHeight: 2,
-                  thumbShape:
-                      const RoundSliderThumbShape(enabledThumbRadius: 6),
+                  thumbShape: const RoundSliderThumbShape(
+                    enabledThumbRadius: 6,
+                  ),
                   overlayShape: SliderComponentShape.noOverlay,
                 ),
                 child: Slider(
@@ -241,53 +232,49 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
         ),
       ),
       IconButton(
-          onPressed: () {
-            setState(() {
-              AppStorage().shuffle = !AppStorage().shuffle;
-            });
-          },
-          icon: AppStorage().shuffle
-              ? const Icon(Icons.shuffle_on)
-              : const Icon(Icons.shuffle)),
-      const SizedBox(
-        width: 10,
+        onPressed: () {
+          setState(() {
+            AppStorage().shuffle = !AppStorage().shuffle;
+          });
+        },
+        icon: AppStorage().shuffle
+            ? const Icon(Icons.shuffle_on)
+            : const Icon(Icons.shuffle),
       ),
+      const SizedBox(width: 10),
       IconButton(
-          onPressed: () {
-            if (AppStorage().playboy.state.playlistMode ==
-                PlaylistMode.single) {
-              AppStorage().playboy.setPlaylistMode(PlaylistMode.none);
-            } else {
-              AppStorage().playboy.setPlaylistMode(PlaylistMode.single);
-            }
-            setState(() {});
-          },
-          icon: AppStorage().playboy.state.playlistMode == PlaylistMode.single
-              ? const Icon(Icons.repeat_one_on)
-              : const Icon(Icons.repeat_one)),
-      const SizedBox(
-        width: 10,
+        onPressed: () {
+          if (AppStorage().playboy.state.playlistMode == PlaylistMode.single) {
+            AppStorage().playboy.setPlaylistMode(PlaylistMode.none);
+          } else {
+            AppStorage().playboy.setPlaylistMode(PlaylistMode.single);
+          }
+          setState(() {});
+        },
+        icon: AppStorage().playboy.state.playlistMode == PlaylistMode.single
+            ? const Icon(Icons.repeat_one_on)
+            : const Icon(Icons.repeat_one),
       ),
+      const SizedBox(width: 10),
       IconButton.filledTonal(
-          iconSize: 30,
-          onPressed: () {},
-          icon: const Icon(Icons.skip_previous_outlined)),
-      const SizedBox(
-        width: 10,
+        onPressed: () {
+          AppStorage().playboy.previous();
+        },
+        icon: const Icon(Icons.skip_previous_outlined),
       ),
+      const SizedBox(width: 10),
       IconButton.filled(
         style: IconButton.styleFrom(
           backgroundColor: colorScheme.secondary,
           foregroundColor: colorScheme.onSecondary,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
         ),
-        iconSize: 40,
-        // color: colorScheme.onTertiary,
+        iconSize: 32,
         onPressed: () {
           setState(() {
             AppStorage().playboy.playOrPause();
-            // AppStorage().playing = AppStorage().playboy.state.playing;
           });
         },
         icon: StreamBuilder(
@@ -308,25 +295,16 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
               }
             }),
       ),
-      const SizedBox(
-        width: 10,
-      ),
+      const SizedBox(width: 10),
       IconButton.filledTonal(
-          iconSize: 30,
-          onPressed: () {},
-          icon: const Icon(Icons.skip_next_outlined)),
-      const SizedBox(
-        width: 10,
-      ),
-      IconButton(
-        icon: const Icon(Icons.menu),
         onPressed: () {
-          setState(() {});
+          AppStorage().playboy.next();
         },
+        icon: const Icon(Icons.skip_next_outlined),
       ),
-      const SizedBox(
-        width: 10,
-      ),
+      const SizedBox(width: 10),
+      MenuButton(menuChildren: buildPlayerMenu()),
+      const SizedBox(width: 10),
       IconButton(
           onPressed: () async {
             if (Platform.isWindows && !await windowManager.isMaximized()) {
@@ -360,7 +338,6 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
                   max: 4,
                   value: AppStorage().playboy.state.rate,
                   onChanged: (value) {
-                    // player.seek(Duration(milliseconds: value.toInt()));
                     setState(() {
                       AppStorage().playboy.setRate(value);
                     });
@@ -368,14 +345,17 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
                 )),
           ),
           IconButton(
-              onPressed: () {
-                setState(() {
-                  AppStorage().playboy.setRate(1);
-                });
-              },
-              icon: Icon(AppStorage().playboy.state.rate == 1
+            onPressed: () {
+              setState(() {
+                AppStorage().playboy.setRate(1);
+              });
+            },
+            icon: Icon(
+              AppStorage().playboy.state.rate == 1
                   ? Icons.flash_off
-                  : Icons.flash_on)),
+                  : Icons.flash_on,
+            ),
+          ),
           const SizedBox(
             width: 16,
           ),

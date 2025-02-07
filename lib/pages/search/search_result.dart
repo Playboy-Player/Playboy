@@ -186,7 +186,7 @@ class SearchResultPageState extends State<SearchResultPage> {
                           },
                           icon: const Icon(Icons.play_arrow),
                         ),
-                        MMenuButton(
+                        MenuButton(
                           menuChildren: _buildPlaylistMenuItems(
                               context, colorScheme, info),
                         ),
@@ -280,7 +280,7 @@ class SearchResultPageState extends State<SearchResultPage> {
                           },
                           icon: const Icon(Icons.play_arrow),
                         ),
-                        MMenuButton(
+                        MenuButton(
                           menuChildren: _buildMediaMenuItems(
                             context,
                             colorScheme,

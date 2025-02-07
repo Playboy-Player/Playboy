@@ -76,7 +76,7 @@ class SettingsPageState extends State<SettingsPage> {
           children: [
             Container(
               color: backgroundColor,
-              width: _sizebarWidth,
+              width: _sizebarWidth - (Platform.isMacOS ? 0 : 40),
               height: 40,
             )
           ],

@@ -101,12 +101,12 @@ class AppStorage extends ChangeNotifier {
           return;
         } else {
           playingTitle = basenameWithoutExtension(src);
-          var coverPath = '${withoutExtension(src)}.cover.jpg';
-          if (File(coverPath).existsSync()) {
-            playingCover = coverPath;
-          } else {
-            playingCover = null;
-          }
+          playingCover = '${withoutExtension(src)}.cover.jpg';
+          // if (File(coverPath).existsSync()) {
+          //   playingCover = coverPath;
+          // } else {
+          //   playingCover = null;
+          // }
         }
       } else {
         playingTitle = 'Not Playing';
@@ -120,12 +120,16 @@ class AppStorage extends ChangeNotifier {
     dataPath = (await getApplicationSupportDirectory()).path;
     await loadSettings();
     bool needsUpdate = false;
-    if (settings.downloadPath == '') {
-      settings.downloadPath = '$dataPath/downloads';
-      needsUpdate = true;
-    }
+    // if (settings.downloadPath == '') {
+    //   settings.downloadPath = '$dataPath/downloads';
+    //   needsUpdate = true;
+    // }
     if (settings.screenshotPath == '') {
       settings.screenshotPath = '$dataPath/screenshots';
+      var dir = Directory(settings.screenshotPath);
+      if (!await dir.exists()) {
+        dir.create();
+      }
       needsUpdate = true;
     }
     if (needsUpdate) {

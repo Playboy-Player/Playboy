@@ -31,11 +31,11 @@ class FileExplorerState extends State<FileExplorer> {
 
   void _init() async {
     Directory dir = Directory(widget.path);
-    if (!await dir.exists()) {
-      return;
-    }
 
     try {
+      if (!await dir.exists()) {
+        return;
+      }
       await for (var item in dir.list()) {
         _contents.add(item);
       }
@@ -43,9 +43,11 @@ class FileExplorerState extends State<FileExplorer> {
       // _errMsg = e.toString();
     }
 
-    setState(() {
-      _loaded = true;
-    });
+    if (mounted) {
+      setState(() {
+        _loaded = true;
+      });
+    }
   }
 
   @override

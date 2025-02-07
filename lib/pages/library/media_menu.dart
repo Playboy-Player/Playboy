@@ -38,6 +38,11 @@ List<Widget> buildCommonMediaMenuItems(
       },
     ),
     MMenuItem(
+      icon: Icons.navigate_next_outlined,
+      label: '插播'.l10n,
+      onPressed: null,
+    ),
+    MMenuItem(
       icon: Icons.last_page,
       label: '最后播放'.l10n,
       onPressed: null,

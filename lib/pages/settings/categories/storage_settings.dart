@@ -64,7 +64,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                   children: [
                     Text(
                       '扫描位置'.l10n,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),

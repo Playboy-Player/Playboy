@@ -26,7 +26,7 @@
   "记忆播放器状态": "Remember Player Status",
   "音量和倍速": "Volume, Speed,...",
   "退出播放页面后继续播放": "Continue Play outside Player Page",
-  "mpv 参数": "mpv args",
+  "MPV 参数": "MPV args",
   "字幕": "Subtitle",
   "扫描选项": "Scan Options",
   "重新扫描媒体库": "Rescan Library",
@@ -56,6 +56,7 @@
   "删除": "Delete",
   "属性": "Property",
   "播放器播放": "Player",
+  "插播": "Play Next",
   "最后播放": "Play Last",
   "隐藏": "Hide",
   "切换显示样式": "Switch Library Style",
@@ -71,5 +72,9 @@
   "无内容": "Empty",
   "已折叠": "Folded",
   "取消": "Cancel",
-  "确定": "OK"
+  "确定": "OK",
+  "截图": "Screenshot",
+  "将当前画面设为封面": "Screenshot as cover",
+  "从播放列表移除": "Remove from list",
+  "设置播放速度": "Set Playback Speed"
 }

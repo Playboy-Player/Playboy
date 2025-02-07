@@ -216,7 +216,7 @@ class PlaylistState extends State<PlaylistPage> {
                 },
                 icon: const Icon(Icons.play_arrow),
               ),
-              MMenuButton(
+              MenuButton(
                 menuChildren: _buildMenuItems(context, colorScheme, info),
               ),
             ],
@@ -264,12 +264,12 @@ class PlaylistState extends State<PlaylistPage> {
             var savePath =
                 '${AppStorage().dataPath}/playlists/${item.uuid}.cover.jpg';
             var originalFile = File(coverPath);
-            var newFile = File(
-              savePath,
-            );
+            var newFile = File(savePath);
             item.cover = savePath;
             await originalFile.copy(newFile.path).then(
-              (value) {
+              (_) {
+                final ImageProvider imageProvider = FileImage(newFile);
+                imageProvider.evict();
                 setState(() {});
               },
             );

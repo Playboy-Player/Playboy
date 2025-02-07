@@ -74,7 +74,7 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
-              'mpv 参数'.l10n,
+              'MPV 参数'.l10n,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,

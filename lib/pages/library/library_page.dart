@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'dart:math';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import 'package:playboy/backend/library_helper.dart';
@@ -215,7 +217,7 @@ class _LibraryPageState extends State<LibraryPage> {
                 },
                 icon: const Icon(Icons.play_arrow),
               ),
-              MMenuButton(
+              MenuButton(
                 menuChildren: _buildMediaMenuItems(
                   context,
                   colorScheme,
@@ -242,12 +244,39 @@ class _LibraryPageState extends State<LibraryPage> {
       MMenuItem(
         icon: Icons.design_services_outlined,
         label: '修改封面'.l10n,
-        onPressed: null,
+        onPressed: () async {
+          String? coverPath =
+              await FilePicker.platform.pickFiles(type: FileType.image).then(
+            (result) {
+              return result?.files.single.path;
+            },
+          );
+          if (coverPath != null) {
+            var savePath = item.cover!;
+            var originalFile = File(coverPath);
+            var newFile = File(savePath);
+            item.cover = savePath;
+            await originalFile.copy(newFile.path).then((_) {
+              // final ImageProvider imageProvider = FileImage(newFile);
+              // imageProvider.evict();
+              setState(() {});
+            });
+          }
+        },
       ),
       MMenuItem(
         icon: Icons.cleaning_services,
         label: '清除封面'.l10n,
-        onPressed: null,
+        onPressed: () async {
+          if (item.cover == null) return;
+          var file = File(item.cover!);
+          if (await file.exists()) {
+            file.delete();
+            final ImageProvider imageProvider = FileImage(file);
+            imageProvider.evict();
+          }
+          setState(() {});
+        },
       ),
       MMenuItem(
         icon: Icons.hide_source,

@@ -3,19 +3,19 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
+import 'package:playboy/backend/keymap_helper.dart';
+import 'package:playboy/pages/media/player_menu.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:window_size/window_size.dart';
 
-import 'package:playboy/backend/keymap_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/backend/utils/time_utils.dart';
 import 'package:playboy/pages/home.dart';
 import 'package:playboy/pages/media/fullscreen_play_page.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
-import 'package:playboy/widgets/menu_item.dart';
 import 'package:playboy/widgets/player_list.dart';
 import 'package:playboy/widgets/image.dart';
 
@@ -34,7 +34,6 @@ class PlayerPageState extends State<PlayerPage> {
   bool _menuExpanded = false;
   bool _videoMode = !AppStorage().settings.defaultMusicMode;
   int _curPanel = 0;
-
   final FocusNode _focusNode = FocusNode();
 
   @override
@@ -44,7 +43,6 @@ class PlayerPageState extends State<PlayerPage> {
 
   @override
   void dispose() {
-    _focusNode.dispose();
     if (!AppStorage().settings.playAfterExit) {
       AppStorage().closeMedia();
     }
@@ -58,6 +56,7 @@ class PlayerPageState extends State<PlayerPage> {
       colorScheme.primary.withValues(alpha: 0.04),
       colorScheme.surface,
     );
+    _focusNode.requestFocus();
     return KeyboardListener(
       autofocus: true,
       focusNode: _focusNode,
@@ -88,7 +87,8 @@ class PlayerPageState extends State<PlayerPage> {
                                 : MediaQuery.of(context).size.width * 0.4,
                             child:
                                 _buildSidePanel(colorScheme, backgroundColor),
-                          ))
+                          ),
+                        )
                       : const SizedBox(),
                 ],
               ),
@@ -137,9 +137,7 @@ class PlayerPageState extends State<PlayerPage> {
               height: _videoMode ? 50 : 80,
               child: _buildControlbar(colorScheme),
             ),
-            const SizedBox(
-              height: 10,
-            )
+            const SizedBox(height: 10)
           ],
         ),
       ),
@@ -295,25 +293,12 @@ class PlayerPageState extends State<PlayerPage> {
     );
   }
 
-  List<Widget> _buildPlayerMenu() {
-    return [
-      const SizedBox(height: 10),
-      const MMenuItem(icon: Icons.download, label: '下载', onPressed: null),
-      const MMenuItem(icon: Icons.cut, label: '截图', onPressed: null),
-      const MMenuItem(icon: Icons.cut, label: '将当前画面设为封面', onPressed: null),
-      const MMenuItem(icon: Icons.flash_on, label: '设置播放速度', onPressed: null),
-      const Divider(),
-      const MMenuItem(icon: Icons.info_outline, label: '属性', onPressed: null),
-      const SizedBox(height: 10),
-    ];
-  }
-
   Widget _buildPlayer(ColorScheme colorScheme) {
     return MInteractiveWrapper(
       menuController: MenuController(),
-      menuChildren: _buildPlayerMenu(),
+      menuChildren: _videoMode ? buildPlayerMenu() : const [],
       onTap: null,
-      borderRadius: 20,
+      borderRadius: 25,
       child: ClipRRect(
         borderRadius: const BorderRadius.all(Radius.circular(25)),
         child: AnimatedSwitcher(
@@ -423,11 +408,13 @@ class PlayerPageState extends State<PlayerPage> {
               AppStorage()
                   .playboy
                   .seek(Duration(milliseconds: value.toInt()))
-                  .then((value) => {
-                        setState(() {
-                          AppStorage().seeking = false;
-                        })
-                      });
+                  .then(
+                    (value) => {
+                      setState(() {
+                        AppStorage().seeking = false;
+                      })
+                    },
+                  );
             },
           );
         },
@@ -496,9 +483,6 @@ class PlayerPageState extends State<PlayerPage> {
             ? const Icon(Icons.shuffle_on)
             : const Icon(Icons.shuffle),
       ),
-      // const SizedBox(
-      //   width: 10,
-      // ),
       IconButton(
         onPressed: () {
           if (AppStorage().playboy.state.playlistMode == PlaylistMode.single) {
@@ -512,21 +496,18 @@ class PlayerPageState extends State<PlayerPage> {
             ? const Icon(Icons.repeat_one_on)
             : const Icon(Icons.repeat_one),
       ),
-      const SizedBox(
-        width: 10,
-      ),
+      const SizedBox(width: 10),
       IconButton.filledTonal(
-        // iconSize: 25,
         onPressed: () {
           AppStorage().playboy.previous();
         },
         icon: const Icon(Icons.skip_previous_outlined),
       ),
-      const SizedBox(
-        width: 10,
-      ),
+      const SizedBox(width: 10),
       IconButton.filled(
         style: IconButton.styleFrom(
+          backgroundColor: colorScheme.secondary,
+          foregroundColor: colorScheme.onSecondary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -559,7 +540,6 @@ class PlayerPageState extends State<PlayerPage> {
         width: 10,
       ),
       IconButton.filledTonal(
-          // iconSize: 25,
           onPressed: () {
             AppStorage().playboy.next();
           },
@@ -577,9 +557,6 @@ class PlayerPageState extends State<PlayerPage> {
           });
         },
       ),
-      // const SizedBox(
-      //   width: 10,
-      // ),
       IconButton(
           onPressed: !_videoMode
               ? null
@@ -600,6 +577,10 @@ class PlayerPageState extends State<PlayerPage> {
                   } else {
                     windowManager.setFullScreen(true);
                   }
+
+                  // setState(() {
+                  //   _fullScreen = !_fullScreen;
+                  // });
 
                   if (!mounted) return;
                   Navigator.push(

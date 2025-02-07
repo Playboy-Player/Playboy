@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:playboy/widgets/animated_cross_slide.dart';
 import 'package:window_manager/window_manager.dart';
@@ -17,6 +18,17 @@ import 'package:playboy/pages/settings/settings_page.dart';
 import 'package:playboy/pages/file/file_page.dart';
 import 'package:playboy/pages/library/library_page.dart';
 import 'package:playboy/widgets/image.dart';
+
+class NoOpIntent extends Intent {
+  const NoOpIntent();
+}
+
+class NoOpAction extends Action<NoOpIntent> {
+  @override
+  void invoke(NoOpIntent intent) {
+    // do nothing
+  }
+}
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -78,6 +90,18 @@ class _HomePageState extends State<HomePage> {
       brightness: Brightness.dark,
     );
     return MaterialApp(
+      shortcuts: {
+        // override the default behavior of arrow and space key
+        LogicalKeySet(LogicalKeyboardKey.arrowLeft): const NoOpIntent(),
+        LogicalKeySet(LogicalKeyboardKey.arrowRight): const NoOpIntent(),
+        LogicalKeySet(LogicalKeyboardKey.arrowUp): const NoOpIntent(),
+        LogicalKeySet(LogicalKeyboardKey.arrowDown): const NoOpIntent(),
+        LogicalKeySet(LogicalKeyboardKey.space): const NoOpIntent(),
+      },
+      actions: {
+        // bind Intent to NoOpAction
+        NoOpIntent: NoOpAction(),
+      },
       debugShowCheckedModeBanner: false,
       title: Constants.appName,
       theme: _getThemeData(AppStorage(), lightTheme),
@@ -259,7 +283,7 @@ class _HomePageState extends State<HomePage> {
                       // );
                       HomePage.switchView?.call();
                     },
-                    icon: const Icon(Constants.appIcon),
+                    icon: const Icon(Icons.play_circle_outline_rounded),
                   ),
             const SizedBox(
               width: 10,
@@ -369,7 +393,8 @@ class _HomePageState extends State<HomePage> {
             borderRadius: BorderRadius.circular(_miniMode ? 0 : 20)),
         child: Stack(
           children: [
-            AppStorage().playingCover == null
+            AppStorage().playingCover == null ||
+                    !File(AppStorage().playingCover!).existsSync()
                 ? const SizedBox()
                 : ShaderMask(
                     shaderCallback: (Rect bounds) {
@@ -635,8 +660,9 @@ class _HomePageState extends State<HomePage> {
                         constraints: const BoxConstraints(),
                         color: colorScheme.primaryContainer,
                         onPressed: () {
-                          AppStorage().closeMedia();
-                          setState(() {});
+                          AppStorage().closeMedia().then((_) {
+                            setState(() {});
+                          });
                         },
                         icon: const Icon(
                           Icons.stop,
@@ -665,7 +691,8 @@ class _HomePageState extends State<HomePage> {
         child: StreamBuilder(
           stream: AppStorage().playboy.stream.playlist,
           builder: (context, snapshot) {
-            return AppStorage().playingCover == null
+            return AppStorage().playingCover == null ||
+                    !File(AppStorage().playingCover!).existsSync()
                 ? buildMediaCardContent(colorScheme)
                 : FutureBuilder(
                     future: ColorScheme.fromImageProvider(

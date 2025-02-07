@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/storage.dart';
@@ -153,7 +157,7 @@ class PlaylistDetailState extends State<PlaylistDetail> {
               AppStorage().updateStatus();
             },
             actions: [
-              MMenuButton(
+              MenuButton(
                 menuChildren: _buildMediaMenuItems(
                   context,
                   colorScheme,
@@ -180,12 +184,47 @@ class PlaylistDetailState extends State<PlaylistDetail> {
       MMenuItem(
         icon: Icons.design_services_outlined,
         label: '修改封面'.l10n,
-        onPressed: null,
+        onPressed: () async {
+          String? coverPath =
+              await FilePicker.platform.pickFiles(type: FileType.image).then(
+            (result) {
+              return result?.files.single.path;
+            },
+          );
+          if (coverPath != null) {
+            var savePath = item.cover!;
+            var originalFile = File(coverPath);
+            var newFile = File(savePath);
+            item.cover = savePath;
+            await originalFile.copy(newFile.path).then((_) {
+              final ImageProvider imageProvider = FileImage(newFile);
+              imageProvider.evict();
+              setState(() {});
+            });
+          }
+        },
+      ),
+      MMenuItem(
+        icon: Icons.cleaning_services,
+        label: '清除封面'.l10n,
+        onPressed: () async {
+          if (item.cover == null) return;
+          var file = File(item.cover!);
+          if (await file.exists()) {
+            file.delete();
+            final ImageProvider imageProvider = FileImage(file);
+            await imageProvider.evict();
+          }
+          setState(() {});
+        },
       ),
       MMenuItem(
         icon: Icons.delete_outline,
         label: '从播放列表移除'.l10n,
-        onPressed: null,
+        onPressed: () {
+          LibraryHelper.removeItemFromPlaylist(widget.info, item);
+          setState(() {});
+        },
       ),
       const Divider(),
       MMenuItem(
