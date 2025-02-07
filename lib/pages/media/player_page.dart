@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:playboy/backend/keymap_helper.dart';
+import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/pages/media/player_menu.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:media_kit/media_kit.dart';
@@ -24,6 +25,8 @@ class PlayerPage extends StatefulWidget {
     super.key,
   });
 
+  static FocusNode? fn;
+
   @override
   PlayerPageState createState() => PlayerPageState();
 }
@@ -34,11 +37,11 @@ class PlayerPageState extends State<PlayerPage> {
   bool _menuExpanded = false;
   bool _videoMode = !AppStorage().settings.defaultMusicMode;
   int _curPanel = 0;
-  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
+    PlayerPage.fn = FocusNode();
   }
 
   @override
@@ -47,6 +50,7 @@ class PlayerPageState extends State<PlayerPage> {
       AppStorage().closeMedia();
     }
     super.dispose();
+    PlayerPage.fn!.requestFocus();
   }
 
   @override
@@ -56,10 +60,11 @@ class PlayerPageState extends State<PlayerPage> {
       colorScheme.primary.withValues(alpha: 0.04),
       colorScheme.surface,
     );
-    _focusNode.requestFocus();
+    // _focusNode.requestFocus();
+    PlayerPage.fn!.requestFocus();
     return KeyboardListener(
       autofocus: true,
-      focusNode: _focusNode,
+      focusNode: PlayerPage.fn!,
       onKeyEvent: KeyMapHelper.handleKeyEvent,
       child: Scaffold(
         backgroundColor: backgroundColor,
@@ -423,230 +428,279 @@ class PlayerPageState extends State<PlayerPage> {
   }
 
   Widget _buildControlbar(ColorScheme colorScheme) {
-    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Expanded(
-        child: Row(
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 100),
-              width: _videoMode ? 16 : 32,
-            ),
-            IconButton(
-                onPressed: () {
-                  setState(() {
-                    AppStorage().playboy.setVolume(0);
-                  });
-                  AppStorage().settings.volume = 0;
-                  AppStorage().saveSettings();
-                },
-                icon: Icon(AppStorage().playboy.state.volume == 0
-                    ? Icons.volume_off
-                    : Icons.volume_up)),
-            SizedBox(
-              width: 100,
-              child: SliderTheme(
-                data: SliderThemeData(
-                  activeTrackColor: colorScheme.secondaryContainer,
-                  thumbColor: colorScheme.secondary,
-                  trackHeight: 2,
-                  thumbShape:
-                      const RoundSliderThumbShape(enabledThumbRadius: 6),
-                  overlayShape: SliderComponentShape.noOverlay,
-                ),
-                child: Slider(
-                  max: 100,
-                  value: AppStorage().playboy.state.volume,
-                  onChanged: (value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Expanded(
+          child: Row(
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 100),
+                width: _videoMode ? 16 : 32,
+              ),
+              IconButton(
+                  onPressed: () {
                     setState(() {
-                      AppStorage().playboy.setVolume(value);
+                      AppStorage().playboy.setVolume(0);
                     });
-                  },
-                  onChangeEnd: (value) {
-                    setState(() {});
-                    AppStorage().settings.volume = value;
+                    AppStorage().settings.volume = 0;
                     AppStorage().saveSettings();
                   },
+                  icon: Icon(AppStorage().playboy.state.volume == 0
+                      ? Icons.volume_off
+                      : Icons.volume_up)),
+              SizedBox(
+                width: 100,
+                child: SliderTheme(
+                  data: SliderThemeData(
+                    activeTrackColor: colorScheme.secondaryContainer,
+                    thumbColor: colorScheme.secondary,
+                    trackHeight: 2,
+                    thumbShape:
+                        const RoundSliderThumbShape(enabledThumbRadius: 6),
+                    overlayShape: SliderComponentShape.noOverlay,
+                  ),
+                  child: Slider(
+                    max: 100,
+                    value: AppStorage().playboy.state.volume,
+                    onChanged: (value) {
+                      setState(() {
+                        AppStorage().playboy.setVolume(value);
+                      });
+                    },
+                    onChangeEnd: (value) {
+                      setState(() {});
+                      AppStorage().settings.volume = value;
+                      AppStorage().saveSettings();
+                    },
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
-      IconButton(
-        onPressed: () {
-          setState(() {
-            AppStorage().shuffle = !AppStorage().shuffle;
-            AppStorage().playboy.setShuffle(AppStorage().shuffle);
-          });
-        },
-        icon: AppStorage().shuffle
-            ? const Icon(Icons.shuffle_on)
-            : const Icon(Icons.shuffle),
-      ),
-      IconButton(
-        onPressed: () {
-          if (AppStorage().playboy.state.playlistMode == PlaylistMode.single) {
-            AppStorage().playboy.setPlaylistMode(PlaylistMode.none);
-          } else {
-            AppStorage().playboy.setPlaylistMode(PlaylistMode.single);
-          }
-          setState(() {});
-        },
-        icon: AppStorage().playboy.state.playlistMode == PlaylistMode.single
-            ? const Icon(Icons.repeat_one_on)
-            : const Icon(Icons.repeat_one),
-      ),
-      const SizedBox(width: 10),
-      IconButton.filledTonal(
-        onPressed: () {
-          AppStorage().playboy.previous();
-        },
-        icon: const Icon(Icons.skip_previous_outlined),
-      ),
-      const SizedBox(width: 10),
-      IconButton.filled(
-        style: IconButton.styleFrom(
-          backgroundColor: colorScheme.secondary,
-          foregroundColor: colorScheme.onSecondary,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            ],
           ),
         ),
-        iconSize: 32,
-        onPressed: () {
-          setState(() {
-            AppStorage().playboy.playOrPause();
-          });
-        },
-        icon: StreamBuilder(
-            stream: AppStorage().playboy.stream.playing,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Icon(
-                  snapshot.data!
-                      ? Icons.pause_circle_outline
-                      : Icons.play_arrow_outlined,
-                );
-              } else {
-                return Icon(
-                  AppStorage().playing
-                      ? Icons.pause_circle_outline
-                      : Icons.play_arrow_outlined,
-                );
-              }
-            }),
-      ),
-      const SizedBox(
-        width: 10,
-      ),
-      IconButton.filledTonal(
+        IconButton(
           onPressed: () {
-            AppStorage().playboy.next();
+            setState(() {
+              AppStorage().shuffle = !AppStorage().shuffle;
+              AppStorage().playboy.setShuffle(AppStorage().shuffle);
+            });
           },
-          icon: const Icon(Icons.skip_next_outlined)),
-      const SizedBox(
-        width: 10,
-      ),
-      IconButton(
-        icon: _videoMode
-            ? const Icon(Icons.music_note_outlined)
-            : const Icon(Icons.music_video_outlined),
-        onPressed: () {
-          setState(() {
-            _videoMode = !_videoMode;
-          });
-        },
-      ),
-      IconButton(
-          onPressed: !_videoMode
-              ? null
-              : () async {
-                  if (Platform.isWindows &&
-                      !await windowManager.isMaximized()) {
-                    var info = await getCurrentScreen();
-                    if (info != null) {
-                      await windowManager.setAsFrameless();
-                      await windowManager.setPosition(Offset.zero);
-                      await windowManager.setSize(
-                        Size(
-                          info.frame.width / info.scaleFactor,
-                          info.frame.height / info.scaleFactor,
-                        ),
-                      );
-                    }
-                  } else {
-                    windowManager.setFullScreen(true);
-                  }
-
-                  // setState(() {
-                  //   _fullScreen = !_fullScreen;
-                  // });
-
-                  if (!mounted) return;
-                  Navigator.push(
-                    context,
-                    // MaterialPageRoute(
-                    //     builder: (context) => const FullscreenPlayPage()),
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation1, animation2) =>
-                          const FullscreenPlayPage(),
-                      transitionDuration: Duration.zero,
-                      reverseTransitionDuration: Duration.zero,
-                    ),
-                  );
-                },
-          icon: const Icon(Icons.fullscreen)),
-      Expanded(
-          child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          SizedBox(
-            width: 100,
-            child: SliderTheme(
-                data: SliderThemeData(
-                  activeTrackColor: colorScheme.secondaryContainer,
-                  thumbColor: colorScheme.secondary,
-                  trackHeight: 2,
-                  thumbShape:
-                      const RoundSliderThumbShape(enabledThumbRadius: 6),
-                  overlayShape: SliderComponentShape.noOverlay,
-                ),
-                child: Slider(
-                  max: 4,
-                  value: AppStorage().playboy.state.rate,
-                  onChanged: (value) {
-                    // player.seek(Duration(milliseconds: value.toInt()));
-                    setState(() {
-                      AppStorage().playboy.setRate(value);
-                    });
-                  },
-                  onChangeEnd: (value) {
-                    AppStorage().settings.speed = value;
-                    AppStorage().saveSettings();
-                  },
-                )),
-          ),
-          IconButton(
-            onPressed: () {
-              setState(() {
-                AppStorage().playboy.setRate(1);
-                AppStorage().settings.speed = 1;
-                AppStorage().saveSettings();
-              });
-            },
-            icon: Icon(
-              AppStorage().playboy.state.rate == 1
-                  ? Icons.flash_off
-                  : Icons.flash_on,
+          icon: AppStorage().shuffle
+              ? const Icon(Icons.shuffle_on)
+              : const Icon(Icons.shuffle),
+        ),
+        IconButton(
+          onPressed: () {
+            if (AppStorage().playboy.state.playlistMode ==
+                PlaylistMode.single) {
+              AppStorage().playboy.setPlaylistMode(PlaylistMode.none);
+            } else {
+              AppStorage().playboy.setPlaylistMode(PlaylistMode.single);
+            }
+            setState(() {});
+          },
+          icon: AppStorage().playboy.state.playlistMode == PlaylistMode.single
+              ? const Icon(Icons.repeat_one_on)
+              : const Icon(Icons.repeat_one),
+        ),
+        const SizedBox(width: 10),
+        IconButton.filledTonal(
+          onPressed: () {
+            AppStorage().playboy.previous();
+          },
+          icon: const Icon(Icons.skip_previous_outlined),
+        ),
+        const SizedBox(width: 10),
+        IconButton.filled(
+          style: IconButton.styleFrom(
+            backgroundColor: colorScheme.secondary,
+            foregroundColor: colorScheme.onSecondary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
             ),
           ),
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 100),
-            width: _videoMode ? 16 : 32,
+          iconSize: 32,
+          onPressed: () {
+            setState(() {
+              AppStorage().playboy.playOrPause();
+            });
+          },
+          icon: StreamBuilder(
+              stream: AppStorage().playboy.stream.playing,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Icon(
+                    snapshot.data!
+                        ? Icons.pause_circle_outline
+                        : Icons.play_arrow_outlined,
+                  );
+                } else {
+                  return Icon(
+                    AppStorage().playing
+                        ? Icons.pause_circle_outline
+                        : Icons.play_arrow_outlined,
+                  );
+                }
+              }),
+        ),
+        const SizedBox(
+          width: 10,
+        ),
+        IconButton.filledTonal(
+            onPressed: () {
+              AppStorage().playboy.next();
+            },
+            icon: const Icon(Icons.skip_next_outlined)),
+        const SizedBox(
+          width: 10,
+        ),
+        IconButton(
+          icon: _videoMode
+              ? const Icon(Icons.music_note_outlined)
+              : const Icon(Icons.music_video_outlined),
+          onPressed: () {
+            setState(() {
+              _videoMode = !_videoMode;
+            });
+          },
+        ),
+        IconButton(
+            onPressed: !_videoMode
+                ? null
+                : () async {
+                    if (Platform.isWindows &&
+                        !await windowManager.isMaximized()) {
+                      var info = await getCurrentScreen();
+                      if (info != null) {
+                        await windowManager.setAsFrameless();
+                        await windowManager.setPosition(Offset.zero);
+                        await windowManager.setSize(
+                          Size(
+                            info.frame.width / info.scaleFactor,
+                            info.frame.height / info.scaleFactor,
+                          ),
+                        );
+                      }
+                    } else {
+                      windowManager.setFullScreen(true);
+                    }
+
+                    // setState(() {
+                    //   _fullScreen = !_fullScreen;
+                    // });
+
+                    if (!mounted) return;
+                    Navigator.push(
+                      context,
+                      // MaterialPageRoute(
+                      //     builder: (context) => const FullscreenPlayPage()),
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation1, animation2) =>
+                            const FullscreenPlayPage(),
+                        transitionDuration: Duration.zero,
+                        reverseTransitionDuration: Duration.zero,
+                      ),
+                    );
+                  },
+            icon: const Icon(Icons.fullscreen)),
+        Expanded(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              SizedBox(
+                height: 40,
+                width: 110,
+                child: DropdownMenu<double>(
+                  inputDecorationTheme: const InputDecorationTheme(
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                    constraints: BoxConstraints(maxHeight: 40),
+                  ),
+                  initialSelection: AppStorage().playboy.state.rate,
+                  onSelected: (value) {
+                    if (value != null) {
+                      AppStorage().playboy.setRate(value);
+                      setState(() {});
+                    }
+                  },
+                  dropdownMenuEntries: const [
+                    DropdownMenuEntry(value: 0.25, label: '0.25X'),
+                    DropdownMenuEntry(value: 0.50, label: '0.50X'),
+                    DropdownMenuEntry(value: 0.75, label: '0.75X'),
+                    DropdownMenuEntry(value: 1.00, label: '1.00X'),
+                    DropdownMenuEntry(value: 1.25, label: '1.25X'),
+                    DropdownMenuEntry(value: 1.50, label: '1.50X'),
+                    DropdownMenuEntry(value: 1.75, label: '1.75X'),
+                    DropdownMenuEntry(value: 2.00, label: '2.00X'),
+                    DropdownMenuEntry(value: 4.00, label: '4.00X'),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 4),
+              IconButton(
+                onPressed: () async {
+                  double? customRate = await showDialog<double>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      TextEditingController controller =
+                          TextEditingController();
+                      controller.text =
+                          AppStorage().playboy.state.rate.toString();
+                      return AlertDialog(
+                        title: Text('自定义倍速'.l10n),
+                        content: TextField(
+                          controller: controller,
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true),
+                          decoration: InputDecoration(
+                              labelText: '输入倍速 (e.g. 1.2)'.l10n),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(null);
+                            },
+                            child: Text('取消'.l10n),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              double? rate = double.tryParse(controller.text);
+                              if (rate != null) {
+                                Navigator.of(context).pop(rate);
+                              } else {
+                                Navigator.of(context).pop(null);
+                              }
+                            },
+                            child: Text('确定'.l10n),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                  if (customRate != null && customRate > 0) {
+                    setState(() {
+                      AppStorage().playboy.setRate(customRate);
+                      AppStorage().settings.speed = customRate;
+                      AppStorage().saveSettings();
+                    });
+                  }
+                },
+                icon: Icon(
+                  AppStorage().playboy.state.rate == 1
+                      ? Icons.flash_off
+                      : Icons.flash_on,
+                ),
+              ),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 100),
+                width: _videoMode ? 16 : 32,
+              ),
+            ],
           ),
-        ],
-      )),
-    ]);
+        ),
+      ],
+    );
   }
 
   Widget _buildSidePanel(ColorScheme colorScheme, Color backgroundColor) {

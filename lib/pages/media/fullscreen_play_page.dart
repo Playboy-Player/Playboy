@@ -5,14 +5,18 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/time_utils.dart';
 import 'package:playboy/pages/media/player_menu.dart';
+import 'package:playboy/pages/media/player_page.dart';
 import 'package:playboy/widgets/menu_button.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 
 class FullscreenPlayPage extends StatefulWidget {
   const FullscreenPlayPage({super.key});
+
+  static void Function()? exitFullscreen;
 
   @override
   FullscreenPlayer createState() => FullscreenPlayer();
@@ -40,14 +44,22 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    FullscreenPlayPage.exitFullscreen = () => _exitFullscreen();
+  }
+
+  @override
   void dispose() {
+    super.dispose();
     _focusNode.dispose();
     _timer?.cancel();
-    super.dispose();
+    FullscreenPlayPage.exitFullscreen = null;
   }
 
   @override
   Widget build(BuildContext context) {
+    PlayerPage.fn!.requestFocus();
     late final colorScheme = Theme.of(context).colorScheme;
     late final backgroundColor = Color.alphaBlend(
       colorScheme.primary.withValues(alpha: 0.08),
@@ -131,6 +143,19 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
         ],
       ),
     );
+  }
+
+  void _exitFullscreen() async {
+    if (Platform.isWindows && !await windowManager.isMaximized()) {
+      windowManager.setSize(const Size(900, 700));
+      windowManager.setTitleBarStyle(TitleBarStyle.hidden);
+      windowManager.center();
+    } else {
+      windowManager.setFullScreen(false);
+    }
+
+    if (!mounted) return;
+    Navigator.pop(context);
   }
 
   Widget _buildSeekbarFullscreen() {
@@ -306,49 +331,100 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
       MenuButton(menuChildren: buildPlayerMenu()),
       const SizedBox(width: 10),
       IconButton(
-          onPressed: () async {
-            if (Platform.isWindows && !await windowManager.isMaximized()) {
-              windowManager.setSize(const Size(900, 700));
-              windowManager.setTitleBarStyle(TitleBarStyle.hidden);
-              windowManager.center();
-            } else {
-              windowManager.setFullScreen(false);
-            }
+        onPressed: () async {
+          // if (Platform.isWindows && !await windowManager.isMaximized()) {
+          //   windowManager.setSize(const Size(900, 700));
+          //   windowManager.setTitleBarStyle(TitleBarStyle.hidden);
+          //   windowManager.center();
+          // } else {
+          //   windowManager.setFullScreen(false);
+          // }
 
-            if (!mounted) return;
-            Navigator.pop(context);
-          },
-          icon: const Icon(Icons.fullscreen_exit)),
+          // if (!mounted) return;
+          // Navigator.pop(context);
+          _exitFullscreen();
+        },
+        icon: const Icon(Icons.fullscreen_exit),
+      ),
       Expanded(
           child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           SizedBox(
-            width: 100,
-            child: SliderTheme(
-                data: SliderThemeData(
-                  activeTrackColor: colorScheme.secondaryContainer,
-                  thumbColor: colorScheme.secondary,
-                  trackHeight: 2,
-                  thumbShape:
-                      const RoundSliderThumbShape(enabledThumbRadius: 6),
-                  overlayShape: SliderComponentShape.noOverlay,
-                ),
-                child: Slider(
-                  max: 4,
-                  value: AppStorage().playboy.state.rate,
-                  onChanged: (value) {
-                    setState(() {
-                      AppStorage().playboy.setRate(value);
-                    });
-                  },
-                )),
+            height: 40,
+            width: 110,
+            child: DropdownMenu<double>(
+              inputDecorationTheme: const InputDecorationTheme(
+                border: OutlineInputBorder(),
+                isDense: true,
+                constraints: BoxConstraints(maxHeight: 40),
+              ),
+              initialSelection: AppStorage().playboy.state.rate,
+              onSelected: (value) {
+                if (value != null) {
+                  AppStorage().playboy.setRate(value);
+                  setState(() {});
+                }
+              },
+              dropdownMenuEntries: const [
+                DropdownMenuEntry(value: 0.25, label: '0.25X'),
+                DropdownMenuEntry(value: 0.50, label: '0.50X'),
+                DropdownMenuEntry(value: 0.75, label: '0.75X'),
+                DropdownMenuEntry(value: 1.00, label: '1.00X'),
+                DropdownMenuEntry(value: 1.25, label: '1.25X'),
+                DropdownMenuEntry(value: 1.50, label: '1.50X'),
+                DropdownMenuEntry(value: 1.75, label: '1.75X'),
+                DropdownMenuEntry(value: 2.00, label: '2.00X'),
+                DropdownMenuEntry(value: 4.00, label: '4.00X'),
+              ],
+            ),
           ),
+          const SizedBox(width: 4),
           IconButton(
-            onPressed: () {
-              setState(() {
-                AppStorage().playboy.setRate(1);
-              });
+            onPressed: () async {
+              double? customRate = await showDialog<double>(
+                context: context,
+                builder: (BuildContext context) {
+                  TextEditingController controller = TextEditingController();
+                  controller.text = AppStorage().playboy.state.rate.toString();
+                  return AlertDialog(
+                    title: Text('自定义倍速'.l10n),
+                    content: TextField(
+                      controller: controller,
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      decoration:
+                          InputDecoration(labelText: '输入倍速 (e.g. 1.2)'.l10n),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(null);
+                        },
+                        child: Text('取消'.l10n),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          double? rate = double.tryParse(controller.text);
+                          if (rate != null) {
+                            Navigator.of(context).pop(rate);
+                          } else {
+                            Navigator.of(context).pop(null);
+                          }
+                        },
+                        child: Text('确定'.l10n),
+                      ),
+                    ],
+                  );
+                },
+              );
+              if (customRate != null && customRate > 0) {
+                setState(() {
+                  AppStorage().playboy.setRate(customRate);
+                  AppStorage().settings.speed = customRate;
+                  AppStorage().saveSettings();
+                });
+              }
             },
             icon: Icon(
               AppStorage().playboy.state.rate == 1
