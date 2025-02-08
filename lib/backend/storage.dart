@@ -102,11 +102,6 @@ class AppStorage extends ChangeNotifier {
         } else {
           playingTitle = basenameWithoutExtension(src);
           playingCover = '${withoutExtension(src)}.cover.jpg';
-          // if (File(coverPath).existsSync()) {
-          //   playingCover = coverPath;
-          // } else {
-          //   playingCover = null;
-          // }
         }
       } else {
         playingTitle = 'Not Playing';
@@ -120,10 +115,6 @@ class AppStorage extends ChangeNotifier {
     dataPath = (await getApplicationSupportDirectory()).path;
     await loadSettings();
     bool needsUpdate = false;
-    // if (settings.downloadPath == '') {
-    //   settings.downloadPath = '$dataPath/downloads';
-    //   needsUpdate = true;
-    // }
     if (settings.screenshotPath == '') {
       settings.screenshotPath = '$dataPath/screenshots';
       var dir = Directory(settings.screenshotPath);
@@ -198,12 +189,12 @@ class AppStorage extends ChangeNotifier {
       playboy.open(LibraryHelper.convertToPlaylist(playlistItem), play: false);
       playboy.setShuffle(true);
       playboy.jump(0);
-      if (AppStorage().settings.autoPlay) {
-        playboy.play();
-      }
+      if (AppStorage().settings.autoPlay) playboy.play();
     } else {
-      playboy.open(LibraryHelper.convertToPlaylist(playlistItem),
-          play: AppStorage().settings.autoPlay);
+      playboy.open(
+        LibraryHelper.convertToPlaylist(playlistItem),
+        play: AppStorage().settings.autoPlay,
+      );
     }
     position = Duration.zero;
     duration = Duration.zero;

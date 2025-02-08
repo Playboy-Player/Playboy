@@ -210,7 +210,7 @@ class SettingsPageState extends State<SettingsPage> {
               _currentPage = id;
             });
           },
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(12),
           child: Container(
             height: 40,
             padding: const EdgeInsets.symmetric(horizontal: 4),

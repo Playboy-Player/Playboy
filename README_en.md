@@ -53,7 +53,7 @@ A cross-platform media player with Material 3 design.
 - [x] Search media files and playlists
 - [x] Play files over LAN
 - [x] Multi-language support
-- [ ] Lyrics and subtitles
+- [ ] subtitles
 
 ## For Developers
 

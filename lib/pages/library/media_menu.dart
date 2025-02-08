@@ -19,13 +19,6 @@ List<Widget> buildCommonMediaMenuItems(
       onPressed: () {
         AppStorage().closeMedia();
         AppStorage().openMedia(item);
-
-        // if (!context.mounted) return;
-        // pushRootPage(
-        //   context,
-        //   const PlayerPage(),
-        // );
-        // AppStorage().updateStatus();
         HomePage.switchView?.call();
       },
     ),

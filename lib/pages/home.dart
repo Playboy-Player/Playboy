@@ -113,58 +113,29 @@ class _HomePageState extends State<HomePage> {
             return _buildMiniModeCard(context);
           }
 
-          Size size = MediaQuery.of(context).size;
-          return AnimatedCrossSlide(
-            firstChild: SizedBox(
-              height: size.height,
-              width: size.width,
-              child: Scaffold(
-                appBar: _buildTitleBar(context),
-                body: Row(
-                  children: [
-                    _buildNavigationRail(context),
-                    _buildPage(context),
-                  ],
-                ),
-                floatingActionButton: _buildFloatingMediaBar(context),
+          return Scaffold(
+            appBar: _buildTitleBar(context),
+            body: AnimatedCrossSlide(
+              firstChild: Row(
+                children: [
+                  _buildNavigationRail(context),
+                  _buildPage(context),
+                ],
+              ),
+              secondChild: const PlayerPage(),
+              crossFadeState: _playerView
+                  ? CrossFadeState.showFirst
+                  : CrossFadeState.showSecond,
+              duration: const Duration(
+                milliseconds: 200,
               ),
             ),
-            secondChild: SizedBox(
-              height: size.height,
-              width: size.width,
-              child: const PlayerPage(),
-            ),
-            crossFadeState: _playerView
-                ? CrossFadeState.showFirst
-                : CrossFadeState.showSecond,
-            duration: const Duration(
-              milliseconds: 200,
-            ),
+            floatingActionButton:
+                _playerView ? null : _buildFloatingMediaBar(context),
           );
         },
       ),
     );
-
-    // return _miniMode
-    //     ? _buildMiniModeCard(colorScheme)
-    //     : Scaffold(
-    //         appBar: _buildTitleBar(),
-    //         body: tabletUI
-    //             ? Row(
-    //                 children: [
-    //                   _buildNavigationRail(context),
-    //                   _buildPage(context),
-    //                 ],
-    //               )
-    //             : Column(
-    //                 children: [
-    //                   Expanded(child: _buildPageContent()),
-    //                   _buildFixedMediaBar(colorScheme),
-    //                 ],
-    //               ),
-    //         floatingActionButton: _buildFloatingMediaBar(colorScheme),
-    //         bottomNavigationBar: tabletUI ? null : _buildNavigationBar(context),
-    //       );
   }
 
   ThemeData _getThemeData(AppStorage value, ColorScheme colorScheme) {
@@ -312,6 +283,15 @@ class _HomePageState extends State<HomePage> {
 
   List<Widget> _buildTitleBarActions(BuildContext context) {
     return [
+      // debug usage
+      // IconButton(
+      //   hoverColor: Colors.transparent,
+      //   padding: EdgeInsets.zero,
+      //   onPressed: () {
+      //     setState(() {});
+      //   },
+      //   icon: const Icon(Icons.refresh),
+      // ),
       IconButton(
         hoverColor: Colors.transparent,
         onPressed: () {
@@ -807,47 +787,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Widget _buildNavigationBar(BuildContext context) {
-  //   return NavigationBar(
-  //     height: 70,
-  //     labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-  //     onDestinationSelected: (int index) {
-  //       setState(() {
-  //         _currentPageIndex = index;
-  //       });
-  //     },
-  //     selectedIndex: _currentPageIndex,
-  //     destinations: [
-  //       const NavigationDestination(
-  //         selectedIcon: Icon(Icons.apps),
-  //         icon: Icon(Icons.apps),
-  //         label: '播放列表',
-  //       ),
-  //       const NavigationDestination(
-  //         selectedIcon: Icon(Icons.smart_display),
-  //         icon: Icon(Icons.smart_display_outlined),
-  //         label: '媒体库',
-  //       ),
-  //       const NavigationDestination(
-  //         selectedIcon: Icon(Icons.folder),
-  //         icon: Icon(Icons.folder_outlined),
-  //         label: '文件',
-  //       ),
-  //       if (AppStorage().settings.tabletUI)
-  //         const NavigationDestination(
-  //           selectedIcon: Icon(Icons.search),
-  //           icon: Icon(Icons.search),
-  //           label: '搜索',
-  //         ),
-  //       const NavigationDestination(
-  //         selectedIcon: Icon(Icons.settings),
-  //         icon: Icon(Icons.settings_outlined),
-  //         label: '设置',
-  //       ),
-  //     ],
-  //   );
-  // }
-
   Widget _buildPage(BuildContext context) {
     Widget buildPageContent(BuildContext context) {
       return IndexedStack(
@@ -908,165 +847,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Widget _buildMediaCard(ColorScheme colorScheme) {
-  //   return Card(
-  //     elevation: 1.6,
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.all(Radius.circular(20)),
-  //     ),
-  //     // color: colorScheme.primary,
-  //     child: SizedBox(
-  //         width: 300, height: 120, child: _buildMediaCardContent(colorScheme)),
-  //   );
-  // }
-
-  // Widget _buildFixedMediaBarContent(ColorScheme colorScheme) {
-  //   return Container(
-  //     decoration: BoxDecoration(
-  //       borderRadius: const BorderRadius.only(
-  //           topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-  //       color: colorScheme.primary,
-  //     ),
-  //     child: SizedBox(
-  //       height: 70,
-  //       child: Stack(
-  //         children: [
-  //           AppStorage().playingCover == null
-  //               ? const SizedBox()
-  //               : ShaderMask(
-  //                   shaderCallback: (Rect bounds) {
-  //                     return RadialGradient(
-  //                       radius: 2,
-  //                       // focalRadius: 1,
-  //                       colors: [
-  //                         Colors.black.withValues(alpha: 0.6),
-  //                         // Colors.black.withOpacity(0.1)
-  //                         Colors.transparent
-  //                       ],
-  //                       // stops: [0, 0.6],
-  //                       // tileMode: TileMode.mirror,
-  //                     ).createShader(bounds);
-  //                   },
-  //                   blendMode: BlendMode.dstIn,
-  //                   child: ClipRRect(
-  //                       borderRadius: BorderRadius.circular(20),
-  //                       child: MImage(url: AppStorage().playingCover!)),
-  //                 ),
-  //           Column(
-  //             children: [
-  //               Expanded(
-  //                 child: Row(
-  //                   crossAxisAlignment: CrossAxisAlignment.center,
-  //                   children: [
-  //                     const SizedBox(
-  //                       width: 16,
-  //                     ),
-  //                     Expanded(
-  //                       child: Column(
-  //                         mainAxisAlignment: MainAxisAlignment.center,
-  //                         crossAxisAlignment: CrossAxisAlignment.start,
-  //                         children: [
-  //                           Text(
-  //                             AppStorage().playingTitle,
-  //                             style: TextStyle(
-  //                               fontSize: 16,
-  //                               fontWeight: FontWeight.w500,
-  //                               color: colorScheme.primaryContainer,
-  //                             ),
-  //                             maxLines: 1,
-  //                           ),
-  //                           // Text(
-  //                           //   'author',
-  //                           //   style: TextStyle(
-  //                           //     fontSize: 12,
-  //                           //     color: colorScheme.primaryContainer,
-  //                           //   ),
-  //                           // ),
-  //                           const SizedBox(
-  //                             height: 8,
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ),
-  //                     IconButton(
-  //                         color: colorScheme.primaryContainer,
-  //                         onPressed: () {
-  //                           AppStorage().playboy.next();
-  //                           setState(() {});
-  //                         },
-  //                         icon: const Icon(
-  //                           Icons.skip_next_outlined,
-  //                         )),
-  //                     IconButton.filled(
-  //                       style: IconButton.styleFrom(
-  //                         backgroundColor: colorScheme.primaryContainer,
-  //                         shape: RoundedRectangleBorder(
-  //                             borderRadius: BorderRadius.circular(16)),
-  //                       ),
-  //                       iconSize: 24,
-  //                       onPressed: () {
-  //                         setState(() {
-  //                           AppStorage().playboy.playOrPause();
-  //                         });
-  //                       },
-  //                       icon: StreamBuilder(
-  //                         stream: AppStorage().playboy.stream.playing,
-  //                         builder: (context, snapshot) {
-  //                           return Icon(
-  //                             AppStorage().playing
-  //                                 ? Icons.pause_circle_outline
-  //                                 : Icons.play_arrow_outlined,
-  //                             color: colorScheme.onPrimaryContainer,
-  //                           );
-  //                         },
-  //                       ),
-  //                     ),
-  //                     const SizedBox(
-  //                       width: 12,
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // Widget _buildFixedMediaBar(ColorScheme colorScheme) {
-  //   return InkWell(
-  //     onTap: () {
-  //       if (!context.mounted) return;
-  //       pushRootPage(
-  //         context,
-  //         const PlayerPage(),
-  //       );
-  //     },
-  //     child: StreamBuilder(
-  //       stream: AppStorage().playboy.stream.playlist,
-  //       builder: (context, snapshot) {
-  //         return AppStorage().playingCover == null
-  //             ? _buildFixedMediaBarContent(colorScheme)
-  //             : FutureBuilder(
-  //                 future: ColorScheme.fromImageProvider(
-  //                   provider: MImageProvider(url: AppStorage().playingCover!)
-  //                       .getImage(),
-  //                 ),
-  //                 builder: (context, snapshot) {
-  //                   if (snapshot.hasData && snapshot.data != null) {
-  //                     return _buildFixedMediaBarContent(snapshot.data!);
-  //                   } else {
-  //                     return _buildFixedMediaBarContent(colorScheme);
-  //                   }
-  //                 },
-  //               );
-  //       },
-  //     ),
-  //   );
-  // }
-
   Widget _buildFloatingMediaBar(BuildContext context) {
     Widget buildFloatingMediaBarContent(BuildContext context) {
       late final colorScheme = Theme.of(context).colorScheme;
@@ -1081,21 +861,6 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             const SizedBox(width: 10),
-            IconButton(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              constraints: const BoxConstraints(),
-              color: colorScheme.primaryContainer,
-              iconSize: 18,
-              onPressed: () {
-                // if (!context.mounted) return;
-                // pushRootPage(
-                //   context,
-                //   const PlayerPage(),
-                // );
-                HomePage.switchView?.call();
-              },
-              icon: const Icon(Icons.open_in_full_rounded),
-            ),
             IconButton(
               padding: const EdgeInsets.symmetric(horizontal: 2),
               constraints: const BoxConstraints(),

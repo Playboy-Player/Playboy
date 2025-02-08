@@ -37,40 +37,6 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
               // AppStorage().updateStatus();
             },
           ),
-          SwitchListTile(
-            title: Text('默认打开音乐视图'.l10n),
-            value: AppStorage().settings.defaultMusicMode,
-            onChanged: (bool value) {
-              setState(() {
-                AppStorage().settings.defaultMusicMode = value;
-              });
-              AppStorage().saveSettings();
-              // AppStorage().updateStatus();
-            },
-          ),
-          SwitchListTile(
-            title: Text('记忆播放器状态'.l10n),
-            subtitle: Text('音量和倍速'.l10n),
-            value: AppStorage().settings.rememberStatus,
-            onChanged: (bool value) {
-              setState(() {
-                AppStorage().settings.rememberStatus = value;
-              });
-              AppStorage().saveSettings();
-              // AppStorage().updateStatus();
-            },
-          ),
-          SwitchListTile(
-            title: Text('退出播放页面后继续播放'.l10n),
-            value: AppStorage().settings.playAfterExit,
-            onChanged: (bool value) {
-              setState(() {
-                AppStorage().settings.playAfterExit = value;
-              });
-              AppStorage().saveSettings();
-              // AppStorage().updateStatus();
-            },
-          ),
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
