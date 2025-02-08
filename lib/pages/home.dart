@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:playboy/widgets/animated_cross_slide.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'package:playboy/backend/constants.dart';
@@ -46,6 +45,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentPageIndex = 0;
+  int _prePageIndex = 0;
   bool _forceRebuild = false;
   bool _playerView = false;
 
@@ -60,12 +60,20 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _playerView = widget.playerView;
-    _currentPageIndex = AppStorage().settings.initPage;
+    _prePageIndex = _currentPageIndex = AppStorage().settings.initPage;
 
     HomePage.refresh = () => setState(() => _forceRebuild = true);
-    HomePage.switchView = () => setState(() {
-          _playerView = !_playerView;
-        });
+    HomePage.switchView = () => setState(
+          () {
+            if (_currentPageIndex == 4) {
+              _currentPageIndex = _prePageIndex;
+            } else {
+              _prePageIndex = _currentPageIndex;
+              _currentPageIndex = 4;
+            }
+            _playerView = !_playerView;
+          },
+        );
   }
 
   @override
@@ -112,23 +120,29 @@ class _HomePageState extends State<HomePage> {
           if (_miniMode) {
             return _buildMiniModeCard(context);
           }
-
           return Scaffold(
             appBar: _buildTitleBar(context),
-            body: AnimatedCrossSlide(
-              firstChild: Row(
-                children: [
-                  _buildNavigationRail(context),
-                  _buildPage(context),
-                ],
-              ),
-              secondChild: const PlayerPage(),
-              crossFadeState: _playerView
-                  ? CrossFadeState.showFirst
-                  : CrossFadeState.showSecond,
-              duration: const Duration(
-                milliseconds: 200,
-              ),
+            // body: AnimatedCrossSlide(
+            //   firstChild: Row(
+            //     children: [
+            //       _buildNavigationRail(context),
+            //       _buildPage(context),
+            //     ],
+            //   ),
+            //   secondChild: const PlayerPage(),
+            //   crossFadeState: _playerView
+            //       ? CrossFadeState.showFirst
+            //       : CrossFadeState.showSecond,
+            //   duration: const Duration(
+            //     milliseconds: 200,
+            //   ),
+            // ),
+
+            body: Row(
+              children: [
+                _buildNavigationRail(context),
+                _buildPage(context),
+              ],
             ),
             floatingActionButton:
                 _playerView ? null : _buildFloatingMediaBar(context),
@@ -230,6 +244,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       toolbarHeight: 40,
+      titleSpacing: Platform.isMacOS ? null : 8,
       title: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onPanStart: (details) {
@@ -238,27 +253,32 @@ class _HomePageState extends State<HomePage> {
         child: Row(
           children: [
             Platform.isMacOS
-                ? const SizedBox(width: 60)
+                ? Container(width: 60)
                 : IconButton(
-                    highlightColor: Colors.transparent,
-                    focusColor: Colors.transparent,
-                    hoverColor: Colors.transparent,
-                    splashColor: Colors.transparent,
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll(
+                        colorScheme.tertiaryContainer,
+                      ),
+                      foregroundColor: WidgetStatePropertyAll(
+                        colorScheme.onTertiaryContainer,
+                      ),
+                      shape: WidgetStatePropertyAll(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                      ),
+                      padding: const WidgetStatePropertyAll(
+                        EdgeInsets.symmetric(horizontal: 17, vertical: 2),
+                      ),
+                    ),
                     constraints: const BoxConstraints(),
                     padding: EdgeInsets.zero,
                     onPressed: () {
-                      // if (!context.mounted) return;
-                      // pushRootPage(
-                      //   context,
-                      //   const PlayerPage(),
-                      // );
                       HomePage.switchView?.call();
                     },
                     icon: const Icon(Icons.play_circle_outline_rounded),
                   ),
-            const SizedBox(
-              width: 10,
-            ),
+            const SizedBox(width: 10),
             Expanded(
               child: tabletUI
                   ? StreamBuilder(
@@ -320,11 +340,6 @@ class _HomePageState extends State<HomePage> {
           hoverColor: Colors.transparent,
           padding: EdgeInsets.zero,
           onPressed: () {
-            // if (!context.mounted) return;
-            // pushRootPage(
-            //   context,
-            //   const PlayerPage(),
-            // );
             HomePage.switchView?.call();
           },
           icon: const Icon(Icons.play_circle_outlined),
@@ -700,91 +715,92 @@ class _HomePageState extends State<HomePage> {
       colorScheme.primary.withValues(alpha: 0.04),
       colorScheme.surface,
     );
-    return NavigationRail(
-      // groupAlignment: -0.9,
-      backgroundColor: backgroundColor,
-      minWidth: 64,
-      selectedIndex: _currentPageIndex,
-      onDestinationSelected: (int index) {
-        setState(() {
-          _currentPageIndex = index;
-        });
-      },
-      labelType: NavigationRailLabelType.selected,
-      // extended: true,
-      // leading: const SizedBox(
-      //   height: 6,
-      // ),
-      trailing: Expanded(
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              IconButton(
-                iconSize: 24,
-                icon: const Icon(
-                  Icons.filter_vintage,
+    return _playerView
+        ? Container(
+            width: 10,
+            color: backgroundColor,
+          )
+        : NavigationRail(
+            backgroundColor: backgroundColor,
+            minWidth: 64,
+            selectedIndex: _currentPageIndex,
+            onDestinationSelected: (int index) {
+              setState(() {
+                _currentPageIndex = index;
+                _prePageIndex = _currentPageIndex;
+              });
+            },
+            labelType: NavigationRailLabelType.selected,
+            trailing: Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      iconSize: 24,
+                      icon: const Icon(
+                        Icons.filter_vintage,
+                      ),
+                      onPressed: () {
+                        pushPage(
+                          context,
+                          const SettingsPage(),
+                        ).then((value) {
+                          AppStorage().updateFilePage();
+                          setState(() {});
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 6),
+                    IconButton(
+                      iconSize: 24,
+                      icon: Theme.of(context).brightness == Brightness.dark
+                          ? const Icon(Icons.wb_sunny)
+                          : const Icon(Icons.dark_mode),
+                      onPressed: () {
+                        setState(
+                          () {
+                            AppStorage().settings.themeMode =
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? ThemeMode.light
+                                    : ThemeMode.dark;
+                          },
+                        );
+                        AppStorage().saveSettings();
+                        AppStorage().updateStatus();
+                      },
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    )
+                  ],
                 ),
-                onPressed: () {
-                  pushPage(
-                    context,
-                    const SettingsPage(),
-                  ).then((value) {
-                    AppStorage().updateFilePage();
-                    setState(() {});
-                  });
-                },
               ),
-              const SizedBox(height: 6),
-              IconButton(
-                iconSize: 24,
-                icon: Theme.of(context).brightness == Brightness.dark
-                    ? const Icon(Icons.wb_sunny)
-                    : const Icon(Icons.dark_mode),
-                onPressed: () {
-                  setState(
-                    () {
-                      AppStorage().settings.themeMode =
-                          Theme.of(context).brightness == Brightness.dark
-                              ? ThemeMode.light
-                              : ThemeMode.dark;
-                    },
-                  );
-                  AppStorage().saveSettings();
-                  AppStorage().updateStatus();
-                },
+            ),
+            destinations: <NavigationRailDestination>[
+              NavigationRailDestination(
+                selectedIcon: const Icon(Icons.apps),
+                icon: const Icon(Icons.apps),
+                label: Text('播放列表'.l10n),
               ),
-              const SizedBox(
-                height: 4,
-              )
+              NavigationRailDestination(
+                selectedIcon: const Icon(Icons.smart_display),
+                icon: const Icon(Icons.smart_display_outlined),
+                label: Text('媒体库'.l10n),
+              ),
+              NavigationRailDestination(
+                selectedIcon: const Icon(Icons.folder),
+                icon: const Icon(Icons.folder_outlined),
+                label: Text('文件'.l10n),
+              ),
+              NavigationRailDestination(
+                selectedIcon: const Icon(Icons.search),
+                icon: const Icon(Icons.search),
+                label: Text('搜索'.l10n),
+              ),
             ],
-          ),
-        ),
-      ),
-      destinations: <NavigationRailDestination>[
-        NavigationRailDestination(
-          selectedIcon: const Icon(Icons.apps),
-          icon: const Icon(Icons.apps),
-          label: Text('播放列表'.l10n),
-        ),
-        NavigationRailDestination(
-          selectedIcon: const Icon(Icons.smart_display),
-          icon: const Icon(Icons.smart_display_outlined),
-          label: Text('媒体库'.l10n),
-        ),
-        NavigationRailDestination(
-          selectedIcon: const Icon(Icons.folder),
-          icon: const Icon(Icons.folder_outlined),
-          label: Text('文件'.l10n),
-        ),
-        NavigationRailDestination(
-          selectedIcon: const Icon(Icons.search),
-          icon: const Icon(Icons.search),
-          label: Text('搜索'.l10n),
-        ),
-      ],
-    );
+          );
   }
 
   Widget _buildPage(BuildContext context) {
@@ -813,16 +829,20 @@ class _HomePageState extends State<HomePage> {
               builder: (context) => const FilePage(),
             ),
           ),
-          if (AppStorage().settings.tabletUI)
-            Navigator(
-              key: _searchPageKey,
-              onGenerateRoute: (route) => MaterialPageRoute(
-                settings: route,
-                builder: (context) => const SearchPage(),
-              ),
-            )
-          else
-            const SettingsPage(),
+          Navigator(
+            key: _searchPageKey,
+            onGenerateRoute: (route) => MaterialPageRoute(
+              settings: route,
+              builder: (context) => const SearchPage(),
+            ),
+          ),
+          Navigator(
+            key: GlobalKey<NavigatorState>(),
+            onGenerateRoute: (route) => MaterialPageRoute(
+              settings: route,
+              builder: (context) => const PlayerPage(),
+            ),
+          )
         ],
       );
     }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:playboy/backend/keymap_helper.dart';
+import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/pages/home.dart';
 import 'package:playboy/pages/media/player_menu.dart';
 import 'package:window_manager/window_manager.dart';
@@ -73,19 +74,21 @@ class PlayerPageState extends State<PlayerPage> {
                   Expanded(
                     // flex: 3,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      // padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: _buildPlayer(colorScheme),
                     ),
                   ),
                   _menuExpanded
                       ? Padding(
                           // flex: 2,
-                          padding: const EdgeInsets.only(right: 10),
+                          padding: const EdgeInsets.only(left: 10),
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 100),
                             width: 300,
-                            child:
-                                _buildSidePanel(colorScheme, backgroundColor),
+                            child: _buildSidePanel(
+                              colorScheme,
+                              backgroundColor,
+                            ),
                           ),
                         )
                       : const SizedBox(),
@@ -136,8 +139,7 @@ class PlayerPageState extends State<PlayerPage> {
                 ],
               ),
             ),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 100),
+            SizedBox(
               height: 50,
               child: _buildControlbar(colorScheme),
             ),
@@ -156,17 +158,14 @@ class PlayerPageState extends State<PlayerPage> {
       borderRadius: 25,
       child: ClipRRect(
         borderRadius: const BorderRadius.all(Radius.circular(25)),
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 200),
-          child: ColoredBox(
-            color: Colors.black,
-            child: Center(
-              child: Video(
-                controller: controller,
-                controls: NoVideoControls,
-                subtitleViewConfiguration: const SubtitleViewConfiguration(
-                  visible: false,
-                ),
+        child: ColoredBox(
+          color: Colors.black,
+          child: Center(
+            child: Video(
+              controller: controller,
+              controls: NoVideoControls,
+              subtitleViewConfiguration: const SubtitleViewConfiguration(
+                visible: false,
               ),
             ),
           ),
@@ -231,10 +230,7 @@ class PlayerPageState extends State<PlayerPage> {
         Expanded(
           child: Row(
             children: [
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 100),
-                width: 16,
-              ),
+              const SizedBox(width: 16),
               IconButton(
                 onPressed: () {
                   setState(() {
@@ -439,10 +435,7 @@ class PlayerPageState extends State<PlayerPage> {
                 },
                 icon: const Icon(Icons.open_in_full_rounded),
               ),
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 100),
-                width: 16,
-              ),
+              const SizedBox(width: 16),
             ],
           ),
         ),
@@ -469,7 +462,7 @@ class PlayerPageState extends State<PlayerPage> {
         toolbarHeight: 46,
         scrolledUnderElevation: 0,
         title: Text(
-          '播放列表',
+          '播放列表'.l10n,
           style: TextStyle(color: colorScheme.primary),
         ),
         actions: [
@@ -490,60 +483,61 @@ class PlayerPageState extends State<PlayerPage> {
         ],
       ),
       body: StreamBuilder(
-          stream: AppStorage().playboy.stream.playlist,
-          builder: (context, snapshot) {
-            return ListView.builder(
-              itemBuilder: (BuildContext context, int index) {
-                var src = AppStorage().playboy.state.playlist.medias[index].uri;
-                return SizedBox(
-                  height: 46,
-                  child: Row(
-                    children: [
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(12),
-                          onTap: () {
-                            AppStorage().playboy.jump(index);
-                          },
-                          child: PlayerListCard(
-                            info: PlayItem(
-                              source: src,
-                              cover: null,
-                              title: p.basenameWithoutExtension(src),
-                            ),
-                            isPlaying: index == AppStorage().playingIndex,
+        stream: AppStorage().playboy.stream.playlist,
+        builder: (context, snapshot) {
+          return ListView.builder(
+            itemBuilder: (BuildContext context, int index) {
+              var src = AppStorage().playboy.state.playlist.medias[index].uri;
+              return SizedBox(
+                height: 46,
+                child: Row(
+                  children: [
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: () {
+                          AppStorage().playboy.jump(index);
+                        },
+                        child: PlayerListCard(
+                          info: PlayItem(
+                            source: src,
+                            cover: null,
+                            title: p.basenameWithoutExtension(src),
                           ),
+                          isPlaying: index == AppStorage().playingIndex,
                         ),
                       ),
-                      IconButton(
-                        onPressed: () {
-                          var len =
-                              AppStorage().playboy.state.playlist.medias.length;
-                          if (index == AppStorage().playingIndex) {
-                            if (len == 1) {
-                              AppStorage().closeMedia();
-                            } else if (len - 1 == index) {
-                              AppStorage().playboy.previous();
-                            } else {
-                              AppStorage().playboy.next();
-                            }
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        var len =
+                            AppStorage().playboy.state.playlist.medias.length;
+                        if (index == AppStorage().playingIndex) {
+                          if (len == 1) {
+                            AppStorage().closeMedia();
+                          } else if (len - 1 == index) {
+                            AppStorage().playboy.previous();
+                          } else {
+                            AppStorage().playboy.next();
                           }
-                          AppStorage().playboy.remove(index);
-                          setState(() {});
-                        },
-                        icon: const Icon(Icons.close),
-                      ),
-                      const SizedBox(
-                        width: 4,
-                      ),
-                    ],
-                  ),
-                );
-              },
-              itemCount: AppStorage().playboy.state.playlist.medias.length,
-            );
-          }),
+                        }
+                        AppStorage().playboy.remove(index);
+                        setState(() {});
+                      },
+                      icon: const Icon(Icons.close),
+                    ),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                  ],
+                ),
+              );
+            },
+            itemCount: AppStorage().playboy.state.playlist.medias.length,
+          );
+        },
+      ),
     );
   }
 
