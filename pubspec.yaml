@@ -17,22 +17,42 @@ dependencies:
   file_picker: ^8.3.1
   json_annotation: ^4.8.1
 
-  # Desktop Window Control
+  # Window Control
   window_manager: ^0.3.8
   macos_window_utils: ^1.6.1
-  window_size:
-    git:
-      url: https://github.com/google/flutter-desktop-embedding.git
-      path: plugins/window_size
-      ref: a738913c8ce2c9f47515382d40827e794a334274
+  screen_retriever: ^0.1.9
+  
+  url_launcher: ^6.2.5
 
   # Media
-  media_kit: ^1.1.10
-  media_kit_video: ^1.2.4
-  media_kit_libs_video: ^1.0.4
-
-  # Misc
-  url_launcher: ^6.2.5
+  media_kit:
+    git:
+      url: https://github.com/YuiHrsw/media-kit.git
+      path: media_kit
+  media_kit_video:
+    git:
+      url: https://github.com/YuiHrsw/media-kit.git
+      path: media_kit_video
+  media_kit_libs_video:
+    git:
+      url: https://github.com/YuiHrsw/media-kit.git
+      path: libs/universal/media_kit_libs_video
+  media_kit_libs_windows_video:
+    git:
+      url: https://github.com/YuiHrsw/media-kit.git
+      path: libs/windows/media_kit_libs_windows_video
+  media_kit_libs_macos_video:
+    git:
+      url: https://github.com/YuiHrsw/media-kit.git
+      path: libs/macos/media_kit_libs_macos_video
+  media_kit_libs_linux:
+    git:
+      url: https://github.com/YuiHrsw/media-kit.git
+      path: libs/linux/media_kit_libs_linux
+  media_kit_libs_android_video:
+    git:
+      url: https://github.com/YuiHrsw/media-kit.git
+      path: libs/android/media_kit_libs_android_video
 
 dev_dependencies:
   flutter_test:

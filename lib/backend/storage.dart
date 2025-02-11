@@ -82,7 +82,7 @@ class AppStorage extends ChangeNotifier {
   factory AppStorage() => _instance;
   AppStorage._internal() {
     settings = AppSettings();
-    playboy = Player();
+    playboy = Player(configuration: const PlayerConfiguration(libass: true));
     controller = VideoController(playboy);
     playboy.stream.position.listen((event) {
       position = event;

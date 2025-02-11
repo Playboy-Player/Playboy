@@ -6,10 +6,10 @@ import 'package:playboy/backend/keymap_helper.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/pages/home.dart';
 import 'package:playboy/pages/media/player_menu.dart';
+import 'package:screen_retriever/screen_retriever.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
-import 'package:window_size/window_size.dart';
 
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
@@ -407,24 +407,21 @@ class PlayerPageState extends State<PlayerPage> {
                 onPressed: () async {
                   if (Platform.isWindows &&
                       !await windowManager.isMaximized()) {
-                    var info = await getCurrentScreen();
-                    if (info != null) {
-                      await windowManager.setAsFrameless();
-                      await windowManager.setPosition(Offset.zero);
-                      await windowManager.setSize(
-                        Size(
-                          info.frame.width / info.scaleFactor,
-                          info.frame.height / info.scaleFactor,
-                        ),
-                      );
-                    }
+                    var info = (await screenRetriever.getPrimaryDisplay());
+                    await windowManager.setAsFrameless();
+                    await windowManager.setPosition(Offset.zero);
+                    await windowManager.setSize(
+                      Size(
+                        info.size.width,
+                        info.size.height,
+                      ),
+                    );
                   } else {
                     windowManager.setFullScreen(true);
                   }
 
                   if (!mounted) return;
-                  Navigator.push(
-                    context,
+                  Navigator.of(context, rootNavigator: true).push(
                     PageRouteBuilder(
                       pageBuilder: (context, animation1, animation2) =>
                           const FullscreenPlayPage(),

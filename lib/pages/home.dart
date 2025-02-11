@@ -61,6 +61,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _playerView = widget.playerView;
     _prePageIndex = _currentPageIndex = AppStorage().settings.initPage;
+    if (_playerView) _currentPageIndex = 4;
 
     HomePage.refresh = () => setState(() => _forceRebuild = true);
     HomePage.switchView = () => setState(
@@ -768,7 +769,6 @@ class _HomePageState extends State<HomePage> {
                           },
                         );
                         AppStorage().saveSettings();
-                        AppStorage().updateStatus();
                       },
                     ),
                     const SizedBox(
