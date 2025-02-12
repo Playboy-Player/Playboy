@@ -405,17 +405,15 @@ class PlayerPageState extends State<PlayerPage> {
               ),
               IconButton(
                 onPressed: () async {
+                  // https://github.com/leanflutter/window_manager/issues/456
                   if (Platform.isWindows &&
                       !await windowManager.isMaximized()) {
+                    AppStorage().windowPos = await windowManager.getPosition();
+                    AppStorage().windowSize = await windowManager.getSize();
                     var info = (await screenRetriever.getPrimaryDisplay());
                     await windowManager.setAsFrameless();
                     await windowManager.setPosition(Offset.zero);
-                    await windowManager.setSize(
-                      Size(
-                        info.size.width,
-                        info.size.height,
-                      ),
-                    );
+                    await windowManager.setSize(info.size);
                   } else {
                     windowManager.setFullScreen(true);
                   }

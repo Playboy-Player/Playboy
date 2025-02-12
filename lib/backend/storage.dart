@@ -66,6 +66,11 @@ class AppStorage extends ChangeNotifier {
   late final Player playboy;
   late final VideoController controller;
 
+  // save window location for current fullscreen implementation on windows
+  // https://github.com/leanflutter/window_manager/issues/456
+  late Offset windowPos;
+  late Size windowSize;
+
   String? playingCover;
   String playingTitle = 'Not Playing';
   List<PlaylistItem> playlists = [];

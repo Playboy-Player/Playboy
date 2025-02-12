@@ -146,10 +146,11 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
   }
 
   void _exitFullscreen() async {
+    // https://github.com/leanflutter/window_manager/issues/456
     if (Platform.isWindows && !await windowManager.isMaximized()) {
-      windowManager.setSize(const Size(900, 700));
+      windowManager.setSize(AppStorage().windowSize);
       windowManager.setTitleBarStyle(TitleBarStyle.hidden);
-      windowManager.center();
+      windowManager.setPosition(AppStorage().windowPos);
     } else {
       windowManager.setFullScreen(false);
     }
