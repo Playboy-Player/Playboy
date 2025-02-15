@@ -1,20 +1,21 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:media_kit_video/basic/basic_video_controller.dart';
 import 'package:path/path.dart' as p;
-import 'package:playboy/backend/keymap_helper.dart';
-import 'package:playboy/backend/utils/l10n_utils.dart';
-import 'package:playboy/pages/home.dart';
-import 'package:playboy/pages/media/player_menu.dart';
 import 'package:screen_retriever/screen_retriever.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:media_kit_video/media_kit_video.dart';
 
+import 'package:playboy/backend/keymap_helper.dart';
+import 'package:playboy/backend/utils/l10n_utils.dart';
+import 'package:playboy/pages/home.dart';
+import 'package:playboy/widgets/basic_video.dart';
+import 'package:playboy/pages/media/player_menu.dart';
+import 'package:playboy/pages/media/fullscreen_play_page.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/backend/utils/time_utils.dart';
-import 'package:playboy/pages/media/fullscreen_play_page.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
 import 'package:playboy/widgets/player_list.dart';
 
@@ -30,7 +31,7 @@ class PlayerPage extends StatefulWidget {
 }
 
 class PlayerPageState extends State<PlayerPage> {
-  VideoController controller = AppStorage().controller;
+  BasicVideoController controller = AppStorage().controller;
 
   bool _menuExpanded = false;
   // bool _videoMode = !AppStorage().settings.defaultMusicMode;
@@ -161,12 +162,12 @@ class PlayerPageState extends State<PlayerPage> {
         child: ColoredBox(
           color: Colors.black,
           child: Center(
-            child: Video(
+            child: BasicVideo(
               controller: controller,
-              controls: NoVideoControls,
-              subtitleViewConfiguration: const SubtitleViewConfiguration(
-                visible: false,
-              ),
+              // controls: NoVideoControls,
+              // subtitleViewConfiguration: const SubtitleViewConfiguration(
+              //   visible: false,
+              // ),
             ),
           ),
         ),
@@ -367,11 +368,26 @@ class PlayerPageState extends State<PlayerPage> {
         ),
         const IconButton(
           onPressed: null,
-          icon: Icon(Icons.keyboard_option_key_rounded),
-        ),
-        const IconButton(
-          onPressed: null,
           icon: Icon(Icons.slow_motion_video_rounded),
+        ),
+        IconButton(
+          onPressed: () {
+            if (!_menuExpanded) {
+              setState(() {
+                _menuExpanded = true;
+                _curPanel = 0;
+              });
+            } else if (_curPanel == 0) {
+              setState(() {
+                _menuExpanded = false;
+              });
+            } else {
+              setState(() {
+                _curPanel = 0;
+              });
+            }
+          },
+          icon: const Icon(Icons.description_outlined),
         ),
         Expanded(
           child: Row(
@@ -442,7 +458,7 @@ class PlayerPageState extends State<PlayerPage> {
     return ClipRRect(
       borderRadius: const BorderRadius.all(Radius.circular(25)),
       child: [
-        _buildOptionsPanel(colorScheme, backgroundColor),
+        _buildConfigurationsPanel(colorScheme, backgroundColor),
         _buildPlaylistPanel(colorScheme, backgroundColor),
       ][_curPanel],
     );
@@ -536,7 +552,8 @@ class PlayerPageState extends State<PlayerPage> {
     );
   }
 
-  Widget _buildOptionsPanel(ColorScheme colorScheme, Color backgroundColor) {
+  Widget _buildConfigurationsPanel(
+      ColorScheme colorScheme, Color backgroundColor) {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
@@ -545,7 +562,7 @@ class PlayerPageState extends State<PlayerPage> {
         toolbarHeight: 46,
         scrolledUnderElevation: 0,
         title: Text(
-          '视频选项',
+          '自定义配置',
           style: TextStyle(color: colorScheme.primary),
         ),
         actions: [
@@ -565,6 +582,19 @@ class PlayerPageState extends State<PlayerPage> {
           ),
         ],
       ),
+      // body: ListView(
+      //   children: [
+      //     ListTile(
+      //       title: const Text('show text'),
+      //       onTap: () {
+      //         AppStorage().playboy.command([
+      //           'show-text',
+      //           'hello',
+      //         ]);
+      //       },
+      //     ),
+      //   ],
+      // ),
     );
   }
 }

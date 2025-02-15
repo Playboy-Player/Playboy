@@ -3,7 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:media_kit_video/media_kit_video.dart';
+import 'package:media_kit_video/basic/basic_video_controller.dart';
+import 'package:media_kit_video/basic/basic_video_controller_configuration.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -63,8 +64,8 @@ class AppStorage extends ChangeNotifier {
   late Function() updateFilePage;
   late Function() updateVideoPage;
 
-  late final Player playboy;
-  late final VideoController controller;
+  late final NativePlayer playboy;
+  late final BasicVideoController controller;
 
   // save window location for current fullscreen implementation on windows
   // https://github.com/leanflutter/window_manager/issues/456
@@ -87,8 +88,30 @@ class AppStorage extends ChangeNotifier {
   factory AppStorage() => _instance;
   AppStorage._internal() {
     settings = AppSettings();
-    playboy = Player(configuration: const PlayerConfiguration(libass: true));
-    controller = VideoController(playboy);
+  }
+
+  Future<void> init() async {
+    dataPath = (await getApplicationSupportDirectory()).path;
+    await loadSettings();
+    bool needsUpdate = false;
+    if (settings.screenshotPath == '') {
+      settings.screenshotPath = '$dataPath/screenshots';
+      var dir = Directory(settings.screenshotPath);
+      if (!await dir.exists()) {
+        dir.create();
+      }
+      needsUpdate = true;
+    }
+    if (needsUpdate) {
+      await saveSettings();
+    }
+    playboy = NativePlayer(
+      configuration: const PlayerConfiguration(libass: true),
+      options: {
+        'config-dir': dataPath,
+        'config': 'yes',
+      },
+    );
     playboy.stream.position.listen((event) {
       position = event;
     });
@@ -114,23 +137,10 @@ class AppStorage extends ChangeNotifier {
       }
       notifyListeners();
     });
-  }
-
-  Future<void> init() async {
-    dataPath = (await getApplicationSupportDirectory()).path;
-    await loadSettings();
-    bool needsUpdate = false;
-    if (settings.screenshotPath == '') {
-      settings.screenshotPath = '$dataPath/screenshots';
-      var dir = Directory(settings.screenshotPath);
-      if (!await dir.exists()) {
-        dir.create();
-      }
-      needsUpdate = true;
-    }
-    if (needsUpdate) {
-      await saveSettings();
-    }
+    controller = await BasicVideoController.create(
+      playboy,
+      const BasicVideoControllerConfiguration(),
+    );
     playboy.setVolume(settings.volume);
     playboy.setRate(settings.speed);
   }

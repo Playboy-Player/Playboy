@@ -4,14 +4,15 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:window_manager/window_manager.dart';
+
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/time_utils.dart';
+import 'package:playboy/widgets/basic_video.dart';
 import 'package:playboy/pages/media/player_menu.dart';
 import 'package:playboy/pages/media/player_page.dart';
 import 'package:playboy/widgets/menu_button.dart';
-import 'package:window_manager/window_manager.dart';
-import 'package:media_kit_video/media_kit_video.dart';
 
 class FullscreenPlayPage extends StatefulWidget {
   const FullscreenPlayPage({super.key});
@@ -74,20 +75,23 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
             },
             cursor:
                 _isMouseHidden ? SystemMouseCursors.none : MouseCursor.defer,
-            child: Video(
-              controller: _controller,
-              controls: NoVideoControls,
-              subtitleViewConfiguration: const SubtitleViewConfiguration(
-                style: TextStyle(
-                  fontSize: 60,
-                  color: Colors.white,
-                  shadows: <Shadow>[
-                    Shadow(
-                      blurRadius: 8,
-                      color: Colors.black,
-                    ),
-                  ],
-                ),
+            child: Container(
+              alignment: Alignment.center,
+              child: BasicVideo(
+                controller: _controller,
+                // controls: NoVideoControls,
+                // subtitleViewConfiguration: const SubtitleViewConfiguration(
+                //   style: TextStyle(
+                //     fontSize: 60,
+                //     color: Colors.white,
+                //     shadows: <Shadow>[
+                //       Shadow(
+                //         blurRadius: 8,
+                //         color: Colors.black,
+                //       ),
+                //     ],
+                //   ),
+                // ),
               ),
             ),
           ),
