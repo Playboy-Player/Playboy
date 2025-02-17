@@ -1,11 +1,9 @@
-// import 'package:flutter/material.dart';
-
 import 'package:flutter/services.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/pages/media/fullscreen_play_page.dart';
 
 class KeyMapHelper {
-  static void handleKeyEvent(KeyEvent event) {
+  static bool handleKeyEvent(KeyEvent event) {
     if (event is KeyDownEvent) {
       final position = AppStorage().position;
       // final rate = AppStorage().playboy.state.rate;
@@ -19,5 +17,6 @@ class KeyMapHelper {
         FullscreenPlayPage.exitFullscreen?.call();
       }
     }
+    return false;
   }
 }

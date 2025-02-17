@@ -85,18 +85,19 @@ class SettingsPageState extends State<SettingsPage> {
         scrolledUnderElevation: 0,
         flexibleSpace: Column(
           children: [
-            SizedBox(
-              height: 8,
-              child: MouseRegion(
-                cursor: SystemMouseCursors.resizeUp,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onPanStart: (details) {
-                    windowManager.startResizing(ResizeEdge.top);
-                  },
+            if (!Platform.isMacOS)
+              SizedBox(
+                height: 8,
+                child: MouseRegion(
+                  cursor: SystemMouseCursors.resizeUp,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onPanStart: (details) {
+                      windowManager.startResizing(ResizeEdge.top);
+                    },
+                  ),
                 ),
               ),
-            ),
             Expanded(
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,

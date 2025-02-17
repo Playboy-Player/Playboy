@@ -222,18 +222,19 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: backgroundColor,
       flexibleSpace: Column(
         children: [
-          SizedBox(
-            height: 8,
-            child: MouseRegion(
-              cursor: SystemMouseCursors.resizeUp,
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onPanStart: (details) {
-                  windowManager.startResizing(ResizeEdge.top);
-                },
+          if (!Platform.isMacOS)
+            SizedBox(
+              height: 8,
+              child: MouseRegion(
+                cursor: SystemMouseCursors.resizeUp,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onPanStart: (details) {
+                    windowManager.startResizing(ResizeEdge.top);
+                  },
+                ),
               ),
             ),
-          ),
           Expanded(
             child: GestureDetector(
               behavior: HitTestBehavior.translucent,
@@ -539,9 +540,11 @@ class _HomePageState extends State<HomePage> {
                         // width: 120,
                         child: SliderTheme(
                           data: SliderThemeData(
-                            trackHeight: 2,
-                            thumbShape: const RoundSliderThumbShape(
-                                enabledThumbRadius: 6),
+                            year2023: false,
+                            trackHeight: 3,
+                            thumbSize:
+                                const WidgetStatePropertyAll(Size(4, 14)),
+                            // thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
                             overlayShape: SliderComponentShape.noOverlay,
                             thumbColor: colorScheme.primaryContainer,
                             activeTrackColor: colorScheme.primaryContainer,
@@ -920,12 +923,13 @@ class _HomePageState extends State<HomePage> {
               // width: 120,
               child: SliderTheme(
                 data: SliderThemeData(
-                  trackHeight: 2,
-                  thumbShape:
-                      const RoundSliderThumbShape(enabledThumbRadius: 6),
-                  overlayShape: SliderComponentShape.noOverlay,
                   thumbColor: colorScheme.primaryContainer,
                   activeTrackColor: colorScheme.primaryContainer,
+                  year2023: false,
+                  trackHeight: 4,
+                  thumbSize: const WidgetStatePropertyAll(Size(4, 12)),
+                  // thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+                  overlayShape: SliderComponentShape.noOverlay,
                 ),
                 child: StreamBuilder(
                   stream: AppStorage().playboy.stream.position,

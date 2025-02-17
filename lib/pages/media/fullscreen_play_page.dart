@@ -11,7 +11,6 @@ import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/time_utils.dart';
 import 'package:playboy/widgets/basic_video.dart';
 import 'package:playboy/pages/media/player_menu.dart';
-import 'package:playboy/pages/media/player_page.dart';
 import 'package:playboy/widgets/menu_button.dart';
 
 class FullscreenPlayPage extends StatefulWidget {
@@ -60,7 +59,6 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
 
   @override
   Widget build(BuildContext context) {
-    PlayerPage.fn!.requestFocus();
     late final colorScheme = Theme.of(context).colorScheme;
     late final backgroundColor = Color.alphaBlend(
       colorScheme.primary.withValues(alpha: 0.08),
@@ -75,24 +73,16 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
             },
             cursor:
                 _isMouseHidden ? SystemMouseCursors.none : MouseCursor.defer,
-            child: Container(
-              alignment: Alignment.center,
-              child: BasicVideo(
-                controller: _controller,
-                // controls: NoVideoControls,
-                // subtitleViewConfiguration: const SubtitleViewConfiguration(
-                //   style: TextStyle(
-                //     fontSize: 60,
-                //     color: Colors.white,
-                //     shadows: <Shadow>[
-                //       Shadow(
-                //         blurRadius: 8,
-                //         color: Colors.black,
-                //       ),
-                //     ],
-                //   ),
-                // ),
-              ),
+            child: Stack(
+              children: [
+                const ColoredBox(
+                  color: Colors.black,
+                  child: SizedBox.expand(),
+                ),
+                SizedBox.expand(
+                  child: BasicVideo(controller: _controller),
+                ),
+              ],
             ),
           ),
           Align(

@@ -1,7 +1,7 @@
 # Playboy Player
 中文 | [English](./README_en.md)  
 
-Material 3 风格的跨平台媒体播放器.
+基于 libmpv 的 Material 3 风格跨平台媒体播放器.
 
 [![build](https://img.shields.io/github/actions/workflow/status/Playboy-Player/Playboy/build.yml?style=for-the-badge)](https://github.com/Playboy-Player/Playboy/actions) 
 [![release](https://img.shields.io/badge/beta-2025.2-blue?style=for-the-badge)](https://github.com/Playboy-Player/Playboy/releases) [![roadmap](https://img.shields.io/badge/roadmap-grey?style=for-the-badge)](https://github.com/orgs/Playboy-Player/projects/3)
@@ -44,35 +44,28 @@ Material 3 风格的跨平台媒体播放器.
 
 ## 功能
 
-- [x] 主题颜色设置 & 深色模式支持
+- [x] 自定义主题 & 深色模式
 - [x] 播放本地和网络媒体
 - [x] 迷你播放器模式 (Windows & macOS)
 - [x] 设置为系统打开方式 (Windows)
 - [x] 播放列表功能 (随机播放, 单曲循环)
 - [x] 任意倍速调节
 - [x] 搜索媒体文件和播放列表
-- [x] 播放局域网文件
 - [x] 多语言支持
-- [ ] 字幕
+- [ ] 字幕 (libass)
+- [ ] 着色器支持, 如 [Anime4K](https://github.com/bloc97/Anime4K)
+- [ ] 自定义快捷键映射
+- [ ] 自定义 mpv 初始化参数 & 命令
 
 ## For Developers
 
-首先, 根据 [官方教程](https://docs.flutter.dev/get-started/install/) 配置 flutter 环境. 请使用不低于 **3.27.2** 的 flutter 版本.
+首先, 根据 [官方教程](https://docs.flutter.dev/get-started/install/) 配置 flutter 环境. 请使用不低于 **3.29.0** 的 flutter 版本.
+
+终端进入项目根目录, 运行 `flutter pub get` 以获取依赖项.
 
 ### Windows
 
-flutter doctor 输出内容示例:
-
-```
-Doctor summary (to see all details, run flutter doctor -v):
-[✓] Flutter (Channel stable, 3.27.3, on Microsoft Windows [版本 10.0.22631.4751], locale zh-CN)
-[✓] Windows Version (Installed version of Windows is version 10 or higher)
-[✓] Visual Studio - develop Windows apps (Visual Studio 生成工具 2022 17.11.1)
-[✓] Connected device (3 available)
-[✓] Network resources
-```
-
-在项目文件夹下运行 `flutter build windows` 以生成 Windows 可执行程序
+运行 `flutter build windows` 以生成 Windows 可执行程序
 
 ### Linux
 
@@ -80,40 +73,15 @@ Doctor summary (to see all details, run flutter doctor -v):
 
 配置完 flutter 后, 请通过系统包管理器或其他途径安装 `libmpv-dev`.
 
-在项目文件夹下运行 `flutter build linux` 以生成 Linux 可执行程序
+运行 `flutter build linux` 以生成 Linux 可执行程序
 
 ### macOS
 
-flutter doctor 输出内容示例:
-
-```
-Doctor summary (to see all details, run flutter doctor -v):
-[✓] Flutter (Channel stable, 3.27.2, on macOS 15.2 24C101 darwin-arm64, locale
-    zh-Hans-CN)
-[!] Xcode - develop for iOS and macOS (Xcode 16.2)
-    ✗ Unable to get list of installed Simulator runtimes.
-[✓] VS Code (version 1.96.4)
-[✓] Connected device (3 available)
-[✓] Network resources
-```
-在项目文件夹下运行 `flutter build macos` 以生成 macOS 可执行程序  
+运行 `flutter build macos` 以生成 macOS 可执行程序  
 
 ### android
 
 > 请在平板设备上运行.
-
-flutter doctor 输出内容示例:
-
-```
-Doctor summary (to see all details, run flutter doctor -v):
-[✓] Flutter (Channel stable, 3.27.2, on macOS 15.3 24D60 darwin-arm64, locale
-    zh-Hans-CN)
-[✓] Android toolchain - develop for Android devices (Android SDK version 35.0.1)
-[✓] Android Studio (version 2024.2)
-[✓] VS Code (version 1.96.4)
-[✓] Connected device (3 available)
-[✓] Network resources
-```
 
 运行 `flutter build apk` 以生成 apk 安装包文件
 

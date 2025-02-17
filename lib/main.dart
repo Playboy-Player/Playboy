@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:playboy/backend/keymap_helper.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:macos_window_utils/macos_window_utils.dart';
@@ -59,6 +61,8 @@ void main(List<String> arguments) async {
   //     ),
   //   );
   // }
+
+  ServicesBinding.instance.keyboard.addHandler(KeyMapHelper.handleKeyEvent);
 
   if (arguments.isNotEmpty) {
     String mediaToOpen = arguments[0];

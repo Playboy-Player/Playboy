@@ -7,7 +7,6 @@ import 'package:screen_retriever/screen_retriever.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:media_kit/media_kit.dart';
 
-import 'package:playboy/backend/keymap_helper.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/pages/home.dart';
 import 'package:playboy/widgets/basic_video.dart';
@@ -24,8 +23,6 @@ class PlayerPage extends StatefulWidget {
     super.key,
   });
 
-  static FocusNode? fn;
-
   @override
   PlayerPageState createState() => PlayerPageState();
 }
@@ -40,7 +37,6 @@ class PlayerPageState extends State<PlayerPage> {
   @override
   void initState() {
     super.initState();
-    PlayerPage.fn = FocusNode();
   }
 
   @override
@@ -49,7 +45,6 @@ class PlayerPageState extends State<PlayerPage> {
       AppStorage().closeMedia();
     }
     super.dispose();
-    PlayerPage.fn!.requestFocus();
   }
 
   @override
@@ -59,94 +54,87 @@ class PlayerPageState extends State<PlayerPage> {
       colorScheme.primary.withValues(alpha: 0.04),
       colorScheme.surface,
     );
-    // _focusNode.requestFocus();
-    PlayerPage.fn!.requestFocus();
-    return KeyboardListener(
-      autofocus: true,
-      focusNode: PlayerPage.fn!,
-      onKeyEvent: KeyMapHelper.handleKeyEvent,
-      child: Scaffold(
-        backgroundColor: backgroundColor,
-        body: Column(
-          children: [
-            Expanded(
-              child: Row(
-                children: [
-                  Expanded(
-                    // flex: 3,
-                    child: Container(
-                      // padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: _buildPlayer(colorScheme),
-                    ),
+    return Scaffold(
+      backgroundColor: backgroundColor,
+      body: Column(
+        children: [
+          Expanded(
+            child: Row(
+              children: [
+                Expanded(
+                  // flex: 3,
+                  child: Container(
+                    // padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: _buildPlayer(colorScheme),
                   ),
-                  _menuExpanded
-                      ? Padding(
-                          // flex: 2,
-                          padding: const EdgeInsets.only(left: 10),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 100),
-                            width: 300,
-                            child: _buildSidePanel(
-                              colorScheme,
-                              backgroundColor,
-                            ),
+                ),
+                _menuExpanded
+                    ? Padding(
+                        // flex: 2,
+                        padding: const EdgeInsets.only(left: 10),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 100),
+                          width: 300,
+                          child: _buildSidePanel(
+                            colorScheme,
+                            backgroundColor,
                           ),
-                        )
-                      : const SizedBox(),
-                ],
-              ),
+                        ),
+                      )
+                    : const SizedBox(),
+              ],
             ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width - 40,
-              height: 25,
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 60,
-                    child: StreamBuilder(
-                      stream: AppStorage().playboy.stream.position,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return Text(
-                            getProgressString(snapshot.data!),
-                          );
-                        } else {
-                          return Text(
-                            getProgressString(AppStorage().position),
-                          );
-                        }
-                      },
-                    ),
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width - 40,
+            height: 25,
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 60,
+                  child: StreamBuilder(
+                    stream: AppStorage().playboy.stream.position,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Text(
+                          getProgressString(snapshot.data!),
+                        );
+                      } else {
+                        return Text(
+                          getProgressString(AppStorage().position),
+                        );
+                      }
+                    },
                   ),
-                  Expanded(child: _buildSeekbar()),
-                  Container(
-                    alignment: Alignment.centerRight,
-                    width: 60,
-                    child: StreamBuilder(
-                      stream: AppStorage().playboy.stream.duration,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return Text(
-                            getProgressString(snapshot.data!),
-                          );
-                        } else {
-                          return Text(
-                            getProgressString(AppStorage().duration),
-                          );
-                        }
-                      },
-                    ),
-                  )
-                ],
-              ),
+                ),
+                Expanded(child: _buildSeekbar()),
+                Container(
+                  alignment: Alignment.centerRight,
+                  width: 60,
+                  child: StreamBuilder(
+                    stream: AppStorage().playboy.stream.duration,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Text(
+                          getProgressString(snapshot.data!),
+                        );
+                      } else {
+                        return Text(
+                          getProgressString(AppStorage().duration),
+                        );
+                      }
+                    },
+                  ),
+                )
+              ],
             ),
-            SizedBox(
-              height: 50,
-              child: _buildControlbar(colorScheme),
-            ),
-            const SizedBox(height: 10)
-          ],
-        ),
+          ),
+          SizedBox(
+            height: 50,
+            child: _buildControlbar(colorScheme),
+          ),
+          const SizedBox(height: 10)
+        ],
       ),
     );
   }
@@ -159,17 +147,16 @@ class PlayerPageState extends State<PlayerPage> {
       borderRadius: 25,
       child: ClipRRect(
         borderRadius: const BorderRadius.all(Radius.circular(25)),
-        child: ColoredBox(
-          color: Colors.black,
-          child: Center(
-            child: BasicVideo(
-              controller: controller,
-              // controls: NoVideoControls,
-              // subtitleViewConfiguration: const SubtitleViewConfiguration(
-              //   visible: false,
-              // ),
+        child: Stack(
+          children: [
+            const ColoredBox(
+              color: Colors.black,
+              child: SizedBox.expand(),
             ),
-          ),
+            SizedBox.expand(
+              child: BasicVideo(controller: controller),
+            ),
+          ],
         ),
       ),
     );
@@ -178,8 +165,9 @@ class PlayerPageState extends State<PlayerPage> {
   Widget _buildSeekbar() {
     return SliderTheme(
       data: SliderThemeData(
-        trackHeight: 2,
-        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+        year2023: false,
+        trackHeight: 4,
+        thumbSize: const WidgetStatePropertyAll(Size(4, 12)),
         overlayShape: SliderComponentShape.noOverlay,
       ),
       child: StreamBuilder(
@@ -242,19 +230,19 @@ class PlayerPageState extends State<PlayerPage> {
                 },
                 icon: Icon(
                   AppStorage().playboy.state.volume == 0
-                      ? Icons.volume_off
-                      : Icons.volume_up,
+                      ? Icons.volume_off_rounded
+                      : Icons.volume_up_rounded,
                 ),
               ),
               SizedBox(
                 width: 100,
                 child: SliderTheme(
                   data: SliderThemeData(
+                    year2023: false,
                     activeTrackColor: colorScheme.secondaryContainer,
                     thumbColor: colorScheme.secondary,
-                    trackHeight: 2,
-                    thumbShape:
-                        const RoundSliderThumbShape(enabledThumbRadius: 6),
+                    trackHeight: 4,
+                    thumbSize: const WidgetStatePropertyAll(Size(4, 12)),
                     overlayShape: SliderComponentShape.noOverlay,
                   ),
                   child: Slider(
@@ -372,20 +360,7 @@ class PlayerPageState extends State<PlayerPage> {
         ),
         IconButton(
           onPressed: () {
-            if (!_menuExpanded) {
-              setState(() {
-                _menuExpanded = true;
-                _curPanel = 0;
-              });
-            } else if (_curPanel == 0) {
-              setState(() {
-                _menuExpanded = false;
-              });
-            } else {
-              setState(() {
-                _curPanel = 0;
-              });
-            }
+            _handlePanelSelection(0);
           },
           icon: const Icon(Icons.description_outlined),
         ),
@@ -403,20 +378,7 @@ class PlayerPageState extends State<PlayerPage> {
                   weight: 550,
                 ),
                 onPressed: () {
-                  if (!_menuExpanded) {
-                    setState(() {
-                      _menuExpanded = true;
-                      _curPanel = 1;
-                    });
-                  } else if (_curPanel == 1) {
-                    setState(() {
-                      _menuExpanded = false;
-                    });
-                  } else {
-                    setState(() {
-                      _curPanel = 1;
-                    });
-                  }
+                  _handlePanelSelection(1);
                 },
               ),
               IconButton(
@@ -452,6 +414,23 @@ class PlayerPageState extends State<PlayerPage> {
         ),
       ],
     );
+  }
+
+  void _handlePanelSelection(int id) {
+    if (!_menuExpanded) {
+      setState(() {
+        _menuExpanded = true;
+        _curPanel = id;
+      });
+    } else if (_curPanel == id) {
+      setState(() {
+        _menuExpanded = false;
+      });
+    } else {
+      setState(() {
+        _curPanel = id;
+      });
+    }
   }
 
   Widget _buildSidePanel(ColorScheme colorScheme, Color backgroundColor) {
@@ -553,7 +532,9 @@ class PlayerPageState extends State<PlayerPage> {
   }
 
   Widget _buildConfigurationsPanel(
-      ColorScheme colorScheme, Color backgroundColor) {
+    ColorScheme colorScheme,
+    Color backgroundColor,
+  ) {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
@@ -562,7 +543,7 @@ class PlayerPageState extends State<PlayerPage> {
         toolbarHeight: 46,
         scrolledUnderElevation: 0,
         title: Text(
-          '自定义配置',
+          '配置',
           style: TextStyle(color: colorScheme.primary),
         ),
         actions: [

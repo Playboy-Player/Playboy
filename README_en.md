@@ -1,7 +1,7 @@
 # Playboy Player
 [中文](./README.md) | English  
 
-A cross-platform media player with Material 3 design.
+A `libmpv` based media player with Material 3 design.
 
 [![build](https://img.shields.io/github/actions/workflow/status/Playboy-Player/Playboy/build.yml?style=for-the-badge)](https://github.com/Playboy-Player/Playboy/actions) 
 [![release](https://img.shields.io/badge/beta-2025.2-blue?style=for-the-badge)](https://github.com/Playboy-Player/Playboy/releases) [![roadmap](https://img.shields.io/badge/roadmap-grey?style=for-the-badge)](https://github.com/orgs/Playboy-Player/projects/3)
@@ -44,33 +44,24 @@ A cross-platform media player with Material 3 design.
 
 ## Features
 
-- [x] Theme color settings & Dark mode support
+- [x] Custom theme & dark mode
 - [x] Play local and online media
 - [x] Mini player mode (Windows & macOS)
-- [x] Set as default system player (Windows)
-- [x] Playlist features (Shuffle, Repeat)
+- [x] Set as system default player (Windows)
+- [x] Playlist features (shuffle, repeat one)
 - [x] Adjustable playback speed
 - [x] Search media files and playlists
-- [x] Play files over LAN
 - [x] Multi-language support
-- [ ] subtitles
+- [ ] Subtitles (libass)
+- [ ] Shaders support, such as [Anime4K](https://github.com/bloc97/Anime4K)
+- [ ] Customizable hotkey mapping
+- [ ] Custom mpv options & commands
 
 ## For Developers
 
-First, set up the Flutter environment according to the [official guide](https://docs.flutter.dev/get-started/install/). Please use Flutter version **3.27.2** or higher.
+First, set up the Flutter environment according to the [official guide](https://docs.flutter.dev/get-started/install/). Please use Flutter version **3.29.0** or higher.
 
 ### Windows
-
-Example output of `flutter doctor`:
-
-```
-Doctor summary (to see all details, run flutter doctor -v):
-[✓] Flutter (Channel stable, 3.27.3, on Microsoft Windows [Version 10.0.22631.4751], locale zh-CN)
-[✓] Windows Version (Installed version of Windows is version 10 or higher)
-[✓] Visual Studio - develop Windows apps (Visual Studio Build Tools 2022 17.11.1)
-[✓] Connected device (3 available)
-[✓] Network resources
-```
 
 Run `flutter build windows` in the project directory to generate the Windows executable.
 
@@ -84,37 +75,11 @@ Run `flutter build linux` in the project directory to generate the Linux executa
 
 ### macOS
 
-Example output of `flutter doctor`:
-
-```
-Doctor summary (to see all details, run flutter doctor -v):
-[✓] Flutter (Channel stable, 3.27.2, on macOS 15.2 24C101 darwin-arm64, locale
-    zh-Hans-CN)
-[!] Xcode - develop for iOS and macOS (Xcode 16.2)
-    ✗ Unable to get list of installed Simulator runtimes.
-[✓] VS Code (version 1.96.4)
-[✓] Connected device (3 available)
-[✓] Network resources
-```
-
 Run `flutter build macos` in the project directory to generate the macOS executable.
 
 ### Android
 
 > Please run on tablet devices.
-
-Example output of `flutter doctor`:
-
-```
-Doctor summary (to see all details, run flutter doctor -v):
-[✓] Flutter (Channel stable, 3.27.2, on macOS 15.3 24D60 darwin-arm64, locale
-    zh-Hans-CN)
-[✓] Android toolchain - develop for Android devices (Android SDK version 35.0.1)
-[✓] Android Studio (version 2024.2)
-[✓] VS Code (version 1.96.4)
-[✓] Connected device (3 available)
-[✓] Network resources
-```
 
 Run `flutter build apk` to generate the APK installation file.
 
