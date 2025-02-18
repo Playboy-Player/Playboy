@@ -266,15 +266,6 @@ class PlayerPageState extends State<PlayerPage> {
         ),
         IconButton(
           onPressed: () {
-            AppStorage().closeMedia().then((_) {
-              setState(() {});
-            });
-            HomePage.switchView?.call();
-          },
-          icon: const Icon(Icons.stop_circle_outlined),
-        ),
-        IconButton(
-          onPressed: () {
             setState(() {
               AppStorage().shuffle = !AppStorage().shuffle;
               AppStorage().playboy.setShuffle(AppStorage().shuffle);
@@ -350,27 +341,29 @@ class PlayerPageState extends State<PlayerPage> {
         const SizedBox(
           width: 10,
         ),
-        const IconButton(
-          onPressed: null,
-          icon: Icon(Icons.bookmark_border_rounded),
-        ),
-        const IconButton(
-          onPressed: null,
-          icon: Icon(Icons.slow_motion_video_rounded),
-        ),
         IconButton(
           onPressed: () {
             _handlePanelSelection(0);
           },
-          icon: const Icon(Icons.description_outlined),
+          icon: const Icon(Icons.slow_motion_video_rounded),
+        ),
+        IconButton(
+          onPressed: () {
+            AppStorage().closeMedia().then((_) {
+              setState(() {});
+            });
+          },
+          icon: const Icon(Icons.stop_circle_outlined),
         ),
         Expanded(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              const IconButton(
-                onPressed: null,
-                icon: Icon(Icons.alarm),
+              IconButton(
+                onPressed: () {
+                  _handlePanelSelection(2);
+                },
+                icon: const Icon(Icons.description_outlined),
               ),
               IconButton(
                 icon: const Icon(
@@ -439,6 +432,7 @@ class PlayerPageState extends State<PlayerPage> {
       child: [
         _buildConfigurationsPanel(colorScheme, backgroundColor),
         _buildPlaylistPanel(colorScheme, backgroundColor),
+        _buildShortcutsPanel(colorScheme, backgroundColor),
       ][_curPanel],
     );
   }
@@ -543,7 +537,42 @@ class PlayerPageState extends State<PlayerPage> {
         toolbarHeight: 46,
         scrolledUnderElevation: 0,
         title: Text(
-          '配置',
+          '视频选项',
+          style: TextStyle(color: colorScheme.primary),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _menuExpanded = false;
+              });
+            },
+            icon: Icon(
+              Icons.close,
+              color: colorScheme.primary,
+            ),
+          ),
+          const SizedBox(
+            width: 4,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShortcutsPanel(
+    ColorScheme colorScheme,
+    Color backgroundColor,
+  ) {
+    return Scaffold(
+      backgroundColor: colorScheme.surface,
+      appBar: AppBar(
+        backgroundColor: colorScheme.surface,
+        automaticallyImplyLeading: false,
+        toolbarHeight: 46,
+        scrolledUnderElevation: 0,
+        title: Text(
+          '快捷指令',
           style: TextStyle(color: colorScheme.primary),
         ),
         actions: [

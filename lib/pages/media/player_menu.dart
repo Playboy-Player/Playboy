@@ -10,6 +10,8 @@ import 'package:playboy/widgets/menu_item.dart';
 List<Widget> buildPlayerMenu() {
   return [
     const SizedBox(height: 10),
+    MMenuItem(icon: Icons.location_on, label: '跳转'.l10n, onPressed: null),
+    MMenuItem(icon: Icons.flash_on, label: '设置播放速度'.l10n, onPressed: null),
     MMenuItem(
       icon: Icons.cut,
       label: '截图'.l10n,
@@ -39,7 +41,23 @@ List<Widget> buildPlayerMenu() {
         AppStorage().updateStatus();
       },
     ),
-    MMenuItem(icon: Icons.flash_on, label: '设置播放速度'.l10n, onPressed: null),
+    MMenuItem(icon: Icons.terminal, label: '自定义命令'.l10n, onPressed: null),
+    const Divider(),
+    MMenuItem(
+      icon: Icons.file_open_outlined,
+      label: '打开文件'.l10n,
+      onPressed: null,
+    ),
+    MMenuItem(
+      icon: Icons.folder_open,
+      label: '打开文件夹'.l10n,
+      onPressed: null,
+    ),
+    MMenuItem(
+      icon: Icons.link,
+      label: '打开URL'.l10n,
+      onPressed: null,
+    ),
     const Divider(),
     MMenuItem(icon: Icons.info_outline, label: '属性'.l10n, onPressed: null),
     const SizedBox(height: 10),

@@ -31,7 +31,7 @@ class _LibraryPageState extends State<LibraryPage> {
   final List<PlayItem> _playitems = [];
   bool _loaded = false;
   bool _gridview = true;
-  bool _videoview = true;
+  final bool _videoview = true;
 
   @override
   void initState() {
@@ -86,19 +86,19 @@ class _LibraryPageState extends State<LibraryPage> {
       colorScheme.surface,
     );
     return [
-      IconButton(
-        tooltip: '切换显示样式'.l10n,
-        hoverColor: backgroundColor,
-        onPressed: () async {
-          setState(() {
-            _videoview = !_videoview;
-          });
-        },
-        icon: Icon(
-          _videoview ? Icons.movie_outlined : Icons.music_note,
-          color: colorScheme.onPrimaryContainer,
-        ),
-      ),
+      // IconButton(
+      //   tooltip: '切换显示样式'.l10n,
+      //   hoverColor: backgroundColor,
+      //   onPressed: () async {
+      //     setState(() {
+      //       _videoview = !_videoview;
+      //     });
+      //   },
+      //   icon: Icon(
+      //     _videoview ? Icons.movie_outlined : Icons.music_note,
+      //     color: colorScheme.onPrimaryContainer,
+      //   ),
+      // ),
       IconButton(
         tooltip: '切换显示视图'.l10n,
         hoverColor: backgroundColor,

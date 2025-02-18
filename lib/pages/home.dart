@@ -288,9 +288,7 @@ class _HomePageState extends State<HomePage> {
                       builder: (context, snapshot) {
                         return Text(
                           AppStorage().playingTitle,
-                          style: const TextStyle(
-                            fontSize: 18,
-                          ),
+                          style: const TextStyle(fontSize: 16),
                         );
                       },
                     )
@@ -333,9 +331,7 @@ class _HomePageState extends State<HomePage> {
             _miniMode = !_miniMode;
           });
         },
-        icon: const Icon(
-          Icons.headset_outlined,
-        ),
+        icon: const Icon(Icons.music_note_outlined),
       ),
       if (Platform.isMacOS)
         IconButton(
@@ -350,16 +346,18 @@ class _HomePageState extends State<HomePage> {
       if (!Platform.isMacOS)
         IconButton(
           hoverColor: Colors.transparent,
-          iconSize: 20,
+          padding: EdgeInsets.zero,
+          iconSize: 26,
           onPressed: () {
             windowManager.minimize();
           },
-          icon: const Icon(Icons.minimize),
+          icon: const Icon(Icons.keyboard_arrow_down),
         ),
       if (!Platform.isMacOS)
         IconButton(
           hoverColor: Colors.transparent,
-          iconSize: 20,
+          padding: EdgeInsets.zero,
+          iconSize: 26,
           onPressed: () async {
             if (await windowManager.isMaximized()) {
               windowManager.unmaximize();
@@ -367,11 +365,12 @@ class _HomePageState extends State<HomePage> {
               windowManager.maximize();
             }
           },
-          icon: const Icon(Icons.crop_square),
+          icon: const Icon(Icons.keyboard_arrow_up),
         ),
       if (!Platform.isMacOS)
         IconButton(
           hoverColor: Colors.transparent,
+          padding: EdgeInsets.zero,
           iconSize: 20,
           onPressed: () {
             windowManager.close();

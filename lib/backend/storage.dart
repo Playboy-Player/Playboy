@@ -106,7 +106,6 @@ class AppStorage extends ChangeNotifier {
       await saveSettings();
     }
     playboy = NativePlayer(
-      configuration: const PlayerConfiguration(libass: true),
       options: {
         'config-dir': dataPath,
         'config': 'yes',

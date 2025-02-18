@@ -32,8 +32,9 @@ class DeveloperSettingsState extends State<DeveloperSettings> {
             tileColor: AppStorage().settings.enableDevSettings
                 ? colorScheme.primaryContainer
                 : colorScheme.primaryContainer.withValues(alpha: 0.2),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             title: Container(
               alignment: Alignment.centerLeft,
               height: 40,
@@ -45,17 +46,6 @@ class DeveloperSettingsState extends State<DeveloperSettings> {
                 AppStorage().settings.enableDevSettings = value;
               });
               AppStorage().saveSettings();
-            },
-          ),
-          SwitchListTile(
-            title: const Text('Enable Tablet UI'),
-            value: AppStorage().settings.tabletUI,
-            onChanged: (bool value) {
-              setState(() {
-                AppStorage().settings.tabletUI = value;
-              });
-              AppStorage().saveSettings();
-              // AppStorage().updateStatus();
             },
           ),
           SwitchListTile(
