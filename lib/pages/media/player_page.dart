@@ -1,17 +1,17 @@
 import 'dart:async';
-import 'dart:io';
+// import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:media_kit_video/basic/basic_video_controller.dart';
 import 'package:path/path.dart' as p;
-import 'package:screen_retriever/screen_retriever.dart';
-import 'package:window_manager/window_manager.dart';
+// import 'package:screen_retriever/screen_retriever.dart';
+// import 'package:window_manager/window_manager.dart';
 import 'package:media_kit/media_kit.dart';
 
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/widgets/basic_video.dart';
 import 'package:playboy/pages/media/player_menu.dart';
-import 'package:playboy/pages/media/fullscreen_play_page.dart';
+// import 'package:playboy/pages/media/fullscreen_play_page.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/storage.dart';
 import 'package:playboy/backend/utils/time_utils.dart';
@@ -21,7 +21,10 @@ import 'package:playboy/widgets/player_list.dart';
 class PlayerPage extends StatefulWidget {
   const PlayerPage({
     super.key,
+    required this.fullscreen,
   });
+
+  final bool fullscreen;
 
   @override
   PlayerPageState createState() => PlayerPageState();
@@ -87,7 +90,9 @@ class PlayerPageState extends State<PlayerPage> {
                 ),
                 _menuExpanded
                     ? Container(
-                        padding: const EdgeInsets.only(left: 10),
+                        padding: widget.fullscreen
+                            ? null
+                            : const EdgeInsets.only(left: 10),
                         width: 300,
                         child: _buildSidePanel(
                           colorScheme,
@@ -108,11 +113,12 @@ class PlayerPageState extends State<PlayerPage> {
   List<Widget> _buildButtomBar(BuildContext context, ColorScheme colorScheme) {
     return [
       SizedBox(
-        width: MediaQuery.of(context).size.width - 40,
+        width: MediaQuery.of(context).size.width - 20,
         height: 25,
         child: Row(
           children: [
-            SizedBox(
+            Container(
+              alignment: Alignment.center,
               width: 60,
               child: StreamBuilder(
                 stream: AppStorage().playboy.stream.position,
@@ -131,7 +137,7 @@ class PlayerPageState extends State<PlayerPage> {
             ),
             Expanded(child: _buildSeekbar()),
             Container(
-              alignment: Alignment.centerRight,
+              alignment: Alignment.center,
               width: 60,
               child: StreamBuilder(
                 stream: AppStorage().playboy.stream.duration,
@@ -165,7 +171,9 @@ class PlayerPageState extends State<PlayerPage> {
       onTap: null,
       borderRadius: 18,
       child: ClipRRect(
-        borderRadius: const BorderRadius.all(Radius.circular(18)),
+        borderRadius: BorderRadius.all(
+          Radius.circular(widget.fullscreen ? 0 : 18),
+        ),
         child: MouseRegion(
           onHover: (_) {
             _resetCursorHideTimer();
@@ -398,42 +406,42 @@ class PlayerPageState extends State<PlayerPage> {
           },
           icon: const Icon(Icons.description_outlined),
         ),
-        Expanded(
+        const Expanded(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              const IconButton(
+              IconButton(
                 onPressed: null,
                 icon: Icon(Icons.alarm),
               ),
-              IconButton(
-                onPressed: () async {
-                  // https://github.com/leanflutter/window_manager/issues/456
-                  if (Platform.isWindows &&
-                      !await windowManager.isMaximized()) {
-                    AppStorage().windowPos = await windowManager.getPosition();
-                    AppStorage().windowSize = await windowManager.getSize();
-                    var info = (await screenRetriever.getPrimaryDisplay());
-                    await windowManager.setAsFrameless();
-                    await windowManager.setPosition(Offset.zero);
-                    await windowManager.setSize(info.size);
-                  } else {
-                    windowManager.setFullScreen(true);
-                  }
+              // IconButton(
+              //   onPressed: () async {
+              //     // https://github.com/leanflutter/window_manager/issues/456
+              //     if (Platform.isWindows &&
+              //         !await windowManager.isMaximized()) {
+              //       AppStorage().windowPos = await windowManager.getPosition();
+              //       AppStorage().windowSize = await windowManager.getSize();
+              //       var info = (await screenRetriever.getPrimaryDisplay());
+              //       await windowManager.setAsFrameless();
+              //       await windowManager.setPosition(Offset.zero);
+              //       await windowManager.setSize(info.size);
+              //     } else {
+              //       windowManager.setFullScreen(true);
+              //     }
 
-                  if (!mounted) return;
-                  Navigator.of(context, rootNavigator: true).push(
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation1, animation2) =>
-                          const FullscreenPlayPage(),
-                      transitionDuration: Duration.zero,
-                      reverseTransitionDuration: Duration.zero,
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.open_in_full_rounded),
-              ),
-              const SizedBox(width: 6),
+              //     if (!mounted) return;
+              //     Navigator.of(context, rootNavigator: true).push(
+              //       PageRouteBuilder(
+              //         pageBuilder: (context, animation1, animation2) =>
+              //             const FullscreenPlayPage(),
+              //         transitionDuration: Duration.zero,
+              //         reverseTransitionDuration: Duration.zero,
+              //       ),
+              //     );
+              //   },
+              //   icon: const Icon(Icons.open_in_full_rounded),
+              // ),
+              SizedBox(width: 6),
             ],
           ),
         ),
@@ -460,7 +468,9 @@ class PlayerPageState extends State<PlayerPage> {
 
   Widget _buildSidePanel(ColorScheme colorScheme, Color backgroundColor) {
     return ClipRRect(
-      borderRadius: const BorderRadius.all(Radius.circular(18)),
+      borderRadius: BorderRadius.all(
+        Radius.circular(widget.fullscreen ? 0 : 18),
+      ),
       child: [
         _buildConfigurationsPanel(colorScheme, backgroundColor),
         _buildPlaylistPanel(colorScheme, backgroundColor),

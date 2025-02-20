@@ -178,7 +178,7 @@ class AppStorage extends ChangeNotifier {
 
   void openMedia(PlayItem media) {
     if (!settings.rememberStatus) {
-      resetPlayerStatus();
+      _resetPlayerStatus();
     }
     duration = Duration.zero;
     position = Duration.zero;
@@ -196,7 +196,7 @@ class AppStorage extends ChangeNotifier {
       return;
     }
     if (!settings.rememberStatus) {
-      resetPlayerStatus();
+      _resetPlayerStatus();
     }
     duration = Duration.zero;
     position = Duration.zero;
@@ -218,7 +218,7 @@ class AppStorage extends ChangeNotifier {
     shuffle = shuffleList;
   }
 
-  void resetPlayerStatus() {
+  void _resetPlayerStatus() {
     playboy.setVolume(settings.defaultVolume);
     playboy.setRate(settings.defaultSpeed);
   }

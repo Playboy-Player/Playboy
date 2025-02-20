@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:screen_retriever/screen_retriever.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'package:playboy/backend/constants.dart';
@@ -48,6 +49,9 @@ class _HomePageState extends State<HomePage> {
   int _prePageIndex = 0;
   bool _forceRebuild = false;
   bool _playerView = false;
+
+  bool _fullScreen = false;
+  bool _showTitleBarFullscreen = false;
 
   bool _miniMode = false;
 
@@ -122,27 +126,39 @@ class _HomePageState extends State<HomePage> {
             return _buildMiniModeCard(context);
           }
           return Scaffold(
-            appBar: _buildTitleBar(context),
-            // body: AnimatedCrossSlide(
-            //   firstChild: Row(
-            //     children: [
-            //       _buildNavigationRail(context),
-            //       _buildPage(context),
-            //     ],
-            //   ),
-            //   secondChild: const PlayerPage(),
-            //   crossFadeState: _playerView
-            //       ? CrossFadeState.showFirst
-            //       : CrossFadeState.showSecond,
-            //   duration: const Duration(
-            //     milliseconds: 200,
-            //   ),
-            // ),
-
-            body: Row(
+            appBar: _fullScreen ? null : _buildTitleBar(context),
+            body: Stack(
               children: [
-                _buildNavigationRail(context),
-                _buildPage(context),
+                Row(
+                  children: [
+                    _buildNavigationRail(context),
+                    _buildPage(context),
+                  ],
+                ),
+                if (_fullScreen)
+                  SizedBox(
+                    height: 40,
+                    child: AnimatedOpacity(
+                      opacity: _showTitleBarFullscreen ? 1 : 0,
+                      duration: const Duration(milliseconds: 100),
+                      child: MouseRegion(
+                        onHover: (event) {
+                          setState(() {
+                            _showTitleBarFullscreen = true;
+                          });
+                        },
+                        onExit: (event) {
+                          setState(() {
+                            _showTitleBarFullscreen = false;
+                          });
+                        },
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          child: _buildTitleBar(context),
+                        ),
+                      ),
+                    ),
+                  ),
               ],
             ),
             floatingActionButton: _playerView
@@ -237,7 +253,9 @@ class _HomePageState extends State<HomePage> {
                 child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onPanStart: (details) {
-                    windowManager.startResizing(ResizeEdge.top);
+                    if (!_fullScreen) {
+                      windowManager.startResizing(ResizeEdge.top);
+                    }
                   },
                 ),
               ),
@@ -246,7 +264,9 @@ class _HomePageState extends State<HomePage> {
             child: GestureDetector(
               behavior: HitTestBehavior.translucent,
               onPanStart: (details) {
-                windowManager.startDragging();
+                if (!_fullScreen) {
+                  windowManager.startDragging();
+                }
               },
             ),
           )
@@ -257,7 +277,9 @@ class _HomePageState extends State<HomePage> {
       title: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onPanStart: (details) {
-          windowManager.startDragging();
+          if (!_fullScreen) {
+            windowManager.startDragging();
+          }
         },
         child: Row(
           children: [
@@ -310,36 +332,28 @@ class _HomePageState extends State<HomePage> {
 
   List<Widget> _buildTitleBarActions(BuildContext context) {
     return [
-      // debug usage
-      // IconButton(
-      //   hoverColor: Colors.transparent,
-      //   padding: EdgeInsets.zero,
-      //   onPressed: () {
-      //     setState(() {});
-      //   },
-      //   icon: const Icon(Icons.refresh),
-      // ),
-      IconButton(
-        hoverColor: Colors.transparent,
-        onPressed: () {
-          if (_miniMode) {
-            windowManager.setResizable(true);
-            windowManager.setMinimumSize(const Size(360, 500));
-            windowManager.setSize(const Size(900, 700));
-            windowManager.setAlwaysOnTop(false);
-            windowManager.center();
-          } else {
-            windowManager.setResizable(false);
-            windowManager.setMinimumSize(const Size(300, 120));
-            windowManager.setSize(const Size(300, 120));
-            windowManager.setAlwaysOnTop(true);
-          }
-          setState(() {
-            _miniMode = !_miniMode;
-          });
-        },
-        icon: const Icon(Icons.music_note_outlined),
-      ),
+      if (!_fullScreen)
+        IconButton(
+          hoverColor: Colors.transparent,
+          onPressed: () {
+            if (_miniMode) {
+              windowManager.setResizable(true);
+              windowManager.setMinimumSize(const Size(360, 500));
+              windowManager.setSize(const Size(900, 700));
+              windowManager.setAlwaysOnTop(false);
+              windowManager.center();
+            } else {
+              windowManager.setResizable(false);
+              windowManager.setMinimumSize(const Size(300, 120));
+              windowManager.setSize(const Size(300, 120));
+              windowManager.setAlwaysOnTop(true);
+            }
+            setState(() {
+              _miniMode = !_miniMode;
+            });
+          },
+          icon: const Icon(Icons.music_note_outlined),
+        ),
       if (Platform.isMacOS)
         IconButton(
           hoverColor: Colors.transparent,
@@ -350,7 +364,7 @@ class _HomePageState extends State<HomePage> {
           icon: const Icon(Icons.play_circle_outlined),
         ),
       const SizedBox(width: 10),
-      if (!Platform.isMacOS)
+      if (!Platform.isMacOS && !_fullScreen)
         IconButton(
           hoverColor: Colors.transparent,
           padding: EdgeInsets.zero,
@@ -360,7 +374,7 @@ class _HomePageState extends State<HomePage> {
           },
           icon: const Icon(Icons.keyboard_arrow_down),
         ),
-      if (!Platform.isMacOS)
+      if (!Platform.isMacOS && !_fullScreen)
         IconButton(
           hoverColor: Colors.transparent,
           padding: EdgeInsets.zero,
@@ -373,6 +387,39 @@ class _HomePageState extends State<HomePage> {
             }
           },
           icon: const Icon(Icons.keyboard_arrow_up),
+        ),
+      if (!Platform.isMacOS)
+        IconButton(
+          hoverColor: Colors.transparent,
+          padding: EdgeInsets.zero,
+          iconSize: 26,
+          onPressed: () async {
+            if (_fullScreen) {
+              if (Platform.isWindows && !await windowManager.isMaximized()) {
+                windowManager.setSize(AppStorage().windowSize);
+                windowManager.setTitleBarStyle(TitleBarStyle.hidden);
+                windowManager.setPosition(AppStorage().windowPos);
+              } else {
+                windowManager.setFullScreen(false);
+              }
+            } else {
+              if (Platform.isWindows && !await windowManager.isMaximized()) {
+                AppStorage().windowPos = await windowManager.getPosition();
+                AppStorage().windowSize = await windowManager.getSize();
+                var info = (await screenRetriever.getPrimaryDisplay());
+                await windowManager.setAsFrameless();
+                await windowManager.setPosition(Offset.zero);
+                await windowManager.setSize(info.size);
+              } else {
+                windowManager.setFullScreen(true);
+              }
+            }
+            setState(() {
+              _fullScreen = !_fullScreen;
+              _showTitleBarFullscreen = false;
+            });
+          },
+          icon: Icon(_fullScreen ? Icons.fullscreen_exit : Icons.fullscreen),
         ),
       if (!Platform.isMacOS)
         IconButton(
@@ -463,7 +510,7 @@ class _HomePageState extends State<HomePage> {
                         style: IconButton.styleFrom(
                           backgroundColor: colorScheme.primaryContainer,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                         iconSize: 24,
@@ -496,38 +543,32 @@ class _HomePageState extends State<HomePage> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       const SizedBox(
-                        width: 6,
+                        width: 10,
                       ),
                       IconButton(
-                          padding: const EdgeInsets.symmetric(horizontal: 2),
-                          constraints: const BoxConstraints(),
-                          color: colorScheme.primaryContainer,
-                          // iconSize: 30,
-                          onPressed: () {
-                            if (_miniMode) {
-                              windowManager.setResizable(true);
-                              windowManager
-                                  .setMinimumSize(const Size(360, 500));
-                              windowManager.setSize(const Size(900, 700));
-                              windowManager.setAlwaysOnTop(false);
-                              windowManager.center();
-                            } else {
-                              windowManager.setResizable(false);
-                              windowManager
-                                  .setMinimumSize(const Size(300, 120));
-                              windowManager.setSize(const Size(300, 120));
-                              windowManager.setAlwaysOnTop(true);
-                            }
-                            setState(() {
-                              _miniMode = !_miniMode;
-                            });
-                          },
-                          icon: Icon(
-                            _miniMode
-                                ? Icons.fullscreen
-                                : Icons.fullscreen_exit,
-                            // size: 30,
-                          )),
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        constraints: const BoxConstraints(),
+                        color: colorScheme.primaryContainer,
+                        // iconSize: 30,
+                        onPressed: () {
+                          if (_miniMode) {
+                            windowManager.setResizable(true);
+                            windowManager.setMinimumSize(const Size(360, 500));
+                            windowManager.setSize(const Size(900, 700));
+                            windowManager.setAlwaysOnTop(false);
+                            windowManager.center();
+                          } else {
+                            windowManager.setResizable(false);
+                            windowManager.setMinimumSize(const Size(300, 120));
+                            windowManager.setSize(const Size(300, 120));
+                            windowManager.setAlwaysOnTop(true);
+                          }
+                          setState(() {
+                            _miniMode = !_miniMode;
+                          });
+                        },
+                        icon: const Icon(Icons.open_in_browser),
+                      ),
                       IconButton(
                         padding: const EdgeInsets.symmetric(horizontal: 2),
                         constraints: const BoxConstraints(),
@@ -538,7 +579,7 @@ class _HomePageState extends State<HomePage> {
                           setState(() {});
                         },
                         icon: const Icon(
-                          Icons.skip_previous,
+                          Icons.skip_previous_rounded,
                           // size: 30,
                         ),
                       ),
@@ -618,7 +659,7 @@ class _HomePageState extends State<HomePage> {
                           setState(() {});
                         },
                         icon: const Icon(
-                          Icons.skip_next,
+                          Icons.skip_next_rounded,
                         ),
                       ),
                       IconButton(
@@ -633,8 +674,8 @@ class _HomePageState extends State<HomePage> {
                           );
                         },
                         icon: AppStorage().shuffle
-                            ? const Icon(Icons.shuffle_on)
-                            : const Icon(Icons.shuffle),
+                            ? const Icon(Icons.shuffle_on_rounded)
+                            : const Icon(Icons.shuffle_rounded),
                         iconSize: 20,
                       ),
                       IconButton(
@@ -656,8 +697,8 @@ class _HomePageState extends State<HomePage> {
                         },
                         icon: AppStorage().playboy.state.playlistMode ==
                                 PlaylistMode.single
-                            ? const Icon(Icons.repeat_one_on)
-                            : const Icon(Icons.repeat_one),
+                            ? const Icon(Icons.repeat_one_on_rounded)
+                            : const Icon(Icons.repeat_one_rounded),
                         iconSize: 20,
                       ),
                       IconButton(
@@ -670,7 +711,7 @@ class _HomePageState extends State<HomePage> {
                           });
                         },
                         icon: const Icon(
-                          Icons.stop,
+                          Icons.stop_rounded,
                         ),
                       ),
                       const SizedBox(
@@ -727,7 +768,7 @@ class _HomePageState extends State<HomePage> {
     );
     return _playerView
         ? Container(
-            width: 10,
+            width: _fullScreen ? 0 : 10,
             color: backgroundColor,
           )
         : NavigationRail(
@@ -845,14 +886,14 @@ class _HomePageState extends State<HomePage> {
               builder: (context) => const SearchPage(),
             ),
           ),
-          Navigator(
-            key: GlobalKey<NavigatorState>(),
-            onGenerateRoute: (route) => MaterialPageRoute(
-              settings: route,
-              builder: (context) => const PlayerPage(),
-            ),
-          )
+          PlayerPage(fullscreen: _fullScreen),
         ],
+      );
+    }
+
+    if (_fullScreen) {
+      return Expanded(
+        child: buildPageContent(context),
       );
     }
 
