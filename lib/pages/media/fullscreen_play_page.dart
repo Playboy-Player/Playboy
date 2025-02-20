@@ -26,10 +26,9 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
   late final _controller = AppStorage().controller;
 
   bool _showControlBar = false;
-
   bool _isMouseHidden = false;
   Timer? _timer;
-  final FocusNode _focusNode = FocusNode();
+  // final FocusNode _focusNode = FocusNode();
 
   void _resetTimer() {
     _timer?.cancel();
@@ -52,7 +51,7 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
   @override
   void dispose() {
     super.dispose();
-    _focusNode.dispose();
+    // _focusNode.dispose();
     _timer?.cancel();
     FullscreenPlayPage.exitFullscreen = null;
   }

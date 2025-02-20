@@ -145,8 +145,9 @@ class _HomePageState extends State<HomePage> {
                 _buildPage(context),
               ],
             ),
-            floatingActionButton:
-                _playerView ? null : _buildFloatingMediaBar(context),
+            floatingActionButton: _playerView
+                ? const SizedBox()
+                : _buildFloatingMediaBar(context),
           );
         },
       ),
@@ -206,6 +207,12 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
+      sliderTheme: SliderThemeData(
+        year2023: false,
+        trackHeight: 4,
+        thumbSize: const WidgetStatePropertyAll(Size(4, 12)),
+        overlayShape: SliderComponentShape.noOverlay,
+      ),
     );
   }
 
@@ -259,10 +266,10 @@ class _HomePageState extends State<HomePage> {
                 : IconButton(
                     style: ButtonStyle(
                       backgroundColor: WidgetStatePropertyAll(
-                        colorScheme.tertiaryContainer,
+                        colorScheme.primaryContainer.withValues(alpha: 0.4),
                       ),
                       foregroundColor: WidgetStatePropertyAll(
-                        colorScheme.onTertiaryContainer,
+                        colorScheme.primary,
                       ),
                       shape: WidgetStatePropertyAll(
                         RoundedRectangleBorder(
@@ -860,8 +867,8 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.only(right: 10),
         child: ClipRRect(
           borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(25),
-            topRight: Radius.circular(25),
+            topLeft: Radius.circular(18),
+            topRight: Radius.circular(18),
           ),
           child: buildPageContent(context),
         ),

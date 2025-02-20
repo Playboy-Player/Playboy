@@ -20,11 +20,17 @@ class AppSettings {
   // Player Settings
   bool autoPlay;
   bool autoDownload;
+  bool keepOpen;
+  bool preciseSeek;
+  int listMode;
+  double defaultVolume;
+  double defaultSpeed;
   bool defaultMusicMode;
+  Map<String, String> mpvProperties;
+  Map<String, String> mpvOptions;
 
   // 0:ask 1:never 2:always
   int continueToPlay;
-
   double volume;
   double speed;
   bool rememberStatus;
@@ -49,6 +55,7 @@ class AppSettings {
   bool enableDevSettings;
   bool tabletUI;
   bool enableTitleBar;
+  String libmpvPath;
 
   AppSettings({
     // Display Settings,
@@ -63,6 +70,11 @@ class AppSettings {
     // Player Settings
     this.autoPlay = true,
     this.autoDownload = false,
+    this.keepOpen = true,
+    this.preciseSeek = false,
+    this.listMode = 0,
+    this.defaultVolume = 100,
+    this.defaultSpeed = 1,
     this.defaultMusicMode = false,
     // 0:ask 1:never 2:always
     this.continueToPlay = 0,
@@ -70,6 +82,8 @@ class AppSettings {
     this.speed = 1,
     this.rememberStatus = true,
     this.playAfterExit = true,
+    this.mpvOptions = const {},
+    this.mpvProperties = const {},
 
     // Storage Settings
     this.getCoverOnScan = false,
@@ -89,6 +103,7 @@ class AppSettings {
     this.enableDevSettings = false,
     this.tabletUI = true,
     this.enableTitleBar = true,
+    this.libmpvPath = '',
   });
 
   factory AppSettings.fromJson(Map<String, dynamic> json) =>

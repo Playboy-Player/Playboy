@@ -38,6 +38,44 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
               // AppStorage().updateStatus();
             },
           ),
+          SwitchListTile(
+            title: Text('精确跳转'.l10n),
+            value: AppStorage().settings.preciseSeek,
+            onChanged: (bool value) {
+              AppStorage().playboy.setProperty(
+                    'hr-seek',
+                    value ? 'yes' : 'no',
+                  );
+              setState(() {
+                AppStorage().settings.preciseSeek = value;
+              });
+              AppStorage().saveSettings();
+              // AppStorage().updateStatus();
+            },
+          ),
+          SwitchListTile(
+            title: Text('记忆播放器状态'.l10n),
+            subtitle: Text('音量, 列表循环'.l10n),
+            value: AppStorage().settings.rememberStatus,
+            onChanged: (bool value) {
+              setState(() {
+                AppStorage().settings.rememberStatus = value;
+              });
+              AppStorage().saveSettings();
+              // AppStorage().updateStatus();
+            },
+          ),
+          Container(
+            padding: const EdgeInsets.all(12),
+            child: Text(
+              'MPV Properties'.l10n,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+          ),
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
@@ -62,22 +100,11 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
                 alignment: Alignment.centerLeft,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  'These options only apply on App start',
+                  '重启应用后生效',
                   style: TextStyle(
                     color: colorScheme.onPrimaryContainer,
                   ),
                 ),
-              ),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(12),
-            child: Text(
-              'Custom Commands'.l10n,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.secondary,
               ),
             ),
           ),

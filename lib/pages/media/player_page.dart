@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -8,7 +9,6 @@ import 'package:window_manager/window_manager.dart';
 import 'package:media_kit/media_kit.dart';
 
 import 'package:playboy/backend/utils/l10n_utils.dart';
-import 'package:playboy/pages/home.dart';
 import 'package:playboy/widgets/basic_video.dart';
 import 'package:playboy/pages/media/player_menu.dart';
 import 'package:playboy/pages/media/fullscreen_play_page.dart';
@@ -34,6 +34,22 @@ class PlayerPageState extends State<PlayerPage> {
   // bool _videoMode = !AppStorage().settings.defaultMusicMode;
   int _curPanel = 0;
 
+  // bool _showControlBar = false;
+  bool _isMouseHidden = false;
+  Timer? _timer;
+
+  void _resetCursorHideTimer() {
+    _timer?.cancel();
+    setState(() {
+      _isMouseHidden = false;
+    });
+    _timer = Timer(const Duration(seconds: 2), () {
+      setState(() {
+        _isMouseHidden = true;
+      });
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -41,10 +57,11 @@ class PlayerPageState extends State<PlayerPage> {
 
   @override
   void dispose() {
+    super.dispose();
     if (!AppStorage().settings.playAfterExit) {
       AppStorage().closeMedia();
     }
-    super.dispose();
+    _timer?.cancel();
   }
 
   @override
@@ -69,74 +86,76 @@ class PlayerPageState extends State<PlayerPage> {
                   ),
                 ),
                 _menuExpanded
-                    ? Padding(
-                        // flex: 2,
+                    ? Container(
                         padding: const EdgeInsets.only(left: 10),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 100),
-                          width: 300,
-                          child: _buildSidePanel(
-                            colorScheme,
-                            backgroundColor,
-                          ),
+                        width: 300,
+                        child: _buildSidePanel(
+                          colorScheme,
+                          backgroundColor,
                         ),
                       )
                     : const SizedBox(),
               ],
             ),
           ),
-          SizedBox(
-            width: MediaQuery.of(context).size.width - 40,
-            height: 25,
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 60,
-                  child: StreamBuilder(
-                    stream: AppStorage().playboy.stream.position,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return Text(
-                          getProgressString(snapshot.data!),
-                        );
-                      } else {
-                        return Text(
-                          getProgressString(AppStorage().position),
-                        );
-                      }
-                    },
-                  ),
-                ),
-                Expanded(child: _buildSeekbar()),
-                Container(
-                  alignment: Alignment.centerRight,
-                  width: 60,
-                  child: StreamBuilder(
-                    stream: AppStorage().playboy.stream.duration,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return Text(
-                          getProgressString(snapshot.data!),
-                        );
-                      } else {
-                        return Text(
-                          getProgressString(AppStorage().duration),
-                        );
-                      }
-                    },
-                  ),
-                )
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 50,
-            child: _buildControlbar(colorScheme),
-          ),
+          ..._buildButtomBar(context, colorScheme),
           const SizedBox(height: 10)
         ],
       ),
     );
+  }
+
+  List<Widget> _buildButtomBar(BuildContext context, ColorScheme colorScheme) {
+    return [
+      SizedBox(
+        width: MediaQuery.of(context).size.width - 40,
+        height: 25,
+        child: Row(
+          children: [
+            SizedBox(
+              width: 60,
+              child: StreamBuilder(
+                stream: AppStorage().playboy.stream.position,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Text(
+                      getProgressString(snapshot.data!),
+                    );
+                  } else {
+                    return Text(
+                      getProgressString(AppStorage().position),
+                    );
+                  }
+                },
+              ),
+            ),
+            Expanded(child: _buildSeekbar()),
+            Container(
+              alignment: Alignment.centerRight,
+              width: 60,
+              child: StreamBuilder(
+                stream: AppStorage().playboy.stream.duration,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Text(
+                      getProgressString(snapshot.data!),
+                    );
+                  } else {
+                    return Text(
+                      getProgressString(AppStorage().duration),
+                    );
+                  }
+                },
+              ),
+            )
+          ],
+        ),
+      ),
+      SizedBox(
+        height: 50,
+        child: _buildControlbar(colorScheme),
+      ),
+    ];
   }
 
   Widget _buildPlayer(ColorScheme colorScheme) {
@@ -144,29 +163,38 @@ class PlayerPageState extends State<PlayerPage> {
       menuController: MenuController(),
       menuChildren: buildPlayerMenu(),
       onTap: null,
-      borderRadius: 25,
+      borderRadius: 18,
       child: ClipRRect(
-        borderRadius: const BorderRadius.all(Radius.circular(25)),
-        child: Stack(
-          children: [
-            const ColoredBox(
-              color: Colors.black,
-              child: SizedBox.expand(),
-            ),
-            SizedBox.expand(
-              child: BasicVideo(controller: controller),
-            ),
-          ],
+        borderRadius: const BorderRadius.all(Radius.circular(18)),
+        child: MouseRegion(
+          onHover: (_) {
+            _resetCursorHideTimer();
+          },
+          cursor: _isMouseHidden ? SystemMouseCursors.none : MouseCursor.defer,
+          child: Stack(
+            children: [
+              const ColoredBox(
+                color: Colors.black,
+                child: SizedBox.expand(),
+              ),
+              SizedBox.expand(
+                child: BasicVideo(controller: controller),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildSeekbar() {
+    late final colorScheme = Theme.of(context).colorScheme;
     return SliderTheme(
       data: SliderThemeData(
         year2023: false,
         trackHeight: 4,
+        thumbColor: colorScheme.secondary,
+        activeTrackColor: colorScheme.secondary,
         thumbSize: const WidgetStatePropertyAll(Size(4, 12)),
         overlayShape: SliderComponentShape.noOverlay,
       ),
@@ -219,7 +247,7 @@ class PlayerPageState extends State<PlayerPage> {
         Expanded(
           child: Row(
             children: [
-              const SizedBox(width: 16),
+              const SizedBox(width: 6),
               IconButton(
                 onPressed: () {
                   setState(() {
@@ -235,7 +263,7 @@ class PlayerPageState extends State<PlayerPage> {
                 ),
               ),
               SizedBox(
-                width: 100,
+                width: 80,
                 child: SliderTheme(
                   data: SliderThemeData(
                     year2023: false,
@@ -263,6 +291,14 @@ class PlayerPageState extends State<PlayerPage> {
               ),
             ],
           ),
+        ),
+        IconButton(
+          onPressed: () {
+            AppStorage().closeMedia().then((_) {
+              setState(() {});
+            });
+          },
+          icon: const Icon(Icons.stop_circle_outlined),
         ),
         IconButton(
           onPressed: () {
@@ -299,13 +335,13 @@ class PlayerPageState extends State<PlayerPage> {
         const SizedBox(width: 10),
         IconButton.filled(
           style: IconButton.styleFrom(
-            backgroundColor: colorScheme.secondary,
-            foregroundColor: colorScheme.onSecondary,
+            // backgroundColor: colorScheme.secondary,
+            // foregroundColor: colorScheme.onSecondary,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
           ),
-          iconSize: 32,
+          iconSize: 30,
           onPressed: () {
             setState(() {
               AppStorage().playboy.playOrPause();
@@ -342,37 +378,33 @@ class PlayerPageState extends State<PlayerPage> {
           width: 10,
         ),
         IconButton(
+          icon: const Icon(
+            Icons.menu,
+            weight: 550,
+          ),
           onPressed: () {
-            _handlePanelSelection(0);
+            _handlePanelSelection(1);
           },
-          icon: const Icon(Icons.slow_motion_video_rounded),
         ),
         IconButton(
           onPressed: () {
-            AppStorage().closeMedia().then((_) {
-              setState(() {});
-            });
+            _handlePanelSelection(0);
           },
-          icon: const Icon(Icons.stop_circle_outlined),
+          icon: const Icon(Icons.video_settings),
+        ),
+        IconButton(
+          onPressed: () {
+            _handlePanelSelection(2);
+          },
+          icon: const Icon(Icons.description_outlined),
         ),
         Expanded(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              IconButton(
-                onPressed: () {
-                  _handlePanelSelection(2);
-                },
-                icon: const Icon(Icons.description_outlined),
-              ),
-              IconButton(
-                icon: const Icon(
-                  Icons.menu,
-                  weight: 550,
-                ),
-                onPressed: () {
-                  _handlePanelSelection(1);
-                },
+              const IconButton(
+                onPressed: null,
+                icon: Icon(Icons.alarm),
               ),
               IconButton(
                 onPressed: () async {
@@ -401,7 +433,7 @@ class PlayerPageState extends State<PlayerPage> {
                 },
                 icon: const Icon(Icons.open_in_full_rounded),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 6),
             ],
           ),
         ),
@@ -428,11 +460,11 @@ class PlayerPageState extends State<PlayerPage> {
 
   Widget _buildSidePanel(ColorScheme colorScheme, Color backgroundColor) {
     return ClipRRect(
-      borderRadius: const BorderRadius.all(Radius.circular(25)),
+      borderRadius: const BorderRadius.all(Radius.circular(18)),
       child: [
         _buildConfigurationsPanel(colorScheme, backgroundColor),
         _buildPlaylistPanel(colorScheme, backgroundColor),
-        _buildShortcutsPanel(colorScheme, backgroundColor),
+        _buildCommandsPanel(colorScheme, backgroundColor),
       ][_curPanel],
     );
   }
@@ -557,10 +589,47 @@ class PlayerPageState extends State<PlayerPage> {
           ),
         ],
       ),
+      body: ListView(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      AppStorage().playboy.setRate(1);
+                    });
+                  },
+                  icon: const Icon(Icons.flash_on_rounded),
+                ),
+                Expanded(
+                  child: Slider(
+                    min: 0.25,
+                    max: 8,
+                    divisions: 31,
+                    label: AppStorage().playboy.state.rate.toString(),
+                    value: bounded(0.25, AppStorage().playboy.state.rate, 8),
+                    onChanged: (value) {
+                      setState(() {
+                        AppStorage().playboy.setRate(value);
+                      });
+                    },
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.more_vert),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildShortcutsPanel(
+  Widget _buildCommandsPanel(
     ColorScheme colorScheme,
     Color backgroundColor,
   ) {
@@ -572,7 +641,7 @@ class PlayerPageState extends State<PlayerPage> {
         toolbarHeight: 46,
         scrolledUnderElevation: 0,
         title: Text(
-          '快捷指令',
+          '命令',
           style: TextStyle(color: colorScheme.primary),
         ),
         actions: [

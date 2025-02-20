@@ -141,7 +141,8 @@ class AppStorage extends ChangeNotifier {
       const BasicVideoControllerConfiguration(),
     );
     playboy.setVolume(settings.volume);
-    playboy.setRate(settings.speed);
+    if (settings.preciseSeek) playboy.setProperty('hr-seek', 'yes');
+    // playboy.setProperty('hr-seek-framedrop', 'no');
   }
 
   Future<void> loadSettings() async {
@@ -218,11 +219,8 @@ class AppStorage extends ChangeNotifier {
   }
 
   void resetPlayerStatus() {
-    playboy.setVolume(100);
-    playboy.setRate(1);
-    settings.volume = 100;
-    settings.speed = 1;
-    saveSettings();
+    playboy.setVolume(settings.defaultVolume);
+    playboy.setRate(settings.defaultSpeed);
   }
 
   // currently it doesn't work

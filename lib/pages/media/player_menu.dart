@@ -42,6 +42,7 @@ List<Widget> buildPlayerMenu() {
       },
     ),
     MMenuItem(icon: Icons.terminal, label: '自定义命令'.l10n, onPressed: null),
+    MMenuItem(icon: Icons.alarm, label: '定时命令'.l10n, onPressed: null),
     const Divider(),
     MMenuItem(
       icon: Icons.file_open_outlined,

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:playboy/pages/settings/categories/command_settings.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'package:playboy/backend/utils/l10n_utils.dart';
@@ -26,6 +27,7 @@ class SettingsPageState extends State<SettingsPage> {
     Icons.color_lens_outlined,
     Icons.play_circle_outline,
     Icons.keyboard_command_key,
+    Icons.terminal_outlined,
     Icons.folder_outlined,
     Icons.translate_rounded,
     Icons.info_outline,
@@ -35,6 +37,7 @@ class SettingsPageState extends State<SettingsPage> {
     const AppearanceSettingsPage(),
     const PlayerSettingsPage(),
     const KeymapSettings(),
+    const CommandSettings(),
     const StorageSettingsPage(),
     const LanguageSettingsPage(),
     const AboutPage(),
@@ -44,6 +47,7 @@ class SettingsPageState extends State<SettingsPage> {
     '外观'.l10n,
     '播放器'.l10n,
     '快捷键'.l10n,
+    '命令'.l10n,
     '存储'.l10n,
     '语言'.l10n,
     '关于'.l10n,
@@ -61,24 +65,34 @@ class SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(
         leadingWidth: 40,
         automaticallyImplyLeading: false,
-        leading: Platform.isMacOS
-            ? null
-            : IconButton(
-                iconSize: 20,
-                constraints: const BoxConstraints(),
-                icon: const Icon(Icons.arrow_back_ios_new),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
+        // leading: Platform.isMacOS
+        //     ? null
+        //     : IconButton(
+        //         iconSize: 20,
+        //         constraints: const BoxConstraints(),
+        //         icon: const Icon(Icons.arrow_back_ios_new),
+        //         onPressed: () {
+        //           Navigator.pop(context);
+        //         },
+        //       ),
         titleSpacing: 0,
-        title: Row(
+        title: Stack(
           children: [
             Container(
               color: backgroundColor,
-              width: _sizebarWidth - (Platform.isMacOS ? 0 : 40),
+              width: _sizebarWidth,
               height: 40,
-            )
+            ),
+            Platform.isMacOS
+                ? const SizedBox()
+                : IconButton(
+                    iconSize: 20,
+                    constraints: const BoxConstraints(),
+                    icon: const Icon(Icons.arrow_back_ios_new),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
           ],
         ),
         backgroundColor: Theme.of(context).colorScheme.surface,
@@ -113,16 +127,18 @@ class SettingsPageState extends State<SettingsPage> {
           if (!Platform.isMacOS)
             IconButton(
               hoverColor: Colors.transparent,
-              iconSize: 20,
+              padding: EdgeInsets.zero,
+              iconSize: 26,
               onPressed: () {
                 windowManager.minimize();
               },
-              icon: const Icon(Icons.minimize),
+              icon: const Icon(Icons.keyboard_arrow_down),
             ),
           if (!Platform.isMacOS)
             IconButton(
               hoverColor: Colors.transparent,
-              iconSize: 20,
+              padding: EdgeInsets.zero,
+              iconSize: 26,
               onPressed: () async {
                 if (await windowManager.isMaximized()) {
                   windowManager.unmaximize();
@@ -130,7 +146,7 @@ class SettingsPageState extends State<SettingsPage> {
                   windowManager.maximize();
                 }
               },
-              icon: const Icon(Icons.crop_square),
+              icon: const Icon(Icons.keyboard_arrow_up),
             ),
           if (!Platform.isMacOS)
             IconButton(
