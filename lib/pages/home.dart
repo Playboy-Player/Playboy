@@ -8,7 +8,7 @@ import 'package:screen_retriever/screen_retriever.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'package:playboy/backend/constants.dart';
-import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/route_utils.dart';
 import 'package:playboy/pages/media/player_page.dart';
@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _playerView = widget.playerView;
-    _prePageIndex = _currentPageIndex = AppStorage().settings.initPage;
+    _prePageIndex = _currentPageIndex = App().settings.initPage;
     if (_playerView) _currentPageIndex = 4;
 
     HomePage.refresh = () => setState(() => _forceRebuild = true);
@@ -93,7 +93,7 @@ class _HomePageState extends State<HomePage> {
       (context as Element).visitChildren(rebuild);
     }
 
-    MaterialColor themeColor = AppStorage().getColorTheme();
+    MaterialColor themeColor = App().getColorTheme();
     var lightTheme = ColorScheme.fromSeed(
       seedColor: themeColor,
       brightness: Brightness.light,
@@ -117,9 +117,9 @@ class _HomePageState extends State<HomePage> {
       },
       debugShowCheckedModeBanner: false,
       title: Constants.appName,
-      theme: _getThemeData(AppStorage(), lightTheme),
-      darkTheme: _getThemeData(AppStorage(), darkTheme),
-      themeMode: AppStorage().settings.themeMode,
+      theme: _getThemeData(App(), lightTheme),
+      darkTheme: _getThemeData(App(), darkTheme),
+      themeMode: App().settings.themeMode,
       home: Builder(
         builder: (context) {
           if (_miniMode) {
@@ -170,7 +170,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  ThemeData _getThemeData(AppStorage value, ColorScheme colorScheme) {
+  ThemeData _getThemeData(App value, ColorScheme colorScheme) {
     return ThemeData(
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: {
@@ -234,7 +234,7 @@ class _HomePageState extends State<HomePage> {
 
   PreferredSizeWidget _buildTitleBar(BuildContext context) {
     // bool tabletUI = MediaQuery.of(context).size.width > 500;
-    bool tabletUI = AppStorage().settings.tabletUI;
+    bool tabletUI = App().settings.tabletUI;
     late final colorScheme = Theme.of(context).colorScheme;
     late final backgroundColor = Color.alphaBlend(
       colorScheme.primary.withValues(alpha: 0.04),
@@ -313,10 +313,10 @@ class _HomePageState extends State<HomePage> {
             Expanded(
               child: tabletUI
                   ? StreamBuilder(
-                      stream: AppStorage().playboy.stream.playlist,
+                      stream: App().playboy.stream.playlist,
                       builder: (context, snapshot) {
                         return Text(
-                          AppStorage().playingTitle,
+                          App().playingTitle,
                           style: const TextStyle(fontSize: 16),
                         );
                       },
@@ -396,16 +396,16 @@ class _HomePageState extends State<HomePage> {
           onPressed: () async {
             if (_fullScreen) {
               if (Platform.isWindows && !await windowManager.isMaximized()) {
-                windowManager.setSize(AppStorage().windowSize);
+                windowManager.setSize(App().windowSize);
                 windowManager.setTitleBarStyle(TitleBarStyle.hidden);
-                windowManager.setPosition(AppStorage().windowPos);
+                windowManager.setPosition(App().windowPos);
               } else {
                 windowManager.setFullScreen(false);
               }
             } else {
               if (Platform.isWindows && !await windowManager.isMaximized()) {
-                AppStorage().windowPos = await windowManager.getPosition();
-                AppStorage().windowSize = await windowManager.getSize();
+                App().windowPos = await windowManager.getPosition();
+                App().windowSize = await windowManager.getSize();
                 var info = (await screenRetriever.getPrimaryDisplay());
                 await windowManager.setAsFrameless();
                 await windowManager.setPosition(Offset.zero);
@@ -443,8 +443,8 @@ class _HomePageState extends State<HomePage> {
             borderRadius: BorderRadius.circular(_miniMode ? 0 : 20)),
         child: Stack(
           children: [
-            AppStorage().playingCover == null ||
-                    !File(AppStorage().playingCover!).existsSync()
+            App().playingCover == null ||
+                    !File(App().playingCover!).existsSync()
                 ? const SizedBox()
                 : ShaderMask(
                     shaderCallback: (Rect bounds) {
@@ -463,7 +463,7 @@ class _HomePageState extends State<HomePage> {
                     blendMode: BlendMode.dstIn,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(_miniMode ? 0 : 20),
-                      child: MImage(url: AppStorage().playingCover!),
+                      child: MImage(url: App().playingCover!),
                     ),
                   ),
             Column(
@@ -481,7 +481,7 @@ class _HomePageState extends State<HomePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              AppStorage().playingTitle,
+                              App().playingTitle,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontSize: 16,
@@ -516,14 +516,14 @@ class _HomePageState extends State<HomePage> {
                         iconSize: 24,
                         onPressed: () {
                           setState(() {
-                            AppStorage().playboy.playOrPause();
+                            App().playboy.playOrPause();
                           });
                         },
                         icon: StreamBuilder(
-                          stream: AppStorage().playboy.stream.playing,
+                          stream: App().playboy.stream.playing,
                           builder: (context, snapshot) {
                             return Icon(
-                              AppStorage().playing
+                              App().playing
                                   ? Icons.pause_circle_outline
                                   : Icons.play_arrow_outlined,
                               color: colorScheme.onPrimaryContainer,
@@ -575,7 +575,7 @@ class _HomePageState extends State<HomePage> {
                         color: colorScheme.primaryContainer,
                         // iconSize: 30,
                         onPressed: () {
-                          AppStorage().playboy.previous();
+                          App().playboy.previous();
                           setState(() {});
                         },
                         icon: const Icon(
@@ -597,41 +597,38 @@ class _HomePageState extends State<HomePage> {
                             activeTrackColor: colorScheme.primaryContainer,
                           ),
                           child: StreamBuilder(
-                            stream: AppStorage().playboy.stream.position,
+                            stream: App().playboy.stream.position,
                             builder: (context, snapshot) {
                               return Slider(
-                                max: AppStorage()
-                                    .duration
-                                    .inMilliseconds
-                                    .toDouble(),
-                                value: AppStorage().seeking
-                                    ? AppStorage().seekingPos
+                                max: App().duration.inMilliseconds.toDouble(),
+                                value: App().seeking
+                                    ? App().seekingPos
                                     : min(
                                         snapshot.hasData
                                             ? snapshot.data!.inMilliseconds
                                                 .toDouble()
-                                            : AppStorage()
+                                            : App()
                                                 .position
                                                 .inMilliseconds
                                                 .toDouble(),
-                                        AppStorage()
+                                        App()
                                             .duration
                                             .inMilliseconds
                                             .toDouble()),
                                 onChanged: (value) {
                                   setState(() {
-                                    AppStorage().seekingPos = value;
+                                    App().seekingPos = value;
                                   });
                                 },
                                 onChangeStart: (value) {
                                   setState(
                                     () {
-                                      AppStorage().seeking = true;
+                                      App().seeking = true;
                                     },
                                   );
                                 },
                                 onChangeEnd: (value) {
-                                  AppStorage()
+                                  App()
                                       .playboy
                                       .seek(
                                           Duration(milliseconds: value.toInt()))
@@ -639,7 +636,7 @@ class _HomePageState extends State<HomePage> {
                                         (value) => {
                                           setState(
                                             () {
-                                              AppStorage().seeking = false;
+                                              App().seeking = false;
                                             },
                                           )
                                         },
@@ -655,7 +652,7 @@ class _HomePageState extends State<HomePage> {
                         constraints: const BoxConstraints(),
                         color: colorScheme.primaryContainer,
                         onPressed: () {
-                          AppStorage().playboy.next();
+                          App().playboy.next();
                           setState(() {});
                         },
                         icon: const Icon(
@@ -669,11 +666,11 @@ class _HomePageState extends State<HomePage> {
                         onPressed: () {
                           setState(
                             () {
-                              AppStorage().shuffle = !AppStorage().shuffle;
+                              App().shuffle = !App().shuffle;
                             },
                           );
                         },
-                        icon: AppStorage().shuffle
+                        icon: App().shuffle
                             ? const Icon(Icons.shuffle_on_rounded)
                             : const Icon(Icons.shuffle_rounded),
                         iconSize: 20,
@@ -683,19 +680,15 @@ class _HomePageState extends State<HomePage> {
                         constraints: const BoxConstraints(),
                         color: colorScheme.primaryContainer,
                         onPressed: () {
-                          if (AppStorage().playboy.state.playlistMode ==
+                          if (App().playboy.state.playlistMode ==
                               PlaylistMode.single) {
-                            AppStorage()
-                                .playboy
-                                .setPlaylistMode(PlaylistMode.none);
+                            App().playboy.setPlaylistMode(PlaylistMode.none);
                           } else {
-                            AppStorage()
-                                .playboy
-                                .setPlaylistMode(PlaylistMode.single);
+                            App().playboy.setPlaylistMode(PlaylistMode.single);
                           }
                           setState(() {});
                         },
-                        icon: AppStorage().playboy.state.playlistMode ==
+                        icon: App().playboy.state.playlistMode ==
                                 PlaylistMode.single
                             ? const Icon(Icons.repeat_one_on_rounded)
                             : const Icon(Icons.repeat_one_rounded),
@@ -706,7 +699,7 @@ class _HomePageState extends State<HomePage> {
                         constraints: const BoxConstraints(),
                         color: colorScheme.primaryContainer,
                         onPressed: () {
-                          AppStorage().closeMedia().then((_) {
+                          App().closeMedia().then((_) {
                             setState(() {});
                           });
                         },
@@ -735,15 +728,15 @@ class _HomePageState extends State<HomePage> {
           windowManager.startDragging();
         },
         child: StreamBuilder(
-          stream: AppStorage().playboy.stream.playlist,
+          stream: App().playboy.stream.playlist,
           builder: (context, snapshot) {
-            return AppStorage().playingCover == null ||
-                    !File(AppStorage().playingCover!).existsSync()
+            return App().playingCover == null ||
+                    !File(App().playingCover!).existsSync()
                 ? buildMediaCardContent(colorScheme)
                 : FutureBuilder(
                     future: ColorScheme.fromImageProvider(
                       provider: MImageProvider(
-                        url: AppStorage().playingCover!,
+                        url: App().playingCover!,
                       ).getImage(),
                     ),
                     builder: (context, snapshot) {
@@ -798,7 +791,7 @@ class _HomePageState extends State<HomePage> {
                           context,
                           const SettingsPage(),
                         ).then((value) {
-                          AppStorage().updateFilePage();
+                          App().updateFilePage();
                           setState(() {});
                         });
                       },
@@ -812,13 +805,13 @@ class _HomePageState extends State<HomePage> {
                       onPressed: () {
                         setState(
                           () {
-                            AppStorage().settings.themeMode =
+                            App().settings.themeMode =
                                 Theme.of(context).brightness == Brightness.dark
                                     ? ThemeMode.light
                                     : ThemeMode.dark;
                           },
                         );
-                        AppStorage().saveSettings();
+                        App().saveSettings();
                       },
                     ),
                     const SizedBox(
@@ -938,14 +931,14 @@ class _HomePageState extends State<HomePage> {
               // iconSize: 30,
               onPressed: () {
                 setState(() {
-                  AppStorage().playboy.playOrPause();
+                  App().playboy.playOrPause();
                 });
               },
               icon: StreamBuilder(
-                stream: AppStorage().playboy.stream.playing,
+                stream: App().playboy.stream.playing,
                 builder: (context, snapshot) {
                   return Icon(
-                    AppStorage().playing
+                    App().playing
                         ? Icons.pause_rounded
                         : Icons.play_arrow_rounded,
                   );
@@ -958,7 +951,7 @@ class _HomePageState extends State<HomePage> {
               color: colorScheme.primaryContainer,
               // iconSize: 30,
               onPressed: () {
-                AppStorage().playboy.previous();
+                App().playboy.previous();
                 setState(() {});
               },
               icon: const Icon(
@@ -979,48 +972,45 @@ class _HomePageState extends State<HomePage> {
                   overlayShape: SliderComponentShape.noOverlay,
                 ),
                 child: StreamBuilder(
-                  stream: AppStorage().playboy.stream.position,
+                  stream: App().playboy.stream.position,
                   builder: (context, snapshot) {
                     return Slider(
-                      max: AppStorage().duration.inMilliseconds.toDouble(),
-                      value: AppStorage().seeking
-                          ? AppStorage().seekingPos
+                      max: App().duration.inMilliseconds.toDouble(),
+                      value: App().seeking
+                          ? App().seekingPos
                           : max(
                               min(
                                   snapshot.hasData
                                       ? snapshot.data!.inMilliseconds.toDouble()
-                                      : AppStorage()
+                                      : App()
                                           .position
                                           .inMilliseconds
                                           .toDouble(),
-                                  AppStorage()
-                                      .duration
-                                      .inMilliseconds
-                                      .toDouble()),
+                                  App().duration.inMilliseconds.toDouble()),
                               0),
                       onChanged: (value) {
                         setState(
                           () {
-                            AppStorage().seekingPos = value;
+                            App().seekingPos = value;
                           },
                         );
                       },
                       onChangeStart: (value) {
                         setState(
                           () {
-                            AppStorage().seeking = true;
+                            App().seeking = true;
                           },
                         );
                       },
                       onChangeEnd: (value) {
-                        AppStorage()
+                        App()
                             .playboy
                             .seek(Duration(milliseconds: value.toInt()))
                             .then(
                               (value) => {
                                 setState(
                                   () {
-                                    AppStorage().seeking = false;
+                                    App().seeking = false;
                                   },
                                 )
                               },
@@ -1036,7 +1026,7 @@ class _HomePageState extends State<HomePage> {
               constraints: const BoxConstraints(),
               color: colorScheme.primaryContainer,
               onPressed: () {
-                AppStorage().playboy.next();
+                App().playboy.next();
                 setState(() {});
               },
               icon: const Icon(
@@ -1050,11 +1040,11 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 setState(
                   () {
-                    AppStorage().shuffle = !AppStorage().shuffle;
+                    App().shuffle = !App().shuffle;
                   },
                 );
               },
-              icon: AppStorage().shuffle
+              icon: App().shuffle
                   ? const Icon(Icons.shuffle_on_rounded)
                   : const Icon(Icons.shuffle_rounded),
               iconSize: 20,
@@ -1064,18 +1054,16 @@ class _HomePageState extends State<HomePage> {
               constraints: const BoxConstraints(),
               color: colorScheme.primaryContainer,
               onPressed: () {
-                if (AppStorage().playboy.state.playlistMode ==
-                    PlaylistMode.single) {
-                  AppStorage().playboy.setPlaylistMode(PlaylistMode.none);
+                if (App().playboy.state.playlistMode == PlaylistMode.single) {
+                  App().playboy.setPlaylistMode(PlaylistMode.none);
                 } else {
-                  AppStorage().playboy.setPlaylistMode(PlaylistMode.single);
+                  App().playboy.setPlaylistMode(PlaylistMode.single);
                 }
                 setState(() {});
               },
-              icon:
-                  AppStorage().playboy.state.playlistMode == PlaylistMode.single
-                      ? const Icon(Icons.repeat_one_on_rounded)
-                      : const Icon(Icons.repeat_one_rounded),
+              icon: App().playboy.state.playlistMode == PlaylistMode.single
+                  ? const Icon(Icons.repeat_one_on_rounded)
+                  : const Icon(Icons.repeat_one_rounded),
               iconSize: 20,
             ),
             IconButton(
@@ -1083,7 +1071,7 @@ class _HomePageState extends State<HomePage> {
               constraints: const BoxConstraints(),
               color: colorScheme.primaryContainer,
               onPressed: () {
-                AppStorage().closeMedia();
+                App().closeMedia();
                 setState(() {});
               },
               icon: const Icon(Icons.stop_rounded),
@@ -1096,10 +1084,9 @@ class _HomePageState extends State<HomePage> {
 
     // late final colorScheme = Theme.of(context).colorScheme;
     return StreamBuilder(
-      stream: AppStorage().playboy.stream.playlist,
+      stream: App().playboy.stream.playlist,
       builder: (context, snapshot) {
-        return AppStorage().playingTitle != 'Not Playing' &&
-                AppStorage().settings.tabletUI
+        return App().playingTitle != 'Not Playing' && App().settings.tabletUI
             ? buildFloatingMediaBarContent(context)
             : const SizedBox();
       },

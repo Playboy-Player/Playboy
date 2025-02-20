@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/widgets/icon_switch_listtile.dart';
 
@@ -39,7 +39,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
             SliverToBoxAdapter(
               child: ListTile(
                 onTap: () {
-                  AppStorage().updateVideoPage();
+                  App().updateVideoPage();
                 },
                 leading: const Icon(Icons.scanner),
                 title: Text('重新扫描媒体库'.l10n),
@@ -48,12 +48,12 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
             MIconSwitchListTile(
               icon: Icons.photo,
               label: '扫描媒体时截取封面 (WIP)'.l10n,
-              value: AppStorage().settings.getCoverOnScan,
+              value: App().settings.getCoverOnScan,
               onChanged: (value) {
                 setState(() {
-                  AppStorage().settings.getCoverOnScan = value;
+                  App().settings.getCoverOnScan = value;
                 });
-                AppStorage().saveSettings();
+                App().saveSettings();
               },
             ),
             SliverToBoxAdapter(
@@ -77,8 +77,8 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                             var res = await FilePicker.platform
                                 .getDirectoryPath(lockParentWindow: true);
                             if (res != null) {
-                              AppStorage().settings.videoPaths.add(res);
-                              AppStorage().saveSettings();
+                              App().settings.videoPaths.add(res);
+                              App().saveSettings();
                               setState(() {});
                             }
                           },
@@ -95,11 +95,11 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
               itemBuilder: (context, index) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: _buildPathCard(AppStorage().settings.videoPaths[index],
-                      colorScheme, AppStorage().settings.videoPaths),
+                  child: _buildPathCard(App().settings.videoPaths[index],
+                      colorScheme, App().settings.videoPaths),
                 );
               },
-              itemCount: AppStorage().settings.videoPaths.length,
+              itemCount: App().settings.videoPaths.length,
             ),
             SliverToBoxAdapter(
               child: Container(
@@ -135,8 +135,8 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                             var res = await FilePicker.platform
                                 .getDirectoryPath(lockParentWindow: true);
                             if (res != null) {
-                              AppStorage().settings.favouritePaths.add(res);
-                              AppStorage().saveSettings();
+                              App().settings.favouritePaths.add(res);
+                              App().saveSettings();
                               setState(() {});
                             }
                           },
@@ -154,13 +154,13 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: _buildPathCard(
-                    AppStorage().settings.favouritePaths[index],
+                    App().settings.favouritePaths[index],
                     colorScheme,
-                    AppStorage().settings.favouritePaths,
+                    App().settings.favouritePaths,
                   ),
                 );
               },
-              itemCount: AppStorage().settings.favouritePaths.length,
+              itemCount: App().settings.favouritePaths.length,
             ),
             SliverToBoxAdapter(
               child: Container(
@@ -193,7 +193,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                         ),
                         Expanded(
                           child: Text(
-                            AppStorage().settings.screenshotPath,
+                            App().settings.screenshotPath,
                             style: TextStyle(
                               overflow: TextOverflow.ellipsis,
                               color: colorScheme.onSecondaryContainer,
@@ -210,8 +210,8 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                                   var res = await FilePicker.platform
                                       .getDirectoryPath(lockParentWindow: true);
                                   if (res != null) {
-                                    AppStorage().settings.screenshotPath = res;
-                                    AppStorage().saveSettings();
+                                    App().settings.screenshotPath = res;
+                                    App().saveSettings();
                                     setState(() {});
                                   }
                                 },
@@ -248,12 +248,12 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
             SliverToBoxAdapter(
               child: ListTile(
                 onTap: () {
-                  launchUrl(Uri.directory(AppStorage().dataPath));
+                  launchUrl(Uri.directory(App().dataPath));
                 },
                 leading: const Icon(Icons.folder),
                 title: Text('打开应用数据文件夹'.l10n),
                 subtitle: Text(
-                  AppStorage().dataPath,
+                  App().dataPath,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -261,7 +261,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
             SliverToBoxAdapter(
               child: ListTile(
                 onTap: () {
-                  var f = File('${AppStorage().dataPath}/config/settings.json');
+                  var f = File('${App().dataPath}/config/settings.json');
                   if (f.existsSync()) {
                     f.deleteSync();
                   }
@@ -319,7 +319,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                     child: IconButton(
                       onPressed: () {
                         dst.remove(path);
-                        AppStorage().saveSettings();
+                        App().saveSettings();
                         setState(() {});
                       },
                       icon: Icon(

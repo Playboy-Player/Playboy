@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
-import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/pages/library/media_menu.dart';
 import 'package:playboy/widgets/cover.dart';
 import 'package:playboy/widgets/cover_listtile.dart';
-import 'package:playboy/widgets/menu_button.dart';
-import 'package:playboy/widgets/menu_item.dart';
+import 'package:playboy/widgets/menu/menu_button.dart';
+import 'package:playboy/widgets/menu/menu_item.dart';
 
 class PlaylistDetail extends StatefulWidget {
   const PlaylistDetail({super.key, required this.info});
@@ -102,8 +102,8 @@ class PlaylistDetailState extends State<PlaylistDetail> {
                           ),
                         ),
                         onPressed: () {
-                          AppStorage().closeMedia();
-                          AppStorage().openPlaylist(widget.info, false);
+                          App().closeMedia();
+                          App().openPlaylist(widget.info, false);
                         },
                         icon: const Icon(Icons.play_arrow),
                         label: Text('播放'.l10n),
@@ -120,8 +120,8 @@ class PlaylistDetailState extends State<PlaylistDetail> {
                           ),
                         ),
                         onPressed: () {
-                          AppStorage().closeMedia();
-                          AppStorage().openPlaylist(widget.info, true);
+                          App().closeMedia();
+                          App().openPlaylist(widget.info, true);
                           setState(() {});
                         },
                         icon: const Icon(Icons.shuffle),
@@ -151,10 +151,10 @@ class PlaylistDetailState extends State<PlaylistDetail> {
             icon: Icons.music_note,
             label: info.title,
             onTap: () async {
-              await AppStorage().closeMedia().then((_) {
-                AppStorage().openMedia(info);
+              await App().closeMedia().then((_) {
+                App().openMedia(info);
               });
-              AppStorage().updateStatus();
+              App().updateStatus();
             },
             actions: [
               MenuButton(

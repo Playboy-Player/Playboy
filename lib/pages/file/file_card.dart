@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
-import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/app.dart';
 import 'package:playboy/pages/home.dart';
 import 'package:playboy/widgets/cover_card.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
@@ -25,9 +25,9 @@ class FileCard extends StatelessWidget {
       menuChildren: const [],
       onTap: () {
         if (LibraryHelper.supportFormats.contains(extension(source))) {
-          AppStorage().closeMedia();
+          App().closeMedia();
           if (!context.mounted) return;
-          AppStorage().openMedia(
+          App().openMedia(
             PlayItem(source: source, cover: null, title: source),
           );
 

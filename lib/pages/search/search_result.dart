@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
-import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/route_utils.dart';
 import 'package:playboy/backend/utils/sliver_utils.dart';
 import 'package:playboy/backend/utils/string_utils.dart';
@@ -19,8 +19,8 @@ import 'package:playboy/widgets/cover_listtile.dart';
 import 'package:playboy/widgets/empty_holder.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
 import 'package:playboy/widgets/loading_holder.dart';
-import 'package:playboy/widgets/menu_button.dart';
-import 'package:playboy/widgets/menu_item.dart';
+import 'package:playboy/widgets/menu/menu_button.dart';
+import 'package:playboy/widgets/menu/menu_item.dart';
 
 class SearchResultPage extends StatefulWidget {
   const SearchResultPage({
@@ -103,7 +103,7 @@ class SearchResultPageState extends State<SearchResultPage> {
   void _loadResult() async {
     // load media result
     var allMedia = await LibraryHelper.getMediaFromPaths(
-      AppStorage().settings.videoPaths,
+      App().settings.videoPaths,
     );
     _mediaResult.addAll(
       allMedia.where((item) => isSubsequence(widget.keyword, item.title)),
@@ -182,7 +182,7 @@ class SearchResultPageState extends State<SearchResultPage> {
                         IconButton(
                           tooltip: '播放',
                           onPressed: () {
-                            AppStorage().openPlaylist(info, false);
+                            App().openPlaylist(info, false);
                           },
                           icon: const Icon(Icons.play_arrow),
                         ),
@@ -219,8 +219,8 @@ class SearchResultPageState extends State<SearchResultPage> {
                         info,
                       ),
                       onTap: () async {
-                        await AppStorage().closeMedia().then((value) {
-                          AppStorage().openMedia(info);
+                        await App().closeMedia().then((value) {
+                          App().openMedia(info);
                         });
                         // if (!context.mounted) return;
                         // pushRootPage(
@@ -254,8 +254,8 @@ class SearchResultPageState extends State<SearchResultPage> {
                       icon: Icons.movie_outlined,
                       label: info.title,
                       onTap: () async {
-                        await AppStorage().closeMedia().then((_) {
-                          AppStorage().openMedia(info);
+                        await App().closeMedia().then((_) {
+                          App().openMedia(info);
                           // if (!context.mounted) return;
                           // pushRootPage(
                           //   context,
@@ -263,14 +263,14 @@ class SearchResultPageState extends State<SearchResultPage> {
                           // );
                           HomePage.switchView?.call();
                         });
-                        AppStorage().updateStatus();
+                        App().updateStatus();
                       },
                       actions: [
                         IconButton(
                           tooltip: '播放',
                           onPressed: () {
-                            AppStorage().closeMedia();
-                            AppStorage().openMedia(info);
+                            App().closeMedia();
+                            App().openMedia(info);
                             // if (!context.mounted) return;
                             // pushRootPage(
                             //   context,

@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
-import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/app.dart';
 
 import 'package:path/path.dart';
 import 'package:media_kit/media_kit.dart';
@@ -24,13 +24,6 @@ class LibraryHelper {
     '.mp3',
     '.ogg',
     '.wav',
-  ];
-  static const imageFormats = [
-    'jpg',
-    'png',
-    'webp',
-    'bmp',
-    'wbmp',
   ];
 
   static Playlist convertToPlaylist(PlaylistItem playlistItem) {
@@ -110,7 +103,7 @@ class LibraryHelper {
 
   static Future<List<PlaylistItem>> loadPlaylists() async {
     var playlists = <PlaylistItem>[];
-    var dir = Directory('${AppStorage().dataPath}/playlists/');
+    var dir = Directory('${App().dataPath}/playlists/');
     if (!dir.existsSync()) {
       dir.createSync(recursive: true);
     }
@@ -130,7 +123,7 @@ class LibraryHelper {
   }
 
   static void savePlaylist(PlaylistItem pl) {
-    var fp = File('${AppStorage().dataPath}/playlists/${pl.uuid}.json');
+    var fp = File('${App().dataPath}/playlists/${pl.uuid}.json');
     if (!fp.existsSync()) {
       fp.createSync(recursive: true);
     }
@@ -139,12 +132,12 @@ class LibraryHelper {
   }
 
   static void deletePlaylist(PlaylistItem pl) {
-    var fp = File('${AppStorage().dataPath}/playlists/${pl.uuid}.json');
+    var fp = File('${App().dataPath}/playlists/${pl.uuid}.json');
     if (fp.existsSync()) {
       fp.deleteSync();
     }
 
-    var cover = File('${AppStorage().dataPath}/playlists/${pl.uuid}.cover.jpg');
+    var cover = File('${App().dataPath}/playlists/${pl.uuid}.cover.jpg');
     if (cover.existsSync()) {
       cover.deleteSync();
     }

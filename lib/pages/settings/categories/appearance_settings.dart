@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
 
 class AppearanceSettingsPage extends StatefulWidget {
@@ -45,17 +45,17 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                 controller: _controller1,
                 maxLines: 1,
                 decoration: InputDecoration.collapsed(
-                  hintText: AppStorage().settings.font != ''
-                      ? AppStorage().settings.font
+                  hintText: App().settings.font != ''
+                      ? App().settings.font
                       : 'Default',
                 ),
                 onSubmitted: (value) {
                   _controller1.clear();
                   setState(() {
-                    AppStorage().settings.font = value;
+                    App().settings.font = value;
                   });
-                  AppStorage().saveSettings();
-                  AppStorage().updateStatus();
+                  App().saveSettings();
+                  App().updateStatus();
                 },
               ),
             ),
@@ -90,7 +90,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                   ),
                   fillColor: Theme.of(context).colorScheme.secondaryContainer,
                 ),
-                value: AppStorage().settings.initPage,
+                value: App().settings.initPage,
                 items: [
                   DropdownMenuItem(
                     value: 0,
@@ -142,8 +142,8 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                   ),
                 ],
                 onChanged: (value) {
-                  AppStorage().settings.initPage = value!;
-                  AppStorage().saveSettings();
+                  App().settings.initPage = value!;
+                  App().saveSettings();
                 },
               ),
             ),
@@ -170,7 +170,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                   ),
                   fillColor: Theme.of(context).colorScheme.secondaryContainer,
                 ),
-                value: AppStorage().settings.playlistListview,
+                value: App().settings.playlistListview,
                 items: [
                   DropdownMenuItem(
                     value: false,
@@ -198,8 +198,8 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                   ),
                 ],
                 onChanged: (value) {
-                  AppStorage().settings.playlistListview = value!;
-                  AppStorage().saveSettings();
+                  App().settings.playlistListview = value!;
+                  App().saveSettings();
                 },
               ),
             ),
@@ -226,7 +226,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                   ),
                   fillColor: Theme.of(context).colorScheme.secondaryContainer,
                 ),
-                value: AppStorage().settings.videoLibListview,
+                value: App().settings.videoLibListview,
                 items: [
                   DropdownMenuItem(
                     value: false,
@@ -254,8 +254,8 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                   ),
                 ],
                 onChanged: (value) {
-                  AppStorage().settings.videoLibListview = value!;
-                  AppStorage().saveSettings();
+                  App().settings.videoLibListview = value!;
+                  App().saveSettings();
                 },
               ),
             ),
@@ -293,16 +293,17 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                   ),
                   fillColor: Theme.of(context).colorScheme.secondaryContainer,
                 ),
-                value: AppStorage().settings.themeCode,
+                value: App().settings.themeCode,
                 items: List.generate(
-                  AppStorage().colors.length,
+                  // App().colors.length,
+                  Colors.primaries.length,
                   (index) {
                     return DropdownMenuItem(
                       value: index,
                       child: Row(
                         children: [
                           ColoredBox(
-                            color: AppStorage().colors[index],
+                            color: Colors.primaries[index],
                             child: const SizedBox(
                               height: 16,
                               width: 16,
@@ -311,61 +312,61 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                           const SizedBox(
                             width: 10,
                           ),
-                          Text(AppStorage().themes[index]),
+                          Text('#$index'),
                         ],
                       ),
                     );
                   },
                 ),
                 onChanged: (value) {
-                  AppStorage().settings.themeCode = value!;
-                  AppStorage().saveSettings();
-                  AppStorage().updateStatus();
+                  App().settings.themeCode = value!;
+                  App().saveSettings();
+                  App().updateStatus();
                 },
               ),
             ),
           ),
           SwitchListTile(
             title: Text('使用系统主题'.l10n),
-            value: AppStorage().settings.themeMode == ThemeMode.system,
+            value: App().settings.themeMode == ThemeMode.system,
             onChanged: (bool value) {
               if (value) {
                 setState(
                   () {
-                    AppStorage().settings.themeMode = ThemeMode.system;
+                    App().settings.themeMode = ThemeMode.system;
                   },
                 );
               } else {
                 setState(
                   () {
-                    AppStorage().settings.themeMode =
+                    App().settings.themeMode =
                         Theme.of(context).brightness == Brightness.dark
                             ? ThemeMode.dark
                             : ThemeMode.light;
                   },
                 );
               }
-              AppStorage().saveSettings();
-              AppStorage().updateStatus();
+              App().saveSettings();
+              App().updateStatus();
             },
           ),
-          AppStorage().settings.themeMode == ThemeMode.system
+          App().settings.themeMode == ThemeMode.system
               ? const SizedBox()
               : SwitchListTile(
                   title: Text('深色模式'.l10n),
-                  value: AppStorage().settings.themeMode == ThemeMode.dark,
+                  value: App().settings.themeMode == ThemeMode.dark,
                   onChanged: (bool value) {
                     if (value) {
                       setState(() {
-                        AppStorage().settings.themeMode = ThemeMode.dark;
+                        App().settings.themeMode = ThemeMode.dark;
                       });
                     } else {
                       setState(() {
-                        AppStorage().settings.themeMode = ThemeMode.light;
+                        App().settings.themeMode = ThemeMode.light;
                       });
                     }
-                    AppStorage().saveSettings();
-                    AppStorage().updateStatus();
+                    App().saveSettings();
+                    App().updateStatus();
                   },
                 ),
         ],

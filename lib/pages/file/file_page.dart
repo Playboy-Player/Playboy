@@ -4,7 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import 'package:playboy/backend/models/playitem.dart';
-import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/route_utils.dart';
 import 'package:playboy/backend/utils/sliver_utils.dart';
@@ -13,9 +13,9 @@ import 'package:playboy/pages/file/folder_card.dart';
 import 'package:playboy/pages/home.dart';
 import 'package:playboy/widgets/empty_holder.dart';
 import 'package:playboy/widgets/folding_holder.dart';
-import 'package:playboy/widgets/library_header.dart';
-import 'package:playboy/widgets/library_listtile.dart';
-import 'package:playboy/widgets/library_title.dart';
+import 'package:playboy/widgets/library/library_header.dart';
+import 'package:playboy/widgets/library/library_listtile.dart';
+import 'package:playboy/widgets/library/library_title.dart';
 
 class FilePage extends StatefulWidget {
   const FilePage({super.key});
@@ -33,7 +33,7 @@ class _FilePageState extends State<FilePage> {
   @override
   void initState() {
     super.initState();
-    AppStorage().updateFilePage = () {
+    App().updateFilePage = () {
       setState(() {});
     };
   }
@@ -76,11 +76,11 @@ class _FilePageState extends State<FilePage> {
                     delegate: SliverChildBuilderDelegate(
                       (BuildContext context, int index) {
                         return FolderCard(
-                          source: AppStorage().settings.videoPaths[index],
+                          source: App().settings.videoPaths[index],
                           icon: Icons.folder_outlined,
                         );
                       },
-                      childCount: AppStorage().settings.videoPaths.length,
+                      childCount: App().settings.videoPaths.length,
                     ),
                   ),
                 )
@@ -112,19 +112,17 @@ class _FilePageState extends State<FilePage> {
                       (BuildContext context, int index) {
                         if (index == 0) {
                           return FolderCard(
-                            source: AppStorage().settings.screenshotPath,
+                            source: App().settings.screenshotPath,
                             icon: Icons.photo_camera_back_outlined,
                           );
                         } else {
                           return FolderCard(
-                            source:
-                                AppStorage().settings.favouritePaths[index - 1],
+                            source: App().settings.favouritePaths[index - 1],
                             icon: Icons.folder_special_outlined,
                           );
                         }
                       },
-                      childCount:
-                          AppStorage().settings.favouritePaths.length + 1,
+                      childCount: App().settings.favouritePaths.length + 1,
                     ),
                   ),
                 )
@@ -263,8 +261,8 @@ class _FilePageState extends State<FilePage> {
 
   void _openLink(String source) async {
     if (!context.mounted) return;
-    AppStorage().closeMedia();
-    AppStorage().openMedia(
+    App().closeMedia();
+    App().openMedia(
       PlayItem(source: source, cover: null, title: source),
     );
 

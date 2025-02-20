@@ -14,55 +14,13 @@ import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/models/settings.dart';
 import 'package:playboy/pages/home.dart';
 
-class AppStorage extends ChangeNotifier {
-  List<MaterialColor> colors = [
-    Colors.amber,
-    Colors.blue,
-    Colors.blueGrey,
-    Colors.brown,
-    Colors.cyan,
-    Colors.deepOrange,
-    Colors.deepPurple,
-    Colors.green,
-    Colors.grey,
-    Colors.indigo,
-    Colors.lightBlue,
-    Colors.lightGreen,
-    Colors.lime,
-    Colors.orange,
-    Colors.pink,
-    Colors.purple,
-    Colors.red,
-    Colors.teal,
-    Colors.yellow,
-  ];
-  List<String> themes = [
-    "amber",
-    "blue+",
-    "grey+",
-    "brown",
-    "miku",
-    "orange+",
-    "purple+",
-    "green+",
-    "grey",
-    "indigo",
-    "blue",
-    "green",
-    "lime",
-    "orange",
-    "pink",
-    "purple",
-    "red",
-    "teal",
-    "yellow",
-  ];
-
+class App extends ChangeNotifier {
   late final String dataPath;
   late AppSettings settings;
 
   late Function() updateFilePage;
   late Function() updateVideoPage;
+  Map<String, Function> actions = {};
 
   late final NativePlayer playboy;
   late final BasicVideoController controller;
@@ -84,9 +42,9 @@ class AppStorage extends ChangeNotifier {
   bool seeking = false;
   double seekingPos = 0;
 
-  static final AppStorage _instance = AppStorage._internal();
-  factory AppStorage() => _instance;
-  AppStorage._internal() {
+  static final App _instance = App._internal();
+  factory App() => _instance;
+  App._internal() {
     settings = AppSettings();
   }
 
@@ -143,6 +101,18 @@ class AppStorage extends ChangeNotifier {
     playboy.setVolume(settings.volume);
     if (settings.preciseSeek) playboy.setProperty('hr-seek', 'yes');
     // playboy.setProperty('hr-seek-framedrop', 'no');
+
+    // TODO: arguments to avoid crash on switch media?
+    // Should I make this into another option?
+    // https://github.com/mpv-player/mpv/commit/703f1588803eaa428e09c0e5547b26c0fff476a7
+    // https://github.com/mpv-android/mpv-android/commit/9e5c3d8a630290fc41edb8b03aeafa3bc4c45955
+    playboy.setProperty('scale', 'bilinear');
+    playboy.setProperty('dscale', 'bilinear');
+    playboy.setProperty('dither', 'no');
+    playboy.setProperty('correct-downscaling', 'no');
+    playboy.setProperty('linear-downscaling', 'no');
+    playboy.setProperty('sigmoid-upscaling', 'no');
+    playboy.setProperty('hdr-compute-peak', 'no');
   }
 
   Future<void> loadSettings() async {
@@ -163,6 +133,10 @@ class AppStorage extends ChangeNotifier {
     var data = settings.toJson();
     var str = jsonEncode(data);
     await fp.writeAsString(str);
+  }
+
+  void executeAction(String action) {
+    actions[action]?.call();
   }
 
   void updateStatus() {
@@ -204,11 +178,11 @@ class AppStorage extends ChangeNotifier {
       playboy.open(LibraryHelper.convertToPlaylist(playlistItem), play: false);
       playboy.setShuffle(true);
       playboy.jump(0);
-      if (AppStorage().settings.autoPlay) playboy.play();
+      if (App().settings.autoPlay) playboy.play();
     } else {
       playboy.open(
         LibraryHelper.convertToPlaylist(playlistItem),
-        play: AppStorage().settings.autoPlay,
+        play: App().settings.autoPlay,
       );
     }
     position = Duration.zero;
@@ -232,6 +206,6 @@ class AppStorage extends ChangeNotifier {
   }
 
   MaterialColor getColorTheme() {
-    return colors[settings.themeCode];
+    return Colors.primaries[settings.themeCode];
   }
 }

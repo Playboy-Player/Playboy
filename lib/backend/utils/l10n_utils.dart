@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/app.dart';
 
-extension AppTranslation on String {
+extension L10n on String {
   String _translate() {
-    var lang = AppStorage().settings.language;
+    var lang = App().settings.language;
     return (translations[lang]?[this]) ?? this;
   }
 

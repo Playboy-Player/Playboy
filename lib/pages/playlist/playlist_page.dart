@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
-import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/route_utils.dart';
 import 'package:playboy/backend/utils/sliver_utils.dart';
@@ -16,11 +16,11 @@ import 'package:playboy/pages/playlist/playlist_menu.dart';
 import 'package:playboy/widgets/empty_holder.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
 import 'package:playboy/widgets/cover_card.dart';
-import 'package:playboy/widgets/library_header.dart';
+import 'package:playboy/widgets/library/library_header.dart';
 import 'package:playboy/widgets/cover_listtile.dart';
 import 'package:playboy/widgets/loading_holder.dart';
-import 'package:playboy/widgets/menu_button.dart';
-import 'package:playboy/widgets/menu_item.dart';
+import 'package:playboy/widgets/menu/menu_button.dart';
+import 'package:playboy/widgets/menu/menu_item.dart';
 
 class PlaylistPage extends StatefulWidget {
   const PlaylistPage({super.key});
@@ -90,7 +90,7 @@ class PlaylistState extends State<PlaylistPage> {
                   );
                   LibraryHelper.savePlaylist(pl);
                   setState(() {
-                    AppStorage().playlists.add(pl);
+                    App().playlists.add(pl);
                   });
                   Navigator.pop(context);
                 },
@@ -112,7 +112,7 @@ class PlaylistState extends State<PlaylistPage> {
                     );
                     LibraryHelper.savePlaylist(pl);
                     setState(() {
-                      AppStorage().playlists.add(pl);
+                      App().playlists.add(pl);
                     });
                     Navigator.pop(context);
                   },
@@ -146,7 +146,7 @@ class PlaylistState extends State<PlaylistPage> {
 
   Widget _buildLibraryview(BuildContext context) {
     if (!_loaded) return const MLoadingPlaceHolder();
-    if (AppStorage().playlists.isEmpty) return const MEmptyHolder().toSliver();
+    if (App().playlists.isEmpty) return const MEmptyHolder().toSliver();
 
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -166,7 +166,7 @@ class PlaylistState extends State<PlaylistPage> {
       ),
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          PlaylistItem info = AppStorage().playlists[index];
+          PlaylistItem info = App().playlists[index];
           return MInteractiveWrapper(
             menuController: MenuController(),
             menuChildren: _buildMenuItems(context, colorScheme, info),
@@ -185,7 +185,7 @@ class PlaylistState extends State<PlaylistPage> {
             ),
           );
         },
-        childCount: AppStorage().playlists.length,
+        childCount: App().playlists.length,
       ),
     );
   }
@@ -195,7 +195,7 @@ class PlaylistState extends State<PlaylistPage> {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          PlaylistItem info = AppStorage().playlists[index];
+          PlaylistItem info = App().playlists[index];
           return MCoverListTile(
             aspectRatio: 1,
             height: 60,
@@ -212,7 +212,7 @@ class PlaylistState extends State<PlaylistPage> {
               IconButton(
                 tooltip: '播放',
                 onPressed: () {
-                  AppStorage().openPlaylist(info, false);
+                  App().openPlaylist(info, false);
                 },
                 icon: const Icon(Icons.play_arrow),
               ),
@@ -222,15 +222,15 @@ class PlaylistState extends State<PlaylistPage> {
             ],
           );
         },
-        childCount: AppStorage().playlists.length,
+        childCount: App().playlists.length,
       ),
     );
   }
 
   void _loadLibrary() async {
-    _gridview = !AppStorage().settings.playlistListview;
-    AppStorage().playlists.clear();
-    AppStorage().playlists.addAll(await LibraryHelper.loadPlaylists());
+    _gridview = !App().settings.playlistListview;
+    App().playlists.clear();
+    App().playlists.addAll(await LibraryHelper.loadPlaylists());
     if (!mounted) return;
     setState(() {
       _loaded = true;
@@ -261,8 +261,7 @@ class PlaylistState extends State<PlaylistPage> {
             },
           );
           if (coverPath != null) {
-            var savePath =
-                '${AppStorage().dataPath}/playlists/${item.uuid}.cover.jpg';
+            var savePath = '${App().dataPath}/playlists/${item.uuid}.cover.jpg';
             var originalFile = File(coverPath);
             var newFile = File(savePath);
             item.cover = savePath;
@@ -283,8 +282,7 @@ class PlaylistState extends State<PlaylistPage> {
           setState(() {
             item.cover = null;
           });
-          var coverPath =
-              '${AppStorage().dataPath}/playlists/${item.uuid}.cover.jpg';
+          var coverPath = '${App().dataPath}/playlists/${item.uuid}.cover.jpg';
           var cover = File(coverPath);
           if (await cover.exists()) {
             await cover.delete();
@@ -368,7 +366,7 @@ class PlaylistState extends State<PlaylistPage> {
                         item,
                       );
                       // AppStorage().playlists.removeAt(index);
-                      AppStorage().playlists.remove(item);
+                      App().playlists.remove(item);
                       setState(() {});
                       Navigator.of(context).pop();
                     },

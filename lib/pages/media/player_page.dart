@@ -13,7 +13,7 @@ import 'package:playboy/widgets/basic_video.dart';
 import 'package:playboy/pages/media/player_menu.dart';
 // import 'package:playboy/pages/media/fullscreen_play_page.dart';
 import 'package:playboy/backend/models/playitem.dart';
-import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/time_utils.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
 import 'package:playboy/widgets/player_list.dart';
@@ -31,13 +31,12 @@ class PlayerPage extends StatefulWidget {
 }
 
 class PlayerPageState extends State<PlayerPage> {
-  BasicVideoController controller = AppStorage().controller;
+  BasicVideoController controller = App().controller;
 
   bool _menuExpanded = false;
-  // bool _videoMode = !AppStorage().settings.defaultMusicMode;
   int _curPanel = 0;
 
-  // bool _showControlBar = false;
+  bool _showControlBar = false;
   bool _isMouseHidden = false;
   Timer? _timer;
 
@@ -61,8 +60,8 @@ class PlayerPageState extends State<PlayerPage> {
   @override
   void dispose() {
     super.dispose();
-    if (!AppStorage().settings.playAfterExit) {
-      AppStorage().closeMedia();
+    if (!App().settings.playAfterExit) {
+      App().closeMedia();
     }
     _timer?.cancel();
   }
@@ -76,41 +75,319 @@ class PlayerPageState extends State<PlayerPage> {
     );
     return Scaffold(
       backgroundColor: backgroundColor,
-      body: Column(
-        children: [
-          Expanded(
-            child: Row(
+      body: widget.fullscreen
+          ? Stack(
               children: [
-                Expanded(
-                  // flex: 3,
-                  child: Container(
-                    // padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: _buildPlayer(colorScheme),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        child: _buildPlayer(colorScheme),
+                      ),
+                    ),
+                    _buildSidePanel(colorScheme, backgroundColor),
+                  ],
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: AnimatedOpacity(
+                    opacity: _showControlBar ? 0.9 : 0,
+                    duration: const Duration(milliseconds: 100),
+                    child: MouseRegion(
+                      onHover: (event) {
+                        setState(() {
+                          _showControlBar = true;
+                        });
+                      },
+                      onExit: (event) {
+                        setState(() {
+                          _showControlBar = false;
+                        });
+                      },
+                      child: Container(
+                        color: backgroundColor,
+                        height: 90,
+                        child: Column(
+                          children: _buildButtomBar(context, colorScheme),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-                _menuExpanded
-                    ? Container(
-                        padding: widget.fullscreen
-                            ? null
-                            : const EdgeInsets.only(left: 10),
-                        width: 300,
-                        child: _buildSidePanel(
-                          colorScheme,
-                          backgroundColor,
+              ],
+            )
+          : Column(
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          child: _buildPlayer(colorScheme),
                         ),
-                      )
-                    : const SizedBox(),
+                      ),
+                      _buildSidePanel(colorScheme, backgroundColor),
+                    ],
+                  ),
+                ),
+                ..._buildButtomBar(context, colorScheme),
+                const SizedBox(height: 10)
               ],
             ),
-          ),
-          ..._buildButtomBar(context, colorScheme),
-          const SizedBox(height: 10)
-        ],
-      ),
     );
   }
 
   List<Widget> _buildButtomBar(BuildContext context, ColorScheme colorScheme) {
+    Widget buildSeekbar() {
+      late final colorScheme = Theme.of(context).colorScheme;
+      return SliderTheme(
+        data: SliderThemeData(
+          year2023: false,
+          trackHeight: 4,
+          thumbColor: colorScheme.secondary,
+          activeTrackColor: colorScheme.secondary,
+          thumbSize: const WidgetStatePropertyAll(Size(4, 12)),
+          overlayShape: SliderComponentShape.noOverlay,
+        ),
+        child: StreamBuilder(
+          stream: App().playboy.stream.position,
+          builder: (BuildContext context, AsyncSnapshot<Duration> snapshot) {
+            return Slider(
+              max: App().duration.inMilliseconds.toDouble(),
+              value: App().seeking
+                  ? App().seekingPos
+                  : bounded(
+                      0,
+                      snapshot.hasData
+                          ? snapshot.data!.inMilliseconds.toDouble()
+                          : App().position.inMilliseconds.toDouble(),
+                      App().duration.inMilliseconds.toDouble(),
+                    ),
+              onChanged: (value) {
+                setState(() {
+                  App().seekingPos = value;
+                });
+              },
+              onChangeStart: (value) {
+                setState(() {
+                  App().seeking = true;
+                });
+              },
+              onChangeEnd: (value) {
+                App().playboy.seek(Duration(milliseconds: value.toInt())).then(
+                      (_) => {
+                        setState(() {
+                          App().seeking = false;
+                        })
+                      },
+                    );
+              },
+            );
+          },
+        ),
+      );
+    }
+
+    Widget buildControlbar(ColorScheme colorScheme) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Row(
+              children: [
+                const SizedBox(width: 6),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      App().playboy.setVolume(0);
+                    });
+                    App().settings.volume = 0;
+                    App().saveSettings();
+                  },
+                  icon: Icon(
+                    App().playboy.state.volume == 0
+                        ? Icons.volume_off_rounded
+                        : Icons.volume_up_rounded,
+                  ),
+                ),
+                SizedBox(
+                  width: 80,
+                  child: SliderTheme(
+                    data: SliderThemeData(
+                      year2023: false,
+                      activeTrackColor: colorScheme.secondaryContainer,
+                      thumbColor: colorScheme.secondary,
+                      trackHeight: 4,
+                      thumbSize: const WidgetStatePropertyAll(Size(4, 12)),
+                      overlayShape: SliderComponentShape.noOverlay,
+                    ),
+                    child: Slider(
+                      max: 100,
+                      value: App().playboy.state.volume,
+                      onChanged: (value) {
+                        setState(() {
+                          App().playboy.setVolume(value);
+                        });
+                      },
+                      onChangeEnd: (value) {
+                        setState(() {});
+                        App().settings.volume = value;
+                        App().saveSettings();
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              App().closeMedia().then((_) {
+                setState(() {});
+              });
+            },
+            icon: const Icon(Icons.stop_circle_outlined),
+          ),
+          IconButton(
+            onPressed: () {
+              setState(() {
+                App().shuffle = !App().shuffle;
+                App().playboy.setShuffle(App().shuffle);
+              });
+            },
+            icon: App().shuffle
+                ? const Icon(Icons.shuffle_on_rounded)
+                : const Icon(Icons.shuffle_rounded),
+          ),
+          IconButton(
+            onPressed: () {
+              if (App().playboy.state.playlistMode == PlaylistMode.single) {
+                App().playboy.setPlaylistMode(PlaylistMode.none);
+              } else {
+                App().playboy.setPlaylistMode(PlaylistMode.single);
+              }
+              setState(() {});
+            },
+            icon: App().playboy.state.playlistMode == PlaylistMode.single
+                ? const Icon(Icons.repeat_one_on_rounded)
+                : const Icon(Icons.repeat_one_rounded),
+          ),
+          const SizedBox(width: 10),
+          IconButton.filledTonal(
+            onPressed: () {
+              App().playboy.previous();
+            },
+            icon: const Icon(Icons.skip_previous_outlined),
+          ),
+          const SizedBox(width: 10),
+          IconButton.filled(
+            style: IconButton.styleFrom(
+              // backgroundColor: colorScheme.secondary,
+              // foregroundColor: colorScheme.onSecondary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+            iconSize: 30,
+            onPressed: () {
+              setState(() {
+                App().playboy.playOrPause();
+              });
+            },
+            icon: StreamBuilder(
+                stream: App().playboy.stream.playing,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Icon(
+                      snapshot.data!
+                          ? Icons.pause_circle_outline
+                          : Icons.play_arrow_outlined,
+                    );
+                  } else {
+                    return Icon(
+                      App().playing
+                          ? Icons.pause_circle_outline
+                          : Icons.play_arrow_outlined,
+                    );
+                  }
+                }),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          IconButton.filledTonal(
+            onPressed: () {
+              App().playboy.next();
+            },
+            icon: const Icon(Icons.skip_next_outlined),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          IconButton(
+            icon: const Icon(
+              Icons.menu,
+              weight: 550,
+            ),
+            onPressed: () {
+              _handlePanelSelection(1);
+            },
+          ),
+          IconButton(
+            onPressed: () {
+              _handlePanelSelection(0);
+            },
+            icon: const Icon(Icons.video_settings),
+          ),
+          IconButton(
+            onPressed: () {
+              _handlePanelSelection(2);
+            },
+            icon: const Icon(Icons.description_outlined),
+          ),
+          const Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton(
+                  onPressed: null,
+                  icon: Icon(Icons.alarm),
+                ),
+                // IconButton(
+                //   onPressed: () async {
+                //     // https://github.com/leanflutter/window_manager/issues/456
+                //     if (Platform.isWindows &&
+                //         !await windowManager.isMaximized()) {
+                //       AppStorage().windowPos = await windowManager.getPosition();
+                //       AppStorage().windowSize = await windowManager.getSize();
+                //       var info = (await screenRetriever.getPrimaryDisplay());
+                //       await windowManager.setAsFrameless();
+                //       await windowManager.setPosition(Offset.zero);
+                //       await windowManager.setSize(info.size);
+                //     } else {
+                //       windowManager.setFullScreen(true);
+                //     }
+
+                //     if (!mounted) return;
+                //     Navigator.of(context, rootNavigator: true).push(
+                //       PageRouteBuilder(
+                //         pageBuilder: (context, animation1, animation2) =>
+                //             const FullscreenPlayPage(),
+                //         transitionDuration: Duration.zero,
+                //         reverseTransitionDuration: Duration.zero,
+                //       ),
+                //     );
+                //   },
+                //   icon: const Icon(Icons.open_in_full_rounded),
+                // ),
+                SizedBox(width: 6),
+              ],
+            ),
+          ),
+        ],
+      );
+    }
+
     return [
       SizedBox(
         width: MediaQuery.of(context).size.width - 20,
@@ -121,7 +398,7 @@ class PlayerPageState extends State<PlayerPage> {
               alignment: Alignment.center,
               width: 60,
               child: StreamBuilder(
-                stream: AppStorage().playboy.stream.position,
+                stream: App().playboy.stream.position,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     return Text(
@@ -129,18 +406,18 @@ class PlayerPageState extends State<PlayerPage> {
                     );
                   } else {
                     return Text(
-                      getProgressString(AppStorage().position),
+                      getProgressString(App().position),
                     );
                   }
                 },
               ),
             ),
-            Expanded(child: _buildSeekbar()),
+            Expanded(child: buildSeekbar()),
             Container(
               alignment: Alignment.center,
               width: 60,
               child: StreamBuilder(
-                stream: AppStorage().playboy.stream.duration,
+                stream: App().playboy.stream.duration,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     return Text(
@@ -148,7 +425,7 @@ class PlayerPageState extends State<PlayerPage> {
                     );
                   } else {
                     return Text(
-                      getProgressString(AppStorage().duration),
+                      getProgressString(App().duration),
                     );
                   }
                 },
@@ -159,7 +436,7 @@ class PlayerPageState extends State<PlayerPage> {
       ),
       SizedBox(
         height: 50,
-        child: _buildControlbar(colorScheme),
+        child: buildControlbar(colorScheme),
       ),
     ];
   }
@@ -195,260 +472,6 @@ class PlayerPageState extends State<PlayerPage> {
     );
   }
 
-  Widget _buildSeekbar() {
-    late final colorScheme = Theme.of(context).colorScheme;
-    return SliderTheme(
-      data: SliderThemeData(
-        year2023: false,
-        trackHeight: 4,
-        thumbColor: colorScheme.secondary,
-        activeTrackColor: colorScheme.secondary,
-        thumbSize: const WidgetStatePropertyAll(Size(4, 12)),
-        overlayShape: SliderComponentShape.noOverlay,
-      ),
-      child: StreamBuilder(
-        stream: AppStorage().playboy.stream.position,
-        builder: (BuildContext context, AsyncSnapshot<Duration> snapshot) {
-          return Slider(
-            max: AppStorage().duration.inMilliseconds.toDouble(),
-            value: AppStorage().seeking
-                ? AppStorage().seekingPos
-                : bounded(
-                    0,
-                    snapshot.hasData
-                        ? snapshot.data!.inMilliseconds.toDouble()
-                        : AppStorage().position.inMilliseconds.toDouble(),
-                    AppStorage().duration.inMilliseconds.toDouble(),
-                  ),
-            onChanged: (value) {
-              setState(() {
-                AppStorage().seekingPos = value;
-              });
-            },
-            onChangeStart: (value) {
-              setState(() {
-                AppStorage().seeking = true;
-              });
-            },
-            onChangeEnd: (value) {
-              AppStorage()
-                  .playboy
-                  .seek(Duration(milliseconds: value.toInt()))
-                  .then(
-                    (_) => {
-                      setState(() {
-                        AppStorage().seeking = false;
-                      })
-                    },
-                  );
-            },
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildControlbar(ColorScheme colorScheme) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Expanded(
-          child: Row(
-            children: [
-              const SizedBox(width: 6),
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    AppStorage().playboy.setVolume(0);
-                  });
-                  AppStorage().settings.volume = 0;
-                  AppStorage().saveSettings();
-                },
-                icon: Icon(
-                  AppStorage().playboy.state.volume == 0
-                      ? Icons.volume_off_rounded
-                      : Icons.volume_up_rounded,
-                ),
-              ),
-              SizedBox(
-                width: 80,
-                child: SliderTheme(
-                  data: SliderThemeData(
-                    year2023: false,
-                    activeTrackColor: colorScheme.secondaryContainer,
-                    thumbColor: colorScheme.secondary,
-                    trackHeight: 4,
-                    thumbSize: const WidgetStatePropertyAll(Size(4, 12)),
-                    overlayShape: SliderComponentShape.noOverlay,
-                  ),
-                  child: Slider(
-                    max: 100,
-                    value: AppStorage().playboy.state.volume,
-                    onChanged: (value) {
-                      setState(() {
-                        AppStorage().playboy.setVolume(value);
-                      });
-                    },
-                    onChangeEnd: (value) {
-                      setState(() {});
-                      AppStorage().settings.volume = value;
-                      AppStorage().saveSettings();
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        IconButton(
-          onPressed: () {
-            AppStorage().closeMedia().then((_) {
-              setState(() {});
-            });
-          },
-          icon: const Icon(Icons.stop_circle_outlined),
-        ),
-        IconButton(
-          onPressed: () {
-            setState(() {
-              AppStorage().shuffle = !AppStorage().shuffle;
-              AppStorage().playboy.setShuffle(AppStorage().shuffle);
-            });
-          },
-          icon: AppStorage().shuffle
-              ? const Icon(Icons.shuffle_on_rounded)
-              : const Icon(Icons.shuffle_rounded),
-        ),
-        IconButton(
-          onPressed: () {
-            if (AppStorage().playboy.state.playlistMode ==
-                PlaylistMode.single) {
-              AppStorage().playboy.setPlaylistMode(PlaylistMode.none);
-            } else {
-              AppStorage().playboy.setPlaylistMode(PlaylistMode.single);
-            }
-            setState(() {});
-          },
-          icon: AppStorage().playboy.state.playlistMode == PlaylistMode.single
-              ? const Icon(Icons.repeat_one_on_rounded)
-              : const Icon(Icons.repeat_one_rounded),
-        ),
-        const SizedBox(width: 10),
-        IconButton.filledTonal(
-          onPressed: () {
-            AppStorage().playboy.previous();
-          },
-          icon: const Icon(Icons.skip_previous_outlined),
-        ),
-        const SizedBox(width: 10),
-        IconButton.filled(
-          style: IconButton.styleFrom(
-            // backgroundColor: colorScheme.secondary,
-            // foregroundColor: colorScheme.onSecondary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
-          iconSize: 30,
-          onPressed: () {
-            setState(() {
-              AppStorage().playboy.playOrPause();
-            });
-          },
-          icon: StreamBuilder(
-              stream: AppStorage().playboy.stream.playing,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Icon(
-                    snapshot.data!
-                        ? Icons.pause_circle_outline
-                        : Icons.play_arrow_outlined,
-                  );
-                } else {
-                  return Icon(
-                    AppStorage().playing
-                        ? Icons.pause_circle_outline
-                        : Icons.play_arrow_outlined,
-                  );
-                }
-              }),
-        ),
-        const SizedBox(
-          width: 10,
-        ),
-        IconButton.filledTonal(
-          onPressed: () {
-            AppStorage().playboy.next();
-          },
-          icon: const Icon(Icons.skip_next_outlined),
-        ),
-        const SizedBox(
-          width: 10,
-        ),
-        IconButton(
-          icon: const Icon(
-            Icons.menu,
-            weight: 550,
-          ),
-          onPressed: () {
-            _handlePanelSelection(1);
-          },
-        ),
-        IconButton(
-          onPressed: () {
-            _handlePanelSelection(0);
-          },
-          icon: const Icon(Icons.video_settings),
-        ),
-        IconButton(
-          onPressed: () {
-            _handlePanelSelection(2);
-          },
-          icon: const Icon(Icons.description_outlined),
-        ),
-        const Expanded(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              IconButton(
-                onPressed: null,
-                icon: Icon(Icons.alarm),
-              ),
-              // IconButton(
-              //   onPressed: () async {
-              //     // https://github.com/leanflutter/window_manager/issues/456
-              //     if (Platform.isWindows &&
-              //         !await windowManager.isMaximized()) {
-              //       AppStorage().windowPos = await windowManager.getPosition();
-              //       AppStorage().windowSize = await windowManager.getSize();
-              //       var info = (await screenRetriever.getPrimaryDisplay());
-              //       await windowManager.setAsFrameless();
-              //       await windowManager.setPosition(Offset.zero);
-              //       await windowManager.setSize(info.size);
-              //     } else {
-              //       windowManager.setFullScreen(true);
-              //     }
-
-              //     if (!mounted) return;
-              //     Navigator.of(context, rootNavigator: true).push(
-              //       PageRouteBuilder(
-              //         pageBuilder: (context, animation1, animation2) =>
-              //             const FullscreenPlayPage(),
-              //         transitionDuration: Duration.zero,
-              //         reverseTransitionDuration: Duration.zero,
-              //       ),
-              //     );
-              //   },
-              //   icon: const Icon(Icons.open_in_full_rounded),
-              // ),
-              SizedBox(width: 6),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
   void _handlePanelSelection(int id) {
     if (!_menuExpanded) {
       setState(() {
@@ -466,17 +489,36 @@ class PlayerPageState extends State<PlayerPage> {
     }
   }
 
-  Widget _buildSidePanel(ColorScheme colorScheme, Color backgroundColor) {
-    return ClipRRect(
-      borderRadius: BorderRadius.all(
-        Radius.circular(widget.fullscreen ? 0 : 18),
-      ),
-      child: [
-        _buildConfigurationsPanel(colorScheme, backgroundColor),
-        _buildPlaylistPanel(colorScheme, backgroundColor),
-        _buildCommandsPanel(colorScheme, backgroundColor),
-      ][_curPanel],
-    );
+  Widget _buildSidePanel(
+    ColorScheme colorScheme,
+    Color backgroundColor,
+  ) {
+    Widget buildSidePanelContent(
+      ColorScheme colorScheme,
+      Color backgroundColor,
+    ) {
+      return ClipRRect(
+        borderRadius: BorderRadius.all(
+          Radius.circular(widget.fullscreen ? 0 : 18),
+        ),
+        child: [
+          _buildConfigurationsPanel(colorScheme, backgroundColor),
+          _buildPlaylistPanel(colorScheme, backgroundColor),
+          _buildCommandsPanel(colorScheme, backgroundColor),
+        ][_curPanel],
+      );
+    }
+
+    return _menuExpanded
+        ? Container(
+            padding: widget.fullscreen ? null : const EdgeInsets.only(left: 10),
+            width: 300,
+            child: buildSidePanelContent(
+              colorScheme,
+              backgroundColor,
+            ),
+          )
+        : const SizedBox();
   }
 
   Widget _buildPlaylistPanel(ColorScheme colorScheme, Color backgroundColor) {
@@ -509,11 +551,11 @@ class PlayerPageState extends State<PlayerPage> {
         ],
       ),
       body: StreamBuilder(
-        stream: AppStorage().playboy.stream.playlist,
+        stream: App().playboy.stream.playlist,
         builder: (context, snapshot) {
           return ListView.builder(
             itemBuilder: (BuildContext context, int index) {
-              var src = AppStorage().playboy.state.playlist.medias[index].uri;
+              var src = App().playboy.state.playlist.medias[index].uri;
               return SizedBox(
                 height: 46,
                 child: Row(
@@ -523,7 +565,7 @@ class PlayerPageState extends State<PlayerPage> {
                       child: InkWell(
                         borderRadius: BorderRadius.circular(12),
                         onTap: () {
-                          AppStorage().playboy.jump(index);
+                          App().playboy.jump(index);
                         },
                         child: PlayerListCard(
                           info: PlayItem(
@@ -531,24 +573,23 @@ class PlayerPageState extends State<PlayerPage> {
                             cover: null,
                             title: p.basenameWithoutExtension(src),
                           ),
-                          isPlaying: index == AppStorage().playingIndex,
+                          isPlaying: index == App().playingIndex,
                         ),
                       ),
                     ),
                     IconButton(
                       onPressed: () {
-                        var len =
-                            AppStorage().playboy.state.playlist.medias.length;
-                        if (index == AppStorage().playingIndex) {
+                        var len = App().playboy.state.playlist.medias.length;
+                        if (index == App().playingIndex) {
                           if (len == 1) {
-                            AppStorage().closeMedia();
+                            App().closeMedia();
                           } else if (len - 1 == index) {
-                            AppStorage().playboy.previous();
+                            App().playboy.previous();
                           } else {
-                            AppStorage().playboy.next();
+                            App().playboy.next();
                           }
                         }
-                        AppStorage().playboy.remove(index);
+                        App().playboy.remove(index);
                         setState(() {});
                       },
                       icon: const Icon(Icons.close),
@@ -560,7 +601,7 @@ class PlayerPageState extends State<PlayerPage> {
                 ),
               );
             },
-            itemCount: AppStorage().playboy.state.playlist.medias.length,
+            itemCount: App().playboy.state.playlist.medias.length,
           );
         },
       ),
@@ -608,7 +649,7 @@ class PlayerPageState extends State<PlayerPage> {
                 IconButton(
                   onPressed: () {
                     setState(() {
-                      AppStorage().playboy.setRate(1);
+                      App().playboy.setRate(1);
                     });
                   },
                   icon: const Icon(Icons.flash_on_rounded),
@@ -618,11 +659,11 @@ class PlayerPageState extends State<PlayerPage> {
                     min: 0.25,
                     max: 8,
                     divisions: 31,
-                    label: AppStorage().playboy.state.rate.toString(),
-                    value: bounded(0.25, AppStorage().playboy.state.rate, 8),
+                    label: App().playboy.state.rate.toString(),
+                    value: bounded(0.25, App().playboy.state.rate, 8),
                     onChanged: (value) {
                       setState(() {
-                        AppStorage().playboy.setRate(value);
+                        App().playboy.setRate(value);
                       });
                     },
                   ),

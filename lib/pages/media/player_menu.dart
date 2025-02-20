@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/app.dart';
 
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/time_utils.dart';
-import 'package:playboy/widgets/menu_item.dart';
+import 'package:playboy/widgets/menu/menu_item.dart';
 
 List<Widget> buildPlayerMenu() {
   return [
@@ -16,11 +16,11 @@ List<Widget> buildPlayerMenu() {
       icon: Icons.cut,
       label: '截图'.l10n,
       onPressed: () async {
-        if (AppStorage().playingTitle == 'Not Playing') return;
-        var image = await AppStorage().playboy.screenshot();
+        if (App().playingTitle == 'Not Playing') return;
+        var image = await App().playboy.screenshot();
         if (image != null) {
           var file = File(
-            '${AppStorage().settings.screenshotPath}/${getCurrentTimeString()}.png',
+            '${App().settings.screenshotPath}/${getCurrentTimeString()}.png',
           );
           await file.writeAsBytes(image);
         }
@@ -30,15 +30,15 @@ List<Widget> buildPlayerMenu() {
       icon: Icons.cut,
       label: '将当前画面设为封面'.l10n,
       onPressed: () async {
-        if (AppStorage().playingTitle == 'Not Playing') return;
-        var image = await AppStorage().playboy.screenshot();
+        if (App().playingTitle == 'Not Playing') return;
+        var image = await App().playboy.screenshot();
         if (image != null) {
-          var file = File('${AppStorage().playingCover}');
+          var file = File('${App().playingCover}');
           await file.writeAsBytes(image);
           final ImageProvider imageProvider = FileImage(file);
           imageProvider.evict();
         }
-        AppStorage().updateStatus();
+        App().updateStatus();
       },
     ),
     MMenuItem(icon: Icons.terminal, label: '自定义命令'.l10n, onPressed: null),

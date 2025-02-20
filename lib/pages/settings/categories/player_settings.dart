@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
 
 class PlayerSettingsPage extends StatefulWidget {
@@ -29,39 +29,39 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
           ),
           SwitchListTile(
             title: Text('自动开始播放'.l10n),
-            value: AppStorage().settings.autoPlay,
+            value: App().settings.autoPlay,
             onChanged: (bool value) {
               setState(() {
-                AppStorage().settings.autoPlay = value;
+                App().settings.autoPlay = value;
               });
-              AppStorage().saveSettings();
+              App().saveSettings();
               // AppStorage().updateStatus();
             },
           ),
           SwitchListTile(
             title: Text('精确跳转'.l10n),
-            value: AppStorage().settings.preciseSeek,
+            value: App().settings.preciseSeek,
             onChanged: (bool value) {
-              AppStorage().playboy.setProperty(
+              App().playboy.setProperty(
                     'hr-seek',
                     value ? 'yes' : 'no',
                   );
               setState(() {
-                AppStorage().settings.preciseSeek = value;
+                App().settings.preciseSeek = value;
               });
-              AppStorage().saveSettings();
+              App().saveSettings();
               // AppStorage().updateStatus();
             },
           ),
           SwitchListTile(
             title: Text('记忆播放器状态'.l10n),
             subtitle: Text('音量, 列表循环'.l10n),
-            value: AppStorage().settings.rememberStatus,
+            value: App().settings.rememberStatus,
             onChanged: (bool value) {
               setState(() {
-                AppStorage().settings.rememberStatus = value;
+                App().settings.rememberStatus = value;
               });
-              AppStorage().saveSettings();
+              App().saveSettings();
               // AppStorage().updateStatus();
             },
           ),

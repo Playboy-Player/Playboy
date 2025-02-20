@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 
+/// Slimilar to AnimatedCrossFade,
+/// this widget provides slide transition in two widgets.
+///
+/// CAUTIONS
+/// The performance of this widget isn't so good.
+/// don't use it to build complicated widgets.
 class AnimatedCrossSlide extends StatefulWidget {
   final Widget firstChild;
   final Widget secondChild;

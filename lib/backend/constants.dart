@@ -7,7 +7,7 @@ class Constants {
   static const String appName = 'Playboy';
   static const String version = 'βeta 2025.2';
 
-  static List<Contributor> maintainers = [
+  static List<Contributor> contributors = [
     Contributor(
       avatar: 'res/contributors/yui.jpg',
       name: 'YuiHrsw',

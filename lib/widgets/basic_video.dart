@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:media_kit_video/basic/basic_video_controller.dart';
 
+/// a simple implemetaion of `media_kit_video` Video Widget
 class BasicVideo extends StatefulWidget {
   const BasicVideo({
     super.key,

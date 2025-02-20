@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:window_manager/window_manager.dart';
 
-import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/time_utils.dart';
 import 'package:playboy/widgets/basic_video.dart';
 import 'package:playboy/pages/media/player_menu.dart';
-import 'package:playboy/widgets/menu_button.dart';
+import 'package:playboy/widgets/menu/menu_button.dart';
 
 class FullscreenPlayPage extends StatefulWidget {
   const FullscreenPlayPage({super.key});
@@ -23,7 +23,7 @@ class FullscreenPlayPage extends StatefulWidget {
 }
 
 class FullscreenPlayer extends State<FullscreenPlayPage> {
-  late final _controller = AppStorage().controller;
+  late final _controller = App().controller;
 
   bool _showControlBar = false;
   bool _isMouseHidden = false;
@@ -109,7 +109,7 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
                       Row(
                         children: [
                           StreamBuilder(
-                              stream: AppStorage().playboy.stream.position,
+                              stream: App().playboy.stream.position,
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
                                   return Text(
@@ -117,12 +117,12 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
                                   );
                                 } else {
                                   return Text(
-                                    getProgressString(AppStorage().position),
+                                    getProgressString(App().position),
                                   );
                                 }
                               }),
                           Expanded(child: _buildSeekbarFullscreen()),
-                          Text(getProgressString(AppStorage().duration)),
+                          Text(getProgressString(App().duration)),
                         ],
                       ),
                       _buildControlbarFullscreen(colorScheme),
@@ -141,9 +141,9 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
   void _exitFullscreen() async {
     // https://github.com/leanflutter/window_manager/issues/456
     if (Platform.isWindows && !await windowManager.isMaximized()) {
-      windowManager.setSize(AppStorage().windowSize);
+      windowManager.setSize(App().windowSize);
       windowManager.setTitleBarStyle(TitleBarStyle.hidden);
-      windowManager.setPosition(AppStorage().windowPos);
+      windowManager.setPosition(App().windowPos);
     } else {
       windowManager.setFullScreen(false);
     }
@@ -160,36 +160,36 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
         overlayShape: SliderComponentShape.noOverlay,
       ),
       child: StreamBuilder(
-        stream: AppStorage().playboy.stream.position,
+        stream: App().playboy.stream.position,
         builder: (BuildContext context, AsyncSnapshot<Duration> snapshot) {
           return Slider(
-            max: AppStorage().duration.inMilliseconds.toDouble(),
-            value: AppStorage().seeking
-                ? AppStorage().seekingPos
+            max: App().duration.inMilliseconds.toDouble(),
+            value: App().seeking
+                ? App().seekingPos
                 : max(
                     min(
                         snapshot.hasData
                             ? snapshot.data!.inMilliseconds.toDouble()
-                            : AppStorage().position.inMilliseconds.toDouble(),
-                        AppStorage().duration.inMilliseconds.toDouble()),
+                            : App().position.inMilliseconds.toDouble(),
+                        App().duration.inMilliseconds.toDouble()),
                     0),
             onChanged: (value) {
               setState(() {
-                AppStorage().seekingPos = value;
+                App().seekingPos = value;
               });
             },
             onChangeStart: (value) {
               setState(() {
-                AppStorage().seeking = true;
+                App().seeking = true;
               });
             },
             onChangeEnd: (value) {
-              AppStorage()
+              App()
                   .playboy
                   .seek(Duration(milliseconds: value.toInt()))
                   .then((value) => {
                         setState(() {
-                          AppStorage().seeking = false;
+                          App().seeking = false;
                         })
                       });
             },
@@ -208,13 +208,13 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
             IconButton(
               onPressed: () {
                 setState(() {
-                  AppStorage().playboy.setVolume(0);
+                  App().playboy.setVolume(0);
                 });
-                AppStorage().settings.volume = 0;
-                AppStorage().saveSettings();
+                App().settings.volume = 0;
+                App().saveSettings();
               },
               icon: Icon(
-                AppStorage().playboy.state.volume == 0
+                App().playboy.state.volume == 0
                     ? Icons.volume_off
                     : Icons.volume_up,
               ),
@@ -233,16 +233,16 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
                 ),
                 child: Slider(
                   max: 100,
-                  value: AppStorage().playboy.state.volume,
+                  value: App().playboy.state.volume,
                   onChanged: (value) {
                     setState(() {
-                      AppStorage().playboy.setVolume(value);
+                      App().playboy.setVolume(value);
                     });
                   },
                   onChangeEnd: (value) {
                     setState(() {});
-                    AppStorage().settings.volume = value;
-                    AppStorage().saveSettings();
+                    App().settings.volume = value;
+                    App().saveSettings();
                   },
                 ),
               ),
@@ -253,31 +253,31 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
       IconButton(
         onPressed: () {
           setState(() {
-            AppStorage().shuffle = !AppStorage().shuffle;
+            App().shuffle = !App().shuffle;
           });
         },
-        icon: AppStorage().shuffle
+        icon: App().shuffle
             ? const Icon(Icons.shuffle_on)
             : const Icon(Icons.shuffle),
       ),
       const SizedBox(width: 10),
       IconButton(
         onPressed: () {
-          if (AppStorage().playboy.state.playlistMode == PlaylistMode.single) {
-            AppStorage().playboy.setPlaylistMode(PlaylistMode.none);
+          if (App().playboy.state.playlistMode == PlaylistMode.single) {
+            App().playboy.setPlaylistMode(PlaylistMode.none);
           } else {
-            AppStorage().playboy.setPlaylistMode(PlaylistMode.single);
+            App().playboy.setPlaylistMode(PlaylistMode.single);
           }
           setState(() {});
         },
-        icon: AppStorage().playboy.state.playlistMode == PlaylistMode.single
+        icon: App().playboy.state.playlistMode == PlaylistMode.single
             ? const Icon(Icons.repeat_one_on)
             : const Icon(Icons.repeat_one),
       ),
       const SizedBox(width: 10),
       IconButton.filledTonal(
         onPressed: () {
-          AppStorage().playboy.previous();
+          App().playboy.previous();
         },
         icon: const Icon(Icons.skip_previous_outlined),
       ),
@@ -293,11 +293,11 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
         iconSize: 32,
         onPressed: () {
           setState(() {
-            AppStorage().playboy.playOrPause();
+            App().playboy.playOrPause();
           });
         },
         icon: StreamBuilder(
-            stream: AppStorage().playboy.stream.playing,
+            stream: App().playboy.stream.playing,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return Icon(
@@ -307,7 +307,7 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
                 );
               } else {
                 return Icon(
-                  AppStorage().playing
+                  App().playing
                       ? Icons.pause_circle_outline
                       : Icons.play_arrow_outlined,
                 );
@@ -317,7 +317,7 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
       const SizedBox(width: 10),
       IconButton.filledTonal(
         onPressed: () {
-          AppStorage().playboy.next();
+          App().playboy.next();
         },
         icon: const Icon(Icons.skip_next_outlined),
       ),
@@ -353,10 +353,10 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
                 isDense: true,
                 constraints: BoxConstraints(maxHeight: 40),
               ),
-              initialSelection: AppStorage().playboy.state.rate,
+              initialSelection: App().playboy.state.rate,
               onSelected: (value) {
                 if (value != null) {
-                  AppStorage().playboy.setRate(value);
+                  App().playboy.setRate(value);
                   setState(() {});
                 }
               },
@@ -380,7 +380,7 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
                 context: context,
                 builder: (BuildContext context) {
                   TextEditingController controller = TextEditingController();
-                  controller.text = AppStorage().playboy.state.rate.toString();
+                  controller.text = App().playboy.state.rate.toString();
                   return AlertDialog(
                     title: Text('自定义倍速'.l10n),
                     content: TextField(
@@ -414,16 +414,14 @@ class FullscreenPlayer extends State<FullscreenPlayPage> {
               );
               if (customRate != null && customRate > 0) {
                 setState(() {
-                  AppStorage().playboy.setRate(customRate);
-                  AppStorage().settings.speed = customRate;
-                  AppStorage().saveSettings();
+                  App().playboy.setRate(customRate);
+                  App().settings.speed = customRate;
+                  App().saveSettings();
                 });
               }
             },
             icon: Icon(
-              AppStorage().playboy.state.rate == 1
-                  ? Icons.flash_off
-                  : Icons.flash_on,
+              App().playboy.state.rate == 1 ? Icons.flash_off : Icons.flash_on,
             ),
           ),
           const SizedBox(

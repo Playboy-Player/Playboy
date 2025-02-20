@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
-import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/pages/home.dart';
-import 'package:playboy/widgets/menu_item.dart';
+import 'package:playboy/widgets/menu/menu_item.dart';
 import 'package:playboy/widgets/playlist_picker.dart';
 
 List<Widget> buildCommonMediaMenuItems(
@@ -17,8 +17,8 @@ List<Widget> buildCommonMediaMenuItems(
       icon: Icons.open_in_new,
       label: '播放器播放'.l10n,
       onPressed: () {
-        AppStorage().closeMedia();
-        AppStorage().openMedia(item);
+        App().closeMedia();
+        App().openMedia(item);
         HomePage.switchView?.call();
       },
     ),
@@ -26,8 +26,8 @@ List<Widget> buildCommonMediaMenuItems(
       icon: Icons.play_circle_outline_rounded,
       label: '播放'.l10n,
       onPressed: () {
-        AppStorage().closeMedia();
-        AppStorage().openMedia(item);
+        App().closeMedia();
+        App().openMedia(item);
       },
     ),
     MMenuItem(
@@ -61,18 +61,18 @@ List<Widget> buildCommonMediaMenuItems(
                       borderRadius: BorderRadius.circular(20),
                       onTap: () {
                         LibraryHelper.addItemToPlaylist(
-                          AppStorage().playlists[indexList],
+                          App().playlists[indexList],
                           item,
                         );
                         Navigator.pop(context);
                       },
                       child: PlaylistPickerItem(
-                        info: AppStorage().playlists[indexList],
+                        info: App().playlists[indexList],
                       ),
                     ),
                   );
                 },
-                itemCount: AppStorage().playlists.length,
+                itemCount: App().playlists.length,
               ),
             ),
           ),

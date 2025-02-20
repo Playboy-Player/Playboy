@@ -1,14 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:playboy/backend/keymap_helper.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:macos_window_utils/macos_window_utils.dart';
 
 import 'package:playboy/backend/library_helper.dart';
-import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/pages/home.dart';
 
@@ -16,8 +15,8 @@ void main(List<String> arguments) async {
   WidgetsFlutterBinding.ensureInitialized();
   MediaKit.ensureInitialized();
 
-  await AppStorage().init();
-  await AppTranslation.init();
+  await App().init();
+  await L10n.init();
 
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     await windowManager.ensureInitialized();
@@ -26,7 +25,7 @@ void main(List<String> arguments) async {
       size: const Size(900, 700),
       center: true,
       backgroundColor: Colors.transparent,
-      titleBarStyle: AppStorage().settings.enableTitleBar
+      titleBarStyle: App().settings.enableTitleBar
           ? TitleBarStyle.hidden
           : TitleBarStyle.normal,
     );
@@ -62,11 +61,12 @@ void main(List<String> arguments) async {
   //   );
   // }
 
-  ServicesBinding.instance.keyboard.addHandler(KeyMapHelper.handleKeyEvent);
+  // ServicesBinding.instance.keyboard.addHandler(KeyMapHelper.handleKeyEvent);
+  KeyMapHelper.init();
 
   if (arguments.isNotEmpty) {
     String mediaToOpen = arguments[0];
-    AppStorage().openMedia(await LibraryHelper.getItemFromFile(mediaToOpen));
+    App().openMedia(await LibraryHelper.getItemFromFile(mediaToOpen));
     runApp(const HomePage(playerView: true));
   } else {
     runApp(const HomePage());

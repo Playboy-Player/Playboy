@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
 
 class LanguageSettingsPage extends StatefulWidget {
@@ -29,28 +29,28 @@ class _LanguageSettingsPageState extends State<LanguageSettingsPage> {
           RadioListTile(
             title: const Text('简体中文'),
             value: 'zh_hans',
-            groupValue: AppStorage().settings.language,
+            groupValue: App().settings.language,
             onChanged: (value) {
               if (value != null) {
                 setState(() {
-                  AppStorage().settings.language = value;
+                  App().settings.language = value;
                 });
-                AppStorage().saveSettings();
-                AppStorage().updateStatus();
+                App().saveSettings();
+                App().updateStatus();
               }
             },
           ),
           RadioListTile(
             title: const Text('English (US)'),
             value: 'en_us',
-            groupValue: AppStorage().settings.language,
+            groupValue: App().settings.language,
             onChanged: (value) {
               if (value != null) {
                 setState(() {
-                  AppStorage().settings.language = value;
+                  App().settings.language = value;
                 });
-                AppStorage().saveSettings();
-                AppStorage().updateStatus();
+                App().saveSettings();
+                App().updateStatus();
               }
             },
           ),

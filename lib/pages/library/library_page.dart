@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
-import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/sliver_utils.dart';
 import 'package:playboy/pages/home.dart';
@@ -14,11 +14,11 @@ import 'package:playboy/pages/library/media_menu.dart';
 import 'package:playboy/widgets/empty_holder.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
 import 'package:playboy/widgets/cover_card.dart';
-import 'package:playboy/widgets/library_header.dart';
+import 'package:playboy/widgets/library/library_header.dart';
 import 'package:playboy/widgets/cover_listtile.dart';
 import 'package:playboy/widgets/loading_holder.dart';
-import 'package:playboy/widgets/menu_button.dart';
-import 'package:playboy/widgets/menu_item.dart';
+import 'package:playboy/widgets/menu/menu_button.dart';
+import 'package:playboy/widgets/menu/menu_item.dart';
 
 class LibraryPage extends StatefulWidget {
   const LibraryPage({super.key});
@@ -56,21 +56,21 @@ class _LibraryPageState extends State<LibraryPage> {
 
   void _loadLibrary() async {
     _playitems.addAll(
-      await LibraryHelper.getMediaFromPaths(AppStorage().settings.videoPaths),
+      await LibraryHelper.getMediaFromPaths(App().settings.videoPaths),
     );
     if (!mounted) return;
     setState(() {
       _loaded = true;
     });
-    _gridview = !AppStorage().settings.videoLibListview;
-    AppStorage().updateVideoPage = () async {
+    _gridview = !App().settings.videoLibListview;
+    App().updateVideoPage = () async {
       setState(() {
         _loaded = false;
       });
       _playitems.clear();
       _playitems.addAll(
         await LibraryHelper.getMediaFromPaths(
-          AppStorage().settings.videoPaths,
+          App().settings.videoPaths,
         ),
       );
       setState(() {
@@ -147,8 +147,8 @@ class _LibraryPageState extends State<LibraryPage> {
               info,
             ),
             onTap: () async {
-              await AppStorage().closeMedia().then((value) {
-                AppStorage().openMedia(info);
+              await App().closeMedia().then((value) {
+                App().openMedia(info);
               });
               if (_videoview) {
                 // if (!context.mounted) return;
@@ -187,8 +187,8 @@ class _LibraryPageState extends State<LibraryPage> {
             icon: _videoview ? Icons.movie_outlined : Icons.music_note,
             label: info.title,
             onTap: () async {
-              await AppStorage().closeMedia().then((_) {
-                AppStorage().openMedia(info);
+              await App().closeMedia().then((_) {
+                App().openMedia(info);
                 if (_videoview) {
                   // if (!context.mounted) return;
                   // pushRootPage(
@@ -198,14 +198,14 @@ class _LibraryPageState extends State<LibraryPage> {
                   HomePage.switchView?.call();
                 }
               });
-              AppStorage().updateStatus();
+              App().updateStatus();
             },
             actions: [
               IconButton(
                 tooltip: '播放',
                 onPressed: () {
-                  AppStorage().closeMedia();
-                  AppStorage().openMedia(info);
+                  App().closeMedia();
+                  App().openMedia(info);
                   if (_videoview) {
                     // if (!context.mounted) return;
                     // pushRootPage(

@@ -101,17 +101,17 @@ class _AboutPageState extends State<AboutPage> {
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
                 return Tooltip(
-                  message: Constants.maintainers[index].url,
+                  message: Constants.contributors[index].url,
                   child: InkWell(
                     hoverColor: Colors.transparent,
                     focusColor: Colors.transparent,
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                     onTap: () {
-                      if (Constants.maintainers[index].url == '') {
+                      if (Constants.contributors[index].url == '') {
                         return;
                       }
-                      launchUrl(Uri.parse(Constants.maintainers[index].url));
+                      launchUrl(Uri.parse(Constants.contributors[index].url));
                     },
                     child: SizedBox(
                       height: 80,
@@ -121,12 +121,12 @@ class _AboutPageState extends State<AboutPage> {
                         children: [
                           CircleAvatar(
                             backgroundImage: AssetImage(
-                              Constants.maintainers[index].avatar,
+                              Constants.contributors[index].avatar,
                             ),
                             radius: 28,
                           ),
                           Text(
-                            Constants.maintainers[index].name,
+                            Constants.contributors[index].name,
                             style: const TextStyle(
                               // color: Colors.orange,
                               fontWeight: FontWeight.w500,
@@ -138,7 +138,7 @@ class _AboutPageState extends State<AboutPage> {
                   ),
                 );
               },
-              itemCount: Constants.maintainers.length,
+              itemCount: Constants.contributors.length,
             ),
           ),
           Container(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/app.dart';
 
 class DeveloperSettings extends StatefulWidget {
   const DeveloperSettings({super.key});
@@ -29,7 +29,7 @@ class DeveloperSettingsState extends State<DeveloperSettings> {
             ),
           ),
           SwitchListTile(
-            tileColor: AppStorage().settings.enableDevSettings
+            tileColor: App().settings.enableDevSettings
                 ? colorScheme.primaryContainer
                 : colorScheme.primaryContainer.withValues(alpha: 0.2),
             shape: RoundedRectangleBorder(
@@ -40,23 +40,23 @@ class DeveloperSettingsState extends State<DeveloperSettings> {
               height: 40,
               child: const Text('Developer Setting'),
             ),
-            value: AppStorage().settings.enableDevSettings,
+            value: App().settings.enableDevSettings,
             onChanged: (bool value) {
               setState(() {
-                AppStorage().settings.enableDevSettings = value;
+                App().settings.enableDevSettings = value;
               });
-              AppStorage().saveSettings();
+              App().saveSettings();
             },
           ),
           SwitchListTile(
             title: const Text('Enable Custom TitleBar'),
-            value: AppStorage().settings.enableTitleBar,
+            value: App().settings.enableTitleBar,
             onChanged: (bool value) {
               setState(() {
-                AppStorage().settings.enableTitleBar = value;
+                App().settings.enableTitleBar = value;
               });
-              AppStorage().saveSettings();
-              AppStorage().updateStatus();
+              App().saveSettings();
+              App().updateStatus();
             },
           ),
         ],

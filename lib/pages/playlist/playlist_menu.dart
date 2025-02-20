@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
-import 'package:playboy/backend/storage.dart';
+import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
-import 'package:playboy/widgets/menu_item.dart';
+import 'package:playboy/widgets/menu/menu_item.dart';
 
 List<Widget> buildCommonPlaylistMenuItems(
   BuildContext context,
@@ -17,16 +17,16 @@ List<Widget> buildCommonPlaylistMenuItems(
       icon: Icons.play_circle_outline_rounded,
       label: '播放'.l10n,
       onPressed: () {
-        AppStorage().closeMedia();
-        AppStorage().openPlaylist(item, false);
+        App().closeMedia();
+        App().openPlaylist(item, false);
       },
     ),
     MMenuItem(
       icon: Icons.shuffle,
       label: '随机播放'.l10n,
       onPressed: () {
-        AppStorage().closeMedia();
-        AppStorage().openPlaylist(
+        App().closeMedia();
+        App().openPlaylist(
           item,
           true,
         );
@@ -47,7 +47,7 @@ List<Widget> buildCommonPlaylistMenuItems(
       label: '导出'.l10n,
       onPressed: () async {
         final originalFile = File(
-          '${AppStorage().dataPath}/playlists/${item.uuid}.json',
+          '${App().dataPath}/playlists/${item.uuid}.json',
         );
         String? newFilePath = await FilePicker.platform.saveFile(
           dialogTitle: '另存为',
