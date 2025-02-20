@@ -1,4 +1,4 @@
-name: Build Playboy Player Releases
+name: Build
 
 on:
   workflow_dispatch:
@@ -51,7 +51,7 @@ jobs:
         run: |
           flutter doctor
           sudo apt-get update -y
-          sudo apt-get install -y ninja-build libgtk-3-dev
+          sudo apt-get install -y ninja-build libgtk-3-dev libmpv-dev
           flutter doctor
 
       - name: Build Linux App
