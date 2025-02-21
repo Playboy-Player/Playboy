@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:screen_retriever/screen_retriever.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'package:playboy/backend/constants.dart';
@@ -395,24 +394,9 @@ class _HomePageState extends State<HomePage> {
           iconSize: 26,
           onPressed: () async {
             if (_fullScreen) {
-              if (Platform.isWindows && !await windowManager.isMaximized()) {
-                windowManager.setSize(App().windowSize);
-                windowManager.setTitleBarStyle(TitleBarStyle.hidden);
-                windowManager.setPosition(App().windowPos);
-              } else {
-                windowManager.setFullScreen(false);
-              }
+              windowManager.setFullScreen(false);
             } else {
-              if (Platform.isWindows && !await windowManager.isMaximized()) {
-                App().windowPos = await windowManager.getPosition();
-                App().windowSize = await windowManager.getSize();
-                var info = (await screenRetriever.getPrimaryDisplay());
-                await windowManager.setAsFrameless();
-                await windowManager.setPosition(Offset.zero);
-                await windowManager.setSize(info.size);
-              } else {
-                windowManager.setFullScreen(true);
-              }
+              windowManager.setFullScreen(true);
             }
             setState(() {
               _fullScreen = !_fullScreen;

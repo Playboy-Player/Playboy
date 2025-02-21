@@ -22,7 +22,7 @@ void main(List<String> arguments) async {
     await windowManager.ensureInitialized();
     WindowOptions windowOptions = WindowOptions(
       minimumSize: const Size(360, 500),
-      size: const Size(900, 700),
+      // size: const Size(900, 700),
       center: true,
       backgroundColor: Colors.transparent,
       titleBarStyle: App().settings.enableTitleBar
