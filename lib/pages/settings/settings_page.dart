@@ -65,16 +65,6 @@ class SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(
         leadingWidth: 40,
         automaticallyImplyLeading: false,
-        // leading: Platform.isMacOS
-        //     ? null
-        //     : IconButton(
-        //         iconSize: 20,
-        //         constraints: const BoxConstraints(),
-        //         icon: const Icon(Icons.arrow_back_ios_new),
-        //         onPressed: () {
-        //           Navigator.pop(context);
-        //         },
-        //       ),
         titleSpacing: 0,
         title: Stack(
           children: [
@@ -83,35 +73,32 @@ class SettingsPageState extends State<SettingsPage> {
               width: _sizebarWidth,
               height: 40,
             ),
-            Platform.isMacOS
-                ? const SizedBox()
-                : IconButton(
-                    iconSize: 20,
-                    constraints: const BoxConstraints(),
-                    icon: const Icon(Icons.arrow_back_ios_new),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
+            IconButton(
+              iconSize: 20,
+              constraints: const BoxConstraints(),
+              icon: const Icon(Icons.arrow_back_ios_new),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
           ],
         ),
         backgroundColor: Theme.of(context).colorScheme.surface,
         scrolledUnderElevation: 0,
         flexibleSpace: Column(
           children: [
-            if (!Platform.isMacOS)
-              SizedBox(
-                height: 8,
-                child: MouseRegion(
-                  cursor: SystemMouseCursors.resizeUp,
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    onPanStart: (details) {
-                      windowManager.startResizing(ResizeEdge.top);
-                    },
-                  ),
+            SizedBox(
+              height: 8,
+              child: MouseRegion(
+                cursor: SystemMouseCursors.resizeUp,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onPanStart: (details) {
+                    windowManager.startResizing(ResizeEdge.top);
+                  },
                 ),
               ),
+            ),
             Expanded(
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
@@ -124,48 +111,36 @@ class SettingsPageState extends State<SettingsPage> {
         ),
         toolbarHeight: 40,
         actions: [
-          if (!Platform.isMacOS)
-            IconButton(
-              hoverColor: Colors.transparent,
-              padding: EdgeInsets.zero,
-              iconSize: 26,
-              onPressed: () {
-                windowManager.minimize();
-              },
-              icon: const Icon(Icons.keyboard_arrow_down),
-            ),
-          if (!Platform.isMacOS)
-            IconButton(
-              hoverColor: Colors.transparent,
-              padding: EdgeInsets.zero,
-              iconSize: 26,
-              onPressed: () async {
-                if (await windowManager.isMaximized()) {
-                  windowManager.unmaximize();
-                } else {
-                  windowManager.maximize();
-                }
-              },
-              icon: const Icon(Icons.keyboard_arrow_up),
-            ),
-          if (!Platform.isMacOS)
-            IconButton(
-              hoverColor: Colors.transparent,
-              iconSize: 20,
-              onPressed: () {
-                windowManager.close();
-              },
-              icon: const Icon(Icons.close),
-            ),
-          if (Platform.isMacOS)
-            IconButton(
-              constraints: const BoxConstraints(),
-              icon: const Icon(Icons.close),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          if (Platform.isMacOS) const SizedBox(width: 8)
+          IconButton(
+            hoverColor: Colors.transparent,
+            padding: EdgeInsets.zero,
+            iconSize: 26,
+            onPressed: () {
+              windowManager.minimize();
+            },
+            icon: const Icon(Icons.keyboard_arrow_down),
+          ),
+          IconButton(
+            hoverColor: Colors.transparent,
+            padding: EdgeInsets.zero,
+            iconSize: 26,
+            onPressed: () async {
+              if (await windowManager.isMaximized()) {
+                windowManager.unmaximize();
+              } else {
+                windowManager.maximize();
+              }
+            },
+            icon: const Icon(Icons.keyboard_arrow_up),
+          ),
+          IconButton(
+            hoverColor: Colors.transparent,
+            iconSize: 20,
+            onPressed: () {
+              windowManager.close();
+            },
+            icon: const Icon(Icons.close),
+          ),
         ],
       ),
       body: Row(

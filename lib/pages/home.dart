@@ -4,6 +4,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:playboy/widgets/menu/menu_button.dart';
+import 'package:playboy/widgets/menu/menu_item.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'package:playboy/backend/constants.dart';
@@ -244,21 +246,20 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: backgroundColor,
       flexibleSpace: Column(
         children: [
-          if (!Platform.isMacOS)
-            SizedBox(
-              height: 8,
-              child: MouseRegion(
-                cursor: SystemMouseCursors.resizeUp,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onPanStart: (details) {
-                    if (!_fullScreen) {
-                      windowManager.startResizing(ResizeEdge.top);
-                    }
-                  },
-                ),
+          SizedBox(
+            height: 8,
+            child: MouseRegion(
+              cursor: SystemMouseCursors.resizeUp,
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onPanStart: (details) {
+                  if (!_fullScreen) {
+                    windowManager.startResizing(ResizeEdge.top);
+                  }
+                },
               ),
             ),
+          ),
           Expanded(
             child: GestureDetector(
               behavior: HitTestBehavior.translucent,
@@ -272,7 +273,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       toolbarHeight: 40,
-      titleSpacing: Platform.isMacOS ? null : 8,
+      titleSpacing: 8,
       title: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onPanStart: (details) {
@@ -282,33 +283,31 @@ class _HomePageState extends State<HomePage> {
         },
         child: Row(
           children: [
-            Platform.isMacOS
-                ? Container(width: 60)
-                : IconButton(
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStatePropertyAll(
-                        colorScheme.primaryContainer.withValues(alpha: 0.4),
-                      ),
-                      foregroundColor: WidgetStatePropertyAll(
-                        colorScheme.primary,
-                      ),
-                      shape: WidgetStatePropertyAll(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                      ),
-                      padding: const WidgetStatePropertyAll(
-                        EdgeInsets.symmetric(horizontal: 17, vertical: 2),
-                      ),
-                    ),
-                    constraints: const BoxConstraints(),
-                    padding: EdgeInsets.zero,
-                    onPressed: () {
-                      HomePage.switchView?.call();
-                    },
-                    icon: const Icon(Icons.play_circle_outline_rounded),
+            IconButton(
+              style: ButtonStyle(
+                backgroundColor: WidgetStatePropertyAll(
+                  colorScheme.primaryContainer.withValues(alpha: 0.4),
+                ),
+                foregroundColor: WidgetStatePropertyAll(
+                  colorScheme.primary,
+                ),
+                shape: WidgetStatePropertyAll(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24),
                   ),
-            const SizedBox(width: 10),
+                ),
+                padding: const WidgetStatePropertyAll(
+                  EdgeInsets.symmetric(horizontal: 17, vertical: 2),
+                ),
+              ),
+              constraints: const BoxConstraints(),
+              padding: EdgeInsets.zero,
+              onPressed: () {
+                HomePage.switchView?.call();
+              },
+              icon: const Icon(Icons.play_circle_outline_rounded),
+            ),
+            const SizedBox(width: 12),
             Expanded(
               child: tabletUI
                   ? StreamBuilder(
@@ -332,38 +331,63 @@ class _HomePageState extends State<HomePage> {
   List<Widget> _buildTitleBarActions(BuildContext context) {
     return [
       if (!_fullScreen)
-        IconButton(
-          hoverColor: Colors.transparent,
-          onPressed: () {
-            if (_miniMode) {
-              windowManager.setResizable(true);
-              windowManager.setMinimumSize(const Size(360, 500));
-              windowManager.setSize(const Size(900, 700));
-              windowManager.setAlwaysOnTop(false);
-              windowManager.center();
-            } else {
-              windowManager.setResizable(false);
-              windowManager.setMinimumSize(const Size(300, 120));
-              windowManager.setSize(const Size(300, 120));
-              windowManager.setAlwaysOnTop(true);
-            }
-            setState(() {
-              _miniMode = !_miniMode;
-            });
-          },
-          icon: const Icon(Icons.music_note_outlined),
-        ),
-      if (Platform.isMacOS)
-        IconButton(
-          hoverColor: Colors.transparent,
-          padding: EdgeInsets.zero,
-          onPressed: () {
-            HomePage.switchView?.call();
-          },
-          icon: const Icon(Icons.play_circle_outlined),
+        MenuButton(
+          menuChildren: [
+            const SizedBox(height: 10),
+            MMenuItem(
+              icon: Icons.open_in_full,
+              label: '全屏模式',
+              onPressed: () async {
+                if (_fullScreen) {
+                  windowManager.setFullScreen(false);
+                } else {
+                  windowManager.setFullScreen(true);
+                }
+                setState(() {
+                  _fullScreen = !_fullScreen;
+                  _showTitleBarFullscreen = false;
+                });
+              },
+            ),
+            MMenuItem(
+              icon: Icons.music_note_outlined,
+              label: '迷你音乐播放器',
+              onPressed: () {
+                windowManager.setResizable(false);
+                windowManager.setMinimumSize(const Size(300, 120));
+                windowManager.setSize(const Size(300, 120));
+                windowManager.setAlwaysOnTop(true);
+                setState(() {
+                  _miniMode = !_miniMode;
+                });
+              },
+            ),
+            const MMenuItem(
+              icon: Icons.picture_in_picture,
+              label: '画中画',
+              onPressed: null,
+            ),
+            const MMenuItem(
+              icon: Icons.push_pin_outlined,
+              label: '应用置顶',
+              onPressed: null,
+            ),
+            const Divider(),
+            const MMenuItem(
+              icon: Icons.info_outline,
+              label: '关于应用',
+              onPressed: null,
+            ),
+            const MMenuItem(
+              icon: Icons.upcoming_outlined,
+              label: '检查更新',
+              onPressed: null,
+            ),
+            const SizedBox(height: 10),
+          ],
         ),
       const SizedBox(width: 10),
-      if (!Platform.isMacOS && !_fullScreen)
+      if (!_fullScreen)
         IconButton(
           hoverColor: Colors.transparent,
           padding: EdgeInsets.zero,
@@ -373,7 +397,7 @@ class _HomePageState extends State<HomePage> {
           },
           icon: const Icon(Icons.keyboard_arrow_down),
         ),
-      if (!Platform.isMacOS && !_fullScreen)
+      if (!_fullScreen)
         IconButton(
           hoverColor: Colors.transparent,
           padding: EdgeInsets.zero,
@@ -387,7 +411,7 @@ class _HomePageState extends State<HomePage> {
           },
           icon: const Icon(Icons.keyboard_arrow_up),
         ),
-      if (!Platform.isMacOS)
+      if (_fullScreen)
         IconButton(
           hoverColor: Colors.transparent,
           padding: EdgeInsets.zero,
@@ -403,18 +427,17 @@ class _HomePageState extends State<HomePage> {
               _showTitleBarFullscreen = false;
             });
           },
-          icon: Icon(_fullScreen ? Icons.fullscreen_exit : Icons.fullscreen),
+          icon: const Icon(Icons.fullscreen_exit),
         ),
-      if (!Platform.isMacOS)
-        IconButton(
-          hoverColor: Colors.transparent,
-          padding: EdgeInsets.zero,
-          iconSize: 20,
-          onPressed: () {
-            windowManager.close();
-          },
-          icon: const Icon(Icons.close),
-        ),
+      IconButton(
+        hoverColor: Colors.transparent,
+        padding: EdgeInsets.zero,
+        iconSize: 20,
+        onPressed: () {
+          windowManager.close();
+        },
+        icon: const Icon(Icons.close),
+      ),
     ];
   }
 
@@ -535,23 +558,17 @@ class _HomePageState extends State<HomePage> {
                         color: colorScheme.primaryContainer,
                         // iconSize: 30,
                         onPressed: () {
-                          if (_miniMode) {
-                            windowManager.setResizable(true);
-                            windowManager.setMinimumSize(const Size(360, 500));
-                            windowManager.setSize(const Size(900, 700));
-                            windowManager.setAlwaysOnTop(false);
-                            windowManager.center();
-                          } else {
-                            windowManager.setResizable(false);
-                            windowManager.setMinimumSize(const Size(300, 120));
-                            windowManager.setSize(const Size(300, 120));
-                            windowManager.setAlwaysOnTop(true);
-                          }
+                          // exit mini mode
+                          windowManager.setResizable(true);
+                          windowManager.setMinimumSize(const Size(360, 500));
+                          windowManager.setSize(const Size(900, 700));
+                          windowManager.setAlwaysOnTop(false);
+                          windowManager.center();
                           setState(() {
                             _miniMode = !_miniMode;
                           });
                         },
-                        icon: const Icon(Icons.open_in_browser),
+                        icon: const Icon(Icons.close_rounded),
                       ),
                       IconButton(
                         padding: const EdgeInsets.symmetric(horizontal: 2),

@@ -353,33 +353,10 @@ class PlayerPageState extends State<PlayerPage> {
                   onPressed: null,
                   icon: Icon(Icons.alarm),
                 ),
-                // IconButton(
-                //   onPressed: () async {
-                //     // https://github.com/leanflutter/window_manager/issues/456
-                //     if (Platform.isWindows &&
-                //         !await windowManager.isMaximized()) {
-                //       AppStorage().windowPos = await windowManager.getPosition();
-                //       AppStorage().windowSize = await windowManager.getSize();
-                //       var info = (await screenRetriever.getPrimaryDisplay());
-                //       await windowManager.setAsFrameless();
-                //       await windowManager.setPosition(Offset.zero);
-                //       await windowManager.setSize(info.size);
-                //     } else {
-                //       windowManager.setFullScreen(true);
-                //     }
-
-                //     if (!mounted) return;
-                //     Navigator.of(context, rootNavigator: true).push(
-                //       PageRouteBuilder(
-                //         pageBuilder: (context, animation1, animation2) =>
-                //             const FullscreenPlayPage(),
-                //         transitionDuration: Duration.zero,
-                //         reverseTransitionDuration: Duration.zero,
-                //       ),
-                //     );
-                //   },
-                //   icon: const Icon(Icons.open_in_full_rounded),
-                // ),
+                IconButton(
+                  onPressed: null,
+                  icon: Icon(Icons.open_in_full_rounded),
+                ),
                 SizedBox(width: 6),
               ],
             ),

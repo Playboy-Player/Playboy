@@ -24,8 +24,6 @@ dependencies:
       path: packages/window_manager
       ref: windows_fullscreen_fix
 
-  macos_window_utils: ^1.6.1
-  
   url_launcher: ^6.2.5
 
   # Media
