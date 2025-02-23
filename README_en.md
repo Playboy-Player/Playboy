@@ -67,8 +67,6 @@ Run `flutter build windows` in the project directory to generate the Windows exe
 
 ### Linux
 
-> The Linux version currently has several bugs, such as crashes when switching pages during playback and incorrect mini player display size.
-
 After setting up Flutter, install `libmpv-dev` via your system package manager or other means.
 
 Run `flutter build linux` in the project directory to generate the Linux executable.

@@ -69,8 +69,6 @@
 
 ### Linux
 
-> 目前 Linux 版本存在较多 Bug, 如播放时切换页面可能导致应用崩溃, 迷你播放器显示尺寸错误等
-
 配置完 flutter 后, 请通过系统包管理器或其他途径安装 `libmpv-dev`.
 
 运行 `flutter build linux` 以生成 Linux 可执行程序
