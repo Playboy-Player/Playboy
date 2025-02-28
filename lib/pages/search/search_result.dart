@@ -299,7 +299,7 @@ class SearchResultPageState extends State<SearchResultPage> {
   }
 
   Widget _buildGridview(BuildContext context, List<Widget> items) {
-    final width = MediaQuery.of(context).size.width;
+    final width = MediaQuery.of(context).size.width - 200;
     final cols = max((width / 160).round(), 2);
     return SliverGrid(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

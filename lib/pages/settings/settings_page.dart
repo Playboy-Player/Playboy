@@ -20,38 +20,52 @@ class SettingsPage extends StatefulWidget {
   SettingsPageState createState() => SettingsPageState();
 }
 
+typedef SettingsTab = (IconData, String, Widget);
+
 class SettingsPageState extends State<SettingsPage> {
-  int _currentPage = 0;
-  final double _sizebarWidth = 200;
-  final List<IconData> _icons = [
-    Icons.color_lens_outlined,
-    Icons.play_circle_outline,
-    Icons.keyboard_command_key,
-    Icons.terminal_outlined,
-    Icons.folder_outlined,
-    Icons.translate_rounded,
-    Icons.info_outline,
-    Icons.bug_report_outlined,
-  ];
-  final List<Widget> _pages = [
-    const AppearanceSettingsPage(),
-    const PlayerSettingsPage(),
-    const KeymapSettings(),
-    const CommandSettings(),
-    const StorageSettingsPage(),
-    const LanguageSettingsPage(),
-    const AboutPage(),
-    const DeveloperSettings(),
-  ];
-  final List<String> _options = [
-    '外观'.l10n,
-    '播放器'.l10n,
-    '快捷键'.l10n,
-    '命令'.l10n,
-    '存储'.l10n,
-    '语言'.l10n,
-    '关于'.l10n,
-    '调试'.l10n,
+  int _tabIndex = 0;
+  final double _sidebarWidth = 200;
+  final List<SettingsTab> _tabs = [
+    (
+      Icons.color_lens_outlined,
+      '外观'.l10n,
+      const AppearanceSettingsPage(),
+    ),
+    (
+      Icons.play_circle_outline,
+      '播放器'.l10n,
+      const PlayerSettingsPage(),
+    ),
+    (
+      Icons.keyboard_command_key,
+      '快捷键'.l10n,
+      const KeymapSettings(),
+    ),
+    (
+      Icons.terminal_outlined,
+      '命令'.l10n,
+      const CommandSettings(),
+    ),
+    (
+      Icons.folder_outlined,
+      '存储'.l10n,
+      const StorageSettingsPage(),
+    ),
+    (
+      Icons.translate_rounded,
+      '语言'.l10n,
+      const LanguageSettingsPage(),
+    ),
+    (
+      Icons.info_outline,
+      '关于'.l10n,
+      const AboutPage(),
+    ),
+    (
+      Icons.bug_report_outlined,
+      '调试'.l10n,
+      const DeveloperSettings(),
+    ),
   ];
 
   @override
@@ -70,7 +84,7 @@ class SettingsPageState extends State<SettingsPage> {
           children: [
             Container(
               color: backgroundColor,
-              width: _sizebarWidth,
+              width: _sidebarWidth,
               height: 40,
             ),
             IconButton(
@@ -148,7 +162,7 @@ class SettingsPageState extends State<SettingsPage> {
           Container(
             color: backgroundColor,
             padding: const EdgeInsets.symmetric(horizontal: 12),
-            width: _sizebarWidth,
+            width: _sidebarWidth,
             child: Column(
               children: [
                 if (Platform.isAndroid) const SizedBox(height: 40),
@@ -167,7 +181,7 @@ class SettingsPageState extends State<SettingsPage> {
                 ),
                 const SizedBox(height: 10),
                 Expanded(
-                  child: _buildSettingsSideBar(_options),
+                  child: _buildSettingsSideBar(),
                 )
               ],
             ),
@@ -176,7 +190,7 @@ class SettingsPageState extends State<SettingsPage> {
             child: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: _pages[_currentPage],
+                child: _tabs[_tabIndex].$3,
               ),
             ),
           ),
@@ -185,21 +199,21 @@ class SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget _buildSettingsSideBar(List<String> options) {
+  Widget _buildSettingsSideBar() {
     late final colorScheme = Theme.of(context).colorScheme;
     late final backgroundColor = Color.alphaBlend(
       colorScheme.primary.withValues(alpha: 0.04),
       colorScheme.surface,
     );
     Widget buildItem(int id, String name, IconData icon) {
-      final bool selected = id == _currentPage;
+      final bool selected = id == _tabIndex;
       return Material(
         color: selected ? colorScheme.secondary : backgroundColor,
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           onTap: () {
             setState(() {
-              _currentPage = id;
+              _tabIndex = id;
             });
           },
           borderRadius: BorderRadius.circular(12),
@@ -236,11 +250,11 @@ class SettingsPageState extends State<SettingsPage> {
     }
 
     return ListView.separated(
-      itemCount: _icons.length,
+      itemCount: _tabs.length,
       itemBuilder: (context, index) => buildItem(
         index,
-        options[index],
-        _icons[index],
+        _tabs[index].$2,
+        _tabs[index].$1,
       ),
       separatorBuilder: (context, index) {
         return const SizedBox(

@@ -128,6 +128,15 @@ class PlaylistState extends State<PlaylistPage> {
         ),
       ),
       IconButton(
+        tooltip: '排序'.l10n,
+        hoverColor: backgroundColor,
+        onPressed: () async {},
+        icon: Icon(
+          Icons.sort,
+          color: colorScheme.onPrimaryContainer,
+        ),
+      ),
+      IconButton(
         tooltip: '切换显示视图'.l10n,
         hoverColor: backgroundColor,
         onPressed: () async {
@@ -137,6 +146,15 @@ class PlaylistState extends State<PlaylistPage> {
         },
         icon: Icon(
           _gridview ? Icons.calendar_view_month : Icons.view_agenda_outlined,
+          color: colorScheme.onPrimaryContainer,
+        ),
+      ),
+      IconButton(
+        tooltip: '搜索'.l10n,
+        hoverColor: backgroundColor,
+        onPressed: () async {},
+        icon: Icon(
+          Icons.search,
           color: colorScheme.onPrimaryContainer,
         ),
       ),
@@ -155,7 +173,7 @@ class PlaylistState extends State<PlaylistPage> {
   }
 
   Widget _buildGridview(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
+    final width = MediaQuery.of(context).size.width - 200;
     final cols = max((width / 160).round(), 2);
     late final colorScheme = Theme.of(context).colorScheme;
     return SliverGrid(

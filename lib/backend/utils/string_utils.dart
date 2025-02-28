@@ -11,3 +11,17 @@ bool isSubsequence(String target, String text) {
 
   return i == n;
 }
+
+String unifyPath(String path, {bool endSlash = true}) {
+  String result = (path).replaceAll(r'\', '/');
+  if (endSlash) {
+    if (!result.endsWith('/')) result += '/';
+  } else {
+    if (result.endsWith('/')) {
+      int n = result.length;
+      result = result.substring(0, n - 1);
+    }
+  }
+
+  return result;
+}

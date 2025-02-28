@@ -5,15 +5,18 @@ class MenuButton extends StatelessWidget {
   const MenuButton({
     super.key,
     required this.menuChildren,
+    this.style,
   });
 
   final List<Widget> menuChildren;
+  final ButtonStyle? style;
 
   @override
   Widget build(BuildContext context) {
     return MenuAnchor(
       builder: (context, controller, child) {
         return IconButton(
+          style: style,
           tooltip: '菜单'.l10n,
           onPressed: () {
             if (controller.isOpen) {

@@ -21,7 +21,6 @@ void main(List<String> arguments) async {
     await windowManager.ensureInitialized();
     WindowOptions windowOptions = WindowOptions(
       minimumSize: const Size(360, 500),
-      // size: const Size(900, 700),
       center: true,
       backgroundColor: Colors.transparent,
       titleBarStyle: App().settings.enableTitleBar
@@ -29,20 +28,16 @@ void main(List<String> arguments) async {
           : TitleBarStyle.normal,
     );
     windowManager.waitUntilReadyToShow(windowOptions, () async {
-      // await windowManager.setHasShadow(false);
       await windowManager.show();
       await windowManager.focus();
     });
   }
 
-  // ServicesBinding.instance.keyboard.addHandler(KeyMapHelper.handleKeyEvent);
   KeyMapHelper.init();
 
   if (arguments.isNotEmpty) {
     String mediaToOpen = arguments[0];
     App().openMedia(await LibraryHelper.getItemFromFile(mediaToOpen));
-    runApp(const HomePage(playerView: true));
-  } else {
-    runApp(const HomePage());
   }
+  runApp(const HomePage(playerView: true));
 }

@@ -6,15 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
-import 'package:playboy/backend/utils/route_utils.dart';
 import 'package:playboy/backend/utils/sliver_utils.dart';
-import 'package:playboy/pages/file/file_explorer.dart';
 import 'package:playboy/pages/file/folder_card.dart';
 import 'package:playboy/pages/home.dart';
 import 'package:playboy/widgets/empty_holder.dart';
 import 'package:playboy/widgets/folding_holder.dart';
 import 'package:playboy/widgets/library/library_header.dart';
-import 'package:playboy/widgets/library/library_listtile.dart';
 import 'package:playboy/widgets/library/library_title.dart';
 
 class FilePage extends StatefulWidget {
@@ -33,9 +30,9 @@ class _FilePageState extends State<FilePage> {
   @override
   void initState() {
     super.initState();
-    App().updateFilePage = () {
-      setState(() {});
-    };
+    // App().updateFilePage = () {
+    //   setState(() {});
+    // };
   }
 
   @override
@@ -47,9 +44,9 @@ class _FilePageState extends State<FilePage> {
         slivers: [
           MLibraryHeader(
             title: '文件'.l10n,
-            actions: null,
+            actions: _buildLibraryActions(context),
           ),
-          _buildLibraryOptions(),
+          // _buildLibraryOptions(),
           MLibraryTitle(
             title: '媒体库'.l10n,
             trailing: IconButton(
@@ -137,126 +134,93 @@ class _FilePageState extends State<FilePage> {
     );
   }
 
-  Widget _buildLibraryOptions() {
-    return SliverList(
-      delegate: SliverChildListDelegate(
-        [
-          MLibraryListTile(
-            icon: Icons.folder_open,
-            title: '播放文件夹'.l10n,
-            onTap: () async {
-              var res = await FilePicker.platform.getDirectoryPath(
-                lockParentWindow: true,
-              );
-              if (res != null) {
-                String link = res;
-                _openLink(link);
-              }
-            },
-          ),
-          MLibraryListTile(
-            icon: Icons.insert_drive_file_outlined,
-            title: '播放本地文件'.l10n,
-            onTap: () async {
-              var res =
-                  await FilePicker.platform.pickFiles(lockParentWindow: true);
-              if (res != null) {
-                String link = res.files.single.path!;
-                _openLink(link);
-              }
-            },
-          ),
-          MLibraryListTile(
-            icon: Icons.explore_outlined,
-            title: '浏览文件夹'.l10n,
-            onTap: () {
-              _editingController.clear();
-              showDialog(
-                useRootNavigator: false,
-                context: context,
-                builder: (BuildContext context) => AlertDialog(
-                  surfaceTintColor: Colors.transparent,
-                  title: const Text('浏览文件夹'),
-                  content: TextField(
-                    autofocus: true,
-                    maxLines: 1,
-                    controller: _editingController,
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.link),
-                      border: OutlineInputBorder(),
-                      labelText: 'URL',
-                    ),
-                    onSubmitted: (value) async {
-                      _exploreDirectory(value);
-                    },
-                  ),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text('取消'.l10n),
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        _exploreDirectory(_editingController.text);
-                      },
-                      child: Text('确定'.l10n),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-          MLibraryListTile(
-            icon: Icons.link,
-            title: '播放网络串流'.l10n,
-            onTap: () {
-              _editingController.clear();
-              showDialog(
-                useRootNavigator: false,
-                context: context,
-                builder: (BuildContext context) => AlertDialog(
-                  surfaceTintColor: Colors.transparent,
-                  title: Text('播放网络串流'.l10n),
-                  content: TextField(
-                    autofocus: true,
-                    maxLines: 1,
-                    controller: _editingController,
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.link),
-                      border: OutlineInputBorder(),
-                      labelText: 'URL',
-                    ),
-                    onSubmitted: (value) async {
-                      _openLink(value);
-                    },
-                  ),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text('取消'.l10n),
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        _openLink(_editingController.text);
-                      },
-                      child: Text('确定'.l10n),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ],
-      ),
+  List<Widget> _buildLibraryActions(BuildContext context) {
+    late final colorScheme = Theme.of(context).colorScheme;
+    late final backgroundColor = Color.alphaBlend(
+      colorScheme.primary.withValues(alpha: 0.08),
+      colorScheme.surface,
     );
-  }
-
-  void _exploreDirectory(String source) {
-    pushPage(context, FileExplorer(path: source));
+    return [
+      IconButton(
+        tooltip: '播放URL'.l10n,
+        hoverColor: backgroundColor,
+        onPressed: () {
+          _editingController.clear();
+          showDialog(
+            useRootNavigator: false,
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              surfaceTintColor: Colors.transparent,
+              title: Text('播放网络串流'.l10n),
+              content: TextField(
+                autofocus: true,
+                maxLines: 1,
+                controller: _editingController,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.link),
+                  border: OutlineInputBorder(),
+                  labelText: 'URL',
+                ),
+                onSubmitted: (value) async {
+                  _openLink(value);
+                },
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('取消'.l10n),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    _openLink(_editingController.text);
+                  },
+                  child: Text('确定'.l10n),
+                ),
+              ],
+            ),
+          );
+        },
+        icon: Icon(
+          Icons.link,
+          color: colorScheme.onPrimaryContainer,
+        ),
+      ),
+      IconButton(
+        tooltip: '播放本地文件'.l10n,
+        hoverColor: backgroundColor,
+        onPressed: () async {
+          var res = await FilePicker.platform.pickFiles(lockParentWindow: true);
+          if (res != null) {
+            String link = res.files.single.path!;
+            _openLink(link);
+          }
+        },
+        icon: Icon(
+          Icons.file_open_outlined,
+          color: colorScheme.onPrimaryContainer,
+        ),
+      ),
+      IconButton(
+        tooltip: '播放文件夹'.l10n,
+        hoverColor: backgroundColor,
+        onPressed: () async {
+          var res = await FilePicker.platform.getDirectoryPath(
+            lockParentWindow: true,
+          );
+          if (res != null) {
+            String link = res;
+            _openLink(link);
+          }
+        },
+        icon: Icon(
+          Icons.folder_open,
+          color: colorScheme.onPrimaryContainer,
+        ),
+      ),
+      const SizedBox(width: 10),
+    ];
   }
 
   void _openLink(String source) async {
@@ -266,12 +230,6 @@ class _FilePageState extends State<FilePage> {
       PlayItem(source: source, cover: null, title: source),
     );
 
-    // pushRootPage(
-    //   context,
-    //   const PlayerPage(),
-    // ).then((value) {
-    //   AppStorage().updateStatus();
-    // });
     HomePage.switchView?.call();
   }
 }

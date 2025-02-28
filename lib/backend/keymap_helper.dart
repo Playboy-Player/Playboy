@@ -18,9 +18,7 @@ class KeyMapHelper {
         App().playboy.command(['seek', '5']);
       } else if (event.physicalKey == PhysicalKeyboardKey.space) {
         App().playboy.playOrPause();
-      } else if (event.physicalKey == PhysicalKeyboardKey.escape) {
-        // FullscreenPlayPage.exitFullscreen?.call();
-      }
+      } else if (event.physicalKey == PhysicalKeyboardKey.escape) {}
     }
     return false;
   }

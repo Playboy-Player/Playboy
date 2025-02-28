@@ -96,7 +96,19 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                     value: 0,
                     child: Row(
                       children: [
-                        const Icon(Icons.apps),
+                        const Icon(Icons.play_circle_outline),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text('播放器'.l10n),
+                      ],
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: 1,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.playlist_play),
                         const SizedBox(
                           width: 10,
                         ),
@@ -105,10 +117,10 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                     ),
                   ),
                   DropdownMenuItem(
-                    value: 1,
+                    value: 2,
                     child: Row(
                       children: [
-                        const Icon(Icons.smart_display_outlined),
+                        const Icon(Icons.video_library_outlined),
                         const SizedBox(
                           width: 10,
                         ),
@@ -117,26 +129,14 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                     ),
                   ),
                   DropdownMenuItem(
-                    value: 2,
+                    value: 3,
                     child: Row(
                       children: [
                         const Icon(Icons.folder_outlined),
                         const SizedBox(
                           width: 10,
                         ),
-                        Text('文件'.l10n),
-                      ],
-                    ),
-                  ),
-                  DropdownMenuItem(
-                    value: 3,
-                    child: Row(
-                      children: [
-                        const Icon(Icons.search),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text('搜索'.l10n),
+                        Text('浏览文件'.l10n),
                       ],
                     ),
                   ),

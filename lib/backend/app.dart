@@ -16,19 +16,14 @@ import 'package:playboy/pages/home.dart';
 
 class App extends ChangeNotifier {
   late final String dataPath;
+
   late AppSettings settings;
 
-  late Function() updateFilePage;
   late Function() updateVideoPage;
   Map<String, Function> actions = {};
 
   late final NativePlayer playboy;
   late final BasicVideoController controller;
-
-  // save window location for current fullscreen implementation on windows
-  // https://github.com/leanflutter/window_manager/issues/456
-  late Offset windowPos;
-  late Size windowSize;
 
   String? playingCover;
   String playingTitle = 'Not Playing';
@@ -41,6 +36,11 @@ class App extends ChangeNotifier {
   bool playing = false;
   bool seeking = false;
   double seekingPos = 0;
+
+  // ui state
+  bool isFullscreen = false;
+  bool onPlayerPage = false;
+  bool settingsPageOpened = false;
 
   static final App _instance = App._internal();
   factory App() => _instance;
@@ -203,9 +203,5 @@ class App extends ChangeNotifier {
     for (var item in pl.items) {
       playboy.add(Media(item.source));
     }
-  }
-
-  MaterialColor getColorTheme() {
-    return Colors.primaries[settings.themeCode];
   }
 }

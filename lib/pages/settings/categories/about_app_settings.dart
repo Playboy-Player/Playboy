@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:playboy/backend/constants.dart';
-import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'package:playboy/backend/constants.dart' as constants;
+import 'package:playboy/backend/utils/l10n_utils.dart';
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
@@ -46,7 +47,7 @@ class _AboutPageState extends State<AboutPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Constants.appIcon,
+                    constants.appIcon,
                     size: 80,
                     color: colorScheme.primary,
                   ),
@@ -59,7 +60,7 @@ class _AboutPageState extends State<AboutPage> {
                       //   height: 12,
                       // ),
                       Text(
-                        Constants.appName,
+                        constants.appName,
                         style: TextStyle(
                           fontSize: 40,
                           color: colorScheme.primary,
@@ -67,7 +68,7 @@ class _AboutPageState extends State<AboutPage> {
                         ),
                       ),
                       Text(
-                        ' ${Constants.version}',
+                        ' ${constants.version}',
                         style: TextStyle(
                           color: colorScheme.primary,
                           fontWeight: FontWeight.w500,
@@ -101,17 +102,17 @@ class _AboutPageState extends State<AboutPage> {
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
                 return Tooltip(
-                  message: Constants.contributors[index].url,
+                  message: constants.contributors[index].url,
                   child: InkWell(
                     hoverColor: Colors.transparent,
                     focusColor: Colors.transparent,
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                     onTap: () {
-                      if (Constants.contributors[index].url == '') {
+                      if (constants.contributors[index].url == '') {
                         return;
                       }
-                      launchUrl(Uri.parse(Constants.contributors[index].url));
+                      launchUrl(Uri.parse(constants.contributors[index].url));
                     },
                     child: SizedBox(
                       height: 80,
@@ -121,12 +122,12 @@ class _AboutPageState extends State<AboutPage> {
                         children: [
                           CircleAvatar(
                             backgroundImage: AssetImage(
-                              Constants.contributors[index].avatar,
+                              constants.contributors[index].avatar,
                             ),
                             radius: 28,
                           ),
                           Text(
-                            Constants.contributors[index].name,
+                            constants.contributors[index].name,
                             style: const TextStyle(
                               // color: Colors.orange,
                               fontWeight: FontWeight.w500,
@@ -138,7 +139,7 @@ class _AboutPageState extends State<AboutPage> {
                   ),
                 );
               },
-              itemCount: Constants.contributors.length,
+              itemCount: constants.contributors.length,
             ),
           ),
           Container(

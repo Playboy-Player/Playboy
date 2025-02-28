@@ -31,12 +31,6 @@ class FileCard extends StatelessWidget {
             PlayItem(source: source, cover: null, title: source),
           );
 
-          // pushRootPage(
-          //   context,
-          //   const PlayerPage(),
-          // ).then((value) {
-          //   AppStorage().updateStatus();
-          // });
           HomePage.switchView?.call();
         }
       },

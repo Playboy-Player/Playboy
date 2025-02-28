@@ -4,19 +4,21 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:playboy/widgets/menu/menu_button.dart';
-import 'package:playboy/widgets/menu/menu_item.dart';
+import 'package:path/path.dart';
+import 'package:playboy/backend/utils/theme_utils.dart';
 import 'package:window_manager/window_manager.dart';
 
-import 'package:playboy/backend/constants.dart';
+import 'package:playboy/backend/actions.dart' as actions;
+import 'package:playboy/pages/file/file_explorer.dart';
+import 'package:playboy/widgets/menu/menu_button.dart';
+import 'package:playboy/widgets/menu/menu_item.dart';
+import 'package:playboy/backend/constants.dart' as constants;
 import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/route_utils.dart';
 import 'package:playboy/pages/media/player_page.dart';
 import 'package:playboy/pages/playlist/playlist_page.dart';
-import 'package:playboy/pages/search/search_page.dart';
 import 'package:playboy/pages/settings/settings_page.dart';
-import 'package:playboy/pages/file/file_page.dart';
 import 'package:playboy/pages/library/library_page.dart';
 import 'package:playboy/widgets/image.dart';
 
@@ -46,7 +48,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _currentPageIndex = 0;
+  int _tabIndex = 0;
   int _prePageIndex = 0;
   bool _forceRebuild = false;
   bool _playerView = false;
@@ -57,25 +59,25 @@ class _HomePageState extends State<HomePage> {
   bool _miniMode = false;
 
   final _playlistPageKey = GlobalKey<NavigatorState>();
-  final _videoPageKey = GlobalKey<NavigatorState>();
+  final _libraryPageKey = GlobalKey<NavigatorState>();
   final _filePageKey = GlobalKey<NavigatorState>();
-  final _searchPageKey = GlobalKey<NavigatorState>();
+  // final _tabCount = 3;
 
   @override
   void initState() {
     super.initState();
     _playerView = widget.playerView;
-    _prePageIndex = _currentPageIndex = App().settings.initPage;
-    if (_playerView) _currentPageIndex = 4;
+    _prePageIndex = _tabIndex = App().settings.initPage;
+    if (_playerView) _tabIndex = 0;
 
     HomePage.refresh = () => setState(() => _forceRebuild = true);
     HomePage.switchView = () => setState(
           () {
-            if (_currentPageIndex == 4) {
-              _currentPageIndex = _prePageIndex;
+            if (_tabIndex == 0) {
+              _tabIndex = _prePageIndex;
             } else {
-              _prePageIndex = _currentPageIndex;
-              _currentPageIndex = 4;
+              _prePageIndex = _tabIndex;
+              _tabIndex = 0;
             }
             _playerView = !_playerView;
           },
@@ -94,7 +96,7 @@ class _HomePageState extends State<HomePage> {
       (context as Element).visitChildren(rebuild);
     }
 
-    MaterialColor themeColor = App().getColorTheme();
+    MaterialColor themeColor = getColorTheme();
     var lightTheme = ColorScheme.fromSeed(
       seedColor: themeColor,
       brightness: Brightness.light,
@@ -117,7 +119,7 @@ class _HomePageState extends State<HomePage> {
         NoOpIntent: NoOpAction(),
       },
       debugShowCheckedModeBanner: false,
-      title: Constants.appName,
+      title: constants.appName,
       theme: _getThemeData(App(), lightTheme),
       darkTheme: _getThemeData(App(), darkTheme),
       themeMode: App().settings.themeMode,
@@ -273,7 +275,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       toolbarHeight: 40,
-      titleSpacing: 8,
+      titleSpacing: 12,
       title: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onPanStart: (details) {
@@ -297,7 +299,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 padding: const WidgetStatePropertyAll(
-                  EdgeInsets.symmetric(horizontal: 17, vertical: 2),
+                  EdgeInsets.symmetric(horizontal: 14, vertical: 2),
                 ),
               ),
               constraints: const BoxConstraints(),
@@ -307,7 +309,7 @@ class _HomePageState extends State<HomePage> {
               },
               icon: const Icon(Icons.play_circle_outline_rounded),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 10),
             Expanded(
               child: tabletUI
                   ? StreamBuilder(
@@ -332,6 +334,9 @@ class _HomePageState extends State<HomePage> {
     return [
       if (!_fullScreen)
         MenuButton(
+          style: const ButtonStyle(
+            shape: WidgetStatePropertyAll(RoundedRectangleBorder()),
+          ),
           menuChildren: [
             const SizedBox(height: 10),
             MMenuItem(
@@ -374,6 +379,40 @@ class _HomePageState extends State<HomePage> {
             ),
             const Divider(),
             const MMenuItem(
+              icon: Icons.visibility_outlined,
+              label: '显示/隐藏侧边栏',
+              onPressed: null,
+            ),
+            MMenuItem(
+              label: '切换深浅色主题',
+              icon: Theme.of(context).brightness == Brightness.dark
+                  ? Icons.wb_sunny_outlined
+                  : Icons.dark_mode_outlined,
+              onPressed: () {
+                setState(
+                  () {
+                    App().settings.themeMode =
+                        Theme.of(context).brightness == Brightness.dark
+                            ? ThemeMode.light
+                            : ThemeMode.dark;
+                  },
+                );
+                App().saveSettings();
+              },
+            ),
+            MMenuItem(
+              icon: Icons.settings_outlined,
+              label: '偏好设置',
+              onPressed: () {
+                pushPage(
+                  context,
+                  const SettingsPage(),
+                ).then((_) {
+                  setState(() {});
+                });
+              },
+            ),
+            const MMenuItem(
               icon: Icons.info_outline,
               label: '关于应用',
               onPressed: null,
@@ -389,7 +428,9 @@ class _HomePageState extends State<HomePage> {
       const SizedBox(width: 10),
       if (!_fullScreen)
         IconButton(
-          hoverColor: Colors.transparent,
+          style: const ButtonStyle(
+            shape: WidgetStatePropertyAll(RoundedRectangleBorder()),
+          ),
           padding: EdgeInsets.zero,
           iconSize: 26,
           onPressed: () {
@@ -399,7 +440,9 @@ class _HomePageState extends State<HomePage> {
         ),
       if (!_fullScreen)
         IconButton(
-          hoverColor: Colors.transparent,
+          style: const ButtonStyle(
+            shape: WidgetStatePropertyAll(RoundedRectangleBorder()),
+          ),
           padding: EdgeInsets.zero,
           iconSize: 26,
           onPressed: () async {
@@ -413,7 +456,9 @@ class _HomePageState extends State<HomePage> {
         ),
       if (_fullScreen)
         IconButton(
-          hoverColor: Colors.transparent,
+          style: const ButtonStyle(
+            shape: WidgetStatePropertyAll(RoundedRectangleBorder()),
+          ),
           padding: EdgeInsets.zero,
           iconSize: 26,
           onPressed: () async {
@@ -430,7 +475,10 @@ class _HomePageState extends State<HomePage> {
           icon: const Icon(Icons.fullscreen_exit),
         ),
       IconButton(
-        hoverColor: Colors.transparent,
+        style: const ButtonStyle(
+          shape: WidgetStatePropertyAll(RoundedRectangleBorder()),
+        ),
+        hoverColor: Theme.of(context).colorScheme.primaryContainer,
         padding: EdgeInsets.zero,
         iconSize: 20,
         onPressed: () {
@@ -760,98 +808,143 @@ class _HomePageState extends State<HomePage> {
       colorScheme.primary.withValues(alpha: 0.04),
       colorScheme.surface,
     );
-    return _playerView
-        ? Container(
-            width: _fullScreen ? 0 : 10,
-            color: backgroundColor,
-          )
-        : NavigationRail(
-            backgroundColor: backgroundColor,
-            minWidth: 64,
-            selectedIndex: _currentPageIndex,
-            onDestinationSelected: (int index) {
-              setState(() {
-                _currentPageIndex = index;
-                _prePageIndex = _currentPageIndex;
-              });
-            },
-            labelType: NavigationRailLabelType.selected,
-            trailing: Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    IconButton(
-                      iconSize: 24,
-                      icon: const Icon(
-                        Icons.filter_vintage,
-                      ),
-                      onPressed: () {
-                        pushPage(
-                          context,
-                          const SettingsPage(),
-                        ).then((value) {
-                          App().updateFilePage();
-                          setState(() {});
-                        });
-                      },
+
+    if (_playerView) {
+      return Container(
+        width: _fullScreen ? 0 : 10,
+        color: backgroundColor,
+      );
+    }
+
+    Widget buildItem(
+      String name,
+      IconData icon,
+      bool selected,
+      Function()? onTap,
+    ) {
+      // final bool selected = id == _tabIndex;
+      return Material(
+        color: selected ? colorScheme.primaryContainer : backgroundColor,
+        borderRadius: BorderRadius.circular(20),
+        child: InkWell(
+          // onTap: () {
+          //   setState(() {
+          //     _tabIndex = id;
+          //   });
+          // },
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(20),
+          child: Container(
+            height: 40,
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Center(
+              child: Row(
+                children: [
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Icon(
+                    icon,
+                    color: selected ? colorScheme.onPrimaryContainer : null,
+                    size: 22,
+                  ),
+                  const SizedBox(
+                    width: 14,
+                  ),
+                  Text(
+                    name,
+                    style: TextStyle(
+                      color: selected ? colorScheme.onPrimaryContainer : null,
+                      fontSize: 15,
                     ),
-                    const SizedBox(height: 6),
-                    IconButton(
-                      iconSize: 24,
-                      icon: Theme.of(context).brightness == Brightness.dark
-                          ? const Icon(Icons.wb_sunny)
-                          : const Icon(Icons.dark_mode),
-                      onPressed: () {
-                        setState(
-                          () {
-                            App().settings.themeMode =
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? ThemeMode.light
-                                    : ThemeMode.dark;
-                          },
-                        );
-                        App().saveSettings();
-                      },
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    )
-                  ],
-                ),
+                  )
+                ],
               ),
             ),
-            destinations: <NavigationRailDestination>[
-              NavigationRailDestination(
-                selectedIcon: const Icon(Icons.apps),
-                icon: const Icon(Icons.apps),
-                label: Text('播放列表'.l10n),
-              ),
-              NavigationRailDestination(
-                selectedIcon: const Icon(Icons.smart_display),
-                icon: const Icon(Icons.smart_display_outlined),
-                label: Text('媒体库'.l10n),
-              ),
-              NavigationRailDestination(
-                selectedIcon: const Icon(Icons.folder),
-                icon: const Icon(Icons.folder_outlined),
-                label: Text('文件'.l10n),
-              ),
-              NavigationRailDestination(
-                selectedIcon: const Icon(Icons.search),
-                icon: const Icon(Icons.search),
-                label: Text('搜索'.l10n),
-              ),
-            ],
-          );
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      color: backgroundColor,
+      width: 200,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: ListView(
+        children: [
+          const SizedBox(height: 10),
+          buildItem(
+            '播放列表'.l10n,
+            Icons.playlist_play,
+            _tabIndex == 1,
+            () {
+              setState(() {
+                _tabIndex = 1;
+              });
+            },
+          ),
+          const SizedBox(height: 6),
+          buildItem(
+            '媒体库'.l10n,
+            Icons.video_library_outlined,
+            _tabIndex == 2,
+            () {
+              setState(() {
+                _tabIndex = 2;
+              });
+            },
+          ),
+          const SizedBox(height: 6),
+          buildItem(
+            '浏览文件'.l10n,
+            Icons.explore_outlined,
+            _tabIndex == 3,
+            () {
+              setState(() {
+                _tabIndex = 3;
+              });
+            },
+          ),
+          const Divider(),
+          ...List.generate(
+            App().settings.favouritePaths.length,
+            (index) {
+              String path = App().settings.favouritePaths[index];
+              return Column(
+                children: [
+                  buildItem(
+                    basename(path),
+                    Icons.folder_special_outlined,
+                    false,
+                    () {
+                      App().actions[actions.gotoDirectory]?.call(path);
+                    },
+                  ),
+                  const SizedBox(height: 6),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildPage(BuildContext context) {
     Widget buildPageContent(BuildContext context) {
+      String homePath;
+      if (Platform.isWindows) {
+        homePath = Platform.environment['USERPROFILE']!;
+      } else if (Platform.isLinux || Platform.isMacOS) {
+        homePath = Platform.environment['HOME']!;
+      } else {
+        // android
+        homePath = '/storage/emulated/0/';
+      }
       return IndexedStack(
-        index: _currentPageIndex,
+        index: _tabIndex,
         children: [
+          PlayerPage(fullscreen: _fullScreen),
           Navigator(
             key: _playlistPageKey,
             onGenerateRoute: (route) => MaterialPageRoute(
@@ -860,7 +953,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Navigator(
-            key: _videoPageKey,
+            key: _libraryPageKey,
             onGenerateRoute: (route) => MaterialPageRoute(
               settings: route,
               builder: (context) => const LibraryPage(),
@@ -870,17 +963,9 @@ class _HomePageState extends State<HomePage> {
             key: _filePageKey,
             onGenerateRoute: (route) => MaterialPageRoute(
               settings: route,
-              builder: (context) => const FilePage(),
+              builder: (context) => FileExplorer(path: homePath),
             ),
           ),
-          Navigator(
-            key: _searchPageKey,
-            onGenerateRoute: (route) => MaterialPageRoute(
-              settings: route,
-              builder: (context) => const SearchPage(),
-            ),
-          ),
-          PlayerPage(fullscreen: _fullScreen),
         ],
       );
     }
@@ -1083,7 +1168,6 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
-    // late final colorScheme = Theme.of(context).colorScheme;
     return StreamBuilder(
       stream: App().playboy.stream.playlist,
       builder: (context, snapshot) {

@@ -100,6 +100,15 @@ class _LibraryPageState extends State<LibraryPage> {
       //   ),
       // ),
       IconButton(
+        tooltip: '排序'.l10n,
+        hoverColor: backgroundColor,
+        onPressed: () async {},
+        icon: Icon(
+          Icons.sort,
+          color: colorScheme.onPrimaryContainer,
+        ),
+      ),
+      IconButton(
         tooltip: '切换显示视图'.l10n,
         hoverColor: backgroundColor,
         onPressed: () async {
@@ -109,6 +118,15 @@ class _LibraryPageState extends State<LibraryPage> {
         },
         icon: Icon(
           _gridview ? Icons.calendar_view_month : Icons.view_agenda_outlined,
+          color: colorScheme.onPrimaryContainer,
+        ),
+      ),
+      IconButton(
+        tooltip: '搜索'.l10n,
+        hoverColor: backgroundColor,
+        onPressed: () async {},
+        icon: Icon(
+          Icons.search,
           color: colorScheme.onPrimaryContainer,
         ),
       ),
@@ -127,8 +145,8 @@ class _LibraryPageState extends State<LibraryPage> {
   }
 
   Widget _buildGridview(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final cols = max((width / (_videoview ? 180 : 160)).round(), 2);
+    final width = MediaQuery.of(context).size.width - 200;
+    final cols = max((width / 160).round(), 2);
     late final colorScheme = Theme.of(context).colorScheme;
     return SliverGrid(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
