@@ -19,13 +19,11 @@ void main(List<String> arguments) async {
 
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     await windowManager.ensureInitialized();
-    WindowOptions windowOptions = WindowOptions(
-      minimumSize: const Size(360, 500),
-      center: true,
+    WindowOptions windowOptions = const WindowOptions(
+      minimumSize: Size(700, 500),
+      // center: true,
       backgroundColor: Colors.transparent,
-      titleBarStyle: App().settings.enableTitleBar
-          ? TitleBarStyle.hidden
-          : TitleBarStyle.normal,
+      titleBarStyle: TitleBarStyle.hidden,
     );
     windowManager.waitUntilReadyToShow(windowOptions, () async {
       await windowManager.show();

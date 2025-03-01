@@ -26,11 +26,11 @@ class KeyMapHelper {
   static bool enableKeyBinding = true;
   static Map<String, String> _keyBindings = {};
 
-  static void _executeKeyAction(String key) {
-    if (!_keyBindings.containsKey(key) || !enableKeyBinding) return;
-    var actionName = _keyBindings[key];
-    App().actions[actionName]?.call();
-  }
+  // static void _executeKeyAction(String key) {
+  //   if (!_keyBindings.containsKey(key) || !enableKeyBinding) return;
+  //   var actionName = _keyBindings[key];
+  //   App().actions[actionName]?.call();
+  // }
 
   static void loadKeyBindings() async {
     var path = "${App().dataPath}/config/keybindings.json";

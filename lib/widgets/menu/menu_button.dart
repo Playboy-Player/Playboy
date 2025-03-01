@@ -6,10 +6,12 @@ class MenuButton extends StatelessWidget {
     super.key,
     required this.menuChildren,
     this.style,
+    this.constraints,
   });
 
   final List<Widget> menuChildren;
   final ButtonStyle? style;
+  final BoxConstraints? constraints;
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +19,7 @@ class MenuButton extends StatelessWidget {
       builder: (context, controller, child) {
         return IconButton(
           style: style,
+          constraints: constraints,
           tooltip: '菜单'.l10n,
           onPressed: () {
             if (controller.isOpen) {

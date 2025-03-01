@@ -61,7 +61,6 @@ class _HomePageState extends State<HomePage> {
   final _playlistPageKey = GlobalKey<NavigatorState>();
   final _libraryPageKey = GlobalKey<NavigatorState>();
   final _filePageKey = GlobalKey<NavigatorState>();
-  // final _tabCount = 3;
 
   @override
   void initState() {
@@ -236,32 +235,48 @@ class _HomePageState extends State<HomePage> {
   }
 
   PreferredSizeWidget _buildTitleBar(BuildContext context) {
-    // bool tabletUI = MediaQuery.of(context).size.width > 500;
-    bool tabletUI = App().settings.tabletUI;
     late final colorScheme = Theme.of(context).colorScheme;
     late final backgroundColor = Color.alphaBlend(
       colorScheme.primary.withValues(alpha: 0.04),
       colorScheme.surface,
     );
+    var titlebarContent = [
+      _buildAppMenuButton(context),
+      const SizedBox(width: 40),
+      Expanded(
+        child: StreamBuilder(
+          stream: App().playboy.stream.playlist,
+          builder: (context, snapshot) {
+            return Text(
+              App().playingTitle,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 16),
+            );
+          },
+        ),
+      ),
+      if (Platform.isMacOS) const SizedBox(width: 80),
+    ];
     return AppBar(
       scrolledUnderElevation: 0,
       backgroundColor: backgroundColor,
       flexibleSpace: Column(
         children: [
-          SizedBox(
-            height: 8,
-            child: MouseRegion(
-              cursor: SystemMouseCursors.resizeUp,
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onPanStart: (details) {
-                  if (!_fullScreen) {
-                    windowManager.startResizing(ResizeEdge.top);
-                  }
-                },
+          if (Platform.isWindows)
+            SizedBox(
+              height: 8,
+              child: MouseRegion(
+                cursor: SystemMouseCursors.resizeUp,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onPanStart: (details) {
+                    if (!_fullScreen) {
+                      windowManager.startResizing(ResizeEdge.top);
+                    }
+                  },
+                ),
               ),
             ),
-          ),
           Expanded(
             child: GestureDetector(
               behavior: HitTestBehavior.translucent,
@@ -284,208 +299,228 @@ class _HomePageState extends State<HomePage> {
           }
         },
         child: Row(
-          children: [
-            IconButton(
-              style: ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(
-                  colorScheme.primaryContainer.withValues(alpha: 0.4),
-                ),
-                foregroundColor: WidgetStatePropertyAll(
-                  colorScheme.primary,
-                ),
-                shape: WidgetStatePropertyAll(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                ),
-                padding: const WidgetStatePropertyAll(
-                  EdgeInsets.symmetric(horizontal: 14, vertical: 2),
-                ),
-              ),
-              constraints: const BoxConstraints(),
-              padding: EdgeInsets.zero,
-              onPressed: () {
-                HomePage.switchView?.call();
-              },
-              icon: const Icon(Icons.play_circle_outline_rounded),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: tabletUI
-                  ? StreamBuilder(
-                      stream: App().playboy.stream.playlist,
-                      builder: (context, snapshot) {
-                        return Text(
-                          App().playingTitle,
-                          style: const TextStyle(fontSize: 16),
-                        );
-                      },
-                    )
-                  : const SizedBox(),
-            ),
-          ],
+          children: Platform.isMacOS
+              ? titlebarContent.reversed.toList()
+              : titlebarContent,
         ),
       ),
       actions: _buildTitleBarActions(context),
     );
   }
 
+  Widget _buildAppMenuButton(BuildContext context) {
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
+    const double borderRadius = 6;
+    return Row(
+      children: [
+        IconButton(
+          style: ButtonStyle(
+            backgroundColor: WidgetStatePropertyAll(
+              colorScheme.primaryContainer.withValues(alpha: 0.2),
+            ),
+            foregroundColor: WidgetStatePropertyAll(
+              colorScheme.primary,
+            ),
+            shape: const WidgetStatePropertyAll(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(borderRadius),
+                  bottomLeft: Radius.circular(borderRadius),
+                ),
+              ),
+            ),
+            padding: const WidgetStatePropertyAll(
+              EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+            ),
+          ),
+          constraints: const BoxConstraints(),
+          padding: EdgeInsets.zero,
+          onPressed: () {
+            HomePage.switchView?.call();
+          },
+          icon: const Icon(Icons.play_circle_outline_rounded),
+        ),
+        MenuButton(
+          style: ButtonStyle(
+            backgroundColor: WidgetStatePropertyAll(
+              colorScheme.primaryContainer.withValues(alpha: 0.4),
+            ),
+            foregroundColor: WidgetStatePropertyAll(
+              colorScheme.primary,
+            ),
+            shape: const WidgetStatePropertyAll(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(borderRadius),
+                  bottomRight: Radius.circular(borderRadius),
+                ),
+              ),
+            ),
+            padding: const WidgetStatePropertyAll(
+              EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+            ),
+          ),
+          constraints: const BoxConstraints(),
+          menuChildren: _buildAppMenuItems(context),
+        ),
+      ],
+    );
+  }
+
+  List<Widget> _buildAppMenuItems(BuildContext context) {
+    return [
+      const SizedBox(height: 10),
+      MMenuItem(
+        icon: Icons.open_in_full,
+        label: '全屏模式',
+        onPressed: () async {
+          if (_fullScreen) {
+            windowManager.setFullScreen(false);
+          } else {
+            windowManager.setFullScreen(true);
+          }
+          setState(() {
+            _fullScreen = !_fullScreen;
+            _showTitleBarFullscreen = false;
+          });
+        },
+      ),
+      MMenuItem(
+        icon: Icons.music_note_outlined,
+        label: '迷你音乐播放器',
+        onPressed: () {
+          windowManager.setResizable(false);
+          windowManager.setMinimumSize(const Size(300, 120));
+          windowManager.setSize(const Size(300, 120));
+          windowManager.setAlwaysOnTop(true);
+          setState(() {
+            _miniMode = !_miniMode;
+          });
+        },
+      ),
+      const MMenuItem(
+        icon: Icons.picture_in_picture,
+        label: '画中画',
+        onPressed: null,
+      ),
+      const MMenuItem(
+        icon: Icons.push_pin_outlined,
+        label: '应用置顶',
+        onPressed: null,
+      ),
+      const Divider(),
+      const MMenuItem(
+        icon: Icons.visibility_outlined,
+        label: '显示/隐藏侧边栏',
+        onPressed: null,
+      ),
+      MMenuItem(
+        label: '切换深浅色主题',
+        icon: Theme.of(context).brightness == Brightness.dark
+            ? Icons.wb_sunny_outlined
+            : Icons.dark_mode_outlined,
+        onPressed: () {
+          setState(
+            () {
+              App().settings.themeMode =
+                  Theme.of(context).brightness == Brightness.dark
+                      ? ThemeMode.light
+                      : ThemeMode.dark;
+            },
+          );
+          App().saveSettings();
+        },
+      ),
+      MMenuItem(
+        icon: Icons.settings_outlined,
+        label: '偏好设置',
+        onPressed: () {
+          pushPage(
+            context,
+            const SettingsPage(),
+          ).then((_) {
+            setState(() {});
+          });
+        },
+      ),
+      const MMenuItem(
+        icon: Icons.info_outline,
+        label: '关于应用',
+        onPressed: null,
+      ),
+      const MMenuItem(
+        icon: Icons.upcoming_outlined,
+        label: '检查更新',
+        onPressed: null,
+      ),
+      const SizedBox(height: 10),
+    ];
+  }
+
   List<Widget> _buildTitleBarActions(BuildContext context) {
     return [
-      if (!_fullScreen)
-        MenuButton(
-          style: const ButtonStyle(
-            shape: WidgetStatePropertyAll(RoundedRectangleBorder()),
+      if (!Platform.isMacOS) ...[
+        if (!_fullScreen) ...[
+          IconButton(
+            style: const ButtonStyle(
+              shape: WidgetStatePropertyAll(RoundedRectangleBorder()),
+            ),
+            padding: EdgeInsets.zero,
+            iconSize: 26,
+            onPressed: () {
+              windowManager.minimize();
+            },
+            icon: const Icon(Icons.keyboard_arrow_down),
           ),
-          menuChildren: [
-            const SizedBox(height: 10),
-            MMenuItem(
-              icon: Icons.open_in_full,
-              label: '全屏模式',
-              onPressed: () async {
-                if (_fullScreen) {
-                  windowManager.setFullScreen(false);
-                } else {
-                  windowManager.setFullScreen(true);
-                }
-                setState(() {
-                  _fullScreen = !_fullScreen;
-                  _showTitleBarFullscreen = false;
-                });
-              },
+          IconButton(
+            style: const ButtonStyle(
+              shape: WidgetStatePropertyAll(RoundedRectangleBorder()),
             ),
-            MMenuItem(
-              icon: Icons.music_note_outlined,
-              label: '迷你音乐播放器',
-              onPressed: () {
-                windowManager.setResizable(false);
-                windowManager.setMinimumSize(const Size(300, 120));
-                windowManager.setSize(const Size(300, 120));
-                windowManager.setAlwaysOnTop(true);
-                setState(() {
-                  _miniMode = !_miniMode;
-                });
-              },
+            padding: EdgeInsets.zero,
+            iconSize: 26,
+            onPressed: () async {
+              if (await windowManager.isMaximized()) {
+                windowManager.unmaximize();
+              } else {
+                windowManager.maximize();
+              }
+            },
+            icon: const Icon(Icons.keyboard_arrow_up),
+          )
+        ],
+        if (_fullScreen)
+          IconButton(
+            style: const ButtonStyle(
+              shape: WidgetStatePropertyAll(RoundedRectangleBorder()),
             ),
-            const MMenuItem(
-              icon: Icons.picture_in_picture,
-              label: '画中画',
-              onPressed: null,
-            ),
-            const MMenuItem(
-              icon: Icons.push_pin_outlined,
-              label: '应用置顶',
-              onPressed: null,
-            ),
-            const Divider(),
-            const MMenuItem(
-              icon: Icons.visibility_outlined,
-              label: '显示/隐藏侧边栏',
-              onPressed: null,
-            ),
-            MMenuItem(
-              label: '切换深浅色主题',
-              icon: Theme.of(context).brightness == Brightness.dark
-                  ? Icons.wb_sunny_outlined
-                  : Icons.dark_mode_outlined,
-              onPressed: () {
-                setState(
-                  () {
-                    App().settings.themeMode =
-                        Theme.of(context).brightness == Brightness.dark
-                            ? ThemeMode.light
-                            : ThemeMode.dark;
-                  },
-                );
-                App().saveSettings();
-              },
-            ),
-            MMenuItem(
-              icon: Icons.settings_outlined,
-              label: '偏好设置',
-              onPressed: () {
-                pushPage(
-                  context,
-                  const SettingsPage(),
-                ).then((_) {
-                  setState(() {});
-                });
-              },
-            ),
-            const MMenuItem(
-              icon: Icons.info_outline,
-              label: '关于应用',
-              onPressed: null,
-            ),
-            const MMenuItem(
-              icon: Icons.upcoming_outlined,
-              label: '检查更新',
-              onPressed: null,
-            ),
-            const SizedBox(height: 10),
-          ],
-        ),
-      const SizedBox(width: 10),
-      if (!_fullScreen)
+            padding: EdgeInsets.zero,
+            iconSize: 26,
+            onPressed: () async {
+              if (_fullScreen) {
+                windowManager.setFullScreen(false);
+              } else {
+                windowManager.setFullScreen(true);
+              }
+              setState(() {
+                _fullScreen = !_fullScreen;
+                _showTitleBarFullscreen = false;
+              });
+            },
+            icon: const Icon(Icons.fullscreen_exit),
+          ),
         IconButton(
           style: const ButtonStyle(
             shape: WidgetStatePropertyAll(RoundedRectangleBorder()),
           ),
+          hoverColor: Theme.of(context).colorScheme.primaryContainer,
           padding: EdgeInsets.zero,
-          iconSize: 26,
+          iconSize: 20,
           onPressed: () {
-            windowManager.minimize();
+            windowManager.close();
           },
-          icon: const Icon(Icons.keyboard_arrow_down),
-        ),
-      if (!_fullScreen)
-        IconButton(
-          style: const ButtonStyle(
-            shape: WidgetStatePropertyAll(RoundedRectangleBorder()),
-          ),
-          padding: EdgeInsets.zero,
-          iconSize: 26,
-          onPressed: () async {
-            if (await windowManager.isMaximized()) {
-              windowManager.unmaximize();
-            } else {
-              windowManager.maximize();
-            }
-          },
-          icon: const Icon(Icons.keyboard_arrow_up),
-        ),
-      if (_fullScreen)
-        IconButton(
-          style: const ButtonStyle(
-            shape: WidgetStatePropertyAll(RoundedRectangleBorder()),
-          ),
-          padding: EdgeInsets.zero,
-          iconSize: 26,
-          onPressed: () async {
-            if (_fullScreen) {
-              windowManager.setFullScreen(false);
-            } else {
-              windowManager.setFullScreen(true);
-            }
-            setState(() {
-              _fullScreen = !_fullScreen;
-              _showTitleBarFullscreen = false;
-            });
-          },
-          icon: const Icon(Icons.fullscreen_exit),
-        ),
-      IconButton(
-        style: const ButtonStyle(
-          shape: WidgetStatePropertyAll(RoundedRectangleBorder()),
-        ),
-        hoverColor: Theme.of(context).colorScheme.primaryContainer,
-        padding: EdgeInsets.zero,
-        iconSize: 20,
-        onPressed: () {
-          windowManager.close();
-        },
-        icon: const Icon(Icons.close),
-      ),
+          icon: const Icon(Icons.close),
+        )
+      ],
     ];
   }
 
@@ -608,7 +643,7 @@ class _HomePageState extends State<HomePage> {
                         onPressed: () {
                           // exit mini mode
                           windowManager.setResizable(true);
-                          windowManager.setMinimumSize(const Size(360, 500));
+                          windowManager.setMinimumSize(const Size(700, 500));
                           windowManager.setSize(const Size(900, 700));
                           windowManager.setAlwaysOnTop(false);
                           windowManager.center();
@@ -638,9 +673,9 @@ class _HomePageState extends State<HomePage> {
                           data: SliderThemeData(
                             year2023: false,
                             trackHeight: 3,
-                            thumbSize:
-                                const WidgetStatePropertyAll(Size(4, 14)),
-                            // thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+                            thumbSize: const WidgetStatePropertyAll(
+                              Size(4, 14),
+                            ),
                             overlayShape: SliderComponentShape.noOverlay,
                             thumbColor: colorScheme.primaryContainer,
                             activeTrackColor: colorScheme.primaryContainer,
@@ -840,17 +875,13 @@ class _HomePageState extends State<HomePage> {
             child: Center(
               child: Row(
                 children: [
-                  const SizedBox(
-                    width: 10,
-                  ),
+                  const SizedBox(width: 10),
                   Icon(
                     icon,
                     color: selected ? colorScheme.onPrimaryContainer : null,
                     size: 22,
                   ),
-                  const SizedBox(
-                    width: 14,
-                  ),
+                  const SizedBox(width: 14),
                   Text(
                     name,
                     style: TextStyle(
@@ -872,7 +903,6 @@ class _HomePageState extends State<HomePage> {
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: ListView(
         children: [
-          const SizedBox(height: 10),
           buildItem(
             '播放列表'.l10n,
             Icons.playlist_play,
@@ -937,9 +967,10 @@ class _HomePageState extends State<HomePage> {
         homePath = Platform.environment['USERPROFILE']!;
       } else if (Platform.isLinux || Platform.isMacOS) {
         homePath = Platform.environment['HOME']!;
-      } else {
-        // android
+      } else if (Platform.isAndroid) {
         homePath = '/storage/emulated/0/';
+      } else {
+        throw Exception('Home Path for this platform is not supported');
       }
       return IndexedStack(
         index: _tabIndex,
@@ -1054,7 +1085,6 @@ class _HomePageState extends State<HomePage> {
                   year2023: false,
                   trackHeight: 4,
                   thumbSize: const WidgetStatePropertyAll(Size(4, 12)),
-                  // thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
                   overlayShape: SliderComponentShape.noOverlay,
                 ),
                 child: StreamBuilder(

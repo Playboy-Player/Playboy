@@ -102,8 +102,7 @@ class App extends ChangeNotifier {
     if (settings.preciseSeek) playboy.setProperty('hr-seek', 'yes');
     // playboy.setProperty('hr-seek-framedrop', 'no');
 
-    // TODO: arguments to avoid crash on switch media?
-    // Should I make this into another option?
+    // These arguments can avoid crashing on switch media (only tested on Windows)
     // https://github.com/mpv-player/mpv/commit/703f1588803eaa428e09c0e5547b26c0fff476a7
     // https://github.com/mpv-android/mpv-android/commit/9e5c3d8a630290fc41edb8b03aeafa3bc4c45955
     playboy.setProperty('scale', 'bilinear');
