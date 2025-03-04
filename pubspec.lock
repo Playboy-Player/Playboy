@@ -952,10 +952,10 @@ packages:
     dependency: transitive
     description:
       name: win32
-      sha256: daf97c9d80197ed7b619040e86c8ab9a9dad285e7671ee7390f9180cc828a51e
+      sha256: b89e6e24d1454e149ab20fbb225af58660f0c0bf4475544650700d8e2da54aef
       url: "https://pub.dev"
     source: hosted
-    version: "5.10.1"
+    version: "5.11.0"
   window_manager:
     dependency: "direct main"
     description:

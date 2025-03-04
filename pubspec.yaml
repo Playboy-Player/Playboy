@@ -25,7 +25,7 @@ dependencies:
       ref: windows_fullscreen_fix
 
   url_launcher: ^6.2.5
-
+  
   # Media
   media_kit:
     git:

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:playboy/pages/settings/categories/command_settings.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'package:playboy/backend/utils/l10n_utils.dart';
@@ -40,11 +39,6 @@ class SettingsPageState extends State<SettingsPage> {
       Icons.keyboard_command_key,
       '快捷键'.l10n,
       const KeymapSettings(),
-    ),
-    (
-      Icons.terminal_outlined,
-      '命令'.l10n,
-      const CommandSettings(),
     ),
     (
       Icons.folder_outlined,

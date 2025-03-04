@@ -1,13 +1,15 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/app.dart';
+import 'package:playboy/backend/models/playitem.dart';
 
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/time_utils.dart';
 import 'package:playboy/widgets/menu/menu_item.dart';
 
-List<Widget> buildPlayerMenu() {
+List<Widget> buildPlayerMenu(BuildContext context) {
   return [
     const SizedBox(height: 10),
     MMenuItem(icon: Icons.location_on, label: '跳转'.l10n, onPressed: null),
@@ -47,20 +49,83 @@ List<Widget> buildPlayerMenu() {
     MMenuItem(
       icon: Icons.file_open_outlined,
       label: '打开文件'.l10n,
-      onPressed: null,
+      onPressed: () async {
+        var res = await FilePicker.platform.pickFiles(lockParentWindow: true);
+        if (res != null) {
+          String link = res.files.single.path!;
+          _openLink(link);
+        }
+      },
     ),
     MMenuItem(
       icon: Icons.folder_open,
       label: '打开文件夹'.l10n,
-      onPressed: null,
+      onPressed: () async {
+        var res = await FilePicker.platform.getDirectoryPath(
+          lockParentWindow: true,
+        );
+        if (res != null) {
+          String link = res;
+          _openLink(link);
+        }
+      },
     ),
     MMenuItem(
       icon: Icons.link,
       label: '打开URL'.l10n,
-      onPressed: null,
+      onPressed: () {
+        var editingController = TextEditingController();
+        showDialog(
+          useRootNavigator: false,
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            surfaceTintColor: Colors.transparent,
+            title: Text('播放网络串流'.l10n),
+            content: TextField(
+              autofocus: true,
+              maxLines: 1,
+              controller: editingController,
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.link),
+                border: OutlineInputBorder(),
+                labelText: 'URL',
+              ),
+              onSubmitted: (value) async {
+                _openLink(value);
+              },
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('取消'.l10n),
+              ),
+              TextButton(
+                onPressed: () async {
+                  _openLink(editingController.text);
+                },
+                child: Text('确定'.l10n),
+              ),
+            ],
+          ),
+        );
+      },
     ),
     const Divider(),
-    MMenuItem(icon: Icons.info_outline, label: '属性'.l10n, onPressed: null),
+    MMenuItem(
+        icon: Icons.info_outline,
+        label: '属性'.l10n,
+        onPressed: () {
+          App().playboy.command(['keypress', 'SHIFT+I']);
+        }),
     const SizedBox(height: 10),
   ];
+}
+
+void _openLink(String source) async {
+  App().closeMedia();
+  App().openMedia(
+    PlayItem(source: source, cover: null, title: source),
+  );
 }

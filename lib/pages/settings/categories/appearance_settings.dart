@@ -72,7 +72,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
             ),
           ),
           ListTile(
-            title: Text('启动页面'.l10n),
+            title: Text('默认媒体库页面'.l10n),
             trailing: SizedBox(
               height: 44,
               width: 150,
@@ -92,18 +92,6 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                 ),
                 value: App().settings.initPage,
                 items: [
-                  DropdownMenuItem(
-                    value: 0,
-                    child: Row(
-                      children: [
-                        const Icon(Icons.play_circle_outline),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text('播放器'.l10n),
-                      ],
-                    ),
-                  ),
                   DropdownMenuItem(
                     value: 1,
                     child: Row(
@@ -132,7 +120,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                     value: 3,
                     child: Row(
                       children: [
-                        const Icon(Icons.folder_outlined),
+                        const Icon(Icons.explore_outlined),
                         const SizedBox(
                           width: 10,
                         ),

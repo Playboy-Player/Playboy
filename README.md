@@ -44,18 +44,22 @@
 
 ## 功能
 
+> 可以通过[键盘快捷键](https://github.com/mpv-player/random-stuff/blob/master/key_bindings_chart/mpbindings.png)访问所有 mpv 功能, 在播放界面按 `SHIFT+O` 可显示 mpv OSD
+
 - [x] 自定义主题 & 深色模式
 - [x] 播放本地和网络媒体
 - [x] 迷你播放器模式 (Windows & macOS)
 - [x] 设置为系统打开方式 (Windows)
 - [x] 播放列表功能 (随机播放, 单曲循环)
+- [x] 章节和 AB 循环 (命令行)
 - [x] 任意倍速调节
-- [x] 搜索媒体文件和播放列表
+- [ ] 搜索媒体文件和播放列表 (重构中)
 - [x] 多语言支持
-- [ ] 字幕 (libass)
-- [ ] 着色器支持, 如 [Anime4K](https://github.com/bloc97/Anime4K)
-- [ ] 自定义快捷键映射
-- [ ] 自定义 mpv 初始化参数 & 命令
+- [x] 字幕 (libass)
+- [x] 着色器支持, 如 [Anime4K](https://github.com/bloc97/Anime4K)
+- [x] 自定义快捷键映射 (input.conf 支持)
+- [x] 兼容 mpv.conf 配置文件
+- [ ] 自定义 mpv 初始化参数
 
 ## For Developers
 

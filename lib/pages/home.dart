@@ -70,6 +70,30 @@ class _HomePageState extends State<HomePage> {
     if (_playerView) _tabIndex = 0;
 
     HomePage.refresh = () => setState(() => _forceRebuild = true);
+    App().actions[actions.togglePlayer] = () {
+      setState(
+        () {
+          if (_tabIndex == 0) {
+            _tabIndex = _prePageIndex;
+          } else {
+            _prePageIndex = _tabIndex;
+            _tabIndex = 0;
+          }
+          _playerView = !_playerView;
+        },
+      );
+    };
+    App().actions[actions.toggleFullscreen] = () async {
+      if (_fullScreen) {
+        windowManager.setFullScreen(false);
+      } else {
+        windowManager.setFullScreen(true);
+      }
+      setState(() {
+        _fullScreen = !_fullScreen;
+        _showTitleBarFullscreen = false;
+      });
+    };
     HomePage.switchView = () => setState(
           () {
             if (_tabIndex == 0) {
@@ -316,7 +340,7 @@ class _HomePageState extends State<HomePage> {
         IconButton(
           style: ButtonStyle(
             backgroundColor: WidgetStatePropertyAll(
-              colorScheme.primaryContainer.withValues(alpha: 0.2),
+              colorScheme.primaryContainer.withValues(alpha: 0.4),
             ),
             foregroundColor: WidgetStatePropertyAll(
               colorScheme.primary,
@@ -343,7 +367,7 @@ class _HomePageState extends State<HomePage> {
         MenuButton(
           style: ButtonStyle(
             backgroundColor: WidgetStatePropertyAll(
-              colorScheme.primaryContainer.withValues(alpha: 0.4),
+              colorScheme.primaryContainer.withValues(alpha: 0.6),
             ),
             foregroundColor: WidgetStatePropertyAll(
               colorScheme.primary,
@@ -371,8 +395,8 @@ class _HomePageState extends State<HomePage> {
     return [
       const SizedBox(height: 10),
       MMenuItem(
-        icon: Icons.open_in_full,
-        label: '全屏模式',
+        icon: _fullScreen ? Icons.close_fullscreen : Icons.open_in_full,
+        label: _fullScreen ? '退出全屏' : '全屏模式',
         onPressed: () async {
           if (_fullScreen) {
             windowManager.setFullScreen(false);
@@ -453,6 +477,21 @@ class _HomePageState extends State<HomePage> {
         label: '检查更新',
         onPressed: null,
       ),
+      const Divider(),
+      MMenuItem(
+        icon: Icons.bug_report_outlined,
+        label: '填充显示区域',
+        onPressed: () {
+          App().refreshVO();
+        },
+      ),
+      MMenuItem(
+        icon: Icons.bug_report_outlined,
+        label: '使用默认显示大小',
+        onPressed: () {
+          App().restoreVO();
+        },
+      ),
       const SizedBox(height: 10),
     ];
   }
@@ -486,40 +525,20 @@ class _HomePageState extends State<HomePage> {
               }
             },
             icon: const Icon(Icons.keyboard_arrow_up),
-          )
-        ],
-        if (_fullScreen)
+          ),
           IconButton(
             style: const ButtonStyle(
               shape: WidgetStatePropertyAll(RoundedRectangleBorder()),
             ),
+            hoverColor: Theme.of(context).colorScheme.primaryContainer,
             padding: EdgeInsets.zero,
-            iconSize: 26,
-            onPressed: () async {
-              if (_fullScreen) {
-                windowManager.setFullScreen(false);
-              } else {
-                windowManager.setFullScreen(true);
-              }
-              setState(() {
-                _fullScreen = !_fullScreen;
-                _showTitleBarFullscreen = false;
-              });
+            iconSize: 20,
+            onPressed: () {
+              windowManager.close();
             },
-            icon: const Icon(Icons.fullscreen_exit),
+            icon: const Icon(Icons.close),
           ),
-        IconButton(
-          style: const ButtonStyle(
-            shape: WidgetStatePropertyAll(RoundedRectangleBorder()),
-          ),
-          hoverColor: Theme.of(context).colorScheme.primaryContainer,
-          padding: EdgeInsets.zero,
-          iconSize: 20,
-          onPressed: () {
-            windowManager.close();
-          },
-          icon: const Icon(Icons.close),
-        )
+        ],
       ],
     ];
   }
@@ -948,6 +967,9 @@ class _HomePageState extends State<HomePage> {
                     false,
                     () {
                       App().actions[actions.gotoDirectory]?.call(path);
+                      setState(() {
+                        _tabIndex = 3;
+                      });
                     },
                   ),
                   const SizedBox(height: 6),

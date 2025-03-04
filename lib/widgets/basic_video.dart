@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:media_kit_video/basic/basic_video_controller.dart';
+import 'package:playboy/backend/app.dart';
 
 /// a simple implemetaion of `media_kit_video` Video Widget
 class BasicVideo extends StatefulWidget {
@@ -65,30 +66,35 @@ class _BasicVideoState extends State<BasicVideo> {
 
   @override
   Widget build(BuildContext context) {
-    return FittedBox(
-      child: ValueListenableBuilder<BasicVideoController?>(
-        valueListenable: _notifier,
-        builder: (context, notifier, _) => notifier == null
-            ? const SizedBox.shrink()
-            : ValueListenableBuilder<int?>(
-                valueListenable: notifier.id,
-                builder: (context, id, _) {
-                  return ValueListenableBuilder<Rect?>(
-                    valueListenable: notifier.rect,
-                    builder: (context, rect, _) {
-                      if (id != null && rect != null && _visible) {
-                        return SizedBox(
-                          width: rect.width,
-                          height: rect.height,
-                          child: Texture(textureId: id),
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    },
-                  );
-                },
-              ),
-      ),
-    );
+    return LayoutBuilder(builder: (context, constrain) {
+      var factor = MediaQuery.of(context).devicePixelRatio;
+      App().voHeight = (constrain.maxHeight * factor).toInt();
+      App().voWidth = (constrain.maxWidth * factor).toInt();
+      return FittedBox(
+        child: ValueListenableBuilder<BasicVideoController?>(
+          valueListenable: _notifier,
+          builder: (context, notifier, _) => notifier == null
+              ? const SizedBox.shrink()
+              : ValueListenableBuilder<int?>(
+                  valueListenable: notifier.id,
+                  builder: (context, id, _) {
+                    return ValueListenableBuilder<Rect?>(
+                      valueListenable: notifier.rect,
+                      builder: (context, rect, _) {
+                        if (id != null && rect != null && _visible) {
+                          return SizedBox(
+                            width: rect.width,
+                            height: rect.height,
+                            child: Texture(textureId: id),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    );
+                  },
+                ),
+        ),
+      );
+    });
   }
 }

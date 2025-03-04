@@ -4,14 +4,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:media_kit_video/basic/basic_video_controller.dart';
 import 'package:path/path.dart' as p;
-// import 'package:screen_retriever/screen_retriever.dart';
-// import 'package:window_manager/window_manager.dart';
 import 'package:media_kit/media_kit.dart';
 
+import 'package:playboy/backend/actions.dart' as actions;
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/widgets/basic_video.dart';
 import 'package:playboy/pages/media/player_menu.dart';
-// import 'package:playboy/pages/media/fullscreen_play_page.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/time_utils.dart';
@@ -337,27 +335,29 @@ class PlayerPageState extends State<PlayerPage> {
             onPressed: () {
               _handlePanelSelection(0);
             },
-            icon: const Icon(Icons.video_settings),
+            icon: const Icon(Icons.slow_motion_video),
           ),
           IconButton(
             onPressed: () {
               _handlePanelSelection(2);
             },
-            icon: const Icon(Icons.description_outlined),
+            icon: const Icon(Icons.subtitles_outlined),
           ),
-          const Expanded(
+          Expanded(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                IconButton(
+                const IconButton(
                   onPressed: null,
                   icon: Icon(Icons.alarm),
                 ),
                 IconButton(
-                  onPressed: null,
-                  icon: Icon(Icons.open_in_full_rounded),
+                  onPressed: () {
+                    App().executeAction(actions.toggleFullscreen);
+                  },
+                  icon: const Icon(Icons.open_in_full_rounded),
                 ),
-                SizedBox(width: 6),
+                const SizedBox(width: 6),
               ],
             ),
           ),
@@ -421,7 +421,8 @@ class PlayerPageState extends State<PlayerPage> {
   Widget _buildPlayer(ColorScheme colorScheme) {
     return MInteractiveWrapper(
       menuController: MenuController(),
-      menuChildren: buildPlayerMenu(),
+      // TODO: show dialog without context
+      menuChildren: buildPlayerMenu(context),
       onTap: null,
       borderRadius: 18,
       child: ClipRRect(
@@ -481,7 +482,7 @@ class PlayerPageState extends State<PlayerPage> {
         child: [
           _buildConfigurationsPanel(colorScheme, backgroundColor),
           _buildPlaylistPanel(colorScheme, backgroundColor),
-          _buildCommandsPanel(colorScheme, backgroundColor),
+          _buildSubtitlePanel(colorScheme, backgroundColor),
         ][_curPanel],
       );
     }
@@ -657,7 +658,7 @@ class PlayerPageState extends State<PlayerPage> {
     );
   }
 
-  Widget _buildCommandsPanel(
+  Widget _buildSubtitlePanel(
     ColorScheme colorScheme,
     Color backgroundColor,
   ) {
@@ -669,7 +670,7 @@ class PlayerPageState extends State<PlayerPage> {
         toolbarHeight: 46,
         scrolledUnderElevation: 0,
         title: Text(
-          '命令',
+          '字幕'.l10n,
           style: TextStyle(color: colorScheme.primary),
         ),
         actions: [

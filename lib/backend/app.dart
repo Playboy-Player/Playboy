@@ -42,6 +42,18 @@ class App extends ChangeNotifier {
   bool onPlayerPage = false;
   bool settingsPageOpened = false;
 
+  int voWidth = 0;
+  int voHeight = 0;
+  void refreshVO() {
+    controller.setSize(width: voWidth, height: voHeight);
+    playboy.command(['show-text', '已更新显示区域']);
+  }
+
+  void restoreVO() {
+    controller.setSize();
+    playboy.command(['show-text', '已恢复默认显示大小']);
+  }
+
   static final App _instance = App._internal();
   factory App() => _instance;
   App._internal() {
@@ -67,6 +79,8 @@ class App extends ChangeNotifier {
       options: {
         'config-dir': dataPath,
         'config': 'yes',
+        'input-default-bindings': 'yes',
+        'osd-level': '0',
       },
     );
     playboy.stream.position.listen((event) {
