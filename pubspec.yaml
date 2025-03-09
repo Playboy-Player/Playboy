@@ -26,6 +26,12 @@ dependencies:
 
   url_launcher: ^6.2.5
   
+  #subtitle genertaion
+  whsiper4dart: ^0.0.1
+
+  #backend refactoring
+  libmpv_dart: ^0.0.1
+
   # Media
   media_kit:
     git:
