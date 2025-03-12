@@ -76,5 +76,6 @@
   "截图": "Screenshot",
   "将当前画面设为封面": "Screenshot as cover",
   "从播放列表移除": "Remove from list",
-  "设置播放速度": "Set Playback Speed"
+  "设置播放速度": "Set Playback Speed",
+  "生成字幕": "Generate Subtitle"
 }

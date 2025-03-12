@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:isolate';
 // import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/time_utils.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
 import 'package:playboy/widgets/player_list.dart';
+import 'package:playboy/backend/ml/subtitle_generator.dart';
 
 class PlayerPage extends StatefulWidget {
   const PlayerPage({
@@ -689,6 +691,24 @@ class PlayerPageState extends State<PlayerPage> {
             width: 4,
           ),
         ],
+      ),
+      body: TextButton(
+        onPressed: () async {
+          SubtitleGenerator subGenerator = SubtitleGenerator("base");
+          subGenerator.ensureInitialized();
+          if (App().mediaPath != null) {
+            var subtitle = await subGenerator.genSubtitle(App().mediaPath!);
+            print("Generated subtitle: $subtitle");
+            App().playboy.setSubtitleTrack(SubtitleTrack.data(subtitle));
+          } else {
+            print("No media is playing");
+          }
+          setState(() {});
+        },
+        child: Text(
+          '生成字幕'.l10n,
+          style: TextStyle(color: colorScheme.primary),
+        ),
       ),
       // body: ListView(
       //   children: [
