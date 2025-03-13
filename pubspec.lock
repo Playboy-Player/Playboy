@@ -952,10 +952,10 @@ packages:
     dependency: "direct main"
     description:
       name: whisper4dart
-      sha256: f578cd10bf38e91ca21501e1c413f8b5e82ea1a1c65353c03d4eb99776da59ab
+      sha256: "35c2b8e70d4423e4b375b27a5d31bb15561755e2fb1da151b76c923b55646508"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.8"
+    version: "0.0.9"
   win32:
     dependency: transitive
     description:

@@ -27,7 +27,7 @@ dependencies:
   url_launcher: ^6.2.5
   
   #subtitle genertaion
-  whisper4dart: ^0.0.8
+  whisper4dart: ^0.0.9
   #backend refactoring
   libmpv_dart: ^0.0.2
 
