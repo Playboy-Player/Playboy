@@ -694,7 +694,7 @@ class PlayerPageState extends State<PlayerPage> {
       ),
       body: TextButton(
         onPressed: () async {
-          SubtitleGenerator subGenerator = SubtitleGenerator("base");
+          SubtitleGenerator subGenerator = SubtitleGenerator("medium-q5_0");
           subGenerator.ensureInitialized();
           if (App().mediaPath != null) {
             var subtitle = await subGenerator.genSubtitle(App().mediaPath!);
