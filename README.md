@@ -65,10 +65,12 @@
 
 首先, 根据 [官方教程](https://docs.flutter.dev/get-started/install/) 配置 flutter 环境. 请使用不低于 **3.29.0** 的 flutter 版本.
 
-终端进入项目根目录, 运行 `flutter pub get` 以获取依赖项.
+终端进入项目根目录, 运行 `flutter pub get` 以获取依赖项.  
+运行 `dart run whisper4dart:setup --prebuilt`
 
 ### Windows
 
+运行 `dart run libmpv_dart:setup --platform=windows` 获取 mpv 库依赖  
 运行 `flutter build windows` 以生成 Windows 可执行程序
 
 ### Linux

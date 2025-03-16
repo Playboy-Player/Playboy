@@ -26,6 +26,7 @@ class App extends ChangeNotifier {
   late final BasicVideoController controller;
 
   String? playingCover;
+  String? mediaPath;
   String playingTitle = 'Not Playing';
   List<PlaylistItem> playlists = [];
   int playingIndex = 0;
@@ -96,6 +97,7 @@ class App extends ChangeNotifier {
       playingIndex = event.index;
       if (event.medias.isNotEmpty) {
         var src = event.medias[playingIndex].uri;
+        mediaPath = src;
         if (src.startsWith('http')) {
           return;
         } else {

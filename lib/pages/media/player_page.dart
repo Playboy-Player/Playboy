@@ -1,5 +1,4 @@
 import 'dart:async';
-// import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:media_kit_video/basic/basic_video_controller.dart';
@@ -15,6 +14,7 @@ import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/time_utils.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
 import 'package:playboy/widgets/player_list.dart';
+import 'package:playboy/backend/ml/subtitle_generator.dart';
 
 class PlayerPage extends StatefulWidget {
   const PlayerPage({
@@ -690,19 +690,24 @@ class PlayerPageState extends State<PlayerPage> {
           ),
         ],
       ),
-      // body: ListView(
-      //   children: [
-      //     ListTile(
-      //       title: const Text('show text'),
-      //       onTap: () {
-      //         AppStorage().playboy.command([
-      //           'show-text',
-      //           'hello',
-      //         ]);
-      //       },
-      //     ),
-      //   ],
-      // ),
+      body: ListView(
+        children: [
+          ListTile(
+            title: Text('生成字幕'.l10n),
+            onTap: () async {
+              SubtitleGenerator subGenerator = SubtitleGenerator("medium-q5_0");
+              subGenerator.ensureInitialized();
+              if (App().mediaPath != null) {
+                var subtitle = await subGenerator.genSubtitle(App().mediaPath!);
+                debugPrint("Generated subtitle: $subtitle");
+                App().playboy.setSubtitleTrack(SubtitleTrack.data(subtitle));
+              } else {
+                debugPrint("No media is playing");
+              }
+            },
+          ),
+        ],
+      ),
     );
   }
 }
