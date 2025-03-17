@@ -174,7 +174,17 @@ class _AboutPageState extends State<AboutPage> {
                 Uri.https('github.com', '/Playboy-Player/Playboy/issues/new'),
               );
             },
-          )
+          ),
+          ListTile(
+            leading: const Icon(
+              Icons.note_outlined,
+            ),
+            title: Text('许可证'.l10n),
+            trailing: const Icon(Icons.open_in_new),
+            onTap: () {
+              showLicensePage(context: context);
+            },
+          ),
         ],
       ),
     );

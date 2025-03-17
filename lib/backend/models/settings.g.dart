@@ -62,6 +62,7 @@ AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) => AppSettings(
       tabletUI: json['tabletUI'] as bool? ?? true,
       enableTitleBar: json['enableTitleBar'] as bool? ?? true,
       libmpvPath: json['libmpvPath'] as String? ?? '',
+      model: json['model'] as String? ?? '',
     );
 
 Map<String, dynamic> _$AppSettingsToJson(AppSettings instance) =>
@@ -102,6 +103,7 @@ Map<String, dynamic> _$AppSettingsToJson(AppSettings instance) =>
       'tabletUI': instance.tabletUI,
       'enableTitleBar': instance.enableTitleBar,
       'libmpvPath': instance.libmpvPath,
+      'model': instance.model,
     };
 
 const _$ThemeModeEnumMap = {

@@ -8,7 +8,6 @@ import 'package:path/path.dart';
 import 'package:playboy/backend/utils/theme_utils.dart';
 import 'package:window_manager/window_manager.dart';
 
-import 'package:playboy/backend/actions.dart' as actions;
 import 'package:playboy/pages/file/file_explorer.dart';
 import 'package:playboy/widgets/menu/menu_button.dart';
 import 'package:playboy/widgets/menu/menu_item.dart';
@@ -41,7 +40,6 @@ class HomePage extends StatefulWidget {
 
   final bool playerView;
   static void Function()? refresh;
-  static void Function()? switchView;
 
   @override
   State<StatefulWidget> createState() => _HomePageState();
@@ -49,12 +47,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _tabIndex = 0;
-  int _prePageIndex = 0;
+  int _prePageIndex = 1;
   bool _forceRebuild = false;
-  bool _playerView = false;
 
   bool _fullScreen = false;
   bool _showTitleBarFullscreen = false;
+  bool _showSidePanel = true;
 
   bool _miniMode = false;
 
@@ -65,12 +63,15 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _playerView = widget.playerView;
     _prePageIndex = _tabIndex = App().settings.initPage;
-    if (_playerView) _tabIndex = 0;
+    if (widget.playerView) {
+      setState(() {
+        _tabIndex = 0;
+      });
+    }
 
     HomePage.refresh = () => setState(() => _forceRebuild = true);
-    App().actions[actions.togglePlayer] = () {
+    App().actions['togglePlayer'] = () {
       setState(
         () {
           if (_tabIndex == 0) {
@@ -79,11 +80,10 @@ class _HomePageState extends State<HomePage> {
             _prePageIndex = _tabIndex;
             _tabIndex = 0;
           }
-          _playerView = !_playerView;
         },
       );
     };
-    App().actions[actions.toggleFullscreen] = () async {
+    App().actions['toggleFullscreen'] = () async {
       if (_fullScreen) {
         windowManager.setFullScreen(false);
       } else {
@@ -94,17 +94,6 @@ class _HomePageState extends State<HomePage> {
         _showTitleBarFullscreen = false;
       });
     };
-    HomePage.switchView = () => setState(
-          () {
-            if (_tabIndex == 0) {
-              _tabIndex = _prePageIndex;
-            } else {
-              _prePageIndex = _tabIndex;
-              _tabIndex = 0;
-            }
-            _playerView = !_playerView;
-          },
-        );
   }
 
   @override
@@ -143,8 +132,8 @@ class _HomePageState extends State<HomePage> {
       },
       debugShowCheckedModeBanner: false,
       title: constants.appName,
-      theme: _getThemeData(App(), lightTheme),
-      darkTheme: _getThemeData(App(), darkTheme),
+      theme: getThemeData(App(), lightTheme),
+      darkTheme: getThemeData(App(), darkTheme),
       themeMode: App().settings.themeMode,
       home: Builder(
         builder: (context) {
@@ -153,41 +142,49 @@ class _HomePageState extends State<HomePage> {
           }
           return Scaffold(
             appBar: _fullScreen ? null : _buildTitleBar(context),
-            body: Stack(
-              children: [
-                Row(
-                  children: [
-                    _buildNavigationRail(context),
-                    _buildPage(context),
-                  ],
-                ),
-                if (_fullScreen)
-                  SizedBox(
-                    height: 40,
-                    child: AnimatedOpacity(
-                      opacity: _showTitleBarFullscreen ? 1 : 0,
-                      duration: const Duration(milliseconds: 100),
-                      child: MouseRegion(
-                        onHover: (event) {
-                          setState(() {
-                            _showTitleBarFullscreen = true;
-                          });
-                        },
-                        onExit: (event) {
-                          setState(() {
-                            _showTitleBarFullscreen = false;
-                          });
-                        },
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: _buildTitleBar(context),
-                        ),
+            body: Navigator(
+              key: App().contentKey,
+              onGenerateRoute: (route) => MaterialPageRoute(
+                settings: route,
+                builder: (context) {
+                  return Stack(
+                    children: [
+                      Row(
+                        children: [
+                          _buildNavigationRail(context),
+                          _buildPage(context),
+                        ],
                       ),
-                    ),
-                  ),
-              ],
+                      if (_fullScreen)
+                        SizedBox(
+                          height: 40,
+                          child: AnimatedOpacity(
+                            opacity: _showTitleBarFullscreen ? 1 : 0,
+                            duration: const Duration(milliseconds: 100),
+                            child: MouseRegion(
+                              onHover: (event) {
+                                setState(() {
+                                  _showTitleBarFullscreen = true;
+                                });
+                              },
+                              onExit: (event) {
+                                setState(() {
+                                  _showTitleBarFullscreen = false;
+                                });
+                              },
+                              child: Align(
+                                alignment: Alignment.topCenter,
+                                child: _buildTitleBar(context),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                },
+              ),
             ),
-            floatingActionButton: _playerView
+            floatingActionButton: _tabIndex == 0
                 ? const SizedBox()
                 : _buildFloatingMediaBar(context),
           );
@@ -196,74 +193,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  ThemeData _getThemeData(App value, ColorScheme colorScheme) {
-    return ThemeData(
-      pageTransitionsTheme: const PageTransitionsTheme(
-        builders: {
-          TargetPlatform.windows: CupertinoPageTransitionsBuilder(),
-          TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
-          TargetPlatform.linux: CupertinoPageTransitionsBuilder(),
-        },
-      ),
-      fontFamily: value.settings.font != '' ? value.settings.font : null,
-      fontFamilyFallback: Platform.isWindows ? ['Microsoft YaHei UI'] : null,
-      colorScheme: colorScheme,
-      tooltipTheme: TooltipThemeData(
-        decoration: BoxDecoration(
-          color: colorScheme.secondary,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        textStyle: TextStyle(
-          color: colorScheme.onSecondary,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      dialogTheme: DialogTheme(
-        backgroundColor: colorScheme.surface,
-        surfaceTintColor: Colors.transparent,
-        barrierColor: colorScheme.surfaceTint.withValues(alpha: 0.1),
-        shadowColor: Colors.black,
-      ),
-      appBarTheme: AppBarTheme(
-        scrolledUnderElevation: 0,
-        backgroundColor: colorScheme.surface,
-      ),
-      navigationRailTheme: NavigationRailThemeData(
-        backgroundColor: Color.alphaBlend(
-          colorScheme.primary.withValues(alpha: 0.04),
-          colorScheme.surface,
-        ),
-        indicatorColor: colorScheme.primaryContainer,
-      ),
-      iconButtonTheme: const IconButtonThemeData(
-        style: ButtonStyle(
-          iconSize: WidgetStatePropertyAll(22),
-        ),
-      ),
-      menuTheme: MenuThemeData(
-        style: MenuStyle(
-          shape: WidgetStatePropertyAll(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        ),
-      ),
-      sliderTheme: SliderThemeData(
-        year2023: false,
-        trackHeight: 4,
-        thumbSize: const WidgetStatePropertyAll(Size(4, 12)),
-        overlayShape: SliderComponentShape.noOverlay,
-      ),
-    );
-  }
-
   PreferredSizeWidget _buildTitleBar(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
-    late final backgroundColor = Color.alphaBlend(
-      colorScheme.primary.withValues(alpha: 0.04),
-      colorScheme.surface,
-    );
     var titlebarContent = [
       _buildAppMenuButton(context),
       const SizedBox(width: 40),
@@ -283,7 +214,7 @@ class _HomePageState extends State<HomePage> {
     ];
     return AppBar(
       scrolledUnderElevation: 0,
-      backgroundColor: backgroundColor,
+      backgroundColor: colorScheme.appBackground,
       flexibleSpace: Column(
         children: [
           if (Platform.isWindows)
@@ -360,7 +291,7 @@ class _HomePageState extends State<HomePage> {
           constraints: const BoxConstraints(),
           padding: EdgeInsets.zero,
           onPressed: () {
-            HomePage.switchView?.call();
+            App().actions['togglePlayer']?.call();
           },
           icon: const Icon(Icons.play_circle_outline_rounded),
         ),
@@ -384,6 +315,7 @@ class _HomePageState extends State<HomePage> {
               EdgeInsets.symmetric(horizontal: 4, vertical: 2),
             ),
           ),
+          icon: Icons.arrow_drop_down_rounded,
           constraints: const BoxConstraints(),
           menuChildren: _buildAppMenuItems(context),
         ),
@@ -408,6 +340,7 @@ class _HomePageState extends State<HomePage> {
             _showTitleBarFullscreen = false;
           });
         },
+        keymap: 'F',
       ),
       MMenuItem(
         icon: Icons.music_note_outlined,
@@ -433,13 +366,17 @@ class _HomePageState extends State<HomePage> {
         onPressed: null,
       ),
       const Divider(),
-      const MMenuItem(
+      MMenuItem(
         icon: Icons.visibility_outlined,
-        label: '显示/隐藏侧边栏',
-        onPressed: null,
+        label: '切换侧边栏',
+        onPressed: () {
+          setState(() {
+            _showSidePanel = !_showSidePanel;
+          });
+        },
       ),
       MMenuItem(
-        label: '切换深浅色主题',
+        label: '切换深色主题',
         icon: Theme.of(context).brightness == Brightness.dark
             ? Icons.wb_sunny_outlined
             : Icons.dark_mode_outlined,
@@ -459,18 +396,27 @@ class _HomePageState extends State<HomePage> {
         icon: Icons.settings_outlined,
         label: '偏好设置',
         onPressed: () {
-          pushPage(
-            context,
-            const SettingsPage(),
-          ).then((_) {
-            setState(() {});
-          });
+          if (App().contentKey.currentContext != null) {
+            pushPage(
+              App().contentKey.currentState!.context,
+              const SettingsPage(),
+            ).then((_) {
+              setState(() {});
+            });
+          }
         },
       ),
-      const MMenuItem(
+      MMenuItem(
         icon: Icons.info_outline,
         label: '关于应用',
-        onPressed: null,
+        onPressed: () {
+          App().dialog(
+            (context) => const AboutDialog(
+              applicationName: constants.appName,
+              applicationVersion: constants.version,
+            ),
+          );
+        },
       ),
       const MMenuItem(
         icon: Icons.upcoming_outlined,
@@ -858,15 +804,11 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildNavigationRail(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
-    late final backgroundColor = Color.alphaBlend(
-      colorScheme.primary.withValues(alpha: 0.04),
-      colorScheme.surface,
-    );
 
-    if (_playerView) {
+    if (_tabIndex == 0 || !_showSidePanel) {
       return Container(
         width: _fullScreen ? 0 : 10,
-        color: backgroundColor,
+        color: colorScheme.appBackground,
       );
     }
 
@@ -878,7 +820,8 @@ class _HomePageState extends State<HomePage> {
     ) {
       // final bool selected = id == _tabIndex;
       return Material(
-        color: selected ? colorScheme.primaryContainer : backgroundColor,
+        color:
+            selected ? colorScheme.primaryContainer : colorScheme.appBackground,
         borderRadius: BorderRadius.circular(20),
         child: InkWell(
           // onTap: () {
@@ -917,7 +860,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     return Container(
-      color: backgroundColor,
+      color: colorScheme.appBackground,
       width: 200,
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: ListView(
@@ -966,7 +909,7 @@ class _HomePageState extends State<HomePage> {
                     Icons.folder_special_outlined,
                     false,
                     () {
-                      App().actions[actions.gotoDirectory]?.call(path);
+                      App().actions['gotoDirectory']?.call(path);
                       setState(() {
                         _tabIndex = 3;
                       });
@@ -1030,13 +973,9 @@ class _HomePageState extends State<HomePage> {
     }
 
     late final colorScheme = Theme.of(context).colorScheme;
-    late final backgroundColor = Color.alphaBlend(
-      colorScheme.primary.withValues(alpha: 0.04),
-      colorScheme.surface,
-    );
     return Expanded(
       child: Container(
-        color: backgroundColor,
+        color: colorScheme.appBackground,
         padding: const EdgeInsets.only(right: 10),
         child: ClipRRect(
           borderRadius: const BorderRadius.only(

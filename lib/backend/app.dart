@@ -19,16 +19,31 @@ class App extends ChangeNotifier {
 
   late AppSettings settings;
 
+  final contentKey = GlobalKey<NavigatorState>();
+  void dialog(Widget Function(BuildContext) builder) {
+    if (contentKey.currentState != null) {
+      showDialog(
+        useRootNavigator: false,
+        context: contentKey.currentState!.context,
+        builder: builder,
+      );
+    }
+  }
+
   late Function() updateVideoPage;
   Map<String, Function> actions = {};
 
   late final NativePlayer playboy;
   late final BasicVideoController controller;
 
+  bool playlistLoaded = false;
+  bool mediaLibraryLoaded = false;
+  List<PlaylistItem> playlists = [];
+  List<PlayItem> mediaLibrary = [];
+
   String? playingCover;
   String? mediaPath;
   String playingTitle = 'Not Playing';
-  List<PlaylistItem> playlists = [];
   int playingIndex = 0;
   bool loop = false;
   bool shuffle = false;
@@ -37,11 +52,6 @@ class App extends ChangeNotifier {
   bool playing = false;
   bool seeking = false;
   double seekingPos = 0;
-
-  // ui state
-  bool isFullscreen = false;
-  bool onPlayerPage = false;
-  bool settingsPageOpened = false;
 
   int voWidth = 0;
   int voHeight = 0;

@@ -60,6 +60,7 @@
 - [x] 自定义快捷键映射 (input.conf 支持)
 - [x] 兼容 mpv.conf 配置文件
 - [ ] 自定义 mpv 初始化参数
+- [ ] 自动生成字幕 (Whisper)
 
 ## For Developers
 

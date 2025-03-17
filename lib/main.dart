@@ -36,6 +36,8 @@ void main(List<String> arguments) async {
   if (arguments.isNotEmpty) {
     String mediaToOpen = arguments[0];
     App().openMedia(await LibraryHelper.getItemFromFile(mediaToOpen));
+    runApp(const HomePage(playerView: true));
+  } else {
+    runApp(const HomePage(playerView: false));
   }
-  runApp(const HomePage(playerView: true));
 }

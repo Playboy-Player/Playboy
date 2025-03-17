@@ -3,7 +3,6 @@ import 'package:path/path.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/app.dart';
-import 'package:playboy/pages/home.dart';
 import 'package:playboy/widgets/cover_card.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
 
@@ -28,10 +27,10 @@ class FileCard extends StatelessWidget {
           App().closeMedia();
           if (!context.mounted) return;
           App().openMedia(
-            PlayItem(source: source, cover: null, title: source),
+            PlayItem(source: source, title: source),
           );
 
-          HomePage.switchView?.call();
+          App().actions['togglePlayer']?.call();
         }
       },
       borderRadius: 20,

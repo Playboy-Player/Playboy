@@ -1,7 +1,5 @@
-import 'dart:io';
 import 'dart:math';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import 'package:playboy/backend/library_helper.dart';
@@ -9,7 +7,8 @@ import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/sliver_utils.dart';
-import 'package:playboy/pages/home.dart';
+import 'package:playboy/backend/utils/theme_utils.dart';
+import 'package:playboy/pages/library/library_loader.dart';
 import 'package:playboy/pages/library/media_menu.dart';
 import 'package:playboy/widgets/empty_holder.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
@@ -18,7 +17,6 @@ import 'package:playboy/widgets/library/library_header.dart';
 import 'package:playboy/widgets/cover_listtile.dart';
 import 'package:playboy/widgets/loading_holder.dart';
 import 'package:playboy/widgets/menu/menu_button.dart';
-import 'package:playboy/widgets/menu/menu_item.dart';
 
 class LibraryPage extends StatefulWidget {
   const LibraryPage({super.key});
@@ -28,15 +26,30 @@ class LibraryPage extends StatefulWidget {
 }
 
 class _LibraryPageState extends State<LibraryPage> {
-  final List<PlayItem> _playitems = [];
-  bool _loaded = false;
   bool _gridview = true;
-  final bool _videoview = true;
 
   @override
   void initState() {
     super.initState();
-    _loadLibrary();
+    _gridview = !App().settings.videoLibListview;
+    App().updateVideoPage = () async {
+      setState(() {
+        App().mediaLibraryLoaded = false;
+      });
+      App().mediaLibrary.clear();
+      App().mediaLibrary.addAll(
+            await LibraryHelper.getMediaFromPaths(
+              App().settings.videoPaths,
+            ),
+          );
+      setState(() {
+        App().mediaLibraryLoaded = true;
+      });
+    };
+    loadMediaLibrary(() {
+      if (!mounted) return;
+      setState(() {});
+    });
   }
 
   @override
@@ -54,54 +67,12 @@ class _LibraryPageState extends State<LibraryPage> {
     );
   }
 
-  void _loadLibrary() async {
-    _playitems.addAll(
-      await LibraryHelper.getMediaFromPaths(App().settings.videoPaths),
-    );
-    if (!mounted) return;
-    setState(() {
-      _loaded = true;
-    });
-    _gridview = !App().settings.videoLibListview;
-    App().updateVideoPage = () async {
-      setState(() {
-        _loaded = false;
-      });
-      _playitems.clear();
-      _playitems.addAll(
-        await LibraryHelper.getMediaFromPaths(
-          App().settings.videoPaths,
-        ),
-      );
-      setState(() {
-        _loaded = true;
-      });
-    };
-  }
-
   List<Widget> _buildLibraryActions(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
-    late final backgroundColor = Color.alphaBlend(
-      colorScheme.primary.withValues(alpha: 0.08),
-      colorScheme.surface,
-    );
     return [
-      // IconButton(
-      //   tooltip: '切换显示样式'.l10n,
-      //   hoverColor: backgroundColor,
-      //   onPressed: () async {
-      //     setState(() {
-      //       _videoview = !_videoview;
-      //     });
-      //   },
-      //   icon: Icon(
-      //     _videoview ? Icons.movie_outlined : Icons.music_note,
-      //     color: colorScheme.onPrimaryContainer,
-      //   ),
-      // ),
       IconButton(
         tooltip: '排序'.l10n,
-        hoverColor: backgroundColor,
+        hoverColor: colorScheme.actionHoverColor,
         onPressed: () async {},
         icon: Icon(
           Icons.sort,
@@ -110,7 +81,7 @@ class _LibraryPageState extends State<LibraryPage> {
       ),
       IconButton(
         tooltip: '切换显示视图'.l10n,
-        hoverColor: backgroundColor,
+        hoverColor: colorScheme.actionHoverColor,
         onPressed: () async {
           setState(() {
             _gridview = !_gridview;
@@ -123,7 +94,7 @@ class _LibraryPageState extends State<LibraryPage> {
       ),
       IconButton(
         tooltip: '搜索'.l10n,
-        hoverColor: backgroundColor,
+        hoverColor: colorScheme.actionHoverColor,
         onPressed: () async {},
         icon: Icon(
           Icons.search,
@@ -135,8 +106,8 @@ class _LibraryPageState extends State<LibraryPage> {
   }
 
   Widget _buildLibraryview(BuildContext context) {
-    if (!_loaded) return const MLoadingPlaceHolder();
-    if (_playitems.isEmpty) return const MEmptyHolder().toSliver();
+    if (!App().mediaLibraryLoaded) return const MLoadingPlaceHolder();
+    if (App().mediaLibrary.isEmpty) return const MEmptyHolder().toSliver();
 
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -152,14 +123,15 @@ class _LibraryPageState extends State<LibraryPage> {
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisSpacing: 6,
         crossAxisCount: cols,
-        childAspectRatio: _videoview ? 8 / 7 : 5 / 6,
+        childAspectRatio: 8 / 7,
       ),
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          PlayItem info = _playitems[index];
+          PlayItem info = App().mediaLibrary[index];
           return MInteractiveWrapper(
             menuController: MenuController(),
-            menuChildren: _buildMediaMenuItems(
+            menuChildren: buildMediaMenuItems(
+              () => setState(() {}),
               context,
               colorScheme,
               info,
@@ -168,26 +140,18 @@ class _LibraryPageState extends State<LibraryPage> {
               await App().closeMedia().then((value) {
                 App().openMedia(info);
               });
-              if (_videoview) {
-                // if (!context.mounted) return;
-                // pushRootPage(
-                //   context,
-                //   const PlayerPage(),
-                // );
-                // AppStorage().updateStatus();
-                HomePage.switchView?.call();
-              }
+              App().actions['togglePlayer']?.call();
             },
             borderRadius: 20,
             child: MCoverCard(
-              aspectRatio: _videoview ? 16 / 9 : 1,
-              icon: _videoview ? Icons.movie_outlined : Icons.music_note,
+              aspectRatio: 16 / 9,
+              icon: Icons.movie_outlined,
               cover: info.cover,
               title: info.title,
             ),
           );
         },
-        childCount: _playitems.length,
+        childCount: App().mediaLibrary.length,
       ),
     );
   }
@@ -197,24 +161,17 @@ class _LibraryPageState extends State<LibraryPage> {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          PlayItem info = _playitems[index];
+          PlayItem info = App().mediaLibrary[index];
           return MCoverListTile(
-            aspectRatio: _videoview ? 4 / 3 : 1,
+            aspectRatio: 4 / 3,
             height: 60,
             cover: info.cover,
-            icon: _videoview ? Icons.movie_outlined : Icons.music_note,
+            icon: Icons.movie_outlined,
             label: info.title,
             onTap: () async {
               await App().closeMedia().then((_) {
                 App().openMedia(info);
-                if (_videoview) {
-                  // if (!context.mounted) return;
-                  // pushRootPage(
-                  //   context,
-                  //   const PlayerPage(),
-                  // );
-                  HomePage.switchView?.call();
-                }
+                App().actions['togglePlayer']?.call();
               });
               App().updateStatus();
             },
@@ -224,19 +181,13 @@ class _LibraryPageState extends State<LibraryPage> {
                 onPressed: () {
                   App().closeMedia();
                   App().openMedia(info);
-                  if (_videoview) {
-                    // if (!context.mounted) return;
-                    // pushRootPage(
-                    //   context,
-                    //   const PlayerPage(),
-                    // );
-                    HomePage.switchView?.call();
-                  }
+                  App().actions['togglePlayer']?.call();
                 },
                 icon: const Icon(Icons.play_arrow),
               ),
               MenuButton(
-                menuChildren: _buildMediaMenuItems(
+                menuChildren: buildMediaMenuItems(
+                  () => setState(() {}),
                   context,
                   colorScheme,
                   info,
@@ -245,69 +196,8 @@ class _LibraryPageState extends State<LibraryPage> {
             ],
           );
         },
-        childCount: _playitems.length,
+        childCount: App().mediaLibrary.length,
       ),
     );
-  }
-
-  List<Widget> _buildMediaMenuItems(
-    BuildContext context,
-    ColorScheme colorScheme,
-    PlayItem item,
-  ) {
-    return [
-      const SizedBox(height: 10),
-      ...buildCommonMediaMenuItems(context, colorScheme, item),
-      const Divider(),
-      MMenuItem(
-        icon: Icons.design_services_outlined,
-        label: '修改封面'.l10n,
-        onPressed: () async {
-          String? coverPath =
-              await FilePicker.platform.pickFiles(type: FileType.image).then(
-            (result) {
-              return result?.files.single.path;
-            },
-          );
-          if (coverPath != null) {
-            var savePath = item.cover!;
-            var originalFile = File(coverPath);
-            var newFile = File(savePath);
-            item.cover = savePath;
-            await originalFile.copy(newFile.path).then((_) {
-              // final ImageProvider imageProvider = FileImage(newFile);
-              // imageProvider.evict();
-              setState(() {});
-            });
-          }
-        },
-      ),
-      MMenuItem(
-        icon: Icons.cleaning_services,
-        label: '清除封面'.l10n,
-        onPressed: () async {
-          if (item.cover == null) return;
-          var file = File(item.cover!);
-          if (await file.exists()) {
-            file.delete();
-            final ImageProvider imageProvider = FileImage(file);
-            imageProvider.evict();
-          }
-          setState(() {});
-        },
-      ),
-      MMenuItem(
-        icon: Icons.hide_source,
-        label: '隐藏'.l10n,
-        onPressed: null,
-      ),
-      const Divider(),
-      MMenuItem(
-        icon: Icons.info_outline,
-        label: '属性'.l10n,
-        onPressed: null,
-      ),
-      const SizedBox(height: 10),
-    ];
   }
 }

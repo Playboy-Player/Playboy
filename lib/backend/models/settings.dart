@@ -57,6 +57,8 @@ class AppSettings {
   bool enableTitleBar;
   String libmpvPath;
 
+  String model;
+
   AppSettings({
     // Display Settings,
     this.font = '',
@@ -104,6 +106,7 @@ class AppSettings {
     this.tabletUI = true,
     this.enableTitleBar = true,
     this.libmpvPath = '',
+    this.model = '',
   });
 
   factory AppSettings.fromJson(Map<String, dynamic> json) =>

@@ -5,8 +5,8 @@ import 'package:media_kit_video/basic/basic_video_controller.dart';
 import 'package:path/path.dart' as p;
 import 'package:media_kit/media_kit.dart';
 
-import 'package:playboy/backend/actions.dart' as actions;
 import 'package:playboy/backend/utils/l10n_utils.dart';
+import 'package:playboy/backend/utils/theme_utils.dart';
 import 'package:playboy/widgets/basic_video.dart';
 import 'package:playboy/pages/media/player_menu.dart';
 import 'package:playboy/backend/models/playitem.dart';
@@ -67,12 +67,9 @@ class PlayerPageState extends State<PlayerPage> {
   @override
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
-    late final backgroundColor = Color.alphaBlend(
-      colorScheme.primary.withValues(alpha: 0.04),
-      colorScheme.surface,
-    );
+
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: colorScheme.appBackground,
       body: widget.fullscreen
           ? Stack(
               children: [
@@ -83,7 +80,7 @@ class PlayerPageState extends State<PlayerPage> {
                         child: _buildPlayer(colorScheme),
                       ),
                     ),
-                    _buildSidePanel(colorScheme, backgroundColor),
+                    _buildSidePanel(colorScheme, colorScheme.appBackground),
                   ],
                 ),
                 Align(
@@ -103,7 +100,7 @@ class PlayerPageState extends State<PlayerPage> {
                         });
                       },
                       child: Container(
-                        color: backgroundColor,
+                        color: colorScheme.appBackground,
                         height: 90,
                         child: Column(
                           children: _buildButtomBar(context, colorScheme),
@@ -124,7 +121,7 @@ class PlayerPageState extends State<PlayerPage> {
                           child: _buildPlayer(colorScheme),
                         ),
                       ),
-                      _buildSidePanel(colorScheme, backgroundColor),
+                      _buildSidePanel(colorScheme, colorScheme.appBackground),
                     ],
                   ),
                 ),
@@ -353,7 +350,7 @@ class PlayerPageState extends State<PlayerPage> {
                 ),
                 IconButton(
                   onPressed: () {
-                    App().executeAction(actions.toggleFullscreen);
+                    App().executeAction('toggleFullscreen');
                   },
                   icon: const Icon(Icons.open_in_full_rounded),
                 ),
@@ -421,7 +418,6 @@ class PlayerPageState extends State<PlayerPage> {
   Widget _buildPlayer(ColorScheme colorScheme) {
     return MInteractiveWrapper(
       menuController: MenuController(),
-      // TODO: show dialog without context
       menuChildren: buildPlayerMenu(context),
       onTap: null,
       borderRadius: 18,
@@ -548,7 +544,6 @@ class PlayerPageState extends State<PlayerPage> {
                         child: PlayerListCard(
                           info: PlayItem(
                             source: src,
-                            cover: null,
                             title: p.basenameWithoutExtension(src),
                           ),
                           isPlaying: index == App().playingIndex,

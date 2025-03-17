@@ -1,8 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:playboy/backend/app.dart';
 
-import 'package:playboy/backend/actions.dart' as actions;
-
 class KeyMapHelper {
   static late final HardwareKeyboard _keyboard;
   static void init() {
@@ -92,9 +90,9 @@ class KeyMapHelper {
 
   static bool enableKeyBinding = true;
   static final Map<String, String> _keyBindings = {
-    'q': actions.togglePlayer,
-    'Q': actions.togglePlayer,
-    'f': actions.toggleFullscreen,
+    'q': 'togglePlayer',
+    'Q': 'togglePlayer',
+    'f': 'toggleFullscreen',
   };
 
   static void _executeKeyAction(String key) {

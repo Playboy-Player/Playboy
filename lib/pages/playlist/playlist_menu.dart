@@ -2,72 +2,157 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/app.dart';
+import 'package:playboy/backend/library_helper.dart';
+import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
+import 'package:playboy/pages/playlist/common_playlist_menu.dart';
 import 'package:playboy/widgets/menu/menu_item.dart';
 
-List<Widget> buildCommonPlaylistMenuItems(
+List<Widget> buildPlaylistMenuItems(
+  Function callback,
   BuildContext context,
   ColorScheme colorScheme,
   PlaylistItem item,
 ) {
+  TextEditingController editingController = TextEditingController();
   return [
-    MMenuItem(
-      icon: Icons.play_circle_outline_rounded,
-      label: '播放'.l10n,
-      onPressed: () {
-        App().closeMedia();
-        App().openPlaylist(item, false);
-      },
+    const SizedBox(height: 10),
+    ...buildCommonPlaylistMenuItems(
+      context,
+      colorScheme,
+      item,
     ),
+    const Divider(),
     MMenuItem(
-      icon: Icons.shuffle,
-      label: '随机播放'.l10n,
-      onPressed: () {
-        App().closeMedia();
-        App().openPlaylist(
-          item,
-          true,
-        );
-      },
-    ),
-    MMenuItem(
-      icon: Icons.add_circle_outline,
-      label: '追加到播放列表'.l10n,
-      onPressed: null,
-      // () {
-      //   AppStorage().appendPlaylist(
-      //     item,
-      //   );
-      // },
-    ),
-    MMenuItem(
-      icon: Icons.share,
-      label: '导出'.l10n,
+      icon: Icons.design_services_outlined,
+      label: '修改封面'.l10n,
       onPressed: () async {
-        final originalFile = File(
-          '${App().dataPath}/playlists/${item.uuid}.json',
+        String? coverPath =
+            await FilePicker.platform.pickFiles(type: FileType.image).then(
+          (result) {
+            return result?.files.single.path;
+          },
         );
-        String? newFilePath = await FilePicker.platform.saveFile(
-          dialogTitle: '另存为',
-          fileName: '${item.uuid}.json',
-        );
-
-        if (newFilePath != null) {
-          final newFile = File(newFilePath);
-
-          await originalFile.copy(newFile.path);
-          if (!context.mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '已经保存到: $newFilePath',
-              ),
-            ),
+        if (coverPath != null) {
+          var savePath = '${App().dataPath}/playlists/${item.uuid}.cover.jpg';
+          var originalFile = File(coverPath);
+          var newFile = File(savePath);
+          item.cover = savePath;
+          await originalFile.copy(newFile.path).then(
+            (_) {
+              final ImageProvider imageProvider = FileImage(newFile);
+              imageProvider.evict();
+              callback();
+            },
           );
         }
       },
     ),
+    MMenuItem(
+      icon: Icons.cleaning_services,
+      label: '清除封面'.l10n,
+      onPressed: () async {
+        item.cover = null;
+        callback();
+        var coverPath = '${App().dataPath}/playlists/${item.uuid}.cover.jpg';
+        var cover = File(coverPath);
+        if (await cover.exists()) {
+          await cover.delete();
+        }
+      },
+    ),
+    MMenuItem(
+      icon: Icons.drive_file_rename_outline,
+      label: '重命名'.l10n,
+      onPressed: () {
+        editingController.clear();
+        editingController.text = item.title;
+        App().dialog(
+          (BuildContext context) => AlertDialog(
+            surfaceTintColor: Colors.transparent,
+            title: Text('重命名'.l10n),
+            content: TextField(
+              autofocus: true,
+              maxLines: 1,
+              controller: editingController,
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                labelText: '名称'.l10n,
+              ),
+              onSubmitted: (value) {
+                LibraryHelper.renamePlaylist(
+                  item,
+                  value,
+                );
+                callback();
+                Navigator.pop(context);
+              },
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('取消'.l10n),
+              ),
+              TextButton(
+                onPressed: () {
+                  LibraryHelper.renamePlaylist(
+                    item,
+                    editingController.text,
+                  );
+                  callback();
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                },
+                child: Text('确定'.l10n),
+              ),
+            ],
+          ),
+        );
+      },
+    ),
+    MMenuItem(
+      icon: Icons.delete_outline,
+      label: '删除'.l10n,
+      onPressed: () {
+        App().dialog(
+          (context) {
+            return AlertDialog(
+              title: Text('操作确认'.l10n),
+              content: Text('确定要删除播放列表吗?'.l10n),
+              actions: [
+                TextButton(
+                  child: Text('取消'.l10n),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: Text('确定'.l10n),
+                  onPressed: () {
+                    LibraryHelper.deletePlaylist(
+                      item,
+                    );
+                    // AppStorage().playlists.removeAt(index);
+                    App().playlists.remove(item);
+                    callback();
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+    ),
+    const Divider(),
+    MMenuItem(
+      icon: Icons.info_outline,
+      label: '属性'.l10n,
+      onPressed: null,
+    ),
+    const SizedBox(height: 10),
   ];
 }

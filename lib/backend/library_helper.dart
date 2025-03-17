@@ -58,14 +58,13 @@ class LibraryHelper {
             if (vis.contains(item.path)) continue;
             q.add(item.path);
           } else if (supportFormats.contains(extension(item.path))) {
-            var outputPath = "${withoutExtension(item.path)}.cover.jpg";
+            // var outputPath = "${withoutExtension(item.path)}.cover.jpg";
             // if (AppStorage().settings.getCoverOnScan) {
             //   await saveThumbnail(item.path);
             // }
             res.add(
               PlayItem(
                 source: item.path,
-                cover: outputPath,
                 title: basenameWithoutExtension(item.path),
               ),
             );
@@ -93,10 +92,9 @@ class LibraryHelper {
   // }
 
   static Future<PlayItem> getItemFromFile(String src) async {
-    var coverPath = '${withoutExtension(src)}.cover.jpg';
+    // var coverPath = '${withoutExtension(src)}.cover.jpg';
     return PlayItem(
       source: src,
-      cover: coverPath,
       title: basenameWithoutExtension(src),
     );
   }

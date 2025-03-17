@@ -93,6 +93,18 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                 value: App().settings.initPage,
                 items: [
                   DropdownMenuItem(
+                    value: 0,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.play_circle_outline),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text('播放器'.l10n),
+                      ],
+                    ),
+                  ),
+                  DropdownMenuItem(
                     value: 1,
                     child: Row(
                       children: [

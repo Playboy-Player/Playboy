@@ -75,10 +75,8 @@ List<Widget> buildPlayerMenu(BuildContext context) {
       label: '打开URL'.l10n,
       onPressed: () {
         var editingController = TextEditingController();
-        showDialog(
-          useRootNavigator: false,
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
+        App().dialog(
+          (BuildContext context) => AlertDialog(
             surfaceTintColor: Colors.transparent,
             title: Text('播放网络串流'.l10n),
             content: TextField(
@@ -114,11 +112,13 @@ List<Widget> buildPlayerMenu(BuildContext context) {
     ),
     const Divider(),
     MMenuItem(
-        icon: Icons.info_outline,
-        label: '属性'.l10n,
-        onPressed: () {
-          App().playboy.command(['keypress', 'SHIFT+I']);
-        }),
+      icon: Icons.info_outline,
+      label: '属性'.l10n,
+      onPressed: () {
+        App().playboy.command(['keypress', 'SHIFT+I']);
+      },
+      keymap: 'Shift+I',
+    ),
     const SizedBox(height: 10),
   ];
 }
@@ -126,6 +126,6 @@ List<Widget> buildPlayerMenu(BuildContext context) {
 void _openLink(String source) async {
   App().closeMedia();
   App().openMedia(
-    PlayItem(source: source, cover: null, title: source),
+    PlayItem(source: source, title: source),
   );
 }

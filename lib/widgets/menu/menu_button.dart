@@ -7,11 +7,13 @@ class MenuButton extends StatelessWidget {
     required this.menuChildren,
     this.style,
     this.constraints,
+    this.icon = Icons.more_vert,
   });
 
   final List<Widget> menuChildren;
   final ButtonStyle? style;
   final BoxConstraints? constraints;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +30,7 @@ class MenuButton extends StatelessWidget {
               controller.open();
             }
           },
-          icon: const Icon(Icons.more_vert),
+          icon: Icon(icon),
         );
       },
       menuChildren: menuChildren,

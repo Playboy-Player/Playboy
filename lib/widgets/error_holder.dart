@@ -18,13 +18,20 @@ class ErrorHolder extends StatelessWidget {
           borderRadius: BorderRadius.all(Radius.circular(14)),
         ),
         child: SizedBox(
-          height: 50,
+          height: 100,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error),
+              const SizedBox(width: 16),
+              const Icon(
+                Icons.error,
+                size: 30,
+              ),
               const SizedBox(width: 10),
-              Text('Error: $message'),
+              Expanded(
+                child: Text('Error: $message'),
+              ),
+              const SizedBox(width: 16),
             ],
           ),
         ),
