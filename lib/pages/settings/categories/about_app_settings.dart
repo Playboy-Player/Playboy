@@ -32,12 +32,6 @@ class _AboutPageState extends State<AboutPage> {
           Card(
             elevation: 0,
             shape: const RoundedRectangleBorder(
-              // borderRadius: BorderRadius.only(
-              //   topLeft: Radius.circular(80),
-              //   topRight: Radius.circular(30),
-              //   bottomLeft: Radius.circular(30),
-              //   bottomRight: Radius.circular(80),
-              // ),
               borderRadius: BorderRadius.all(Radius.circular(30)),
             ),
             color: colorScheme.primaryContainer.withValues(alpha: 0.3),

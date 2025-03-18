@@ -360,10 +360,16 @@ class _HomePageState extends State<HomePage> {
         label: '画中画',
         onPressed: null,
       ),
-      const MMenuItem(
+      MMenuItem(
         icon: Icons.push_pin_outlined,
         label: '应用置顶',
-        onPressed: null,
+        onPressed: () async {
+          if (await windowManager.isAlwaysOnTop()) {
+            windowManager.setAlwaysOnTop(false);
+          } else {
+            windowManager.setAlwaysOnTop(true);
+          }
+        },
       ),
       const Divider(),
       MMenuItem(
@@ -424,19 +430,33 @@ class _HomePageState extends State<HomePage> {
         onPressed: null,
       ),
       const Divider(),
-      MMenuItem(
-        icon: Icons.bug_report_outlined,
-        label: '填充显示区域',
-        onPressed: () {
-          App().refreshVO();
-        },
-      ),
-      MMenuItem(
-        icon: Icons.bug_report_outlined,
-        label: '使用默认显示大小',
-        onPressed: () {
-          App().restoreVO();
-        },
+      SubmenuButton(
+        leadingIcon: const Icon(
+          Icons.bug_report_outlined,
+          size: 18,
+        ),
+        menuChildren: [
+          const SizedBox(height: 10),
+          MMenuItem(
+            icon: Icons.bug_report_outlined,
+            label: '填充显示区域',
+            onPressed: () {
+              App().refreshVO();
+            },
+          ),
+          MMenuItem(
+            icon: Icons.bug_report_outlined,
+            label: '使用默认显示大小',
+            onPressed: () {
+              App().restoreVO();
+            },
+          ),
+          const SizedBox(height: 10)
+        ],
+        child: const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 6),
+          child: Text('调试'),
+        ),
       ),
       const SizedBox(height: 10),
     ];
@@ -636,6 +656,7 @@ class _HomePageState extends State<HomePage> {
                         // width: 120,
                         child: SliderTheme(
                           data: SliderThemeData(
+                            // ignore: deprecated_member_use
                             year2023: false,
                             trackHeight: 3,
                             thumbSize: const WidgetStatePropertyAll(
@@ -1043,6 +1064,7 @@ class _HomePageState extends State<HomePage> {
                 data: SliderThemeData(
                   thumbColor: colorScheme.primaryContainer,
                   activeTrackColor: colorScheme.primaryContainer,
+                  // ignore: deprecated_member_use
                   year2023: false,
                   trackHeight: 4,
                   thumbSize: const WidgetStatePropertyAll(Size(4, 12)),

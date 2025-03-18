@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/app.dart';
+import 'package:playboy/backend/utils/l10n_utils.dart';
 
 class DeveloperSettings extends StatefulWidget {
   const DeveloperSettings({super.key});
@@ -20,7 +21,7 @@ class DeveloperSettingsState extends State<DeveloperSettings> {
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
-              'Developer Settings',
+              '调试'.l10n,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
@@ -38,7 +39,7 @@ class DeveloperSettingsState extends State<DeveloperSettings> {
             title: Container(
               alignment: Alignment.centerLeft,
               height: 40,
-              child: const Text('Developer Setting'),
+              child: Text('启用调试选项'.l10n),
             ),
             value: App().settings.enableDevSettings,
             onChanged: (bool value) {

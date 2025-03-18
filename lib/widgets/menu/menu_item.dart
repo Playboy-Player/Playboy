@@ -16,6 +16,7 @@ class MMenuItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    late final colorScheme = Theme.of(context).colorScheme;
     return SizedBox(
       height: 34,
       child: MenuItemButton(
@@ -29,9 +30,7 @@ class MMenuItem extends StatelessWidget {
           child: Text(
             keymap,
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withValues(
-                    alpha: 0.4,
-                  ),
+              color: colorScheme.onSurface.withValues(alpha: 0.4),
             ),
           ),
         ),

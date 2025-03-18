@@ -72,7 +72,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
             ),
           ),
           ListTile(
-            title: Text('默认媒体库页面'.l10n),
+            title: Text('初始显示页面'.l10n),
             trailing: SizedBox(
               height: 44,
               width: 150,

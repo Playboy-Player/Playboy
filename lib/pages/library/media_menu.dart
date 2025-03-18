@@ -55,11 +55,6 @@ List<Widget> buildMediaMenuItems(
         callback();
       },
     ),
-    MMenuItem(
-      icon: Icons.hide_source,
-      label: '隐藏'.l10n,
-      onPressed: null,
-    ),
     const Divider(),
     MMenuItem(
       icon: Icons.info_outline,

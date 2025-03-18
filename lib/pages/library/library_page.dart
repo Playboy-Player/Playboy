@@ -7,6 +7,7 @@ import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/sliver_utils.dart';
+import 'package:playboy/backend/utils/string_utils.dart';
 import 'package:playboy/backend/utils/theme_utils.dart';
 import 'package:playboy/pages/library/library_loader.dart';
 import 'package:playboy/pages/library/media_menu.dart';
@@ -26,13 +27,17 @@ class LibraryPage extends StatefulWidget {
 }
 
 class _LibraryPageState extends State<LibraryPage> {
+  final TextEditingController _editingController = TextEditingController();
   bool _gridview = true;
+
+  String _filter = '';
+  List<PlayItem> _contents = [];
 
   @override
   void initState() {
     super.initState();
     _gridview = !App().settings.videoLibListview;
-    App().updateVideoPage = () async {
+    App().actions['updateVideoPage'] = () async {
       setState(() {
         App().mediaLibraryLoaded = false;
       });
@@ -48,7 +53,9 @@ class _LibraryPageState extends State<LibraryPage> {
     };
     loadMediaLibrary(() {
       if (!mounted) return;
-      setState(() {});
+      setState(() {
+        _contents = App().mediaLibrary;
+      });
     });
   }
 
@@ -61,21 +68,77 @@ class _LibraryPageState extends State<LibraryPage> {
             title: '媒体库'.l10n,
             actions: _buildLibraryActions(context),
           ),
+          if (_filter != '')
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Card(
+                elevation: 0,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(14)),
+                ),
+                child: SizedBox(
+                  height: 50,
+                  child: Row(
+                    children: [
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text('${'正在展示以下内容的搜索结果: '.l10n}$_filter'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            _filter = '';
+                            _contents = App().mediaLibrary;
+                          });
+                        },
+                        child: Text('还原'.l10n),
+                      ),
+                      const SizedBox(width: 10),
+                    ],
+                  ),
+                ),
+              ),
+            ).toSliver(),
           _buildLibraryview(context),
         ],
       ),
     );
   }
 
+  void _search(String target) {
+    setState(() {
+      _filter = target;
+      _updateResult();
+    });
+  }
+
+  void _updateResult() {
+    _contents = App()
+        .mediaLibrary
+        .where(
+          (e) => isSubsequence(_filter, e.title),
+        )
+        .toList();
+  }
+
   List<Widget> _buildLibraryActions(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
     return [
       IconButton(
-        tooltip: '排序'.l10n,
+        tooltip: '播放'.l10n,
         hoverColor: colorScheme.actionHoverColor,
-        onPressed: () async {},
+        onPressed: null,
         icon: Icon(
-          Icons.sort,
+          Icons.play_arrow_rounded,
+          color: colorScheme.onPrimaryContainer,
+        ),
+      ),
+      IconButton(
+        tooltip: '随机播放'.l10n,
+        hoverColor: colorScheme.actionHoverColor,
+        onPressed: null,
+        icon: Icon(
+          Icons.shuffle_rounded,
           color: colorScheme.onPrimaryContainer,
         ),
       ),
@@ -95,7 +158,42 @@ class _LibraryPageState extends State<LibraryPage> {
       IconButton(
         tooltip: '搜索'.l10n,
         hoverColor: colorScheme.actionHoverColor,
-        onPressed: () async {},
+        onPressed: () async {
+          _editingController.clear();
+          App().dialog(
+            (BuildContext context) => AlertDialog(
+              title: Text('搜索播放列表'.l10n),
+              content: TextField(
+                autofocus: true,
+                maxLines: 1,
+                controller: _editingController,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: '名称'.l10n,
+                ),
+                onSubmitted: (value) {
+                  _search(value);
+                  Navigator.pop(context);
+                },
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('取消'.l10n),
+                ),
+                TextButton(
+                  onPressed: () {
+                    _search(_editingController.text);
+                    Navigator.pop(context);
+                  },
+                  child: Text('确定'.l10n),
+                ),
+              ],
+            ),
+          );
+        },
         icon: Icon(
           Icons.search,
           color: colorScheme.onPrimaryContainer,
@@ -107,7 +205,7 @@ class _LibraryPageState extends State<LibraryPage> {
 
   Widget _buildLibraryview(BuildContext context) {
     if (!App().mediaLibraryLoaded) return const MLoadingPlaceHolder();
-    if (App().mediaLibrary.isEmpty) return const MEmptyHolder().toSliver();
+    if (_contents.isEmpty) return const MEmptyHolder().toSliver();
 
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -127,11 +225,13 @@ class _LibraryPageState extends State<LibraryPage> {
       ),
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          PlayItem info = App().mediaLibrary[index];
+          PlayItem info = _contents[index];
           return MInteractiveWrapper(
             menuController: MenuController(),
             menuChildren: buildMediaMenuItems(
-              () => setState(() {}),
+              () => setState(() {
+                _updateResult();
+              }),
               context,
               colorScheme,
               info,
@@ -151,7 +251,7 @@ class _LibraryPageState extends State<LibraryPage> {
             ),
           );
         },
-        childCount: App().mediaLibrary.length,
+        childCount: _contents.length,
       ),
     );
   }
@@ -161,7 +261,7 @@ class _LibraryPageState extends State<LibraryPage> {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          PlayItem info = App().mediaLibrary[index];
+          PlayItem info = _contents[index];
           return MCoverListTile(
             aspectRatio: 4 / 3,
             height: 60,
@@ -187,7 +287,9 @@ class _LibraryPageState extends State<LibraryPage> {
               ),
               MenuButton(
                 menuChildren: buildMediaMenuItems(
-                  () => setState(() {}),
+                  () => setState(() {
+                    _updateResult();
+                  }),
                   context,
                   colorScheme,
                   info,
@@ -196,7 +298,7 @@ class _LibraryPageState extends State<LibraryPage> {
             ],
           );
         },
-        childCount: App().mediaLibrary.length,
+        childCount: _contents.length,
       ),
     );
   }

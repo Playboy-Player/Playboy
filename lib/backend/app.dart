@@ -7,6 +7,7 @@ import 'package:media_kit_video/basic/basic_video_controller.dart';
 import 'package:media_kit_video/basic/basic_video_controller_configuration.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:playboy/backend/keymap_helper.dart';
 
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
@@ -22,11 +23,14 @@ class App extends ChangeNotifier {
   final contentKey = GlobalKey<NavigatorState>();
   void dialog(Widget Function(BuildContext) builder) {
     if (contentKey.currentState != null) {
+      KeyMapHelper.keyBindinglock++;
       showDialog(
         useRootNavigator: false,
         context: contentKey.currentState!.context,
         builder: builder,
-      );
+      ).whenComplete(() {
+        KeyMapHelper.keyBindinglock--;
+      });
     }
   }
 
@@ -125,7 +129,6 @@ class App extends ChangeNotifier {
       const BasicVideoControllerConfiguration(),
     );
     playboy.setVolume(settings.volume);
-    if (settings.preciseSeek) playboy.setProperty('hr-seek', 'yes');
     // playboy.setProperty('hr-seek-framedrop', 'no');
 
     // These arguments can avoid crashing on switch media (only tested on Windows)
@@ -222,8 +225,6 @@ class App extends ChangeNotifier {
     playboy.setRate(settings.defaultSpeed);
   }
 
-  // currently it doesn't work
-  // https://github.com/media-kit/media-kit/issues/722
   void appendPlaylist(PlaylistItem pl) {
     for (var item in pl.items) {
       playboy.add(Media(item.source));

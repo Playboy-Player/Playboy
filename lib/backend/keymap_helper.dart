@@ -75,7 +75,7 @@ class KeyMapHelper {
       if (_keyboard.isControlPressed) key = 'CTRL+$key';
       if (_keyboard.isMetaPressed) key = 'META+$key';
 
-      if (enableKeyBinding) {
+      if (keyBindinglock == 0) {
         if (_keyBindings.containsKey(key)) {
           // overrides mpv keymap
           _executeKeyAction(key);
@@ -88,7 +88,7 @@ class KeyMapHelper {
     return false;
   }
 
-  static bool enableKeyBinding = true;
+  static int keyBindinglock = 0;
   static final Map<String, String> _keyBindings = {
     'q': 'togglePlayer',
     'Q': 'togglePlayer',

@@ -55,19 +55,24 @@ You can access all mpv functions using [keyboard shortcuts](https://github.com/m
 - [x] Playlist support (shuffle, repeat one)  
 - [x] Chapters and AB loop (via command line)  
 - [x] Adjustable playback speed  
-- [ ] Media file and playlist search (under refactoring)  
+- [x] Media file and playlist search  
 - [x] Multi-language support  
 - [x] Subtitles (libass)  
 - [x] Shader support, such as [Anime4K](https://github.com/bloc97/Anime4K)  
 - [x] Custom key mapping (input.conf support)  
 - [x] Compatible with `mpv.conf` configuration files  
 - [ ] Custom mpv initialization parameters  
+- [ ] Subtitle generation using Whisper
 
 ## For Developers
 
 First, set up the Flutter environment according to the [official guide](https://docs.flutter.dev/get-started/install/). Please use Flutter version **3.29.0** or higher.
 
+Then run `flutter pub get` and `dart run whisper4dart:setup --prebuilt` to get necessary dependencies.
+
 ### Windows
+
+Before building the application, run `libmpv_dart:setup --platform=windows` to get libmpv dependencies.
 
 Run `flutter build windows` in the project directory to generate the Windows executable.
 

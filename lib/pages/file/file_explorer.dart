@@ -11,12 +11,15 @@ import 'package:playboy/backend/utils/sliver_utils.dart';
 import 'package:playboy/backend/utils/string_utils.dart';
 import 'package:playboy/backend/utils/theme_utils.dart';
 import 'package:playboy/pages/file/file_card.dart';
+import 'package:playboy/pages/library/common_media_menu.dart';
 import 'package:playboy/widgets/cover_card.dart';
 import 'package:playboy/widgets/cover_listtile.dart';
 import 'package:playboy/widgets/empty_holder.dart';
 import 'package:playboy/widgets/error_holder.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
 import 'package:playboy/widgets/loading_holder.dart';
+import 'package:playboy/widgets/menu/menu_button.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class FileExplorer extends StatefulWidget {
   const FileExplorer({
@@ -91,15 +94,6 @@ class FileExplorerState extends State<FileExplorer> {
     late final colorScheme = Theme.of(context).colorScheme;
     return [
       IconButton(
-        tooltip: '排序'.l10n,
-        hoverColor: colorScheme.actionHoverColor,
-        onPressed: () async {},
-        icon: Icon(
-          Icons.sort,
-          color: colorScheme.onPrimaryContainer,
-        ),
-      ),
-      IconButton(
         tooltip: '切换显示视图'.l10n,
         hoverColor: colorScheme.actionHoverColor,
         onPressed: () async {
@@ -113,11 +107,13 @@ class FileExplorerState extends State<FileExplorer> {
         ),
       ),
       IconButton(
-        tooltip: '搜索'.l10n,
+        tooltip: '系统文件管理器'.l10n,
         hoverColor: colorScheme.actionHoverColor,
-        onPressed: () async {},
+        onPressed: () async {
+          launchUrlString(_path);
+        },
         icon: Icon(
-          Icons.search,
+          Icons.open_in_browser,
           color: colorScheme.onPrimaryContainer,
         ),
       ),
@@ -246,6 +242,7 @@ class FileExplorerState extends State<FileExplorer> {
   }
 
   Widget _buildListview(BuildContext context) {
+    late final colorScheme = Theme.of(context).colorScheme;
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
@@ -268,7 +265,24 @@ class FileExplorerState extends State<FileExplorer> {
                   App().actions['togglePlayer']?.call();
                 }
               },
-              actions: const [],
+              actions: [
+                MenuButton(
+                  menuChildren: [
+                    const SizedBox(height: 10),
+                    ...buildCommonMediaMenuItems(
+                      context,
+                      colorScheme,
+                      PlayItem(
+                        source: e.path,
+                        title: basename(
+                          e.path,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                ),
+              ],
             );
           } else if (e is Directory) {
             return MCoverListTile(

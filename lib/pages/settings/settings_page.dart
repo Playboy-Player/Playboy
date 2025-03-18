@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:playboy/backend/keymap_helper.dart';
 import 'package:playboy/backend/utils/theme_utils.dart';
 import 'package:playboy/pages/settings/categories/whisper_settings.dart';
 
@@ -65,6 +66,18 @@ class SettingsPageState extends State<SettingsPage> {
       const DeveloperSettings(),
     ),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    KeyMapHelper.keyBindinglock++;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    KeyMapHelper.keyBindinglock--;
+  }
 
   @override
   Widget build(BuildContext context) {

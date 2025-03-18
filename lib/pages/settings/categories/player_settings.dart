@@ -35,22 +35,6 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
                 App().settings.autoPlay = value;
               });
               App().saveSettings();
-              // AppStorage().updateStatus();
-            },
-          ),
-          SwitchListTile(
-            title: Text('精确跳转'.l10n),
-            value: App().settings.preciseSeek,
-            onChanged: (bool value) {
-              App().playboy.setProperty(
-                    'hr-seek',
-                    value ? 'yes' : 'no',
-                  );
-              setState(() {
-                App().settings.preciseSeek = value;
-              });
-              App().saveSettings();
-              // AppStorage().updateStatus();
             },
           ),
           SwitchListTile(
@@ -62,24 +46,12 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
                 App().settings.rememberStatus = value;
               });
               App().saveSettings();
-              // AppStorage().updateStatus();
             },
           ),
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
-              'MPV Properties'.l10n,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(12),
-            child: Text(
-              'MPV Options'.l10n,
+              'libmpv 设置'.l10n,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
@@ -100,11 +72,42 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
                 alignment: Alignment.centerLeft,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  '重启应用后生效',
+                  '注意: libmpv 设置需要重启应用才能生效',
                   style: TextStyle(
                     color: colorScheme.onPrimaryContainer,
                   ),
                 ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
+          SwitchListTile(
+            title: Text('允许 libmpv 使用配置文件'.l10n),
+            value: true,
+            onChanged: (bool value) {},
+          ),
+          SwitchListTile(
+            title: Text('使用 libmpv 预置键位绑定'.l10n),
+            value: true,
+            onChanged: (bool value) {},
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: Text(
+              'mpv 配置文件路径'.l10n,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: Text(
+              'osd-level'.l10n,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),

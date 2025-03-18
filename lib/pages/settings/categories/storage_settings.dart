@@ -6,7 +6,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
-import 'package:playboy/widgets/icon_switch_listtile.dart';
 
 class StorageSettingsPage extends StatefulWidget {
   const StorageSettingsPage({super.key});
@@ -44,17 +43,6 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                 leading: const Icon(Icons.scanner),
                 title: Text('重新扫描媒体库'.l10n),
               ),
-            ),
-            MIconSwitchListTile(
-              icon: Icons.photo,
-              label: '扫描媒体时截取封面 (WIP)'.l10n,
-              value: App().settings.getCoverOnScan,
-              onChanged: (value) {
-                setState(() {
-                  App().settings.getCoverOnScan = value;
-                });
-                App().saveSettings();
-              },
             ),
             SliverToBoxAdapter(
               child: Container(
@@ -100,19 +88,6 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                 );
               },
               itemCount: App().settings.videoPaths.length,
-            ),
-            SliverToBoxAdapter(
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                child: Text(
-                  '文件夹'.l10n,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                ),
-              ),
             ),
             SliverToBoxAdapter(
               child: Container(

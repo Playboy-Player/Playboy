@@ -137,6 +137,7 @@ class PlayerPageState extends State<PlayerPage> {
       late final colorScheme = Theme.of(context).colorScheme;
       return SliderTheme(
         data: SliderThemeData(
+          // ignore: deprecated_member_use
           year2023: false,
           trackHeight: 4,
           thumbColor: colorScheme.secondary,
@@ -209,6 +210,7 @@ class PlayerPageState extends State<PlayerPage> {
                   width: 80,
                   child: SliderTheme(
                     data: SliderThemeData(
+                      // ignore: deprecated_member_use
                       year2023: false,
                       activeTrackColor: colorScheme.secondaryContainer,
                       thumbColor: colorScheme.secondary,

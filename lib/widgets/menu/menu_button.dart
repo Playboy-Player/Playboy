@@ -8,12 +8,14 @@ class MenuButton extends StatelessWidget {
     this.style,
     this.constraints,
     this.icon = Icons.more_vert,
+    this.tooltip,
   });
 
   final List<Widget> menuChildren;
   final ButtonStyle? style;
   final BoxConstraints? constraints;
   final IconData icon;
+  final String? tooltip;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class MenuButton extends StatelessWidget {
         return IconButton(
           style: style,
           constraints: constraints,
-          tooltip: '菜单'.l10n,
+          tooltip: tooltip ?? '菜单'.l10n,
           onPressed: () {
             if (controller.isOpen) {
               controller.close();

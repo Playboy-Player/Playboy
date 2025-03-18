@@ -58,6 +58,7 @@ ThemeData getThemeData(App value, ColorScheme colorScheme) {
       ),
     ),
     sliderTheme: SliderThemeData(
+      // ignore: deprecated_member_use
       year2023: false,
       trackHeight: 4,
       thumbSize: const WidgetStatePropertyAll(Size(4, 12)),
