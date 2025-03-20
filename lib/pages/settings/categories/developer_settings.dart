@@ -49,17 +49,6 @@ class DeveloperSettingsState extends State<DeveloperSettings> {
               App().saveSettings();
             },
           ),
-          // SwitchListTile(
-          //   title: const Text('Enable Custom TitleBar'),
-          //   value: App().settings.enableTitleBar,
-          //   onChanged: (bool value) {
-          //     setState(() {
-          //       App().settings.enableTitleBar = value;
-          //     });
-          //     App().saveSettings();
-          //     App().updateStatus();
-          //   },
-          // ),
         ],
       ),
     );

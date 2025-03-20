@@ -72,7 +72,7 @@ Then run `flutter pub get` and `dart run whisper4dart:setup --prebuilt` to get n
 
 ### Windows
 
-Before building the application, run `libmpv_dart:setup --platform=windows` to get libmpv dependencies.
+Before building the application, run `libmpv_dart:setup --platform windows` to get libmpv dependencies.
 
 Run `flutter build windows` in the project directory to generate the Windows executable.
 

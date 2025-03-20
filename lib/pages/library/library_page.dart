@@ -37,7 +37,7 @@ class _LibraryPageState extends State<LibraryPage> {
   void initState() {
     super.initState();
     _gridview = !App().settings.videoLibListview;
-    App().actions['updateVideoPage'] = () async {
+    App().actions['rescanLibrary'] = () async {
       setState(() {
         App().mediaLibraryLoaded = false;
       });

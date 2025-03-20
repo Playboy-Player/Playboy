@@ -18,8 +18,11 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Set up Flutter for Windows
-        run: flutter config --enable-windows-desktop
+      - name: Set up libmpv_dart
+        run: dart run libmpv_dart:setup --platform windows
+
+      - name: Set up whisper4dart (using prebuilt library)
+        run: dart run whisper4dart:setup --prebuilt
 
       - name: Build Windows App
         run: flutter build windows

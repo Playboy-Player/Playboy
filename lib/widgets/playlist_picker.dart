@@ -13,36 +13,37 @@ class PlaylistPickerItem extends StatelessWidget {
     return Row(
       children: [
         Padding(
-            padding: const EdgeInsets.all(6),
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: info.cover == null
-                  ? Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        color: colorScheme.secondaryContainer,
-                      ),
-                      child: Icon(
-                        Icons.playlist_play_rounded,
-                        color: colorScheme.secondary,
-                        size: 30,
-                      ),
-                    )
-                  : Ink(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        color: colorScheme.secondaryContainer,
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: FileImage(
-                            File(info.cover!),
-                          ),
+          padding: const EdgeInsets.all(6),
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: !File(info.cover).existsSync()
+                ? Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      color: colorScheme.secondaryContainer,
+                    ),
+                    child: Icon(
+                      Icons.playlist_play_rounded,
+                      color: colorScheme.secondary,
+                      size: 30,
+                    ),
+                  )
+                : Ink(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      color: colorScheme.secondaryContainer,
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: FileImage(
+                          File(info.cover),
                         ),
                       ),
                     ),
-            )),
+                  ),
+          ),
+        ),
         const SizedBox(
           width: 10,
         ),

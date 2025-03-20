@@ -58,10 +58,6 @@ class LibraryHelper {
             if (vis.contains(item.path)) continue;
             q.add(item.path);
           } else if (supportFormats.contains(extension(item.path))) {
-            // var outputPath = "${withoutExtension(item.path)}.cover.jpg";
-            // if (AppStorage().settings.getCoverOnScan) {
-            //   await saveThumbnail(item.path);
-            // }
             res.add(
               PlayItem(
                 source: item.path,
@@ -76,23 +72,7 @@ class LibraryHelper {
     return res;
   }
 
-  // static Future<void> saveThumbnail(String path) async {
-  //   var outputPath = "${withoutExtension(path)}.cover.jpg";
-  //   if (await File(outputPath).exists()) return;
-  //   var shell = Shell();
-  //   try {
-  //     // call ffmpeg to get the frame at 00:00:05
-  //     await shell.run(
-  //       'ffmpeg -progress - -i "$path" -y -ss 0:00:05.000000 -frames:v 1 -q:v 1 "$outputPath"',
-  //     );
-  //   } catch (e) {
-  //     // print(e.toString());
-  //   }
-  //   // return outputPath;
-  // }
-
   static Future<PlayItem> getItemFromFile(String src) async {
-    // var coverPath = '${withoutExtension(src)}.cover.jpg';
     return PlayItem(
       source: src,
       title: basenameWithoutExtension(src),
@@ -108,12 +88,6 @@ class LibraryHelper {
     await for (var item in dir.list()) {
       if (item is File && extension(item.path) == '.json') {
         var pl = PlaylistItem.fromJson(jsonDecode(await item.readAsString()));
-        var cover = '${withoutExtension(item.path)}.cover.jpg';
-        if (await File(cover).exists()) {
-          pl.cover = cover;
-        } else {
-          pl.cover = null;
-        }
         playlists.add(pl);
       }
     }
@@ -121,7 +95,7 @@ class LibraryHelper {
   }
 
   static void savePlaylist(PlaylistItem pl) {
-    var fp = File('${App().dataPath}/playlists/${pl.uuid}.json');
+    var fp = File('${App().dataPath}/playlists/${pl.title}.json');
     if (!fp.existsSync()) {
       fp.createSync(recursive: true);
     }
@@ -130,12 +104,12 @@ class LibraryHelper {
   }
 
   static void deletePlaylist(PlaylistItem pl) {
-    var fp = File('${App().dataPath}/playlists/${pl.uuid}.json');
+    var fp = File('${App().dataPath}/playlists/${pl.title}.json');
     if (fp.existsSync()) {
       fp.deleteSync();
     }
 
-    var cover = File('${App().dataPath}/playlists/${pl.uuid}.cover.jpg');
+    var cover = File('${App().dataPath}/playlists/${pl.title}.cover.jpg');
     if (cover.existsSync()) {
       cover.deleteSync();
     }

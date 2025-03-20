@@ -47,11 +47,11 @@ List<Widget> buildCommonPlaylistMenuItems(
       label: '导出'.l10n,
       onPressed: () async {
         final originalFile = File(
-          '${App().dataPath}/playlists/${item.uuid}.json',
+          '${App().dataPath}/playlists/${item.title}.json',
         );
         String? newFilePath = await FilePicker.platform.saveFile(
           dialogTitle: '另存为',
-          fileName: '${item.uuid}.json',
+          fileName: '${item.title}.json',
         );
 
         if (newFilePath != null) {

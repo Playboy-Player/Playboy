@@ -34,7 +34,6 @@ class App extends ChangeNotifier {
     }
   }
 
-  late Function() updateVideoPage;
   Map<String, Function> actions = {};
 
   late final NativePlayer playboy;
@@ -92,10 +91,11 @@ class App extends ChangeNotifier {
     }
     playboy = NativePlayer(
       options: {
-        'config-dir': dataPath,
-        'config': 'yes',
-        'input-default-bindings': 'yes',
-        'osd-level': '0',
+        'config-dir':
+            settings.mpvConfigPath != '' ? settings.mpvConfigPath : dataPath,
+        'config': settings.enableMpvConfig ? 'yes' : 'no',
+        'input-default-bindings': settings.useDefaultKeyBinding ? 'yes' : 'no',
+        'osd-level': settings.mpvOsdLevel.toString(),
       },
     );
     playboy.stream.position.listen((event) {
@@ -129,18 +129,6 @@ class App extends ChangeNotifier {
       const BasicVideoControllerConfiguration(),
     );
     playboy.setVolume(settings.volume);
-    // playboy.setProperty('hr-seek-framedrop', 'no');
-
-    // These arguments can avoid crashing on switch media (only tested on Windows)
-    // https://github.com/mpv-player/mpv/commit/703f1588803eaa428e09c0e5547b26c0fff476a7
-    // https://github.com/mpv-android/mpv-android/commit/9e5c3d8a630290fc41edb8b03aeafa3bc4c45955
-    playboy.setProperty('scale', 'bilinear');
-    playboy.setProperty('dscale', 'bilinear');
-    playboy.setProperty('dither', 'no');
-    playboy.setProperty('correct-downscaling', 'no');
-    playboy.setProperty('linear-downscaling', 'no');
-    playboy.setProperty('sigmoid-upscaling', 'no');
-    playboy.setProperty('hdr-compute-peak', 'no');
   }
 
   Future<void> loadSettings() async {

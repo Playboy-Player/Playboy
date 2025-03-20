@@ -412,6 +412,7 @@ class _HomePageState extends State<HomePage> {
           }
         },
       ),
+      const Divider(),
       MMenuItem(
         icon: Icons.info_outline,
         label: '关于应用',

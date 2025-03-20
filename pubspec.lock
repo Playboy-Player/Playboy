@@ -379,11 +379,12 @@ packages:
   libmpv_dart:
     dependency: "direct main"
     description:
-      name: libmpv_dart
-      sha256: "70250eb5d178dc5b8b73ac8e0f49f1bc15a8422f9036d71d4a8ece5601d31764"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.2"
+      path: "."
+      ref: dev
+      resolved-ref: "367732e95f9d788e44c362803183b02b61695907"
+      url: "https://github.com/Playboy-Player/libmpv_dart.git"
+    source: git
+    version: "0.0.3"
   lints:
     dependency: transitive
     description:
@@ -757,7 +758,7 @@ packages:
     source: hosted
     version: "1.4.1"
   synchronized:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: synchronized
       sha256: "0669c70faae6270521ee4f05bffd2919892d42d1276e6c495be80174b6bc0ef6"
@@ -951,10 +952,11 @@ packages:
   whisper4dart:
     dependency: "direct main"
     description:
-      name: whisper4dart
-      sha256: "11028a6be29276b1a8e8dbae56b990f5201720e1c5ad1b767ff084dca1645e2f"
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: dev
+      resolved-ref: "92495a9ec1ffa69978d692b4c88d3c397f5511b7"
+      url: "https://github.com/YuiHrsw/whisper4dart.git"
+    source: git
     version: "0.0.10"
   win32:
     dependency: transitive

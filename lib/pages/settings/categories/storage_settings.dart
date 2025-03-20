@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:playboy/backend/utils/sliver_utils.dart';
+import 'package:playboy/widgets/path_setting_card.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:playboy/backend/app.dart';
@@ -38,7 +40,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
             SliverToBoxAdapter(
               child: ListTile(
                 onTap: () {
-                  App().updateVideoPage();
+                  App().actions['rescanLibrary']?.call();
                 },
                 leading: const Icon(Icons.scanner),
                 title: Text('重新扫描媒体库'.l10n),
@@ -81,10 +83,39 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
             ),
             SliverList.builder(
               itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: _buildPathCard(App().settings.videoPaths[index],
-                      colorScheme, App().settings.videoPaths),
+                String path = App().settings.videoPaths[index];
+                return PathSettingCard(
+                  path: path,
+                  actions: [
+                    SizedBox(
+                      width: 40,
+                      child: IconButton(
+                        onPressed: () {
+                          launchUrl(
+                            Uri.directory(App().settings.videoPaths[index]),
+                          );
+                        },
+                        icon: Icon(
+                          Icons.folder_outlined,
+                          color: colorScheme.onSecondaryContainer,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 40,
+                      child: IconButton(
+                        onPressed: () {
+                          App().settings.videoPaths.remove(path);
+                          App().saveSettings();
+                          setState(() {});
+                        },
+                        icon: Icon(
+                          Icons.delete_outline,
+                          color: colorScheme.onSecondaryContainer,
+                        ),
+                      ),
+                    ),
+                  ],
                 );
               },
               itemCount: App().settings.videoPaths.length,
@@ -126,13 +157,39 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
             ),
             SliverList.builder(
               itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: _buildPathCard(
-                    App().settings.favouritePaths[index],
-                    colorScheme,
-                    App().settings.favouritePaths,
-                  ),
+                String path = App().settings.favouritePaths[index];
+                return PathSettingCard(
+                  path: path,
+                  actions: [
+                    SizedBox(
+                      width: 40,
+                      child: IconButton(
+                        onPressed: () {
+                          launchUrl(
+                            Uri.directory(App().settings.favouritePaths[index]),
+                          );
+                        },
+                        icon: Icon(
+                          Icons.folder_outlined,
+                          color: colorScheme.onSecondaryContainer,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 40,
+                      child: IconButton(
+                        onPressed: () {
+                          App().settings.favouritePaths.remove(path);
+                          App().saveSettings();
+                          setState(() {});
+                        },
+                        icon: Icon(
+                          Icons.delete_outline,
+                          color: colorScheme.onSecondaryContainer,
+                        ),
+                      ),
+                    ),
+                  ],
                 );
               },
               itemCount: App().settings.favouritePaths.length,
@@ -150,63 +207,26 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                 ),
               ),
             ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Card(
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
+            PathSettingCard(
+              path: App().settings.screenshotPath,
+              actions: [
+                SizedBox(
+                  width: 40,
+                  child: IconButton(
+                    onPressed: () async {
+                      var res = await FilePicker.platform
+                          .getDirectoryPath(lockParentWindow: true);
+                      if (res != null) {
+                        App().settings.screenshotPath = res;
+                        App().saveSettings();
+                        setState(() {});
+                      }
+                    },
+                    icon: const Icon(Icons.edit_outlined),
                   ),
-                  color: colorScheme.secondaryContainer.withValues(alpha: 0.4),
-                  child: SizedBox(
-                    height: 50,
-                    child: Row(
-                      children: [
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Expanded(
-                          child: Text(
-                            App().settings.screenshotPath,
-                            style: TextStyle(
-                              overflow: TextOverflow.ellipsis,
-                              color: colorScheme.onSecondaryContainer,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 50,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              IconButton(
-                                onPressed: () async {
-                                  var res = await FilePicker.platform
-                                      .getDirectoryPath(lockParentWindow: true);
-                                  if (res != null) {
-                                    App().settings.screenshotPath = res;
-                                    App().saveSettings();
-                                    setState(() {});
-                                  }
-                                },
-                                icon: Icon(
-                                  Icons.edit,
-                                  color: colorScheme.onSecondaryContainer,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              )
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
+                )
+              ],
+            ).toSliver(),
             SliverToBoxAdapter(
               child: Container(
                 padding: const EdgeInsets.all(12),
@@ -225,7 +245,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                 onTap: () {
                   launchUrl(Uri.directory(App().dataPath));
                 },
-                leading: const Icon(Icons.folder),
+                leading: const Icon(Icons.folder_outlined),
                 title: Text('打开应用数据文件夹'.l10n),
                 subtitle: Text(
                   App().dataPath,
@@ -241,74 +261,11 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                     f.deleteSync();
                   }
                 },
-                leading: const Icon(Icons.restore),
+                leading: const Icon(Icons.cleaning_services),
                 title: Text('恢复默认设置'.l10n),
                 subtitle: Text('重启应用后生效'.l10n),
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPathCard(
-      String path, ColorScheme colorScheme, List<String> dst) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      color: colorScheme.secondaryContainer.withValues(alpha: 0.4),
-      child: SizedBox(
-        height: 50,
-        child: Row(
-          children: [
-            const SizedBox(
-              width: 10,
-            ),
-            Expanded(
-              child: Text(
-                path,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: colorScheme.onSecondaryContainer,
-                ),
-              ),
-            ),
-            SizedBox(
-              width: 80,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Expanded(
-                    child: IconButton(
-                      onPressed: () {
-                        launchUrl(Uri.directory(path));
-                      },
-                      icon: Icon(
-                        Icons.folder_outlined,
-                        color: colorScheme.onSecondaryContainer,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: IconButton(
-                      onPressed: () {
-                        dst.remove(path);
-                        App().saveSettings();
-                        setState(() {});
-                      },
-                      icon: Icon(
-                        Icons.delete_outline,
-                        color: colorScheme.onSecondaryContainer,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  )
-                ],
-              ),
-            )
           ],
         ),
       ),

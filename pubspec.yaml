@@ -11,11 +11,12 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # File System
+  # General
   path: ^1.8.3
   path_provider: ^2.1.1
   file_picker: ^8.3.1
   json_annotation: ^4.8.1
+  url_launcher: ^6.2.5
 
   # Window Control
   window_manager:
@@ -23,17 +24,17 @@ dependencies:
       url: https://github.com/YuiHrsw/window_manager.git
       path: packages/window_manager
       ref: windows_fullscreen_fix
-
-  url_launcher: ^6.2.5
   
-  #subtitle genertaion
-  whisper4dart: ^0.0.10
-  #backend refactoring
-  libmpv_dart: ^0.0.2
-
-  #concurrent lock
-  synchronized: ^3.3.1
   # Media
+  whisper4dart:
+    git:
+      url: https://github.com/YuiHrsw/whisper4dart.git
+      ref: dev
+  libmpv_dart:
+    git:
+      url: https://github.com/Playboy-Player/libmpv_dart.git
+      ref: dev
+
   media_kit:
     git:
       url: https://github.com/YuiHrsw/media-kit.git

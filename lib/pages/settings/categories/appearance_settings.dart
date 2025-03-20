@@ -271,59 +271,73 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
               ),
             ),
           ),
-          ListTile(
-            leading: const Icon(Icons.color_lens_outlined),
-            title: Text('主题颜色'.l10n),
-            trailing: SizedBox(
-              height: 44,
-              width: 150,
-              child: DropdownButtonFormField(
-                // icon: const SizedBox(),
-                isExpanded: true,
-                borderRadius: BorderRadius.circular(16),
-                decoration: InputDecoration(
-                  isDense: true,
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      width: 0,
-                      style: BorderStyle.none,
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  fillColor: Theme.of(context).colorScheme.secondaryContainer,
-                ),
-                value: App().settings.themeCode,
-                items: List.generate(
-                  // App().colors.length,
-                  Colors.primaries.length,
-                  (index) {
-                    return DropdownMenuItem(
-                      value: index,
-                      child: Row(
-                        children: [
-                          ColoredBox(
-                            color: Colors.primaries[index],
-                            child: const SizedBox(
-                              height: 16,
-                              width: 16,
+          SizedBox(
+            height: 80,
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              scrollDirection: Axis.horizontal,
+              itemCount: Colors.primaries.length,
+              itemBuilder: (context, index) {
+                final colorScheme = ColorScheme.fromSeed(
+                  seedColor: Colors.primaries[index],
+                );
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: InkWell(
+                    focusColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    onTap: () {
+                      App().settings.themeCode = index;
+                      App().saveSettings();
+                      App().updateStatus();
+                    },
+                    borderRadius: BorderRadius.circular(25),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        SizedBox(
+                          width: 50,
+                          height: 50,
+                          child: ClipOval(
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          color: colorScheme.primaryContainer,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          color: colorScheme.tertiaryContainer,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  height: 25,
+                                  color: Colors.primaries[index].shade200,
+                                ),
+                              ],
                             ),
                           ),
-                          const SizedBox(
-                            width: 10,
+                        ),
+                        if (App().settings.themeCode == index)
+                          Icon(
+                            Icons.check,
+                            color: colorScheme.onSurface,
+                            size: 20,
                           ),
-                          Text('#$index'),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-                onChanged: (value) {
-                  App().settings.themeCode = value!;
-                  App().saveSettings();
-                  App().updateStatus();
-                },
-              ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
           ),
           SwitchListTile(

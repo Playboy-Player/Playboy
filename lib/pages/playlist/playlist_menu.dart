@@ -35,10 +35,9 @@ List<Widget> buildPlaylistMenuItems(
           },
         );
         if (coverPath != null) {
-          var savePath = '${App().dataPath}/playlists/${item.uuid}.cover.jpg';
+          var savePath = '${App().dataPath}/playlists/${item.title}.cover.jpg';
           var originalFile = File(coverPath);
           var newFile = File(savePath);
-          item.cover = savePath;
           await originalFile.copy(newFile.path).then(
             (_) {
               final ImageProvider imageProvider = FileImage(newFile);
@@ -53,13 +52,11 @@ List<Widget> buildPlaylistMenuItems(
       icon: Icons.cleaning_services,
       label: '清除封面'.l10n,
       onPressed: () async {
-        item.cover = null;
-        callback();
-        var coverPath = '${App().dataPath}/playlists/${item.uuid}.cover.jpg';
-        var cover = File(coverPath);
+        var cover = File(item.cover);
         if (await cover.exists()) {
           await cover.delete();
         }
+        callback();
       },
     ),
     MMenuItem(

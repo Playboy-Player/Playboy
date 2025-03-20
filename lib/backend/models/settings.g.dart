@@ -36,6 +36,10 @@ AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) => AppSettings(
             (k, e) => MapEntry(k, e as String),
           ) ??
           const {},
+      enableMpvConfig: json['enableMpvConfig'] as bool? ?? true,
+      useDefaultKeyBinding: json['useDefaultKeyBinding'] as bool? ?? true,
+      mpvConfigPath: json['mpvConfigPath'] as String? ?? '',
+      mpvOsdLevel: (json['mpvOsdLevel'] as num?)?.toInt() ?? 0,
       getCoverOnScan: json['getCoverOnScan'] as bool? ?? false,
       videoPaths: (json['videoPaths'] as List<dynamic>?)
               ?.map((e) => e as String)
@@ -63,6 +67,7 @@ AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) => AppSettings(
       enableTitleBar: json['enableTitleBar'] as bool? ?? true,
       libmpvPath: json['libmpvPath'] as String? ?? '',
       model: json['model'] as String? ?? '',
+      useMirrorLink: json['useMirrorLink'] as bool? ?? true,
     );
 
 Map<String, dynamic> _$AppSettingsToJson(AppSettings instance) =>
@@ -84,6 +89,10 @@ Map<String, dynamic> _$AppSettingsToJson(AppSettings instance) =>
       'defaultMusicMode': instance.defaultMusicMode,
       'mpvProperties': instance.mpvProperties,
       'mpvOptions': instance.mpvOptions,
+      'enableMpvConfig': instance.enableMpvConfig,
+      'useDefaultKeyBinding': instance.useDefaultKeyBinding,
+      'mpvConfigPath': instance.mpvConfigPath,
+      'mpvOsdLevel': instance.mpvOsdLevel,
       'continueToPlay': instance.continueToPlay,
       'volume': instance.volume,
       'speed': instance.speed,
@@ -104,6 +113,7 @@ Map<String, dynamic> _$AppSettingsToJson(AppSettings instance) =>
       'enableTitleBar': instance.enableTitleBar,
       'libmpvPath': instance.libmpvPath,
       'model': instance.model,
+      'useMirrorLink': instance.useMirrorLink,
     };
 
 const _$ThemeModeEnumMap = {

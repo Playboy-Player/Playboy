@@ -71,7 +71,7 @@
 
 ### Windows
 
-运行 `dart run libmpv_dart:setup --platform=windows` 获取 mpv 库依赖  
+运行 `dart run libmpv_dart:setup --platform windows` 获取 mpv 库依赖  
 运行 `flutter build windows` 以生成 Windows 可执行程序
 
 ### Linux

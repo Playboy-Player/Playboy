@@ -10,7 +10,6 @@ import 'package:playboy/backend/utils/route_utils.dart';
 import 'package:playboy/backend/utils/sliver_utils.dart';
 import 'package:playboy/backend/utils/string_utils.dart';
 import 'package:playboy/backend/utils/theme_utils.dart';
-import 'package:playboy/backend/utils/time_utils.dart';
 import 'package:playboy/pages/playlist/playlist_card.dart';
 import 'package:playboy/pages/playlist/playlist_detail.dart';
 import 'package:playboy/pages/playlist/playlist_listtile.dart';
@@ -129,10 +128,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 ),
                 onSubmitted: (value) {
                   var pl = PlaylistItem(
-                    uuid: getCurrentTimeString(),
                     items: [],
                     title: value,
-                    cover: null,
                   );
                   LibraryHelper.savePlaylist(pl);
                   setState(() {
@@ -152,10 +149,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 TextButton(
                   onPressed: () {
                     var pl = PlaylistItem(
-                      uuid: getCurrentTimeString(),
                       items: [],
                       title: _editingController.text,
-                      cover: null,
                     );
                     LibraryHelper.savePlaylist(pl);
                     setState(() {
