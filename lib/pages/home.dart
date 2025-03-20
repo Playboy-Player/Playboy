@@ -1,11 +1,11 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:path/path.dart';
 import 'package:playboy/backend/utils/theme_utils.dart';
+import 'package:playboy/pages/media/seekbar_builder.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'package:playboy/pages/file/file_explorer.dart';
@@ -667,55 +667,9 @@ class _HomePageState extends State<HomePage> {
                             thumbColor: colorScheme.primaryContainer,
                             activeTrackColor: colorScheme.primaryContainer,
                           ),
-                          child: StreamBuilder(
-                            stream: App().playboy.stream.position,
-                            builder: (context, snapshot) {
-                              return Slider(
-                                max: App().duration.inMilliseconds.toDouble(),
-                                value: App().seeking
-                                    ? App().seekingPos
-                                    : min(
-                                        snapshot.hasData
-                                            ? snapshot.data!.inMilliseconds
-                                                .toDouble()
-                                            : App()
-                                                .position
-                                                .inMilliseconds
-                                                .toDouble(),
-                                        App()
-                                            .duration
-                                            .inMilliseconds
-                                            .toDouble()),
-                                onChanged: (value) {
-                                  setState(() {
-                                    App().seekingPos = value;
-                                  });
-                                },
-                                onChangeStart: (value) {
-                                  setState(
-                                    () {
-                                      App().seeking = true;
-                                    },
-                                  );
-                                },
-                                onChangeEnd: (value) {
-                                  App()
-                                      .playboy
-                                      .seek(
-                                          Duration(milliseconds: value.toInt()))
-                                      .then(
-                                        (value) => {
-                                          setState(
-                                            () {
-                                              App().seeking = false;
-                                            },
-                                          )
-                                        },
-                                      );
-                                },
-                              );
-                            },
-                          ),
+                          child: buildMediaSeekbar(() {
+                            setState(() {});
+                          }),
                         ),
                       ),
                       IconButton(
@@ -1062,64 +1016,18 @@ class _HomePageState extends State<HomePage> {
             Expanded(
               // width: 120,
               child: SliderTheme(
-                data: SliderThemeData(
-                  thumbColor: colorScheme.primaryContainer,
-                  activeTrackColor: colorScheme.primaryContainer,
-                  // ignore: deprecated_member_use
-                  year2023: false,
-                  trackHeight: 4,
-                  thumbSize: const WidgetStatePropertyAll(Size(4, 12)),
-                  overlayShape: SliderComponentShape.noOverlay,
-                ),
-                child: StreamBuilder(
-                  stream: App().playboy.stream.position,
-                  builder: (context, snapshot) {
-                    return Slider(
-                      max: App().duration.inMilliseconds.toDouble(),
-                      value: App().seeking
-                          ? App().seekingPos
-                          : max(
-                              min(
-                                  snapshot.hasData
-                                      ? snapshot.data!.inMilliseconds.toDouble()
-                                      : App()
-                                          .position
-                                          .inMilliseconds
-                                          .toDouble(),
-                                  App().duration.inMilliseconds.toDouble()),
-                              0),
-                      onChanged: (value) {
-                        setState(
-                          () {
-                            App().seekingPos = value;
-                          },
-                        );
-                      },
-                      onChangeStart: (value) {
-                        setState(
-                          () {
-                            App().seeking = true;
-                          },
-                        );
-                      },
-                      onChangeEnd: (value) {
-                        App()
-                            .playboy
-                            .seek(Duration(milliseconds: value.toInt()))
-                            .then(
-                              (value) => {
-                                setState(
-                                  () {
-                                    App().seeking = false;
-                                  },
-                                )
-                              },
-                            );
-                      },
-                    );
-                  },
-                ),
-              ),
+                  data: SliderThemeData(
+                    thumbColor: colorScheme.primaryContainer,
+                    activeTrackColor: colorScheme.primaryContainer,
+                    // ignore: deprecated_member_use
+                    year2023: false,
+                    trackHeight: 4,
+                    thumbSize: const WidgetStatePropertyAll(Size(4, 12)),
+                    overlayShape: SliderComponentShape.noOverlay,
+                  ),
+                  child: buildMediaSeekbar(() {
+                    setState(() {});
+                  })),
             ),
             IconButton(
               padding: const EdgeInsets.symmetric(horizontal: 2),
@@ -1185,7 +1093,7 @@ class _HomePageState extends State<HomePage> {
     return StreamBuilder(
       stream: App().playboy.stream.playlist,
       builder: (context, snapshot) {
-        return App().playingTitle != 'Not Playing' && App().settings.tabletUI
+        return App().playingTitle != 'Not Playing'
             ? buildFloatingMediaBarContent(context)
             : const SizedBox();
       },

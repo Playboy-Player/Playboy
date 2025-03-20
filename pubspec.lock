@@ -185,14 +185,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.1"
-  dbus:
-    dependency: transitive
-    description:
-      name: dbus
-      sha256: "79e0c23480ff85dc68de79e2cd6334add97e48f7f4865d17686dd6ea81a47e8c"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.7.11"
   fake_async:
     dependency: transitive
     description:
@@ -376,15 +368,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.1"
-  libmpv_dart:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: dev
-      resolved-ref: "367732e95f9d788e44c362803183b02b61695907"
-      url: "https://github.com/Playboy-Player/libmpv_dart.git"
-    source: git
-    version: "0.0.3"
   lints:
     dependency: transitive
     description:
@@ -421,35 +404,44 @@ packages:
     dependency: "direct main"
     description:
       path: media_kit
-      ref: HEAD
-      resolved-ref: "1bb237575571feb6f81cc347669a4617b63fab57"
+      ref: bebbb582519a723d3e3d77200716809ee738b072
+      resolved-ref: bebbb582519a723d3e3d77200716809ee738b072
       url: "https://github.com/YuiHrsw/media-kit.git"
     source: git
     version: "1.1.11"
   media_kit_libs_android_video:
-    dependency: "direct main"
+    dependency: transitive
     description:
       path: "libs/android/media_kit_libs_android_video"
-      ref: HEAD
-      resolved-ref: "1bb237575571feb6f81cc347669a4617b63fab57"
+      ref: bebbb582519a723d3e3d77200716809ee738b072
+      resolved-ref: bebbb582519a723d3e3d77200716809ee738b072
       url: "https://github.com/YuiHrsw/media-kit.git"
     source: git
     version: "1.3.6"
+  media_kit_libs_ios_video:
+    dependency: transitive
+    description:
+      path: "libs/ios/media_kit_libs_ios_video"
+      ref: bebbb582519a723d3e3d77200716809ee738b072
+      resolved-ref: bebbb582519a723d3e3d77200716809ee738b072
+      url: "https://github.com/YuiHrsw/media-kit.git"
+    source: git
+    version: "1.1.4"
   media_kit_libs_linux:
-    dependency: "direct main"
+    dependency: transitive
     description:
       path: "libs/linux/media_kit_libs_linux"
-      ref: HEAD
-      resolved-ref: "1bb237575571feb6f81cc347669a4617b63fab57"
+      ref: bebbb582519a723d3e3d77200716809ee738b072
+      resolved-ref: bebbb582519a723d3e3d77200716809ee738b072
       url: "https://github.com/YuiHrsw/media-kit.git"
     source: git
     version: "1.2.0"
   media_kit_libs_macos_video:
-    dependency: "direct main"
+    dependency: transitive
     description:
       path: "libs/macos/media_kit_libs_macos_video"
-      ref: HEAD
-      resolved-ref: "1bb237575571feb6f81cc347669a4617b63fab57"
+      ref: bebbb582519a723d3e3d77200716809ee738b072
+      resolved-ref: bebbb582519a723d3e3d77200716809ee738b072
       url: "https://github.com/YuiHrsw/media-kit.git"
     source: git
     version: "1.1.4"
@@ -457,17 +449,17 @@ packages:
     dependency: "direct main"
     description:
       path: "libs/universal/media_kit_libs_video"
-      ref: HEAD
-      resolved-ref: "1bb237575571feb6f81cc347669a4617b63fab57"
+      ref: bebbb582519a723d3e3d77200716809ee738b072
+      resolved-ref: bebbb582519a723d3e3d77200716809ee738b072
       url: "https://github.com/YuiHrsw/media-kit.git"
     source: git
     version: "1.0.5"
   media_kit_libs_windows_video:
-    dependency: "direct main"
+    dependency: transitive
     description:
       path: "libs/windows/media_kit_libs_windows_video"
-      ref: HEAD
-      resolved-ref: "1bb237575571feb6f81cc347669a4617b63fab57"
+      ref: bebbb582519a723d3e3d77200716809ee738b072
+      resolved-ref: bebbb582519a723d3e3d77200716809ee738b072
       url: "https://github.com/YuiHrsw/media-kit.git"
     source: git
     version: "1.0.10"
@@ -475,8 +467,8 @@ packages:
     dependency: "direct main"
     description:
       path: media_kit_video
-      ref: HEAD
-      resolved-ref: "1bb237575571feb6f81cc347669a4617b63fab57"
+      ref: bebbb582519a723d3e3d77200716809ee738b072
+      resolved-ref: bebbb582519a723d3e3d77200716809ee738b072
       url: "https://github.com/YuiHrsw/media-kit.git"
     source: git
     version: "1.2.5"
@@ -504,22 +496,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
-  package_info_plus:
-    dependency: transitive
-    description:
-      name: package_info_plus
-      sha256: "67eae327b1b0faf761964a1d2e5d323c797f3799db0e85aa232db8d9e922bc35"
-      url: "https://pub.dev"
-    source: hosted
-    version: "8.2.1"
-  package_info_plus_platform_interface:
-    dependency: transitive
-    description:
-      name: package_info_plus_platform_interface
-      sha256: "205ec83335c2ab9107bbba3f8997f9356d72ca3c715d2f038fc773d0366b4c76"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.1.0"
   path:
     dependency: "direct main"
     description:
@@ -901,22 +877,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "14.3.1"
-  wakelock_plus:
-    dependency: transitive
-    description:
-      name: wakelock_plus
-      sha256: "36c88af0b930121941345306d259ec4cc4ecca3b151c02e3a9e71aede83c615e"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.10"
-  wakelock_plus_platform_interface:
-    dependency: transitive
-    description:
-      name: wakelock_plus_platform_interface
-      sha256: "70e780bc99796e1db82fe764b1e7dcb89a86f1e5b3afb1db354de50f2e41eb7a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.2"
   watcher:
     dependency: transitive
     description:
@@ -949,15 +909,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.2"
-  whisper4dart:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: dev
-      resolved-ref: "92495a9ec1ffa69978d692b4c88d3c397f5511b7"
-      url: "https://github.com/YuiHrsw/whisper4dart.git"
-    source: git
-    version: "0.0.10"
   win32:
     dependency: transitive
     description:

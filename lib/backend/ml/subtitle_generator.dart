@@ -4,7 +4,7 @@ import 'dart:io';
 // import 'package:path/path.dart' as path;
 // import 'package:http/http.dart' as http;
 // import 'package:playboy/backend/app.dart';
-import 'package:whisper4dart/whisper4dart.dart' as whisper;
+// import 'package:whisper4dart/whisper4dart.dart' as whisper;
 // import 'package:synchronized/synchronized.dart';
 
 class SubtitleGenerator {
@@ -92,8 +92,10 @@ class SubtitleGenerator {
     //     throw StateError("SubtitleGenerator is not initialized yet.");
     //   }
     // }
-    var cparams = whisper.createContextDefaultParams();
-    var whisperModel = whisper.Whisper(modelFile.path, cparams);
-    return whisperModel.inferIsolate(mediaPath, outputMode: "srt");
+    // var cparams = whisper.createContextDefaultParams();
+    // var whisperModel = whisper.Whisper(modelFile.path, cparams);
+    // return whisperModel.inferIsolate(mediaPath, outputMode: "srt");
+
+    return '';
   }
 }

@@ -26,43 +26,24 @@ dependencies:
       ref: windows_fullscreen_fix
   
   # Media
-  whisper4dart:
-    git:
-      url: https://github.com/YuiHrsw/whisper4dart.git
-      ref: dev
-  libmpv_dart:
-    git:
-      url: https://github.com/Playboy-Player/libmpv_dart.git
-      ref: dev
+  # whisper4dart: ^0.0.10
+  # libmpv_dart: ^0.0.4
 
   media_kit:
     git:
       url: https://github.com/YuiHrsw/media-kit.git
       path: media_kit
+      ref: bebbb582519a723d3e3d77200716809ee738b072
   media_kit_video:
     git:
       url: https://github.com/YuiHrsw/media-kit.git
       path: media_kit_video
+      ref: bebbb582519a723d3e3d77200716809ee738b072
   media_kit_libs_video:
     git:
       url: https://github.com/YuiHrsw/media-kit.git
       path: libs/universal/media_kit_libs_video
-  media_kit_libs_windows_video:
-    git:
-      url: https://github.com/YuiHrsw/media-kit.git
-      path: libs/windows/media_kit_libs_windows_video
-  media_kit_libs_macos_video:
-    git:
-      url: https://github.com/YuiHrsw/media-kit.git
-      path: libs/macos/media_kit_libs_macos_video
-  media_kit_libs_linux:
-    git:
-      url: https://github.com/YuiHrsw/media-kit.git
-      path: libs/linux/media_kit_libs_linux
-  media_kit_libs_android_video:
-    git:
-      url: https://github.com/YuiHrsw/media-kit.git
-      path: libs/android/media_kit_libs_android_video
+      ref: bebbb582519a723d3e3d77200716809ee738b072
 
 dev_dependencies:
   flutter_test:

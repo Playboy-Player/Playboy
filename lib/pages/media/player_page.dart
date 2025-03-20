@@ -7,6 +7,7 @@ import 'package:media_kit/media_kit.dart';
 
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/theme_utils.dart';
+import 'package:playboy/pages/media/seekbar_builder.dart';
 import 'package:playboy/widgets/basic_video.dart';
 import 'package:playboy/pages/media/player_menu.dart';
 import 'package:playboy/backend/models/playitem.dart';
@@ -144,42 +145,9 @@ class PlayerPageState extends State<PlayerPage> {
           thumbSize: const WidgetStatePropertyAll(Size(4, 12)),
           overlayShape: SliderComponentShape.noOverlay,
         ),
-        child: StreamBuilder(
-          stream: App().playboy.stream.position,
-          builder: (BuildContext context, AsyncSnapshot<Duration> snapshot) {
-            return Slider(
-              max: App().duration.inMilliseconds.toDouble(),
-              value: App().seeking
-                  ? App().seekingPos
-                  : bounded(
-                      0,
-                      snapshot.hasData
-                          ? snapshot.data!.inMilliseconds.toDouble()
-                          : App().position.inMilliseconds.toDouble(),
-                      App().duration.inMilliseconds.toDouble(),
-                    ),
-              onChanged: (value) {
-                setState(() {
-                  App().seekingPos = value;
-                });
-              },
-              onChangeStart: (value) {
-                setState(() {
-                  App().seeking = true;
-                });
-              },
-              onChangeEnd: (value) {
-                App().playboy.seek(Duration(milliseconds: value.toInt())).then(
-                      (_) => {
-                        setState(() {
-                          App().seeking = false;
-                        })
-                      },
-                    );
-              },
-            );
-          },
-        ),
+        child: buildMediaSeekbar(() {
+          setState(() {});
+        }),
       );
     }
 

@@ -28,7 +28,7 @@ class _PlaylistListtileState extends State<PlaylistListtile> {
       aspectRatio: 1,
       height: 60,
       cover: widget.info.cover,
-      icon: Icons.music_note,
+      icon: Icons.playlist_play_rounded,
       label: widget.info.title,
       onTap: widget.onTap,
       actions: [
