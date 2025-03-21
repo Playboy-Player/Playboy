@@ -185,20 +185,24 @@ class PlayerPageState extends State<PlayerPage> {
                       thumbSize: const WidgetStatePropertyAll(Size(4, 12)),
                       overlayShape: SliderComponentShape.noOverlay,
                     ),
-                    child: Slider(
-                      max: 100,
-                      value: App().playboy.state.volume,
-                      onChanged: (value) {
-                        setState(() {
-                          App().playboy.setVolume(value);
-                        });
-                      },
-                      onChangeEnd: (value) {
-                        setState(() {});
-                        App().settings.volume = value;
-                        App().saveSettings();
-                      },
-                    ),
+                    child: StreamBuilder(
+                        stream: App().playboy.stream.volume,
+                        builder: (context, snapshot) {
+                          return Slider(
+                            max: 100,
+                            value: App().playboy.state.volume,
+                            onChanged: (value) {
+                              setState(() {
+                                App().playboy.setVolume(value);
+                              });
+                            },
+                            onChangeEnd: (value) {
+                              setState(() {});
+                              App().settings.volume = value;
+                              App().saveSettings();
+                            },
+                          );
+                        }),
                   ),
                 ),
               ],

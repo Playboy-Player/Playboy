@@ -7,8 +7,8 @@ import 'package:media_kit_video/basic/basic_video_controller.dart';
 import 'package:media_kit_video/basic/basic_video_controller_configuration.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:playboy/backend/keymap_helper.dart';
 
+import 'package:playboy/backend/keymap_helper.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
@@ -43,30 +43,6 @@ class App extends ChangeNotifier {
   bool mediaLibraryLoaded = false;
   List<PlaylistItem> playlists = [];
   List<PlayItem> mediaLibrary = [];
-
-  String? playingCover;
-  String? mediaPath;
-  String playingTitle = 'Not Playing';
-  int playingIndex = 0;
-  bool loop = false;
-  bool shuffle = false;
-  Duration position = const Duration();
-  Duration duration = const Duration();
-  bool playing = false;
-  bool seeking = false;
-  double seekingPos = 0;
-
-  int voWidth = 0;
-  int voHeight = 0;
-  void refreshVO() {
-    controller.setSize(width: voWidth, height: voHeight);
-    playboy.command(['show-text', '已更新显示区域']);
-  }
-
-  void restoreVO() {
-    controller.setSize();
-    playboy.command(['show-text', '已恢复默认显示大小']);
-  }
 
   static final App _instance = App._internal();
   factory App() => _instance;
@@ -157,6 +133,30 @@ class App extends ChangeNotifier {
 
   void updateStatus() {
     HomePage.refresh?.call();
+  }
+
+  String? playingCover;
+  String? mediaPath;
+  String playingTitle = 'Not Playing';
+  int playingIndex = 0;
+  bool loop = false;
+  bool shuffle = false;
+  Duration position = const Duration();
+  Duration duration = const Duration();
+  bool playing = false;
+  bool seeking = false;
+  double seekingPos = 0;
+
+  int voWidth = 0;
+  int voHeight = 0;
+  void refreshVO() {
+    controller.setSize(width: voWidth, height: voHeight);
+    playboy.command(['show-text', '已更新显示区域']);
+  }
+
+  void restoreVO() {
+    controller.setSize();
+    playboy.command(['show-text', '已恢复默认显示大小']);
   }
 
   Future<void> closeMedia() async {
