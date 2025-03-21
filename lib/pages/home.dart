@@ -200,7 +200,7 @@ class _HomePageState extends State<HomePage> {
       const SizedBox(width: 40),
       Expanded(
         child: StreamBuilder(
-          stream: App().playboy.stream.playlist,
+          stream: App().player.stream.playlist,
           builder: (context, snapshot) {
             return Text(
               App().playingTitle,
@@ -592,14 +592,14 @@ class _HomePageState extends State<HomePage> {
                         iconSize: 24,
                         onPressed: () {
                           setState(() {
-                            App().playboy.playOrPause();
+                            App().player.playOrPause();
                           });
                         },
                         icon: StreamBuilder(
-                          stream: App().playboy.stream.playing,
+                          stream: App().player.stream.playing,
                           builder: (context, snapshot) {
                             return Icon(
-                              App().playing
+                              App().player.state.playing
                                   ? Icons.pause_circle_outline
                                   : Icons.play_arrow_outlined,
                               color: colorScheme.onPrimaryContainer,
@@ -645,7 +645,7 @@ class _HomePageState extends State<HomePage> {
                         color: colorScheme.primaryContainer,
                         // iconSize: 30,
                         onPressed: () {
-                          App().playboy.previous();
+                          App().player.previous();
                           setState(() {});
                         },
                         icon: const Icon(
@@ -677,7 +677,7 @@ class _HomePageState extends State<HomePage> {
                         constraints: const BoxConstraints(),
                         color: colorScheme.primaryContainer,
                         onPressed: () {
-                          App().playboy.next();
+                          App().player.next();
                           setState(() {});
                         },
                         icon: const Icon(
@@ -689,13 +689,11 @@ class _HomePageState extends State<HomePage> {
                         constraints: const BoxConstraints(),
                         color: colorScheme.primaryContainer,
                         onPressed: () {
-                          setState(
-                            () {
-                              App().shuffle = !App().shuffle;
-                            },
-                          );
+                          var shuffle = App().player.isShuffleEnabled;
+                          App().player.setShuffle(!shuffle);
+                          setState(() {});
                         },
-                        icon: App().shuffle
+                        icon: App().player.isShuffleEnabled
                             ? const Icon(Icons.shuffle_on_rounded)
                             : const Icon(Icons.shuffle_rounded),
                         iconSize: 20,
@@ -705,15 +703,15 @@ class _HomePageState extends State<HomePage> {
                         constraints: const BoxConstraints(),
                         color: colorScheme.primaryContainer,
                         onPressed: () {
-                          if (App().playboy.state.playlistMode ==
+                          if (App().player.state.playlistMode ==
                               PlaylistMode.single) {
-                            App().playboy.setPlaylistMode(PlaylistMode.none);
+                            App().player.setPlaylistMode(PlaylistMode.none);
                           } else {
-                            App().playboy.setPlaylistMode(PlaylistMode.single);
+                            App().player.setPlaylistMode(PlaylistMode.single);
                           }
                           setState(() {});
                         },
-                        icon: App().playboy.state.playlistMode ==
+                        icon: App().player.state.playlistMode ==
                                 PlaylistMode.single
                             ? const Icon(Icons.repeat_one_on_rounded)
                             : const Icon(Icons.repeat_one_rounded),
@@ -753,7 +751,7 @@ class _HomePageState extends State<HomePage> {
           windowManager.startDragging();
         },
         child: StreamBuilder(
-          stream: App().playboy.stream.playlist,
+          stream: App().player.stream.playlist,
           builder: (context, snapshot) {
             return App().playingCover == null ||
                     !File(App().playingCover!).existsSync()
@@ -985,14 +983,14 @@ class _HomePageState extends State<HomePage> {
               // iconSize: 30,
               onPressed: () {
                 setState(() {
-                  App().playboy.playOrPause();
+                  App().player.playOrPause();
                 });
               },
               icon: StreamBuilder(
-                stream: App().playboy.stream.playing,
+                stream: App().player.stream.playing,
                 builder: (context, snapshot) {
                   return Icon(
-                    App().playing
+                    App().player.state.playing
                         ? Icons.pause_rounded
                         : Icons.play_arrow_rounded,
                   );
@@ -1005,7 +1003,7 @@ class _HomePageState extends State<HomePage> {
               color: colorScheme.primaryContainer,
               // iconSize: 30,
               onPressed: () {
-                App().playboy.previous();
+                App().player.previous();
                 setState(() {});
               },
               icon: const Icon(
@@ -1034,7 +1032,7 @@ class _HomePageState extends State<HomePage> {
               constraints: const BoxConstraints(),
               color: colorScheme.primaryContainer,
               onPressed: () {
-                App().playboy.next();
+                App().player.next();
                 setState(() {});
               },
               icon: const Icon(
@@ -1046,13 +1044,11 @@ class _HomePageState extends State<HomePage> {
               constraints: const BoxConstraints(),
               color: colorScheme.primaryContainer,
               onPressed: () {
-                setState(
-                  () {
-                    App().shuffle = !App().shuffle;
-                  },
-                );
+                var shuffle = App().player.isShuffleEnabled;
+                App().player.setShuffle(!shuffle);
+                setState(() {});
               },
-              icon: App().shuffle
+              icon: App().player.isShuffleEnabled
                   ? const Icon(Icons.shuffle_on_rounded)
                   : const Icon(Icons.shuffle_rounded),
               iconSize: 20,
@@ -1062,14 +1058,14 @@ class _HomePageState extends State<HomePage> {
               constraints: const BoxConstraints(),
               color: colorScheme.primaryContainer,
               onPressed: () {
-                if (App().playboy.state.playlistMode == PlaylistMode.single) {
-                  App().playboy.setPlaylistMode(PlaylistMode.none);
+                if (App().player.state.playlistMode == PlaylistMode.single) {
+                  App().player.setPlaylistMode(PlaylistMode.none);
                 } else {
-                  App().playboy.setPlaylistMode(PlaylistMode.single);
+                  App().player.setPlaylistMode(PlaylistMode.single);
                 }
                 setState(() {});
               },
-              icon: App().playboy.state.playlistMode == PlaylistMode.single
+              icon: App().player.state.playlistMode == PlaylistMode.single
                   ? const Icon(Icons.repeat_one_on_rounded)
                   : const Icon(Icons.repeat_one_rounded),
               iconSize: 20,
@@ -1091,7 +1087,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     return StreamBuilder(
-      stream: App().playboy.stream.playlist,
+      stream: App().player.stream.playlist,
       builder: (context, snapshot) {
         return App().playingTitle != 'Not Playing'
             ? buildFloatingMediaBarContent(context)

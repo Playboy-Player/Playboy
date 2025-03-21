@@ -19,7 +19,7 @@ List<Widget> buildPlayerMenu(BuildContext context) {
       label: '截图'.l10n,
       onPressed: () async {
         if (App().playingTitle == 'Not Playing') return;
-        var image = await App().playboy.screenshot();
+        var image = await App().player.screenshot();
         if (image != null) {
           var file = File(
             '${App().settings.screenshotPath}/${getCurrentTimeString()}.png',
@@ -33,7 +33,7 @@ List<Widget> buildPlayerMenu(BuildContext context) {
       label: '将当前画面设为封面'.l10n,
       onPressed: () async {
         if (App().playingTitle == 'Not Playing') return;
-        var image = await App().playboy.screenshot();
+        var image = await App().player.screenshot();
         if (image != null) {
           var file = File('${App().playingCover}');
           await file.writeAsBytes(image);
@@ -115,7 +115,7 @@ List<Widget> buildPlayerMenu(BuildContext context) {
       icon: Icons.info_outline,
       label: '属性'.l10n,
       onPressed: () {
-        App().playboy.command(['keypress', 'SHIFT+I']);
+        App().player.command(['keypress', 'SHIFT+I']);
       },
       keymap: 'Shift+I',
     ),

@@ -81,7 +81,7 @@ class KeyMapHelper {
           _executeKeyAction(key);
         } else {
           // use keymap from mpv builtin and user input.conf
-          App().playboy.command(['keypress', key]);
+          App().player.command(['keypress', key]);
         }
       }
     }

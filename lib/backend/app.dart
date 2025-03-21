@@ -36,7 +36,7 @@ class App extends ChangeNotifier {
 
   Map<String, Function> actions = {};
 
-  late final NativePlayer playboy;
+  late final NativePlayer player;
   late final BasicVideoController controller;
 
   bool playlistLoaded = false;
@@ -65,7 +65,7 @@ class App extends ChangeNotifier {
     if (needsUpdate) {
       await saveSettings();
     }
-    playboy = NativePlayer(
+    player = NativePlayer(
       options: {
         'config-dir':
             settings.mpvConfigPath != '' ? settings.mpvConfigPath : dataPath,
@@ -74,19 +74,9 @@ class App extends ChangeNotifier {
         'osd-level': settings.mpvOsdLevel.toString(),
       },
     );
-    playboy.stream.position.listen((event) {
-      position = event;
-    });
-    playboy.stream.playing.listen((event) {
-      playing = event;
-    });
-    playboy.stream.duration.listen((event) {
-      duration = event;
-    });
-    playboy.stream.playlist.listen((event) {
-      playingIndex = event.index;
+    player.stream.playlist.listen((event) {
       if (event.medias.isNotEmpty) {
-        var src = event.medias[playingIndex].uri;
+        var src = event.medias[event.index].uri;
         mediaPath = src;
         if (src.startsWith('http')) {
           return;
@@ -101,10 +91,10 @@ class App extends ChangeNotifier {
       notifyListeners();
     });
     controller = await BasicVideoController.create(
-      playboy,
+      player,
       const BasicVideoControllerConfiguration(),
     );
-    playboy.setVolume(settings.volume);
+    player.setVolume(settings.volume);
   }
 
   Future<void> loadSettings() async {
@@ -138,12 +128,9 @@ class App extends ChangeNotifier {
   String? playingCover;
   String? mediaPath;
   String playingTitle = 'Not Playing';
-  int playingIndex = 0;
+
   bool loop = false;
-  bool shuffle = false;
-  Duration position = const Duration();
-  Duration duration = const Duration();
-  bool playing = false;
+
   bool seeking = false;
   double seekingPos = 0;
 
@@ -151,34 +138,29 @@ class App extends ChangeNotifier {
   int voHeight = 0;
   void refreshVO() {
     controller.setSize(width: voWidth, height: voHeight);
-    playboy.command(['show-text', '已更新显示区域']);
+    player.command(['show-text', '已更新显示区域']);
   }
 
   void restoreVO() {
     controller.setSize();
-    playboy.command(['show-text', '已恢复默认显示大小']);
+    player.command(['show-text', '已恢复默认显示大小']);
   }
 
   Future<void> closeMedia() async {
-    playboy.stop();
+    player.stop();
     playingTitle = 'Not Playing';
     playingCover = null;
-    shuffle = false;
   }
 
   void openMedia(PlayItem media) {
     if (!settings.rememberStatus) {
       _resetPlayerStatus();
     }
-    duration = Duration.zero;
-    position = Duration.zero;
     final video = Media(media.source);
-    playboy.open(video, play: settings.autoPlay);
-    position = Duration.zero;
-    duration = Duration.zero;
+    player.open(video, play: settings.autoPlay);
     playingTitle = basenameWithoutExtension(media.title);
     playingCover = media.cover;
-    shuffle = false;
+    // shuffle = false;
   }
 
   void openPlaylist(PlaylistItem playlistItem, bool shuffleList) {
@@ -188,34 +170,29 @@ class App extends ChangeNotifier {
     if (!settings.rememberStatus) {
       _resetPlayerStatus();
     }
-    duration = Duration.zero;
-    position = Duration.zero;
     if (shuffleList) {
-      playboy.open(LibraryHelper.convertToPlaylist(playlistItem), play: false);
-      playboy.setShuffle(true);
-      playboy.jump(0);
-      if (App().settings.autoPlay) playboy.play();
+      player.open(LibraryHelper.convertToPlaylist(playlistItem), play: false);
+      player.setShuffle(true);
+      player.jump(0);
+      if (App().settings.autoPlay) player.play();
     } else {
-      playboy.open(
+      player.open(
         LibraryHelper.convertToPlaylist(playlistItem),
         play: App().settings.autoPlay,
       );
     }
-    position = Duration.zero;
-    duration = Duration.zero;
     playingTitle = basenameWithoutExtension(playlistItem.items.first.title);
     playingCover = playlistItem.items.first.cover;
-    shuffle = shuffleList;
   }
 
   void _resetPlayerStatus() {
-    playboy.setVolume(settings.defaultVolume);
-    playboy.setRate(settings.defaultSpeed);
+    player.setVolume(settings.defaultVolume);
+    player.setRate(settings.defaultSpeed);
   }
 
   void appendPlaylist(PlaylistItem pl) {
     for (var item in pl.items) {
-      playboy.add(Media(item.source));
+      player.add(Media(item.source));
     }
   }
 }

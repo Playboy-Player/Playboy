@@ -162,13 +162,13 @@ class PlayerPageState extends State<PlayerPage> {
                 IconButton(
                   onPressed: () {
                     setState(() {
-                      App().playboy.setVolume(0);
+                      App().player.setVolume(0);
                     });
                     App().settings.volume = 0;
                     App().saveSettings();
                   },
                   icon: Icon(
-                    App().playboy.state.volume == 0
+                    App().player.state.volume == 0
                         ? Icons.volume_off_rounded
                         : Icons.volume_up_rounded,
                   ),
@@ -186,14 +186,14 @@ class PlayerPageState extends State<PlayerPage> {
                       overlayShape: SliderComponentShape.noOverlay,
                     ),
                     child: StreamBuilder(
-                        stream: App().playboy.stream.volume,
+                        stream: App().player.stream.volume,
                         builder: (context, snapshot) {
                           return Slider(
                             max: 100,
-                            value: App().playboy.state.volume,
+                            value: App().player.state.volume,
                             onChanged: (value) {
                               setState(() {
-                                App().playboy.setVolume(value);
+                                App().player.setVolume(value);
                               });
                             },
                             onChangeEnd: (value) {
@@ -219,31 +219,33 @@ class PlayerPageState extends State<PlayerPage> {
           IconButton(
             onPressed: () {
               setState(() {
-                App().shuffle = !App().shuffle;
-                App().playboy.setShuffle(App().shuffle);
+                // App().shuffle = !App().shuffle;
+                var shuffle = App().player.isShuffleEnabled;
+                App().player.setShuffle(!shuffle);
+                setState(() {});
               });
             },
-            icon: App().shuffle
+            icon: App().player.isShuffleEnabled
                 ? const Icon(Icons.shuffle_on_rounded)
                 : const Icon(Icons.shuffle_rounded),
           ),
           IconButton(
             onPressed: () {
-              if (App().playboy.state.playlistMode == PlaylistMode.single) {
-                App().playboy.setPlaylistMode(PlaylistMode.none);
+              if (App().player.state.playlistMode == PlaylistMode.single) {
+                App().player.setPlaylistMode(PlaylistMode.none);
               } else {
-                App().playboy.setPlaylistMode(PlaylistMode.single);
+                App().player.setPlaylistMode(PlaylistMode.single);
               }
               setState(() {});
             },
-            icon: App().playboy.state.playlistMode == PlaylistMode.single
+            icon: App().player.state.playlistMode == PlaylistMode.single
                 ? const Icon(Icons.repeat_one_on_rounded)
                 : const Icon(Icons.repeat_one_rounded),
           ),
           const SizedBox(width: 10),
           IconButton.filledTonal(
             onPressed: () {
-              App().playboy.previous();
+              App().player.previous();
             },
             icon: const Icon(Icons.skip_previous_outlined),
           ),
@@ -259,25 +261,17 @@ class PlayerPageState extends State<PlayerPage> {
             iconSize: 30,
             onPressed: () {
               setState(() {
-                App().playboy.playOrPause();
+                App().player.playOrPause();
               });
             },
             icon: StreamBuilder(
-                stream: App().playboy.stream.playing,
+                stream: App().player.stream.playing,
                 builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Icon(
-                      snapshot.data!
-                          ? Icons.pause_circle_outline
-                          : Icons.play_arrow_outlined,
-                    );
-                  } else {
-                    return Icon(
-                      App().playing
-                          ? Icons.pause_circle_outline
-                          : Icons.play_arrow_outlined,
-                    );
-                  }
+                  return Icon(
+                    App().player.state.playing
+                        ? Icons.pause_circle_outline
+                        : Icons.play_arrow_outlined,
+                  );
                 }),
           ),
           const SizedBox(
@@ -285,7 +279,7 @@ class PlayerPageState extends State<PlayerPage> {
           ),
           IconButton.filledTonal(
             onPressed: () {
-              App().playboy.next();
+              App().player.next();
             },
             icon: const Icon(Icons.skip_next_outlined),
           ),
@@ -345,17 +339,20 @@ class PlayerPageState extends State<PlayerPage> {
               alignment: Alignment.center,
               width: 60,
               child: StreamBuilder(
-                stream: App().playboy.stream.position,
+                stream: App().player.stream.position,
                 builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Text(
-                      getProgressString(snapshot.data!),
-                    );
-                  } else {
-                    return Text(
-                      getProgressString(App().position),
-                    );
-                  }
+                  // if (snapshot.hasData) {
+                  //   return Text(
+                  //     getProgressString(snapshot.data!),
+                  //   );
+                  // } else {
+                  //   return Text(
+                  //     getProgressString(App().position),
+                  //   );
+                  // }
+                  return Text(
+                    getProgressString(App().player.state.position),
+                  );
                 },
               ),
             ),
@@ -364,17 +361,20 @@ class PlayerPageState extends State<PlayerPage> {
               alignment: Alignment.center,
               width: 60,
               child: StreamBuilder(
-                stream: App().playboy.stream.duration,
+                stream: App().player.stream.duration,
                 builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Text(
-                      getProgressString(snapshot.data!),
-                    );
-                  } else {
-                    return Text(
-                      getProgressString(App().duration),
-                    );
-                  }
+                  // if (snapshot.hasData) {
+                  //   return Text(
+                  //     getProgressString(snapshot.data!),
+                  //   );
+                  // } else {
+                  //   return Text(
+                  //     getProgressString(App().duration),
+                  //   );
+                  // }
+                  return Text(
+                    getProgressString(App().player.state.duration),
+                  );
                 },
               ),
             )
@@ -498,11 +498,11 @@ class PlayerPageState extends State<PlayerPage> {
         ],
       ),
       body: StreamBuilder(
-        stream: App().playboy.stream.playlist,
+        stream: App().player.stream.playlist,
         builder: (context, snapshot) {
           return ListView.builder(
             itemBuilder: (BuildContext context, int index) {
-              var src = App().playboy.state.playlist.medias[index].uri;
+              var src = App().player.state.playlist.medias[index].uri;
               return SizedBox(
                 height: 46,
                 child: Row(
@@ -512,30 +512,30 @@ class PlayerPageState extends State<PlayerPage> {
                       child: InkWell(
                         borderRadius: BorderRadius.circular(12),
                         onTap: () {
-                          App().playboy.jump(index);
+                          App().player.jump(index);
                         },
                         child: PlayerListCard(
                           info: PlayItem(
                             source: src,
                             title: p.basenameWithoutExtension(src),
                           ),
-                          isPlaying: index == App().playingIndex,
+                          isPlaying: index == App().player.state.playlist.index,
                         ),
                       ),
                     ),
                     IconButton(
                       onPressed: () {
-                        var len = App().playboy.state.playlist.medias.length;
-                        if (index == App().playingIndex) {
+                        var len = App().player.state.playlist.medias.length;
+                        if (index == App().player.state.playlist.index) {
                           if (len == 1) {
                             App().closeMedia();
                           } else if (len - 1 == index) {
-                            App().playboy.previous();
+                            App().player.previous();
                           } else {
-                            App().playboy.next();
+                            App().player.next();
                           }
                         }
-                        App().playboy.remove(index);
+                        App().player.remove(index);
                         setState(() {});
                       },
                       icon: const Icon(Icons.close),
@@ -547,7 +547,7 @@ class PlayerPageState extends State<PlayerPage> {
                 ),
               );
             },
-            itemCount: App().playboy.state.playlist.medias.length,
+            itemCount: App().player.state.playlist.medias.length,
           );
         },
       ),
@@ -595,7 +595,7 @@ class PlayerPageState extends State<PlayerPage> {
                 IconButton(
                   onPressed: () {
                     setState(() {
-                      App().playboy.setRate(1);
+                      App().player.setRate(1);
                     });
                   },
                   icon: const Icon(Icons.flash_on_rounded),
@@ -605,11 +605,11 @@ class PlayerPageState extends State<PlayerPage> {
                     min: 0.25,
                     max: 8,
                     divisions: 31,
-                    label: App().playboy.state.rate.toString(),
-                    value: bounded(0.25, App().playboy.state.rate, 8),
+                    label: App().player.state.rate.toString(),
+                    value: bounded(0.25, App().player.state.rate, 8),
                     onChanged: (value) {
                       setState(() {
-                        App().playboy.setRate(value);
+                        App().player.setRate(value);
                       });
                     },
                   ),
