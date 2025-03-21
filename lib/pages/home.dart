@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _prePageIndex = _tabIndex = App().settings.initPage;
+    _tabIndex = App().settings.initPage;
     if (widget.playerView) {
       setState(() {
         _tabIndex = 0;
