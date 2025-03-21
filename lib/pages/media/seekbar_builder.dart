@@ -10,7 +10,9 @@ Widget buildMediaSeekbar(Function callback) {
       return StreamBuilder(
         stream: App().player.stream.position,
         builder: (context, snapshot) {
-          double pos = App().player.state.position.inMilliseconds.toDouble();
+          double pos = App().seeking
+              ? App().seekingPos
+              : App().player.state.position.inMilliseconds.toDouble();
           double dur = App().player.state.duration.inMilliseconds.toDouble();
           pos = min(pos, dur);
           return Slider(
