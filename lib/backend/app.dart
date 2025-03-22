@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/basic/basic_video_controller.dart';
-import 'package:media_kit_video/basic/basic_video_controller_configuration.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -86,10 +85,7 @@ class App {
         }
       },
     );
-    controller = await BasicVideoController.create(
-      player,
-      const BasicVideoControllerConfiguration(),
-    );
+    controller = await BasicVideoController.create(player);
     player.setVolume(settings.volume);
   }
 

@@ -33,17 +33,17 @@ dependencies:
     git:
       url: https://github.com/YuiHrsw/media-kit.git
       path: media_kit
-      ref: bebbb582519a723d3e3d77200716809ee738b072
+      ref: 582dc080806cb9e369d1305ea1ea218416985c33
   media_kit_video:
     git:
       url: https://github.com/YuiHrsw/media-kit.git
       path: media_kit_video
-      ref: bebbb582519a723d3e3d77200716809ee738b072
+      ref: 582dc080806cb9e369d1305ea1ea218416985c33
   media_kit_libs_video:
     git:
       url: https://github.com/YuiHrsw/media-kit.git
       path: libs/universal/media_kit_libs_video
-      ref: bebbb582519a723d3e3d77200716809ee738b072
+      ref: 582dc080806cb9e369d1305ea1ea218416985c33
 
 dev_dependencies:
   flutter_test:
