@@ -237,9 +237,7 @@ class _LibraryPageState extends State<LibraryPage> {
               info,
             ),
             onTap: () async {
-              await App().closeMedia().then((value) {
-                App().openMedia(info);
-              });
+              App().openMedia(info);
               App().actions['togglePlayer']?.call();
             },
             borderRadius: 20,
@@ -269,17 +267,14 @@ class _LibraryPageState extends State<LibraryPage> {
             icon: Icons.movie_outlined,
             label: info.title,
             onTap: () async {
-              await App().closeMedia().then((_) {
-                App().openMedia(info);
-                App().actions['togglePlayer']?.call();
-              });
+              App().openMedia(info);
+              App().actions['togglePlayer']?.call();
               App().updateStatus();
             },
             actions: [
               IconButton(
                 tooltip: '播放',
                 onPressed: () {
-                  App().closeMedia();
                   App().openMedia(info);
                   App().actions['togglePlayer']?.call();
                 },

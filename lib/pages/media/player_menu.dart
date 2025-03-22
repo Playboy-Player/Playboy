@@ -124,7 +124,6 @@ List<Widget> buildPlayerMenu(BuildContext context) {
 }
 
 void _openLink(String source) async {
-  App().closeMedia();
   App().openMedia(
     PlayItem(source: source, title: source),
   );

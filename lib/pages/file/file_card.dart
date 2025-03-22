@@ -37,8 +37,6 @@ class FileCard extends StatelessWidget {
       ],
       onTap: () {
         if (LibraryHelper.supportFormats.contains(extension(source))) {
-          App().closeMedia();
-          if (!context.mounted) return;
           App().openMedia(
             PlayItem(source: source, title: source),
           );

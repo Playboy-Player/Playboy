@@ -15,7 +15,7 @@ import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/models/settings.dart';
 import 'package:playboy/pages/home.dart';
 
-class App extends ChangeNotifier {
+class App {
   late final String dataPath;
 
   late AppSettings settings;
@@ -74,22 +74,18 @@ class App extends ChangeNotifier {
         'osd-level': settings.mpvOsdLevel.toString(),
       },
     );
-    player.stream.playlist.listen((event) {
-      if (event.medias.isNotEmpty) {
-        var src = event.medias[event.index].uri;
-        mediaPath = src;
-        if (src.startsWith('http')) {
-          return;
-        } else {
+    player.stream.playlist.listen(
+      (event) {
+        if (event.medias.isNotEmpty) {
+          var src = event.medias[event.index].uri;
           playingTitle = basenameWithoutExtension(src);
           playingCover = '${withoutExtension(src)}.cover.jpg';
+        } else {
+          playingTitle = 'Not Playing';
+          playingCover = null;
         }
-      } else {
-        playingTitle = 'Not Playing';
-        playingCover = null;
-      }
-      notifyListeners();
-    });
+      },
+    );
     controller = await BasicVideoController.create(
       player,
       const BasicVideoControllerConfiguration(),
@@ -126,7 +122,6 @@ class App extends ChangeNotifier {
   }
 
   String? playingCover;
-  String? mediaPath;
   String playingTitle = 'Not Playing';
 
   bool loop = false;
@@ -146,21 +141,12 @@ class App extends ChangeNotifier {
     player.command(['show-text', '已恢复默认显示大小']);
   }
 
-  Future<void> closeMedia() async {
-    player.stop();
-    playingTitle = 'Not Playing';
-    playingCover = null;
-  }
-
   void openMedia(PlayItem media) {
     if (!settings.rememberStatus) {
       _resetPlayerStatus();
     }
     final video = Media(media.source);
     player.open(video, play: settings.autoPlay);
-    playingTitle = basenameWithoutExtension(media.title);
-    playingCover = media.cover;
-    // shuffle = false;
   }
 
   void openPlaylist(PlaylistItem playlistItem, bool shuffleList) {
@@ -181,8 +167,6 @@ class App extends ChangeNotifier {
         play: App().settings.autoPlay,
       );
     }
-    playingTitle = basenameWithoutExtension(playlistItem.items.first.title);
-    playingCover = playlistItem.items.first.cover;
   }
 
   void _resetPlayerStatus() {

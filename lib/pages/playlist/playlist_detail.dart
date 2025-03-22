@@ -102,7 +102,6 @@ class PlaylistDetailState extends State<PlaylistDetail> {
                           ),
                         ),
                         onPressed: () {
-                          App().closeMedia();
                           App().openPlaylist(widget.info, false);
                         },
                         icon: const Icon(Icons.play_arrow),
@@ -120,7 +119,6 @@ class PlaylistDetailState extends State<PlaylistDetail> {
                           ),
                         ),
                         onPressed: () {
-                          App().closeMedia();
                           App().openPlaylist(widget.info, true);
                           setState(() {});
                         },
@@ -151,9 +149,7 @@ class PlaylistDetailState extends State<PlaylistDetail> {
             icon: Icons.music_note,
             label: info.title,
             onTap: () async {
-              await App().closeMedia().then((_) {
-                App().openMedia(info);
-              });
+              App().openMedia(info);
               App().updateStatus();
             },
             actions: [

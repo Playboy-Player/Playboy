@@ -256,7 +256,6 @@ class FileExplorerState extends State<FileExplorer> {
               label: basename(e.path),
               onTap: () {
                 if (LibraryHelper.supportFormats.contains(extension(e.path))) {
-                  App().closeMedia();
                   if (!context.mounted) return;
                   App().openMedia(
                     PlayItem(source: e.path, title: e.path),

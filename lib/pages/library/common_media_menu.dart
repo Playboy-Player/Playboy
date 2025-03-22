@@ -16,7 +16,6 @@ List<Widget> buildCommonMediaMenuItems(
       icon: Icons.open_in_new,
       label: '播放器播放'.l10n,
       onPressed: () {
-        App().closeMedia();
         App().openMedia(item);
         App().actions['togglePlayer']?.call();
       },
@@ -25,7 +24,6 @@ List<Widget> buildCommonMediaMenuItems(
       icon: Icons.play_circle_outline_rounded,
       label: '播放'.l10n,
       onPressed: () {
-        App().closeMedia();
         App().openMedia(item);
       },
     ),

@@ -58,9 +58,6 @@ class PlayerPageState extends State<PlayerPage> {
   @override
   void dispose() {
     super.dispose();
-    if (!App().settings.playAfterExit) {
-      App().closeMedia();
-    }
     _timer?.cancel();
   }
 
@@ -210,9 +207,7 @@ class PlayerPageState extends State<PlayerPage> {
           ),
           IconButton(
             onPressed: () {
-              App().closeMedia().then((_) {
-                setState(() {});
-              });
+              App().player.stop();
             },
             icon: const Icon(Icons.stop_circle_outlined),
           ),
@@ -528,7 +523,7 @@ class PlayerPageState extends State<PlayerPage> {
                         var len = App().player.state.playlist.medias.length;
                         if (index == App().player.state.playlist.index) {
                           if (len == 1) {
-                            App().closeMedia();
+                            App().player.stop();
                           } else if (len - 1 == index) {
                             App().player.previous();
                           } else {

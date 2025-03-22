@@ -17,7 +17,6 @@ List<Widget> buildCommonPlaylistMenuItems(
       icon: Icons.play_circle_outline_rounded,
       label: '播放'.l10n,
       onPressed: () {
-        App().closeMedia();
         App().openPlaylist(item, false);
       },
     ),
@@ -25,7 +24,6 @@ List<Widget> buildCommonPlaylistMenuItems(
       icon: Icons.shuffle,
       label: '随机播放'.l10n,
       onPressed: () {
-        App().closeMedia();
         App().openPlaylist(
           item,
           true,

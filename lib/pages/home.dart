@@ -722,9 +722,8 @@ class _HomePageState extends State<HomePage> {
                         constraints: const BoxConstraints(),
                         color: colorScheme.primaryContainer,
                         onPressed: () {
-                          App().closeMedia().then((_) {
-                            setState(() {});
-                          });
+                          App().player.stop();
+                          setState(() {});
                         },
                         icon: const Icon(
                           Icons.stop_rounded,
@@ -1075,7 +1074,7 @@ class _HomePageState extends State<HomePage> {
               constraints: const BoxConstraints(),
               color: colorScheme.primaryContainer,
               onPressed: () {
-                App().closeMedia();
+                App().player.stop();
                 setState(() {});
               },
               icon: const Icon(Icons.stop_rounded),
