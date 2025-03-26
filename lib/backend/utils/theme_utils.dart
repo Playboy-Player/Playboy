@@ -50,6 +50,7 @@ ThemeData getThemeData(App value, ColorScheme colorScheme) {
     ),
     menuTheme: MenuThemeData(
       style: MenuStyle(
+        backgroundColor: WidgetStatePropertyAll(colorScheme.appBackground),
         shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),

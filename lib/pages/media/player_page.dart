@@ -224,18 +224,29 @@ class PlayerPageState extends State<PlayerPage> {
                 ? const Icon(Icons.shuffle_on_rounded)
                 : const Icon(Icons.shuffle_rounded),
           ),
-          IconButton(
-            onPressed: () {
-              if (App().player.state.playlistMode == PlaylistMode.single) {
-                App().player.setPlaylistMode(PlaylistMode.none);
-              } else {
-                App().player.setPlaylistMode(PlaylistMode.single);
-              }
-              setState(() {});
+          StreamBuilder(
+            stream: App().player.stream.playlistMode,
+            builder: (context, _) {
+              return IconButton(
+                onPressed: () {
+                  switch (App().player.state.playlistMode) {
+                    case PlaylistMode.loop:
+                      App().player.setPlaylistMode(PlaylistMode.single);
+                    case PlaylistMode.single:
+                      App().player.setPlaylistMode(PlaylistMode.none);
+                    case PlaylistMode.none:
+                      App().player.setPlaylistMode(PlaylistMode.loop);
+                  }
+                },
+                icon: Icon(
+                  switch (App().player.state.playlistMode) {
+                    PlaylistMode.loop => Icons.repeat_on_rounded,
+                    PlaylistMode.single => Icons.repeat_one_on_rounded,
+                    PlaylistMode.none => Icons.repeat_rounded,
+                  },
+                ),
+              );
             },
-            icon: App().player.state.playlistMode == PlaylistMode.single
-                ? const Icon(Icons.repeat_one_on_rounded)
-                : const Icon(Icons.repeat_one_rounded),
           ),
           const SizedBox(width: 10),
           IconButton.filledTonal(
@@ -336,15 +347,6 @@ class PlayerPageState extends State<PlayerPage> {
               child: StreamBuilder(
                 stream: App().player.stream.position,
                 builder: (context, snapshot) {
-                  // if (snapshot.hasData) {
-                  //   return Text(
-                  //     getProgressString(snapshot.data!),
-                  //   );
-                  // } else {
-                  //   return Text(
-                  //     getProgressString(App().position),
-                  //   );
-                  // }
                   return Text(
                     getProgressString(App().player.state.position),
                   );

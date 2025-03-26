@@ -6,6 +6,7 @@ import 'package:media_kit/media_kit.dart';
 import 'package:path/path.dart';
 import 'package:playboy/backend/utils/theme_utils.dart';
 import 'package:playboy/pages/media/seekbar_builder.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'package:playboy/pages/file/file_explorer.dart';
@@ -328,7 +329,7 @@ class _HomePageState extends State<HomePage> {
       const SizedBox(height: 10),
       MMenuItem(
         icon: _fullScreen ? Icons.close_fullscreen : Icons.open_in_full,
-        label: _fullScreen ? '退出全屏' : '全屏模式',
+        label: _fullScreen ? '退出全屏'.l10n : '全屏模式'.l10n,
         onPressed: () async {
           if (_fullScreen) {
             windowManager.setFullScreen(false);
@@ -344,7 +345,7 @@ class _HomePageState extends State<HomePage> {
       ),
       MMenuItem(
         icon: Icons.music_note_outlined,
-        label: '迷你音乐播放器',
+        label: '迷你音乐播放器'.l10n,
         onPressed: () {
           windowManager.setResizable(false);
           windowManager.setMinimumSize(const Size(300, 120));
@@ -362,7 +363,7 @@ class _HomePageState extends State<HomePage> {
       ),
       MMenuItem(
         icon: Icons.push_pin_outlined,
-        label: '应用置顶',
+        label: '应用置顶'.l10n,
         onPressed: () async {
           if (await windowManager.isAlwaysOnTop()) {
             windowManager.setAlwaysOnTop(false);
@@ -374,7 +375,7 @@ class _HomePageState extends State<HomePage> {
       const Divider(),
       MMenuItem(
         icon: Icons.visibility_outlined,
-        label: '切换侧边栏',
+        label: '切换侧边栏'.l10n,
         onPressed: () {
           setState(() {
             _showSidePanel = !_showSidePanel;
@@ -382,7 +383,7 @@ class _HomePageState extends State<HomePage> {
         },
       ),
       MMenuItem(
-        label: '切换深色主题',
+        label: '切换深色主题'.l10n,
         icon: Theme.of(context).brightness == Brightness.dark
             ? Icons.wb_sunny_outlined
             : Icons.dark_mode_outlined,
@@ -400,7 +401,7 @@ class _HomePageState extends State<HomePage> {
       ),
       MMenuItem(
         icon: Icons.settings_outlined,
-        label: '偏好设置',
+        label: '偏好设置'.l10n,
         onPressed: () {
           if (App().contentKey.currentContext != null) {
             pushPage(
@@ -415,7 +416,7 @@ class _HomePageState extends State<HomePage> {
       const Divider(),
       MMenuItem(
         icon: Icons.info_outline,
-        label: '关于应用',
+        label: '关于应用'.l10n,
         onPressed: () {
           App().dialog(
             (context) => const AboutDialog(
@@ -425,10 +426,14 @@ class _HomePageState extends State<HomePage> {
           );
         },
       ),
-      const MMenuItem(
+      MMenuItem(
         icon: Icons.upcoming_outlined,
-        label: '检查更新',
-        onPressed: null,
+        label: '检查更新'.l10n,
+        onPressed: () {
+          launchUrl(
+            Uri.parse('https://github.com/Playboy-Player/Playboy/releases'),
+          );
+        },
       ),
       const Divider(),
       SubmenuButton(
@@ -440,23 +445,23 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 10),
           MMenuItem(
             icon: Icons.bug_report_outlined,
-            label: '填充显示区域',
+            label: '填充显示区域'.l10n,
             onPressed: () {
               App().refreshVO();
             },
           ),
           MMenuItem(
             icon: Icons.bug_report_outlined,
-            label: '使用默认显示大小',
+            label: '使用默认显示大小'.l10n,
             onPressed: () {
               App().restoreVO();
             },
           ),
           const SizedBox(height: 10)
         ],
-        child: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 6),
-          child: Text('调试'),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 6),
+          child: Text('调试'.l10n),
         ),
       ),
       const SizedBox(height: 10),
@@ -507,6 +512,110 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ],
+    ];
+  }
+
+  List<Widget> _buildControlButtons(ColorScheme colorScheme) {
+    return [
+      IconButton(
+        padding: const EdgeInsets.symmetric(horizontal: 2),
+        constraints: const BoxConstraints(),
+        color: colorScheme.primaryContainer,
+        // iconSize: 30,
+        onPressed: () {
+          App().player.previous();
+          setState(() {});
+        },
+        icon: const Icon(
+          Icons.skip_previous_rounded,
+          // size: 30,
+        ),
+      ),
+      Expanded(
+        // width: 120,
+        child: SliderTheme(
+          data: SliderThemeData(
+            // ignore: deprecated_member_use
+            year2023: false,
+            trackHeight: 3,
+            thumbSize: const WidgetStatePropertyAll(
+              Size(4, 14),
+            ),
+            overlayShape: SliderComponentShape.noOverlay,
+            thumbColor: colorScheme.primaryContainer,
+            activeTrackColor: colorScheme.primaryContainer,
+          ),
+          child: buildMediaSeekbar(() {
+            setState(() {});
+          }),
+        ),
+      ),
+      IconButton(
+        padding: const EdgeInsets.symmetric(horizontal: 2),
+        constraints: const BoxConstraints(),
+        color: colorScheme.primaryContainer,
+        onPressed: () {
+          App().player.next();
+          setState(() {});
+        },
+        icon: const Icon(
+          Icons.skip_next_rounded,
+        ),
+      ),
+      IconButton(
+        padding: const EdgeInsets.symmetric(horizontal: 2),
+        constraints: const BoxConstraints(),
+        color: colorScheme.primaryContainer,
+        onPressed: () {
+          var shuffle = App().player.isShuffleEnabled;
+          App().player.setShuffle(!shuffle);
+          setState(() {});
+        },
+        icon: App().player.isShuffleEnabled
+            ? const Icon(Icons.shuffle_on_rounded)
+            : const Icon(Icons.shuffle_rounded),
+        iconSize: 20,
+      ),
+      StreamBuilder(
+        stream: App().player.stream.playlistMode,
+        builder: (context, _) {
+          return IconButton(
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            constraints: const BoxConstraints(),
+            color: colorScheme.primaryContainer,
+            onPressed: () {
+              switch (App().player.state.playlistMode) {
+                case PlaylistMode.loop:
+                  App().player.setPlaylistMode(PlaylistMode.single);
+                case PlaylistMode.single:
+                  App().player.setPlaylistMode(PlaylistMode.none);
+                case PlaylistMode.none:
+                  App().player.setPlaylistMode(PlaylistMode.loop);
+              }
+            },
+            icon: Icon(
+              switch (App().player.state.playlistMode) {
+                PlaylistMode.loop => Icons.repeat_on_rounded,
+                PlaylistMode.single => Icons.repeat_one_on_rounded,
+                PlaylistMode.none => Icons.repeat_rounded,
+              },
+            ),
+            iconSize: 20,
+          );
+        },
+      ),
+      IconButton(
+        padding: const EdgeInsets.symmetric(horizontal: 2),
+        constraints: const BoxConstraints(),
+        color: colorScheme.primaryContainer,
+        onPressed: () {
+          App().player.stop();
+          setState(() {});
+        },
+        icon: const Icon(
+          Icons.stop_rounded,
+        ),
+      )
     ];
   }
 
@@ -566,16 +675,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                               maxLines: 1,
                             ),
-                            // Text(
-                            //   'author',
-                            //   style: TextStyle(
-                            //     fontSize: 12,
-                            //     color: colorScheme.primaryContainer,
-                            //   ),
-                            // )
-                            const SizedBox(
-                              height: 8,
-                            )
+                            const SizedBox(height: 8)
                           ],
                         ),
                       ),
@@ -607,9 +707,7 @@ class _HomePageState extends State<HomePage> {
                           },
                         ),
                       ),
-                      const SizedBox(
-                        width: 12,
-                      ),
+                      const SizedBox(width: 12),
                     ],
                   ),
                 ),
@@ -618,9 +716,7 @@ class _HomePageState extends State<HomePage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      const SizedBox(
-                        width: 10,
-                      ),
+                      const SizedBox(width: 10),
                       IconButton(
                         padding: const EdgeInsets.symmetric(horizontal: 2),
                         constraints: const BoxConstraints(),
@@ -639,102 +735,11 @@ class _HomePageState extends State<HomePage> {
                         },
                         icon: const Icon(Icons.close_rounded),
                       ),
-                      IconButton(
-                        padding: const EdgeInsets.symmetric(horizontal: 2),
-                        constraints: const BoxConstraints(),
-                        color: colorScheme.primaryContainer,
-                        // iconSize: 30,
-                        onPressed: () {
-                          App().player.previous();
-                          setState(() {});
-                        },
-                        icon: const Icon(
-                          Icons.skip_previous_rounded,
-                          // size: 30,
-                        ),
-                      ),
-                      Expanded(
-                        // width: 120,
-                        child: SliderTheme(
-                          data: SliderThemeData(
-                            // ignore: deprecated_member_use
-                            year2023: false,
-                            trackHeight: 3,
-                            thumbSize: const WidgetStatePropertyAll(
-                              Size(4, 14),
-                            ),
-                            overlayShape: SliderComponentShape.noOverlay,
-                            thumbColor: colorScheme.primaryContainer,
-                            activeTrackColor: colorScheme.primaryContainer,
-                          ),
-                          child: buildMediaSeekbar(() {
-                            setState(() {});
-                          }),
-                        ),
-                      ),
-                      IconButton(
-                        padding: const EdgeInsets.symmetric(horizontal: 2),
-                        constraints: const BoxConstraints(),
-                        color: colorScheme.primaryContainer,
-                        onPressed: () {
-                          App().player.next();
-                          setState(() {});
-                        },
-                        icon: const Icon(
-                          Icons.skip_next_rounded,
-                        ),
-                      ),
-                      IconButton(
-                        padding: const EdgeInsets.symmetric(horizontal: 2),
-                        constraints: const BoxConstraints(),
-                        color: colorScheme.primaryContainer,
-                        onPressed: () {
-                          var shuffle = App().player.isShuffleEnabled;
-                          App().player.setShuffle(!shuffle);
-                          setState(() {});
-                        },
-                        icon: App().player.isShuffleEnabled
-                            ? const Icon(Icons.shuffle_on_rounded)
-                            : const Icon(Icons.shuffle_rounded),
-                        iconSize: 20,
-                      ),
-                      IconButton(
-                        padding: const EdgeInsets.symmetric(horizontal: 2),
-                        constraints: const BoxConstraints(),
-                        color: colorScheme.primaryContainer,
-                        onPressed: () {
-                          if (App().player.state.playlistMode ==
-                              PlaylistMode.single) {
-                            App().player.setPlaylistMode(PlaylistMode.none);
-                          } else {
-                            App().player.setPlaylistMode(PlaylistMode.single);
-                          }
-                          setState(() {});
-                        },
-                        icon: App().player.state.playlistMode ==
-                                PlaylistMode.single
-                            ? const Icon(Icons.repeat_one_on_rounded)
-                            : const Icon(Icons.repeat_one_rounded),
-                        iconSize: 20,
-                      ),
-                      IconButton(
-                        padding: const EdgeInsets.symmetric(horizontal: 2),
-                        constraints: const BoxConstraints(),
-                        color: colorScheme.primaryContainer,
-                        onPressed: () {
-                          App().player.stop();
-                          setState(() {});
-                        },
-                        icon: const Icon(
-                          Icons.stop_rounded,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 6,
-                      ),
+                      ..._buildControlButtons(colorScheme),
+                      const SizedBox(width: 10),
                     ],
                   ),
-                )
+                ),
               ],
             ),
           ],
@@ -996,89 +1001,7 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
             ),
-            IconButton(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              constraints: const BoxConstraints(),
-              color: colorScheme.primaryContainer,
-              // iconSize: 30,
-              onPressed: () {
-                App().player.previous();
-                setState(() {});
-              },
-              icon: const Icon(
-                Icons.skip_previous_rounded,
-                // size: 30,
-              ),
-            ),
-            Expanded(
-              // width: 120,
-              child: SliderTheme(
-                  data: SliderThemeData(
-                    thumbColor: colorScheme.primaryContainer,
-                    activeTrackColor: colorScheme.primaryContainer,
-                    // ignore: deprecated_member_use
-                    year2023: false,
-                    trackHeight: 4,
-                    thumbSize: const WidgetStatePropertyAll(Size(4, 12)),
-                    overlayShape: SliderComponentShape.noOverlay,
-                  ),
-                  child: buildMediaSeekbar(() {
-                    setState(() {});
-                  })),
-            ),
-            IconButton(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              constraints: const BoxConstraints(),
-              color: colorScheme.primaryContainer,
-              onPressed: () {
-                App().player.next();
-                setState(() {});
-              },
-              icon: const Icon(
-                Icons.skip_next_rounded,
-              ),
-            ),
-            IconButton(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              constraints: const BoxConstraints(),
-              color: colorScheme.primaryContainer,
-              onPressed: () {
-                var shuffle = App().player.isShuffleEnabled;
-                App().player.setShuffle(!shuffle);
-                setState(() {});
-              },
-              icon: App().player.isShuffleEnabled
-                  ? const Icon(Icons.shuffle_on_rounded)
-                  : const Icon(Icons.shuffle_rounded),
-              iconSize: 20,
-            ),
-            IconButton(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              constraints: const BoxConstraints(),
-              color: colorScheme.primaryContainer,
-              onPressed: () {
-                if (App().player.state.playlistMode == PlaylistMode.single) {
-                  App().player.setPlaylistMode(PlaylistMode.none);
-                } else {
-                  App().player.setPlaylistMode(PlaylistMode.single);
-                }
-                setState(() {});
-              },
-              icon: App().player.state.playlistMode == PlaylistMode.single
-                  ? const Icon(Icons.repeat_one_on_rounded)
-                  : const Icon(Icons.repeat_one_rounded),
-              iconSize: 20,
-            ),
-            IconButton(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              constraints: const BoxConstraints(),
-              color: colorScheme.primaryContainer,
-              onPressed: () {
-                App().player.stop();
-                setState(() {});
-              },
-              icon: const Icon(Icons.stop_rounded),
-            ),
+            ..._buildControlButtons(colorScheme),
             const SizedBox(width: 10),
           ],
         ),
