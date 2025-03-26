@@ -1,10 +1,10 @@
-# Playboy Player
+# Playboy
 [中文](./README.md) | English  
 
 A `libmpv` based media player with Material 3 design.
 
 [![build](https://img.shields.io/github/actions/workflow/status/Playboy-Player/Playboy/build.yml?style=for-the-badge)](https://github.com/Playboy-Player/Playboy/actions) 
-[![release](https://img.shields.io/badge/beta-2025.2-blue?style=for-the-badge)](https://github.com/Playboy-Player/Playboy/releases) [![roadmap](https://img.shields.io/badge/roadmap-grey?style=for-the-badge)](https://github.com/orgs/Playboy-Player/projects/3)
+[![release](https://img.shields.io/badge/beta-2025.3-gold?style=for-the-badge)](https://github.com/Playboy-Player/Playboy/releases) ![downloads](https://img.shields.io/github/downloads/Playboy-Player/Playboy/total?style=for-the-badge&color=blue) [![project](https://img.shields.io/badge/project-grey?style=for-the-badge)](https://github.com/orgs/Playboy-Player/projects/3)
 
 ![](https://m3-markdown-badges.vercel.app/stars/7/2/Playboy-Player/Playboy)
 ![](https://m3-markdown-badges.vercel.app/issues/1/2/Playboy-Player/Playboy)  
@@ -41,8 +41,6 @@ A `libmpv` based media player with Material 3 design.
     </td>
   </tr>
 </table>
-
-## Features
 
 ## Features  
 

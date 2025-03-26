@@ -1,10 +1,10 @@
-# Playboy Player
+# Playboy
 中文 | [English](./README_en.md)  
 
-基于 libmpv 的 Material 3 风格跨平台媒体播放器.
+基于 `libmpv` 的 Material 3 风格跨平台媒体播放器.
 
 [![build](https://img.shields.io/github/actions/workflow/status/Playboy-Player/Playboy/build.yml?style=for-the-badge)](https://github.com/Playboy-Player/Playboy/actions) 
-[![release](https://img.shields.io/badge/beta-2025.2-blue?style=for-the-badge)](https://github.com/Playboy-Player/Playboy/releases) [![roadmap](https://img.shields.io/badge/roadmap-grey?style=for-the-badge)](https://github.com/orgs/Playboy-Player/projects/3)
+[![release](https://img.shields.io/badge/beta-2025.3-gold?style=for-the-badge)](https://github.com/Playboy-Player/Playboy/releases) ![downloads](https://img.shields.io/github/downloads/Playboy-Player/Playboy/total?style=for-the-badge&color=blue) [![project](https://img.shields.io/badge/project-grey?style=for-the-badge)](https://github.com/orgs/Playboy-Player/projects/3)
 
 ![](https://m3-markdown-badges.vercel.app/stars/7/2/Playboy-Player/Playboy)
 ![](https://m3-markdown-badges.vercel.app/issues/1/2/Playboy-Player/Playboy)  
@@ -56,11 +56,19 @@
 - [x] 搜索媒体文件和播放列表
 - [x] 多语言支持
 - [x] 字幕 (libass)
-- [x] 着色器支持, 如 [Anime4K](https://github.com/bloc97/Anime4K)
+- [x] 着色器支持
 - [x] 自定义快捷键映射 (input.conf 支持)
 - [x] 兼容 mpv.conf 配置文件
 - [ ] 自定义 mpv 初始化参数
 - [ ] 自动生成字幕 (Whisper)
+
+### 使用 Anime4K 着色器
+
+参考 [Anime4K](https://github.com/bloc97/Anime4K) 官方的 GLSL/MPV 安装教程, 下载 template files.
+
+**顶部菜单 -> 应用偏好设置 -> 存储 -> 打开应用数据文件夹**, 把 `mpv.conf`, `input.conf`, `shaders 文件夹` 复制到数据文件夹下.
+
+启用 **应用偏好设置 -> 播放器 -> 允许 libmpv 使用配置文件** 选项, 重启应用.
 
 ## For Developers
 
