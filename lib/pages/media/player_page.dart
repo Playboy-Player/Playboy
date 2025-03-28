@@ -5,8 +5,9 @@ import 'package:media_kit_video/basic/basic_video_controller.dart';
 import 'package:path/path.dart' as p;
 import 'package:media_kit/media_kit.dart';
 
-import 'package:playboy/backend/actions.dart' as actions;
 import 'package:playboy/backend/utils/l10n_utils.dart';
+import 'package:playboy/backend/utils/theme_utils.dart';
+import 'package:playboy/pages/media/seekbar_builder.dart';
 import 'package:playboy/widgets/basic_video.dart';
 import 'package:playboy/pages/media/player_menu.dart';
 import 'package:playboy/backend/models/playitem.dart';
@@ -14,7 +15,6 @@ import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/time_utils.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
 import 'package:playboy/widgets/player_list.dart';
-import 'package:playboy/backend/ml/subtitle_generator.dart';
 
 class PlayerPage extends StatefulWidget {
   const PlayerPage({
@@ -58,21 +58,15 @@ class PlayerPageState extends State<PlayerPage> {
   @override
   void dispose() {
     super.dispose();
-    if (!App().settings.playAfterExit) {
-      App().closeMedia();
-    }
     _timer?.cancel();
   }
 
   @override
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
-    late final backgroundColor = Color.alphaBlend(
-      colorScheme.primary.withValues(alpha: 0.04),
-      colorScheme.surface,
-    );
+
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: colorScheme.appBackground,
       body: widget.fullscreen
           ? Stack(
               children: [
@@ -83,7 +77,7 @@ class PlayerPageState extends State<PlayerPage> {
                         child: _buildPlayer(colorScheme),
                       ),
                     ),
-                    _buildSidePanel(colorScheme, backgroundColor),
+                    _buildSidePanel(colorScheme, colorScheme.appBackground),
                   ],
                 ),
                 Align(
@@ -103,7 +97,7 @@ class PlayerPageState extends State<PlayerPage> {
                         });
                       },
                       child: Container(
-                        color: backgroundColor,
+                        color: colorScheme.appBackground,
                         height: 90,
                         child: Column(
                           children: _buildButtomBar(context, colorScheme),
@@ -124,7 +118,7 @@ class PlayerPageState extends State<PlayerPage> {
                           child: _buildPlayer(colorScheme),
                         ),
                       ),
-                      _buildSidePanel(colorScheme, backgroundColor),
+                      _buildSidePanel(colorScheme, colorScheme.appBackground),
                     ],
                   ),
                 ),
@@ -140,6 +134,7 @@ class PlayerPageState extends State<PlayerPage> {
       late final colorScheme = Theme.of(context).colorScheme;
       return SliderTheme(
         data: SliderThemeData(
+          // ignore: deprecated_member_use
           year2023: false,
           trackHeight: 4,
           thumbColor: colorScheme.secondary,
@@ -147,42 +142,9 @@ class PlayerPageState extends State<PlayerPage> {
           thumbSize: const WidgetStatePropertyAll(Size(4, 12)),
           overlayShape: SliderComponentShape.noOverlay,
         ),
-        child: StreamBuilder(
-          stream: App().playboy.stream.position,
-          builder: (BuildContext context, AsyncSnapshot<Duration> snapshot) {
-            return Slider(
-              max: App().duration.inMilliseconds.toDouble(),
-              value: App().seeking
-                  ? App().seekingPos
-                  : bounded(
-                      0,
-                      snapshot.hasData
-                          ? snapshot.data!.inMilliseconds.toDouble()
-                          : App().position.inMilliseconds.toDouble(),
-                      App().duration.inMilliseconds.toDouble(),
-                    ),
-              onChanged: (value) {
-                setState(() {
-                  App().seekingPos = value;
-                });
-              },
-              onChangeStart: (value) {
-                setState(() {
-                  App().seeking = true;
-                });
-              },
-              onChangeEnd: (value) {
-                App().playboy.seek(Duration(milliseconds: value.toInt())).then(
-                      (_) => {
-                        setState(() {
-                          App().seeking = false;
-                        })
-                      },
-                    );
-              },
-            );
-          },
-        ),
+        child: buildMediaSeekbar(() {
+          setState(() {});
+        }),
       );
     }
 
@@ -197,13 +159,13 @@ class PlayerPageState extends State<PlayerPage> {
                 IconButton(
                   onPressed: () {
                     setState(() {
-                      App().playboy.setVolume(0);
+                      App().player.setVolume(0);
                     });
                     App().settings.volume = 0;
                     App().saveSettings();
                   },
                   icon: Icon(
-                    App().playboy.state.volume == 0
+                    App().player.state.volume == 0
                         ? Icons.volume_off_rounded
                         : Icons.volume_up_rounded,
                   ),
@@ -212,6 +174,7 @@ class PlayerPageState extends State<PlayerPage> {
                   width: 80,
                   child: SliderTheme(
                     data: SliderThemeData(
+                      // ignore: deprecated_member_use
                       year2023: false,
                       activeTrackColor: colorScheme.secondaryContainer,
                       thumbColor: colorScheme.secondary,
@@ -219,20 +182,24 @@ class PlayerPageState extends State<PlayerPage> {
                       thumbSize: const WidgetStatePropertyAll(Size(4, 12)),
                       overlayShape: SliderComponentShape.noOverlay,
                     ),
-                    child: Slider(
-                      max: 100,
-                      value: App().playboy.state.volume,
-                      onChanged: (value) {
-                        setState(() {
-                          App().playboy.setVolume(value);
-                        });
-                      },
-                      onChangeEnd: (value) {
-                        setState(() {});
-                        App().settings.volume = value;
-                        App().saveSettings();
-                      },
-                    ),
+                    child: StreamBuilder(
+                        stream: App().player.stream.volume,
+                        builder: (context, snapshot) {
+                          return Slider(
+                            max: 100,
+                            value: App().player.state.volume,
+                            onChanged: (value) {
+                              setState(() {
+                                App().player.setVolume(value);
+                              });
+                            },
+                            onChangeEnd: (value) {
+                              setState(() {});
+                              App().settings.volume = value;
+                              App().saveSettings();
+                            },
+                          );
+                        }),
                   ),
                 ),
               ],
@@ -240,40 +207,51 @@ class PlayerPageState extends State<PlayerPage> {
           ),
           IconButton(
             onPressed: () {
-              App().closeMedia().then((_) {
-                setState(() {});
-              });
+              App().player.stop();
             },
             icon: const Icon(Icons.stop_circle_outlined),
           ),
           IconButton(
             onPressed: () {
               setState(() {
-                App().shuffle = !App().shuffle;
-                App().playboy.setShuffle(App().shuffle);
+                // App().shuffle = !App().shuffle;
+                var shuffle = App().player.isShuffleEnabled;
+                App().player.setShuffle(!shuffle);
+                setState(() {});
               });
             },
-            icon: App().shuffle
+            icon: App().player.isShuffleEnabled
                 ? const Icon(Icons.shuffle_on_rounded)
                 : const Icon(Icons.shuffle_rounded),
           ),
-          IconButton(
-            onPressed: () {
-              if (App().playboy.state.playlistMode == PlaylistMode.single) {
-                App().playboy.setPlaylistMode(PlaylistMode.none);
-              } else {
-                App().playboy.setPlaylistMode(PlaylistMode.single);
-              }
-              setState(() {});
+          StreamBuilder(
+            stream: App().player.stream.playlistMode,
+            builder: (context, _) {
+              return IconButton(
+                onPressed: () {
+                  switch (App().player.state.playlistMode) {
+                    case PlaylistMode.loop:
+                      App().player.setPlaylistMode(PlaylistMode.single);
+                    case PlaylistMode.single:
+                      App().player.setPlaylistMode(PlaylistMode.none);
+                    case PlaylistMode.none:
+                      App().player.setPlaylistMode(PlaylistMode.loop);
+                  }
+                },
+                icon: Icon(
+                  switch (App().player.state.playlistMode) {
+                    PlaylistMode.loop => Icons.repeat_on_rounded,
+                    PlaylistMode.single => Icons.repeat_one_on_rounded,
+                    PlaylistMode.none => Icons.repeat_rounded,
+                  },
+                ),
+              );
             },
-            icon: App().playboy.state.playlistMode == PlaylistMode.single
-                ? const Icon(Icons.repeat_one_on_rounded)
-                : const Icon(Icons.repeat_one_rounded),
           ),
           const SizedBox(width: 10),
           IconButton.filledTonal(
             onPressed: () {
-              App().playboy.previous();
+              App().player.previous();
             },
             icon: const Icon(Icons.skip_previous_outlined),
           ),
@@ -289,25 +267,17 @@ class PlayerPageState extends State<PlayerPage> {
             iconSize: 30,
             onPressed: () {
               setState(() {
-                App().playboy.playOrPause();
+                App().player.playOrPause();
               });
             },
             icon: StreamBuilder(
-                stream: App().playboy.stream.playing,
+                stream: App().player.stream.playing,
                 builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Icon(
-                      snapshot.data!
-                          ? Icons.pause_circle_outline
-                          : Icons.play_arrow_outlined,
-                    );
-                  } else {
-                    return Icon(
-                      App().playing
-                          ? Icons.pause_circle_outline
-                          : Icons.play_arrow_outlined,
-                    );
-                  }
+                  return Icon(
+                    App().player.state.playing
+                        ? Icons.pause_circle_outline
+                        : Icons.play_arrow_outlined,
+                  );
                 }),
           ),
           const SizedBox(
@@ -315,7 +285,7 @@ class PlayerPageState extends State<PlayerPage> {
           ),
           IconButton.filledTonal(
             onPressed: () {
-              App().playboy.next();
+              App().player.next();
             },
             icon: const Icon(Icons.skip_next_outlined),
           ),
@@ -353,7 +323,7 @@ class PlayerPageState extends State<PlayerPage> {
                 ),
                 IconButton(
                   onPressed: () {
-                    App().executeAction(actions.toggleFullscreen);
+                    App().executeAction('toggleFullscreen');
                   },
                   icon: const Icon(Icons.open_in_full_rounded),
                 ),
@@ -375,17 +345,11 @@ class PlayerPageState extends State<PlayerPage> {
               alignment: Alignment.center,
               width: 60,
               child: StreamBuilder(
-                stream: App().playboy.stream.position,
+                stream: App().player.stream.position,
                 builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Text(
-                      getProgressString(snapshot.data!),
-                    );
-                  } else {
-                    return Text(
-                      getProgressString(App().position),
-                    );
-                  }
+                  return Text(
+                    getProgressString(App().player.state.position),
+                  );
                 },
               ),
             ),
@@ -394,17 +358,20 @@ class PlayerPageState extends State<PlayerPage> {
               alignment: Alignment.center,
               width: 60,
               child: StreamBuilder(
-                stream: App().playboy.stream.duration,
+                stream: App().player.stream.duration,
                 builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Text(
-                      getProgressString(snapshot.data!),
-                    );
-                  } else {
-                    return Text(
-                      getProgressString(App().duration),
-                    );
-                  }
+                  // if (snapshot.hasData) {
+                  //   return Text(
+                  //     getProgressString(snapshot.data!),
+                  //   );
+                  // } else {
+                  //   return Text(
+                  //     getProgressString(App().duration),
+                  //   );
+                  // }
+                  return Text(
+                    getProgressString(App().player.state.duration),
+                  );
                 },
               ),
             )
@@ -421,7 +388,6 @@ class PlayerPageState extends State<PlayerPage> {
   Widget _buildPlayer(ColorScheme colorScheme) {
     return MInteractiveWrapper(
       menuController: MenuController(),
-      // TODO: show dialog without context
       menuChildren: buildPlayerMenu(context),
       onTap: null,
       borderRadius: 18,
@@ -529,11 +495,11 @@ class PlayerPageState extends State<PlayerPage> {
         ],
       ),
       body: StreamBuilder(
-        stream: App().playboy.stream.playlist,
+        stream: App().player.stream.playlist,
         builder: (context, snapshot) {
           return ListView.builder(
             itemBuilder: (BuildContext context, int index) {
-              var src = App().playboy.state.playlist.medias[index].uri;
+              var src = App().player.state.playlist.medias[index].uri;
               return SizedBox(
                 height: 46,
                 child: Row(
@@ -543,31 +509,30 @@ class PlayerPageState extends State<PlayerPage> {
                       child: InkWell(
                         borderRadius: BorderRadius.circular(12),
                         onTap: () {
-                          App().playboy.jump(index);
+                          App().player.jump(index);
                         },
                         child: PlayerListCard(
                           info: PlayItem(
                             source: src,
-                            cover: null,
                             title: p.basenameWithoutExtension(src),
                           ),
-                          isPlaying: index == App().playingIndex,
+                          isPlaying: index == App().player.state.playlist.index,
                         ),
                       ),
                     ),
                     IconButton(
                       onPressed: () {
-                        var len = App().playboy.state.playlist.medias.length;
-                        if (index == App().playingIndex) {
+                        var len = App().player.state.playlist.medias.length;
+                        if (index == App().player.state.playlist.index) {
                           if (len == 1) {
-                            App().closeMedia();
+                            App().player.stop();
                           } else if (len - 1 == index) {
-                            App().playboy.previous();
+                            App().player.previous();
                           } else {
-                            App().playboy.next();
+                            App().player.next();
                           }
                         }
-                        App().playboy.remove(index);
+                        App().player.remove(index);
                         setState(() {});
                       },
                       icon: const Icon(Icons.close),
@@ -579,7 +544,7 @@ class PlayerPageState extends State<PlayerPage> {
                 ),
               );
             },
-            itemCount: App().playboy.state.playlist.medias.length,
+            itemCount: App().player.state.playlist.medias.length,
           );
         },
       ),
@@ -627,7 +592,7 @@ class PlayerPageState extends State<PlayerPage> {
                 IconButton(
                   onPressed: () {
                     setState(() {
-                      App().playboy.setRate(1);
+                      App().player.setRate(1);
                     });
                   },
                   icon: const Icon(Icons.flash_on_rounded),
@@ -637,11 +602,11 @@ class PlayerPageState extends State<PlayerPage> {
                     min: 0.25,
                     max: 8,
                     divisions: 31,
-                    label: App().playboy.state.rate.toString(),
-                    value: bounded(0.25, App().playboy.state.rate, 8),
+                    label: App().player.state.rate.toString(),
+                    value: bounded(0.25, App().player.state.rate, 8),
                     onChanged: (value) {
                       setState(() {
-                        App().playboy.setRate(value);
+                        App().player.setRate(value);
                       });
                     },
                   ),
@@ -695,15 +660,15 @@ class PlayerPageState extends State<PlayerPage> {
           ListTile(
             title: Text('生成字幕'.l10n),
             onTap: () async {
-              SubtitleGenerator subGenerator = SubtitleGenerator("medium-q5_0");
-              subGenerator.ensureInitialized();
-              if (App().mediaPath != null) {
-                var subtitle = await subGenerator.genSubtitle(App().mediaPath!);
-                debugPrint("Generated subtitle: $subtitle");
-                App().playboy.setSubtitleTrack(SubtitleTrack.data(subtitle));
-              } else {
-                debugPrint("No media is playing");
-              }
+              // SubtitleGenerator subGenerator = SubtitleGenerator("medium-q5_0");
+              // subGenerator.ensureInitialized();
+              // if (App().mediaPath != null) {
+              //   var subtitle = await subGenerator.genSubtitle(App().mediaPath!);
+              //   debugPrint("Generated subtitle: $subtitle");
+              //   App().playboy.setSubtitleTrack(SubtitleTrack.data(subtitle));
+              // } else {
+              //   debugPrint("No media is playing");
+              // }
             },
           ),
         ],

@@ -7,7 +7,7 @@ import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
-import 'package:playboy/pages/library/media_menu.dart';
+import 'package:playboy/pages/library/common_media_menu.dart';
 import 'package:playboy/widgets/cover.dart';
 import 'package:playboy/widgets/cover_listtile.dart';
 import 'package:playboy/widgets/menu/menu_button.dart';
@@ -102,7 +102,6 @@ class PlaylistDetailState extends State<PlaylistDetail> {
                           ),
                         ),
                         onPressed: () {
-                          App().closeMedia();
                           App().openPlaylist(widget.info, false);
                         },
                         icon: const Icon(Icons.play_arrow),
@@ -120,7 +119,6 @@ class PlaylistDetailState extends State<PlaylistDetail> {
                           ),
                         ),
                         onPressed: () {
-                          App().closeMedia();
                           App().openPlaylist(widget.info, true);
                           setState(() {});
                         },
@@ -151,9 +149,7 @@ class PlaylistDetailState extends State<PlaylistDetail> {
             icon: Icons.music_note,
             label: info.title,
             onTap: () async {
-              await App().closeMedia().then((_) {
-                App().openMedia(info);
-              });
+              App().openMedia(info);
               App().updateStatus();
             },
             actions: [
@@ -192,10 +188,10 @@ class PlaylistDetailState extends State<PlaylistDetail> {
             },
           );
           if (coverPath != null) {
-            var savePath = item.cover!;
+            var savePath = item.cover;
             var originalFile = File(coverPath);
             var newFile = File(savePath);
-            item.cover = savePath;
+            // item.cover = savePath;
             await originalFile.copy(newFile.path).then((_) {
               final ImageProvider imageProvider = FileImage(newFile);
               imageProvider.evict();
@@ -208,8 +204,7 @@ class PlaylistDetailState extends State<PlaylistDetail> {
         icon: Icons.cleaning_services,
         label: '清除封面'.l10n,
         onPressed: () async {
-          if (item.cover == null) return;
-          var file = File(item.cover!);
+          var file = File(item.cover);
           if (await file.exists()) {
             file.delete();
             final ImageProvider imageProvider = FileImage(file);

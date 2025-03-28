@@ -1,14 +1,14 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:path/path.dart';
 import 'package:playboy/backend/utils/theme_utils.dart';
+import 'package:playboy/pages/media/seekbar_builder.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:window_manager/window_manager.dart';
 
-import 'package:playboy/backend/actions.dart' as actions;
 import 'package:playboy/pages/file/file_explorer.dart';
 import 'package:playboy/widgets/menu/menu_button.dart';
 import 'package:playboy/widgets/menu/menu_item.dart';
@@ -41,7 +41,6 @@ class HomePage extends StatefulWidget {
 
   final bool playerView;
   static void Function()? refresh;
-  static void Function()? switchView;
 
   @override
   State<StatefulWidget> createState() => _HomePageState();
@@ -49,12 +48,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _tabIndex = 0;
-  int _prePageIndex = 0;
+  int _prePageIndex = 1;
   bool _forceRebuild = false;
-  bool _playerView = false;
 
   bool _fullScreen = false;
   bool _showTitleBarFullscreen = false;
+  bool _showSidePanel = true;
 
   bool _miniMode = false;
 
@@ -65,12 +64,15 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _playerView = widget.playerView;
-    _prePageIndex = _tabIndex = App().settings.initPage;
-    if (_playerView) _tabIndex = 0;
+    _tabIndex = App().settings.initPage;
+    if (widget.playerView) {
+      setState(() {
+        _tabIndex = 0;
+      });
+    }
 
     HomePage.refresh = () => setState(() => _forceRebuild = true);
-    App().actions[actions.togglePlayer] = () {
+    App().actions['togglePlayer'] = () {
       setState(
         () {
           if (_tabIndex == 0) {
@@ -79,11 +81,10 @@ class _HomePageState extends State<HomePage> {
             _prePageIndex = _tabIndex;
             _tabIndex = 0;
           }
-          _playerView = !_playerView;
         },
       );
     };
-    App().actions[actions.toggleFullscreen] = () async {
+    App().actions['toggleFullscreen'] = () async {
       if (_fullScreen) {
         windowManager.setFullScreen(false);
       } else {
@@ -94,17 +95,6 @@ class _HomePageState extends State<HomePage> {
         _showTitleBarFullscreen = false;
       });
     };
-    HomePage.switchView = () => setState(
-          () {
-            if (_tabIndex == 0) {
-              _tabIndex = _prePageIndex;
-            } else {
-              _prePageIndex = _tabIndex;
-              _tabIndex = 0;
-            }
-            _playerView = !_playerView;
-          },
-        );
   }
 
   @override
@@ -143,8 +133,8 @@ class _HomePageState extends State<HomePage> {
       },
       debugShowCheckedModeBanner: false,
       title: constants.appName,
-      theme: _getThemeData(App(), lightTheme),
-      darkTheme: _getThemeData(App(), darkTheme),
+      theme: getThemeData(App(), lightTheme),
+      darkTheme: getThemeData(App(), darkTheme),
       themeMode: App().settings.themeMode,
       home: Builder(
         builder: (context) {
@@ -153,41 +143,49 @@ class _HomePageState extends State<HomePage> {
           }
           return Scaffold(
             appBar: _fullScreen ? null : _buildTitleBar(context),
-            body: Stack(
-              children: [
-                Row(
-                  children: [
-                    _buildNavigationRail(context),
-                    _buildPage(context),
-                  ],
-                ),
-                if (_fullScreen)
-                  SizedBox(
-                    height: 40,
-                    child: AnimatedOpacity(
-                      opacity: _showTitleBarFullscreen ? 1 : 0,
-                      duration: const Duration(milliseconds: 100),
-                      child: MouseRegion(
-                        onHover: (event) {
-                          setState(() {
-                            _showTitleBarFullscreen = true;
-                          });
-                        },
-                        onExit: (event) {
-                          setState(() {
-                            _showTitleBarFullscreen = false;
-                          });
-                        },
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: _buildTitleBar(context),
-                        ),
+            body: Navigator(
+              key: App().contentKey,
+              onGenerateRoute: (route) => MaterialPageRoute(
+                settings: route,
+                builder: (context) {
+                  return Stack(
+                    children: [
+                      Row(
+                        children: [
+                          _buildNavigationRail(context),
+                          _buildPage(context),
+                        ],
                       ),
-                    ),
-                  ),
-              ],
+                      if (_fullScreen)
+                        SizedBox(
+                          height: 40,
+                          child: AnimatedOpacity(
+                            opacity: _showTitleBarFullscreen ? 1 : 0,
+                            duration: const Duration(milliseconds: 100),
+                            child: MouseRegion(
+                              onHover: (event) {
+                                setState(() {
+                                  _showTitleBarFullscreen = true;
+                                });
+                              },
+                              onExit: (event) {
+                                setState(() {
+                                  _showTitleBarFullscreen = false;
+                                });
+                              },
+                              child: Align(
+                                alignment: Alignment.topCenter,
+                                child: _buildTitleBar(context),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                },
+              ),
             ),
-            floatingActionButton: _playerView
+            floatingActionButton: _tabIndex == 0
                 ? const SizedBox()
                 : _buildFloatingMediaBar(context),
           );
@@ -196,80 +194,14 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  ThemeData _getThemeData(App value, ColorScheme colorScheme) {
-    return ThemeData(
-      pageTransitionsTheme: const PageTransitionsTheme(
-        builders: {
-          TargetPlatform.windows: CupertinoPageTransitionsBuilder(),
-          TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
-          TargetPlatform.linux: CupertinoPageTransitionsBuilder(),
-        },
-      ),
-      fontFamily: value.settings.font != '' ? value.settings.font : null,
-      fontFamilyFallback: Platform.isWindows ? ['Microsoft YaHei UI'] : null,
-      colorScheme: colorScheme,
-      tooltipTheme: TooltipThemeData(
-        decoration: BoxDecoration(
-          color: colorScheme.secondary,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        textStyle: TextStyle(
-          color: colorScheme.onSecondary,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      dialogTheme: DialogTheme(
-        backgroundColor: colorScheme.surface,
-        surfaceTintColor: Colors.transparent,
-        barrierColor: colorScheme.surfaceTint.withValues(alpha: 0.1),
-        shadowColor: Colors.black,
-      ),
-      appBarTheme: AppBarTheme(
-        scrolledUnderElevation: 0,
-        backgroundColor: colorScheme.surface,
-      ),
-      navigationRailTheme: NavigationRailThemeData(
-        backgroundColor: Color.alphaBlend(
-          colorScheme.primary.withValues(alpha: 0.04),
-          colorScheme.surface,
-        ),
-        indicatorColor: colorScheme.primaryContainer,
-      ),
-      iconButtonTheme: const IconButtonThemeData(
-        style: ButtonStyle(
-          iconSize: WidgetStatePropertyAll(22),
-        ),
-      ),
-      menuTheme: MenuThemeData(
-        style: MenuStyle(
-          shape: WidgetStatePropertyAll(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        ),
-      ),
-      sliderTheme: SliderThemeData(
-        year2023: false,
-        trackHeight: 4,
-        thumbSize: const WidgetStatePropertyAll(Size(4, 12)),
-        overlayShape: SliderComponentShape.noOverlay,
-      ),
-    );
-  }
-
   PreferredSizeWidget _buildTitleBar(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
-    late final backgroundColor = Color.alphaBlend(
-      colorScheme.primary.withValues(alpha: 0.04),
-      colorScheme.surface,
-    );
     var titlebarContent = [
       _buildAppMenuButton(context),
       const SizedBox(width: 40),
       Expanded(
         child: StreamBuilder(
-          stream: App().playboy.stream.playlist,
+          stream: App().player.stream.playlist,
           builder: (context, snapshot) {
             return Text(
               App().playingTitle,
@@ -283,7 +215,7 @@ class _HomePageState extends State<HomePage> {
     ];
     return AppBar(
       scrolledUnderElevation: 0,
-      backgroundColor: backgroundColor,
+      backgroundColor: colorScheme.appBackground,
       flexibleSpace: Column(
         children: [
           if (Platform.isWindows)
@@ -360,7 +292,7 @@ class _HomePageState extends State<HomePage> {
           constraints: const BoxConstraints(),
           padding: EdgeInsets.zero,
           onPressed: () {
-            HomePage.switchView?.call();
+            App().actions['togglePlayer']?.call();
           },
           icon: const Icon(Icons.play_circle_outline_rounded),
         ),
@@ -384,6 +316,7 @@ class _HomePageState extends State<HomePage> {
               EdgeInsets.symmetric(horizontal: 4, vertical: 2),
             ),
           ),
+          icon: Icons.arrow_drop_down_rounded,
           constraints: const BoxConstraints(),
           menuChildren: _buildAppMenuItems(context),
         ),
@@ -396,7 +329,7 @@ class _HomePageState extends State<HomePage> {
       const SizedBox(height: 10),
       MMenuItem(
         icon: _fullScreen ? Icons.close_fullscreen : Icons.open_in_full,
-        label: _fullScreen ? '退出全屏' : '全屏模式',
+        label: _fullScreen ? '退出全屏'.l10n : '全屏模式'.l10n,
         onPressed: () async {
           if (_fullScreen) {
             windowManager.setFullScreen(false);
@@ -408,10 +341,11 @@ class _HomePageState extends State<HomePage> {
             _showTitleBarFullscreen = false;
           });
         },
+        keymap: 'F',
       ),
       MMenuItem(
         icon: Icons.music_note_outlined,
-        label: '迷你音乐播放器',
+        label: '迷你音乐播放器'.l10n,
         onPressed: () {
           windowManager.setResizable(false);
           windowManager.setMinimumSize(const Size(300, 120));
@@ -427,19 +361,29 @@ class _HomePageState extends State<HomePage> {
         label: '画中画',
         onPressed: null,
       ),
-      const MMenuItem(
+      MMenuItem(
         icon: Icons.push_pin_outlined,
-        label: '应用置顶',
-        onPressed: null,
+        label: '应用置顶'.l10n,
+        onPressed: () async {
+          if (await windowManager.isAlwaysOnTop()) {
+            windowManager.setAlwaysOnTop(false);
+          } else {
+            windowManager.setAlwaysOnTop(true);
+          }
+        },
       ),
       const Divider(),
-      const MMenuItem(
+      MMenuItem(
         icon: Icons.visibility_outlined,
-        label: '显示/隐藏侧边栏',
-        onPressed: null,
+        label: '切换侧边栏'.l10n,
+        onPressed: () {
+          setState(() {
+            _showSidePanel = !_showSidePanel;
+          });
+        },
       ),
       MMenuItem(
-        label: '切换深浅色主题',
+        label: '切换深色主题'.l10n,
         icon: Theme.of(context).brightness == Brightness.dark
             ? Icons.wb_sunny_outlined
             : Icons.dark_mode_outlined,
@@ -457,40 +401,68 @@ class _HomePageState extends State<HomePage> {
       ),
       MMenuItem(
         icon: Icons.settings_outlined,
-        label: '偏好设置',
+        label: '偏好设置'.l10n,
         onPressed: () {
-          pushPage(
-            context,
-            const SettingsPage(),
-          ).then((_) {
-            setState(() {});
-          });
+          if (App().contentKey.currentContext != null) {
+            pushPage(
+              App().contentKey.currentState!.context,
+              const SettingsPage(),
+            ).then((_) {
+              setState(() {});
+            });
+          }
         },
-      ),
-      const MMenuItem(
-        icon: Icons.info_outline,
-        label: '关于应用',
-        onPressed: null,
-      ),
-      const MMenuItem(
-        icon: Icons.upcoming_outlined,
-        label: '检查更新',
-        onPressed: null,
       ),
       const Divider(),
       MMenuItem(
-        icon: Icons.bug_report_outlined,
-        label: '填充显示区域',
+        icon: Icons.info_outline,
+        label: '关于应用'.l10n,
         onPressed: () {
-          App().refreshVO();
+          App().dialog(
+            (context) => const AboutDialog(
+              applicationName: constants.appName,
+              applicationVersion: constants.version,
+            ),
+          );
         },
       ),
       MMenuItem(
-        icon: Icons.bug_report_outlined,
-        label: '使用默认显示大小',
+        icon: Icons.upcoming_outlined,
+        label: '检查更新'.l10n,
         onPressed: () {
-          App().restoreVO();
+          launchUrl(
+            Uri.parse('https://github.com/Playboy-Player/Playboy/releases'),
+          );
         },
+      ),
+      const Divider(),
+      SubmenuButton(
+        leadingIcon: const Icon(
+          Icons.bug_report_outlined,
+          size: 18,
+        ),
+        menuChildren: [
+          const SizedBox(height: 10),
+          MMenuItem(
+            icon: Icons.bug_report_outlined,
+            label: '填充显示区域'.l10n,
+            onPressed: () {
+              App().refreshVO();
+            },
+          ),
+          MMenuItem(
+            icon: Icons.bug_report_outlined,
+            label: '使用默认显示大小'.l10n,
+            onPressed: () {
+              App().restoreVO();
+            },
+          ),
+          const SizedBox(height: 10)
+        ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 6),
+          child: Text('调试'.l10n),
+        ),
       ),
       const SizedBox(height: 10),
     ];
@@ -540,6 +512,110 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ],
+    ];
+  }
+
+  List<Widget> _buildControlButtons(ColorScheme colorScheme) {
+    return [
+      IconButton(
+        padding: const EdgeInsets.symmetric(horizontal: 2),
+        constraints: const BoxConstraints(),
+        color: colorScheme.primaryContainer,
+        // iconSize: 30,
+        onPressed: () {
+          App().player.previous();
+          setState(() {});
+        },
+        icon: const Icon(
+          Icons.skip_previous_rounded,
+          // size: 30,
+        ),
+      ),
+      Expanded(
+        // width: 120,
+        child: SliderTheme(
+          data: SliderThemeData(
+            // ignore: deprecated_member_use
+            year2023: false,
+            trackHeight: 3,
+            thumbSize: const WidgetStatePropertyAll(
+              Size(4, 14),
+            ),
+            overlayShape: SliderComponentShape.noOverlay,
+            thumbColor: colorScheme.primaryContainer,
+            activeTrackColor: colorScheme.primaryContainer,
+          ),
+          child: buildMediaSeekbar(() {
+            setState(() {});
+          }),
+        ),
+      ),
+      IconButton(
+        padding: const EdgeInsets.symmetric(horizontal: 2),
+        constraints: const BoxConstraints(),
+        color: colorScheme.primaryContainer,
+        onPressed: () {
+          App().player.next();
+          setState(() {});
+        },
+        icon: const Icon(
+          Icons.skip_next_rounded,
+        ),
+      ),
+      IconButton(
+        padding: const EdgeInsets.symmetric(horizontal: 2),
+        constraints: const BoxConstraints(),
+        color: colorScheme.primaryContainer,
+        onPressed: () {
+          var shuffle = App().player.isShuffleEnabled;
+          App().player.setShuffle(!shuffle);
+          setState(() {});
+        },
+        icon: App().player.isShuffleEnabled
+            ? const Icon(Icons.shuffle_on_rounded)
+            : const Icon(Icons.shuffle_rounded),
+        iconSize: 20,
+      ),
+      StreamBuilder(
+        stream: App().player.stream.playlistMode,
+        builder: (context, _) {
+          return IconButton(
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            constraints: const BoxConstraints(),
+            color: colorScheme.primaryContainer,
+            onPressed: () {
+              switch (App().player.state.playlistMode) {
+                case PlaylistMode.loop:
+                  App().player.setPlaylistMode(PlaylistMode.single);
+                case PlaylistMode.single:
+                  App().player.setPlaylistMode(PlaylistMode.none);
+                case PlaylistMode.none:
+                  App().player.setPlaylistMode(PlaylistMode.loop);
+              }
+            },
+            icon: Icon(
+              switch (App().player.state.playlistMode) {
+                PlaylistMode.loop => Icons.repeat_on_rounded,
+                PlaylistMode.single => Icons.repeat_one_on_rounded,
+                PlaylistMode.none => Icons.repeat_rounded,
+              },
+            ),
+            iconSize: 20,
+          );
+        },
+      ),
+      IconButton(
+        padding: const EdgeInsets.symmetric(horizontal: 2),
+        constraints: const BoxConstraints(),
+        color: colorScheme.primaryContainer,
+        onPressed: () {
+          App().player.stop();
+          setState(() {});
+        },
+        icon: const Icon(
+          Icons.stop_rounded,
+        ),
+      )
     ];
   }
 
@@ -599,16 +675,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                               maxLines: 1,
                             ),
-                            // Text(
-                            //   'author',
-                            //   style: TextStyle(
-                            //     fontSize: 12,
-                            //     color: colorScheme.primaryContainer,
-                            //   ),
-                            // )
-                            const SizedBox(
-                              height: 8,
-                            )
+                            const SizedBox(height: 8)
                           ],
                         ),
                       ),
@@ -625,14 +692,14 @@ class _HomePageState extends State<HomePage> {
                         iconSize: 24,
                         onPressed: () {
                           setState(() {
-                            App().playboy.playOrPause();
+                            App().player.playOrPause();
                           });
                         },
                         icon: StreamBuilder(
-                          stream: App().playboy.stream.playing,
+                          stream: App().player.stream.playing,
                           builder: (context, snapshot) {
                             return Icon(
-                              App().playing
+                              App().player.state.playing
                                   ? Icons.pause_circle_outline
                                   : Icons.play_arrow_outlined,
                               color: colorScheme.onPrimaryContainer,
@@ -640,9 +707,7 @@ class _HomePageState extends State<HomePage> {
                           },
                         ),
                       ),
-                      const SizedBox(
-                        width: 12,
-                      ),
+                      const SizedBox(width: 12),
                     ],
                   ),
                 ),
@@ -651,9 +716,7 @@ class _HomePageState extends State<HomePage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      const SizedBox(
-                        width: 10,
-                      ),
+                      const SizedBox(width: 10),
                       IconButton(
                         padding: const EdgeInsets.symmetric(horizontal: 2),
                         constraints: const BoxConstraints(),
@@ -672,150 +735,11 @@ class _HomePageState extends State<HomePage> {
                         },
                         icon: const Icon(Icons.close_rounded),
                       ),
-                      IconButton(
-                        padding: const EdgeInsets.symmetric(horizontal: 2),
-                        constraints: const BoxConstraints(),
-                        color: colorScheme.primaryContainer,
-                        // iconSize: 30,
-                        onPressed: () {
-                          App().playboy.previous();
-                          setState(() {});
-                        },
-                        icon: const Icon(
-                          Icons.skip_previous_rounded,
-                          // size: 30,
-                        ),
-                      ),
-                      Expanded(
-                        // width: 120,
-                        child: SliderTheme(
-                          data: SliderThemeData(
-                            year2023: false,
-                            trackHeight: 3,
-                            thumbSize: const WidgetStatePropertyAll(
-                              Size(4, 14),
-                            ),
-                            overlayShape: SliderComponentShape.noOverlay,
-                            thumbColor: colorScheme.primaryContainer,
-                            activeTrackColor: colorScheme.primaryContainer,
-                          ),
-                          child: StreamBuilder(
-                            stream: App().playboy.stream.position,
-                            builder: (context, snapshot) {
-                              return Slider(
-                                max: App().duration.inMilliseconds.toDouble(),
-                                value: App().seeking
-                                    ? App().seekingPos
-                                    : min(
-                                        snapshot.hasData
-                                            ? snapshot.data!.inMilliseconds
-                                                .toDouble()
-                                            : App()
-                                                .position
-                                                .inMilliseconds
-                                                .toDouble(),
-                                        App()
-                                            .duration
-                                            .inMilliseconds
-                                            .toDouble()),
-                                onChanged: (value) {
-                                  setState(() {
-                                    App().seekingPos = value;
-                                  });
-                                },
-                                onChangeStart: (value) {
-                                  setState(
-                                    () {
-                                      App().seeking = true;
-                                    },
-                                  );
-                                },
-                                onChangeEnd: (value) {
-                                  App()
-                                      .playboy
-                                      .seek(
-                                          Duration(milliseconds: value.toInt()))
-                                      .then(
-                                        (value) => {
-                                          setState(
-                                            () {
-                                              App().seeking = false;
-                                            },
-                                          )
-                                        },
-                                      );
-                                },
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        padding: const EdgeInsets.symmetric(horizontal: 2),
-                        constraints: const BoxConstraints(),
-                        color: colorScheme.primaryContainer,
-                        onPressed: () {
-                          App().playboy.next();
-                          setState(() {});
-                        },
-                        icon: const Icon(
-                          Icons.skip_next_rounded,
-                        ),
-                      ),
-                      IconButton(
-                        padding: const EdgeInsets.symmetric(horizontal: 2),
-                        constraints: const BoxConstraints(),
-                        color: colorScheme.primaryContainer,
-                        onPressed: () {
-                          setState(
-                            () {
-                              App().shuffle = !App().shuffle;
-                            },
-                          );
-                        },
-                        icon: App().shuffle
-                            ? const Icon(Icons.shuffle_on_rounded)
-                            : const Icon(Icons.shuffle_rounded),
-                        iconSize: 20,
-                      ),
-                      IconButton(
-                        padding: const EdgeInsets.symmetric(horizontal: 2),
-                        constraints: const BoxConstraints(),
-                        color: colorScheme.primaryContainer,
-                        onPressed: () {
-                          if (App().playboy.state.playlistMode ==
-                              PlaylistMode.single) {
-                            App().playboy.setPlaylistMode(PlaylistMode.none);
-                          } else {
-                            App().playboy.setPlaylistMode(PlaylistMode.single);
-                          }
-                          setState(() {});
-                        },
-                        icon: App().playboy.state.playlistMode ==
-                                PlaylistMode.single
-                            ? const Icon(Icons.repeat_one_on_rounded)
-                            : const Icon(Icons.repeat_one_rounded),
-                        iconSize: 20,
-                      ),
-                      IconButton(
-                        padding: const EdgeInsets.symmetric(horizontal: 2),
-                        constraints: const BoxConstraints(),
-                        color: colorScheme.primaryContainer,
-                        onPressed: () {
-                          App().closeMedia().then((_) {
-                            setState(() {});
-                          });
-                        },
-                        icon: const Icon(
-                          Icons.stop_rounded,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 6,
-                      ),
+                      ..._buildControlButtons(colorScheme),
+                      const SizedBox(width: 10),
                     ],
                   ),
-                )
+                ),
               ],
             ),
           ],
@@ -831,7 +755,7 @@ class _HomePageState extends State<HomePage> {
           windowManager.startDragging();
         },
         child: StreamBuilder(
-          stream: App().playboy.stream.playlist,
+          stream: App().player.stream.playlist,
           builder: (context, snapshot) {
             return App().playingCover == null ||
                     !File(App().playingCover!).existsSync()
@@ -858,15 +782,11 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildNavigationRail(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
-    late final backgroundColor = Color.alphaBlend(
-      colorScheme.primary.withValues(alpha: 0.04),
-      colorScheme.surface,
-    );
 
-    if (_playerView) {
+    if (_tabIndex == 0 || !_showSidePanel) {
       return Container(
         width: _fullScreen ? 0 : 10,
-        color: backgroundColor,
+        color: colorScheme.appBackground,
       );
     }
 
@@ -878,7 +798,8 @@ class _HomePageState extends State<HomePage> {
     ) {
       // final bool selected = id == _tabIndex;
       return Material(
-        color: selected ? colorScheme.primaryContainer : backgroundColor,
+        color:
+            selected ? colorScheme.primaryContainer : colorScheme.appBackground,
         borderRadius: BorderRadius.circular(20),
         child: InkWell(
           // onTap: () {
@@ -917,7 +838,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     return Container(
-      color: backgroundColor,
+      color: colorScheme.appBackground,
       width: 200,
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: ListView(
@@ -966,7 +887,7 @@ class _HomePageState extends State<HomePage> {
                     Icons.folder_special_outlined,
                     false,
                     () {
-                      App().actions[actions.gotoDirectory]?.call(path);
+                      App().actions['gotoDirectory']?.call(path);
                       setState(() {
                         _tabIndex = 3;
                       });
@@ -1030,13 +951,9 @@ class _HomePageState extends State<HomePage> {
     }
 
     late final colorScheme = Theme.of(context).colorScheme;
-    late final backgroundColor = Color.alphaBlend(
-      colorScheme.primary.withValues(alpha: 0.04),
-      colorScheme.surface,
-    );
     return Expanded(
       child: Container(
-        color: backgroundColor,
+        color: colorScheme.appBackground,
         padding: const EdgeInsets.only(right: 10),
         child: ClipRRect(
           borderRadius: const BorderRadius.only(
@@ -1070,150 +987,21 @@ class _HomePageState extends State<HomePage> {
               // iconSize: 30,
               onPressed: () {
                 setState(() {
-                  App().playboy.playOrPause();
+                  App().player.playOrPause();
                 });
               },
               icon: StreamBuilder(
-                stream: App().playboy.stream.playing,
+                stream: App().player.stream.playing,
                 builder: (context, snapshot) {
                   return Icon(
-                    App().playing
+                    App().player.state.playing
                         ? Icons.pause_rounded
                         : Icons.play_arrow_rounded,
                   );
                 },
               ),
             ),
-            IconButton(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              constraints: const BoxConstraints(),
-              color: colorScheme.primaryContainer,
-              // iconSize: 30,
-              onPressed: () {
-                App().playboy.previous();
-                setState(() {});
-              },
-              icon: const Icon(
-                Icons.skip_previous_rounded,
-                // size: 30,
-              ),
-            ),
-            Expanded(
-              // width: 120,
-              child: SliderTheme(
-                data: SliderThemeData(
-                  thumbColor: colorScheme.primaryContainer,
-                  activeTrackColor: colorScheme.primaryContainer,
-                  year2023: false,
-                  trackHeight: 4,
-                  thumbSize: const WidgetStatePropertyAll(Size(4, 12)),
-                  overlayShape: SliderComponentShape.noOverlay,
-                ),
-                child: StreamBuilder(
-                  stream: App().playboy.stream.position,
-                  builder: (context, snapshot) {
-                    return Slider(
-                      max: App().duration.inMilliseconds.toDouble(),
-                      value: App().seeking
-                          ? App().seekingPos
-                          : max(
-                              min(
-                                  snapshot.hasData
-                                      ? snapshot.data!.inMilliseconds.toDouble()
-                                      : App()
-                                          .position
-                                          .inMilliseconds
-                                          .toDouble(),
-                                  App().duration.inMilliseconds.toDouble()),
-                              0),
-                      onChanged: (value) {
-                        setState(
-                          () {
-                            App().seekingPos = value;
-                          },
-                        );
-                      },
-                      onChangeStart: (value) {
-                        setState(
-                          () {
-                            App().seeking = true;
-                          },
-                        );
-                      },
-                      onChangeEnd: (value) {
-                        App()
-                            .playboy
-                            .seek(Duration(milliseconds: value.toInt()))
-                            .then(
-                              (value) => {
-                                setState(
-                                  () {
-                                    App().seeking = false;
-                                  },
-                                )
-                              },
-                            );
-                      },
-                    );
-                  },
-                ),
-              ),
-            ),
-            IconButton(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              constraints: const BoxConstraints(),
-              color: colorScheme.primaryContainer,
-              onPressed: () {
-                App().playboy.next();
-                setState(() {});
-              },
-              icon: const Icon(
-                Icons.skip_next_rounded,
-              ),
-            ),
-            IconButton(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              constraints: const BoxConstraints(),
-              color: colorScheme.primaryContainer,
-              onPressed: () {
-                setState(
-                  () {
-                    App().shuffle = !App().shuffle;
-                  },
-                );
-              },
-              icon: App().shuffle
-                  ? const Icon(Icons.shuffle_on_rounded)
-                  : const Icon(Icons.shuffle_rounded),
-              iconSize: 20,
-            ),
-            IconButton(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              constraints: const BoxConstraints(),
-              color: colorScheme.primaryContainer,
-              onPressed: () {
-                if (App().playboy.state.playlistMode == PlaylistMode.single) {
-                  App().playboy.setPlaylistMode(PlaylistMode.none);
-                } else {
-                  App().playboy.setPlaylistMode(PlaylistMode.single);
-                }
-                setState(() {});
-              },
-              icon: App().playboy.state.playlistMode == PlaylistMode.single
-                  ? const Icon(Icons.repeat_one_on_rounded)
-                  : const Icon(Icons.repeat_one_rounded),
-              iconSize: 20,
-            ),
-            IconButton(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              constraints: const BoxConstraints(),
-              color: colorScheme.primaryContainer,
-              onPressed: () {
-                App().closeMedia();
-                setState(() {});
-              },
-              icon: const Icon(Icons.stop_rounded),
-            ),
+            ..._buildControlButtons(colorScheme),
             const SizedBox(width: 10),
           ],
         ),
@@ -1221,9 +1009,9 @@ class _HomePageState extends State<HomePage> {
     }
 
     return StreamBuilder(
-      stream: App().playboy.stream.playlist,
+      stream: App().player.stream.playlist,
       builder: (context, snapshot) {
-        return App().playingTitle != 'Not Playing' && App().settings.tabletUI
+        return App().playingTitle != 'Not Playing'
             ? buildFloatingMediaBarContent(context)
             : const SizedBox();
       },

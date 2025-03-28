@@ -1,7 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:window_manager/window_manager.dart';
+import 'package:playboy/backend/keymap_helper.dart';
+import 'package:playboy/backend/utils/theme_utils.dart';
+import 'package:playboy/pages/settings/categories/whisper_settings.dart';
 
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/pages/settings/categories/about_app_settings.dart';
@@ -41,6 +41,11 @@ class SettingsPageState extends State<SettingsPage> {
       const KeymapSettings(),
     ),
     (
+      Icons.auto_awesome_outlined,
+      'Whisper'.l10n,
+      const WhisperSettingsPage(),
+    ),
+    (
       Icons.folder_outlined,
       '存储'.l10n,
       const StorageSettingsPage(),
@@ -63,128 +68,84 @@ class SettingsPageState extends State<SettingsPage> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    KeyMapHelper.keyBindinglock++;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    KeyMapHelper.keyBindinglock--;
+  }
+
+  @override
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
-    late final backgroundColor = Color.alphaBlend(
-      colorScheme.primary.withValues(alpha: 0.04),
-      colorScheme.surface,
-    );
+
     return Scaffold(
-      appBar: AppBar(
-        leadingWidth: 40,
-        automaticallyImplyLeading: false,
-        titleSpacing: 0,
-        title: Stack(
-          children: [
-            Container(
-              color: backgroundColor,
-              width: _sidebarWidth,
-              height: 40,
-            ),
-            IconButton(
-              iconSize: 20,
-              constraints: const BoxConstraints(),
-              icon: const Icon(Icons.arrow_back_ios_new),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        scrolledUnderElevation: 0,
-        flexibleSpace: Column(
-          children: [
-            SizedBox(
-              height: 8,
-              child: MouseRegion(
-                cursor: SystemMouseCursors.resizeUp,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onPanStart: (details) {
-                    windowManager.startResizing(ResizeEdge.top);
-                  },
-                ),
-              ),
-            ),
-            Expanded(
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onPanStart: (details) {
-                  windowManager.startDragging();
-                },
-              ),
-            )
-          ],
-        ),
-        toolbarHeight: 40,
-        actions: [
-          IconButton(
-            hoverColor: Colors.transparent,
-            padding: EdgeInsets.zero,
-            iconSize: 26,
-            onPressed: () {
-              windowManager.minimize();
-            },
-            icon: const Icon(Icons.keyboard_arrow_down),
-          ),
-          IconButton(
-            hoverColor: Colors.transparent,
-            padding: EdgeInsets.zero,
-            iconSize: 26,
-            onPressed: () async {
-              if (await windowManager.isMaximized()) {
-                windowManager.unmaximize();
-              } else {
-                windowManager.maximize();
-              }
-            },
-            icon: const Icon(Icons.keyboard_arrow_up),
-          ),
-          IconButton(
-            hoverColor: Colors.transparent,
-            iconSize: 20,
-            onPressed: () {
-              windowManager.close();
-            },
-            icon: const Icon(Icons.close),
-          ),
-        ],
-      ),
       body: Row(
         children: [
           Container(
-            color: backgroundColor,
+            color: colorScheme.appBackground,
             padding: const EdgeInsets.symmetric(horizontal: 12),
             width: _sidebarWidth,
             child: Column(
               children: [
-                if (Platform.isAndroid) const SizedBox(height: 40),
-                Container(
-                  alignment: Alignment.topCenter,
-                  height: 50,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
-                    '设置'.l10n,
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w500,
-                      color: Theme.of(context).colorScheme.secondary,
+                Row(
+                  children: [
+                    IconButton(
+                      iconSize: 16,
+                      padding: const EdgeInsets.all(4),
+                      constraints: const BoxConstraints(),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.arrow_back_rounded),
                     ),
-                  ),
+                    Expanded(
+                      child: Container(
+                        alignment: Alignment.center,
+                        height: 50,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          '设置'.l10n,
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w500,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 24),
+                  ],
                 ),
                 const SizedBox(height: 10),
                 Expanded(
                   child: _buildSettingsSideBar(),
-                )
+                ),
               ],
             ),
           ),
           Expanded(
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: _tabs[_tabIndex].$3,
+            child: Container(
+              color: colorScheme.appBackground,
+              padding: const EdgeInsets.only(right: 10),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(18),
+                  topRight: Radius.circular(18),
+                ),
+                child: Container(
+                  color: colorScheme.surface,
+                  padding: const EdgeInsets.only(
+                    left: 10,
+                    right: 10,
+                    top: 6,
+                  ),
+                  child: _tabs[_tabIndex].$3,
+                ),
               ),
             ),
           ),
@@ -195,14 +156,10 @@ class SettingsPageState extends State<SettingsPage> {
 
   Widget _buildSettingsSideBar() {
     late final colorScheme = Theme.of(context).colorScheme;
-    late final backgroundColor = Color.alphaBlend(
-      colorScheme.primary.withValues(alpha: 0.04),
-      colorScheme.surface,
-    );
     Widget buildItem(int id, String name, IconData icon) {
       final bool selected = id == _tabIndex;
       return Material(
-        color: selected ? colorScheme.secondary : backgroundColor,
+        color: selected ? colorScheme.secondary : colorScheme.appBackground,
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           onTap: () {

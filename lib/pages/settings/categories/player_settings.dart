@@ -1,6 +1,10 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
+import 'package:playboy/widgets/path_setting_card.dart';
+import 'package:playboy/widgets/settings_message_box.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PlayerSettingsPage extends StatefulWidget {
   const PlayerSettingsPage({super.key});
@@ -12,7 +16,6 @@ class PlayerSettingsPage extends StatefulWidget {
 class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
   @override
   Widget build(BuildContext context) {
-    late final ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       body: ListView(
         children: [
@@ -35,22 +38,6 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
                 App().settings.autoPlay = value;
               });
               App().saveSettings();
-              // AppStorage().updateStatus();
-            },
-          ),
-          SwitchListTile(
-            title: Text('精确跳转'.l10n),
-            value: App().settings.preciseSeek,
-            onChanged: (bool value) {
-              App().playboy.setProperty(
-                    'hr-seek',
-                    value ? 'yes' : 'no',
-                  );
-              setState(() {
-                App().settings.preciseSeek = value;
-              });
-              App().saveSettings();
-              // AppStorage().updateStatus();
             },
           ),
           SwitchListTile(
@@ -62,51 +49,119 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
                 App().settings.rememberStatus = value;
               });
               App().saveSettings();
-              // AppStorage().updateStatus();
+            },
+          ),
+          // default volume
+          // default speed
+          // default playlist mode
+          Container(
+            padding: const EdgeInsets.all(12),
+            child: Text(
+              'libmpv 设置'.l10n,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+          ),
+          SettingsMessageBox(message: '注意: libmpv 设置需要重启应用才能生效'.l10n),
+          const SizedBox(height: 6),
+          // osd level 0123
+          SwitchListTile(
+            title: Text('允许 libmpv 使用配置文件'.l10n),
+            value: App().settings.enableMpvConfig,
+            onChanged: (value) {
+              setState(() {
+                App().settings.enableMpvConfig = value;
+              });
+            },
+          ),
+          SwitchListTile(
+            title: Text('使用 libmpv 预置键位绑定'.l10n),
+            value: App().settings.useDefaultKeyBinding,
+            onChanged: (value) {
+              setState(() {
+                App().settings.useDefaultKeyBinding = value;
+              });
             },
           ),
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             child: Text(
-              'MPV Properties'.l10n,
-              style: TextStyle(
-                fontSize: 20,
+              'mpv 配置文件路径'.l10n,
+              style: const TextStyle(
+                fontSize: 16,
                 fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.secondary,
               ),
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(12),
-            child: Text(
-              'MPV Options'.l10n,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-            ),
-          ),
-          Container(
-            decoration: ShapeDecoration(
-              color: colorScheme.primaryContainer.withValues(alpha: 0.2),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
-            child: SizedBox(
-              height: 50,
-              child: Container(
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  '重启应用后生效',
-                  style: TextStyle(
-                    color: colorScheme.onPrimaryContainer,
-                  ),
+          PathSettingCard(
+            path: App().settings.mpvConfigPath != ''
+                ? App().settings.mpvConfigPath
+                : App().dataPath,
+            actions: [
+              SizedBox(
+                width: 40,
+                child: IconButton(
+                  onPressed: () {
+                    launchUrl(
+                      Uri.directory(
+                        App().settings.mpvConfigPath != ''
+                            ? App().settings.mpvConfigPath
+                            : App().dataPath,
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.folder_outlined),
                 ),
               ),
+              SizedBox(
+                width: 40,
+                child: IconButton(
+                  onPressed: () async {
+                    var res = await FilePicker.platform
+                        .getDirectoryPath(lockParentWindow: true);
+                    if (res != null) {
+                      App().settings.mpvConfigPath = res;
+                      App().saveSettings();
+                      setState(() {});
+                    }
+                  },
+                  icon: const Icon(Icons.edit_outlined),
+                ),
+              ),
+            ],
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: Text(
+              'mpv 动态库路径'.l10n,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
             ),
+          ),
+          PathSettingCard(
+            path: App().settings.libmpvPath,
+            actions: [
+              SizedBox(
+                width: 40,
+                child: IconButton(
+                  onPressed: () async {
+                    var res = await FilePicker.platform
+                        .getDirectoryPath(lockParentWindow: true);
+                    if (res != null) {
+                      App().settings.libmpvPath = res;
+                      App().saveSettings();
+                      setState(() {});
+                    }
+                  },
+                  icon: const Icon(Icons.edit_outlined),
+                ),
+              ),
+            ],
           ),
         ],
       ),

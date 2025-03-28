@@ -1,8 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:playboy/backend/app.dart';
 
-import 'package:playboy/backend/actions.dart' as actions;
-
 class KeyMapHelper {
   static late final HardwareKeyboard _keyboard;
   static void init() {
@@ -77,24 +75,24 @@ class KeyMapHelper {
       if (_keyboard.isControlPressed) key = 'CTRL+$key';
       if (_keyboard.isMetaPressed) key = 'META+$key';
 
-      if (enableKeyBinding) {
+      if (keyBindinglock == 0) {
         if (_keyBindings.containsKey(key)) {
           // overrides mpv keymap
           _executeKeyAction(key);
         } else {
           // use keymap from mpv builtin and user input.conf
-          App().playboy.command(['keypress', key]);
+          App().player.command(['keypress', key]);
         }
       }
     }
     return false;
   }
 
-  static bool enableKeyBinding = true;
+  static int keyBindinglock = 0;
   static final Map<String, String> _keyBindings = {
-    'q': actions.togglePlayer,
-    'Q': actions.togglePlayer,
-    'f': actions.toggleFullscreen,
+    'q': 'togglePlayer',
+    'Q': 'togglePlayer',
+    'f': 'toggleFullscreen',
   };
 
   static void _executeKeyAction(String key) {

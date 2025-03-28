@@ -14,7 +14,7 @@ class MEmptyHolder extends StatelessWidget {
           borderRadius: BorderRadius.all(Radius.circular(14)),
         ),
         child: SizedBox(
-          height: 50,
+          height: 100,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

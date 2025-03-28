@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/models/contributor.dart';
 
-const IconData appIcon = Icons.smart_display;
+const IconData appIcon = Icons.play_circle_outline;
 const String appName = 'Playboy';
-const String version = 'βeta 2025.2';
+const String version = 'βeta 2025.3';
 const String flutterVersion = '3.29.0';
 
 List<Contributor> contributors = [

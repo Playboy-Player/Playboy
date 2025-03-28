@@ -12,6 +12,7 @@ bool isSubsequence(String target, String text) {
   return i == n;
 }
 
+// TODO: use normalize url from path package
 String unifyPath(String path, {bool endSlash = true}) {
   String result = (path).replaceAll(r'\', '/');
   if (endSlash) {

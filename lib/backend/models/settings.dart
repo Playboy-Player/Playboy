@@ -28,6 +28,10 @@ class AppSettings {
   bool defaultMusicMode;
   Map<String, String> mpvProperties;
   Map<String, String> mpvOptions;
+  bool enableMpvConfig;
+  bool useDefaultKeyBinding;
+  String mpvConfigPath;
+  int mpvOsdLevel;
 
   // 0:ask 1:never 2:always
   int continueToPlay;
@@ -57,6 +61,9 @@ class AppSettings {
   bool enableTitleBar;
   String libmpvPath;
 
+  String model;
+  bool useMirrorLink;
+
   AppSettings({
     // Display Settings,
     this.font = '',
@@ -84,6 +91,10 @@ class AppSettings {
     this.playAfterExit = true,
     this.mpvOptions = const {},
     this.mpvProperties = const {},
+    this.enableMpvConfig = true,
+    this.useDefaultKeyBinding = true,
+    this.mpvConfigPath = '',
+    this.mpvOsdLevel = 0,
 
     // Storage Settings
     this.getCoverOnScan = false,
@@ -104,6 +115,8 @@ class AppSettings {
     this.tabletUI = true,
     this.enableTitleBar = true,
     this.libmpvPath = '',
+    this.model = '',
+    this.useMirrorLink = true,
   });
 
   factory AppSettings.fromJson(Map<String, dynamic> json) =>

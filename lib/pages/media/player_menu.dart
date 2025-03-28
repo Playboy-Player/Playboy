@@ -19,7 +19,7 @@ List<Widget> buildPlayerMenu(BuildContext context) {
       label: '截图'.l10n,
       onPressed: () async {
         if (App().playingTitle == 'Not Playing') return;
-        var image = await App().playboy.screenshot();
+        var image = await App().player.screenshot();
         if (image != null) {
           var file = File(
             '${App().settings.screenshotPath}/${getCurrentTimeString()}.png',
@@ -33,7 +33,7 @@ List<Widget> buildPlayerMenu(BuildContext context) {
       label: '将当前画面设为封面'.l10n,
       onPressed: () async {
         if (App().playingTitle == 'Not Playing') return;
-        var image = await App().playboy.screenshot();
+        var image = await App().player.screenshot();
         if (image != null) {
           var file = File('${App().playingCover}');
           await file.writeAsBytes(image);
@@ -75,10 +75,8 @@ List<Widget> buildPlayerMenu(BuildContext context) {
       label: '打开URL'.l10n,
       onPressed: () {
         var editingController = TextEditingController();
-        showDialog(
-          useRootNavigator: false,
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
+        App().dialog(
+          (BuildContext context) => AlertDialog(
             surfaceTintColor: Colors.transparent,
             title: Text('播放网络串流'.l10n),
             content: TextField(
@@ -114,18 +112,19 @@ List<Widget> buildPlayerMenu(BuildContext context) {
     ),
     const Divider(),
     MMenuItem(
-        icon: Icons.info_outline,
-        label: '属性'.l10n,
-        onPressed: () {
-          App().playboy.command(['keypress', 'SHIFT+I']);
-        }),
+      icon: Icons.info_outline,
+      label: '属性'.l10n,
+      onPressed: () {
+        App().player.command(['keypress', 'SHIFT+I']);
+      },
+      keymap: 'Shift+I',
+    ),
     const SizedBox(height: 10),
   ];
 }
 
 void _openLink(String source) async {
-  App().closeMedia();
   App().openMedia(
-    PlayItem(source: source, cover: null, title: source),
+    PlayItem(source: source, title: source),
   );
 }
