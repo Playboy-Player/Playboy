@@ -7,6 +7,7 @@ import 'package:media_kit/media_kit.dart';
 
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/theme_utils.dart';
+import 'package:playboy/backend/utils/media_utils.dart';
 import 'package:playboy/pages/media/seekbar_builder.dart';
 import 'package:playboy/widgets/basic_video.dart';
 import 'package:playboy/pages/media/player_menu.dart';
@@ -15,6 +16,7 @@ import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/time_utils.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
 import 'package:playboy/widgets/player_list.dart';
+import 'package:playboy/backend/ml/subtitle_generator.dart';
 
 class PlayerPage extends StatefulWidget {
   const PlayerPage({
@@ -660,15 +662,20 @@ class PlayerPageState extends State<PlayerPage> {
           ListTile(
             title: Text('生成字幕'.l10n),
             onTap: () async {
-              // SubtitleGenerator subGenerator = SubtitleGenerator("medium-q5_0");
-              // subGenerator.ensureInitialized();
-              // if (App().mediaPath != null) {
-              //   var subtitle = await subGenerator.genSubtitle(App().mediaPath!);
-              //   debugPrint("Generated subtitle: $subtitle");
-              //   App().playboy.setSubtitleTrack(SubtitleTrack.data(subtitle));
-              // } else {
-              //   debugPrint("No media is playing");
-              // }
+              SubtitleGenerator subGenerator = SubtitleGenerator("medium-q5_0");
+              var mediaPath =
+                  App().player.state.playlist.current.uri.toString();
+
+              var subtitle = await subGenerator.genSubtitle(
+                  mediaPath, App().player.state.position.inMilliseconds);
+              debugPrint(App().player.state.position.inMilliseconds.toString());
+              subtitle.addListener(
+                () {
+                  App()
+                      .player
+                      .setSubtitleTrack(SubtitleTrack.data(subtitle.value));
+                },
+              );
             },
           ),
         ],

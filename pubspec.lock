@@ -368,6 +368,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.1"
+  libmpv_dart:
+    dependency: transitive
+    description:
+      name: libmpv_dart
+      sha256: "0ae3317325c75de2a703a8dd33304d9b0a7c7e2c0d2e90ddfc6c17cd4a9036c4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.4"
   lints:
     dependency: transitive
     description:
@@ -488,6 +496,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  nested:
+    dependency: transitive
+    description:
+      name: nested
+      sha256: "03bac4c528c64c95c722ec99280375a6f2fc708eec17c7b3f07253b626cd2a20"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   package_config:
     dependency: transitive
     description:
@@ -584,6 +600,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.1"
+  provider:
+    dependency: transitive
+    description:
+      name: provider
+      sha256: "489024f942069c2920c844ee18bb3d467c69e48955a4f32d1677f71be103e310"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.1.4"
   pub_semver:
     dependency: transitive
     description:
@@ -909,6 +933,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.2"
+  whisper4dart:
+    dependency: "direct main"
+    description:
+      name: whisper4dart
+      sha256: "77f4718af05474b5500dec03822e8041447612f92f3d0a3da62dad35cb0a1182"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
   win32:
     dependency: transitive
     description:
