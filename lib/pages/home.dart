@@ -254,6 +254,13 @@ class _HomePageState extends State<HomePage> {
             windowManager.startDragging();
           }
         },
+        onDoubleTap: () async {
+          if (await windowManager.isMaximized()) {
+            windowManager.unmaximize();
+          } else {
+            windowManager.maximize();
+          }
+        },
         child: Row(
           children: Platform.isMacOS
               ? titlebarContent.reversed.toList()

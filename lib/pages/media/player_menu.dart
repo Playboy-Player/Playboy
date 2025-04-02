@@ -12,8 +12,6 @@ import 'package:playboy/widgets/menu/menu_item.dart';
 List<Widget> buildPlayerMenu(BuildContext context) {
   return [
     const SizedBox(height: 10),
-    MMenuItem(icon: Icons.location_on, label: '跳转'.l10n, onPressed: null),
-    MMenuItem(icon: Icons.flash_on, label: '设置播放速度'.l10n, onPressed: null),
     MMenuItem(
       icon: Icons.cut,
       label: '截图'.l10n,

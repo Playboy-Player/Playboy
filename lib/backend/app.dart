@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:media_kit_video/basic/basic_video_controller.dart';
+import 'package:media_kit_video/basic/video_controller.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -128,7 +129,10 @@ class App {
   int voWidth = 0;
   int voHeight = 0;
   void refreshVO() {
-    controller.setSize(width: voWidth, height: voHeight);
+    var voInfo = player.state.videoParams;
+    int w = voInfo.dw ?? 0, h = voInfo.dh ?? 0;
+    double fac = min(voWidth / w, voHeight / h);
+    controller.setSize(width: (w * fac) ~/ 1, height: (h * fac) ~/ 1);
     player.command(['show-text', '已更新显示区域']);
   }
 
