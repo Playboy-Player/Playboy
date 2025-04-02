@@ -25,25 +25,21 @@ dependencies:
       path: packages/window_manager
       ref: windows_fullscreen_fix
   
-  # Media
-  # whisper4dart: ^0.0.10
-  # libmpv_dart: ^0.0.4
-
   media_kit:
     git:
-      url: https://github.com/YuiHrsw/media-kit.git
+      url: https://github.com/Playboy-Player/media_cat.git
       path: media_kit
-      ref: 582dc080806cb9e369d1305ea1ea218416985c33
+      ref: 7fa4fa399bc8fef890d655c6acf094ffa1d50065
   media_kit_video:
     git:
-      url: https://github.com/YuiHrsw/media-kit.git
+      url: https://github.com/Playboy-Player/media_cat.git
       path: media_kit_video
-      ref: 582dc080806cb9e369d1305ea1ea218416985c33
+      ref: 7fa4fa399bc8fef890d655c6acf094ffa1d50065
   media_kit_libs_video:
     git:
-      url: https://github.com/YuiHrsw/media-kit.git
+      url: https://github.com/Playboy-Player/media_cat.git
       path: libs/universal/media_kit_libs_video
-      ref: 582dc080806cb9e369d1305ea1ea218416985c33
+      ref: 7fa4fa399bc8fef890d655c6acf094ffa1d50065
 
 dev_dependencies:
   flutter_test:
