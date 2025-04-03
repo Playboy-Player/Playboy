@@ -111,11 +111,10 @@ List<Widget> buildPlayerMenu(BuildContext context) {
     const Divider(),
     MMenuItem(
       icon: Icons.info_outline,
-      label: '属性'.l10n,
+      label: '统计信息'.l10n,
       onPressed: () {
-        App().player.command(['keypress', 'SHIFT+I']);
+        App().player.command(['script-binding', 'display-stats-toggle']);
       },
-      keymap: 'Shift+I',
     ),
     const SizedBox(height: 10),
   ];
