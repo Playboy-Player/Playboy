@@ -14,6 +14,9 @@ class PlayerSettingsPage extends StatefulWidget {
 }
 
 class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
+  TextEditingController _volumeEditor = TextEditingController();
+  TextEditingController _speedEditor = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,9 +54,71 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
               App().saveSettings();
             },
           ),
-          // default volume
-          // default speed
           // default playlist mode
+          ListTile(
+            title: Text('默认音量'.l10n),
+            trailing: Container(
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 0),
+              width: 100,
+              height: 40,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Theme.of(context).colorScheme.secondaryContainer,
+              ),
+              child: TextField(
+                textAlign: TextAlign.center,
+                controller: _volumeEditor,
+                maxLines: 1,
+                decoration: InputDecoration.collapsed(
+                  hintText: App().settings.defaultVolume.toString(),
+                ),
+                onSubmitted: (value) {
+                  var newVolume = double.tryParse(value);
+                  if (newVolume == null || newVolume < 0 || newVolume > 100) {
+                    _volumeEditor.clear();
+                    return;
+                  }
+                  App().settings.defaultVolume = newVolume;
+                  App().saveSettings();
+                  setState(() {});
+                  _volumeEditor.clear();
+                },
+              ),
+            ),
+          ),
+          ListTile(
+            title: Text('默认倍速'.l10n),
+            trailing: Container(
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 0),
+              width: 100,
+              height: 40,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Theme.of(context).colorScheme.secondaryContainer,
+              ),
+              child: TextField(
+                textAlign: TextAlign.center,
+                controller: _speedEditor,
+                maxLines: 1,
+                decoration: InputDecoration.collapsed(
+                  hintText: App().settings.defaultSpeed.toString(),
+                ),
+                onSubmitted: (value) {
+                  var newSpeed = double.tryParse(value);
+                  if (newSpeed == null || newSpeed < 0.01 || newSpeed > 16) {
+                    _speedEditor.clear();
+                    return;
+                  }
+                  App().settings.defaultSpeed = newSpeed;
+                  App().saveSettings();
+                  setState(() {});
+                  _speedEditor.clear();
+                },
+              ),
+            ),
+          ),
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
@@ -133,36 +198,36 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
               ),
             ],
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            child: Text(
-              'mpv 动态库路径'.l10n,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          PathSettingCard(
-            path: App().settings.libmpvPath,
-            actions: [
-              SizedBox(
-                width: 40,
-                child: IconButton(
-                  onPressed: () async {
-                    var res = await FilePicker.platform
-                        .getDirectoryPath(lockParentWindow: true);
-                    if (res != null) {
-                      App().settings.libmpvPath = res;
-                      App().saveSettings();
-                      setState(() {});
-                    }
-                  },
-                  icon: const Icon(Icons.edit_outlined),
-                ),
-              ),
-            ],
-          ),
+          // Container(
+          //   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          //   child: Text(
+          //     'mpv 动态库路径'.l10n,
+          //     style: const TextStyle(
+          //       fontSize: 16,
+          //       fontWeight: FontWeight.w500,
+          //     ),
+          //   ),
+          // ),
+          // PathSettingCard(
+          //   path: App().settings.libmpvPath,
+          //   actions: [
+          //     SizedBox(
+          //       width: 40,
+          //       child: IconButton(
+          //         onPressed: () async {
+          //           var res = await FilePicker.platform
+          //               .getDirectoryPath(lockParentWindow: true);
+          //           if (res != null) {
+          //             App().settings.libmpvPath = res;
+          //             App().saveSettings();
+          //             setState(() {});
+          //           }
+          //         },
+          //         icon: const Icon(Icons.edit_outlined),
+          //       ),
+          //     ),
+          //   ],
+          // ),
         ],
       ),
     );

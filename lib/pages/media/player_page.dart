@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 import 'package:media_kit/media_kit.dart';
 
 import 'package:playboy/backend/utils/l10n_utils.dart';
+import 'package:playboy/backend/utils/media_utils.dart';
 import 'package:playboy/backend/utils/theme_utils.dart';
 import 'package:playboy/pages/media/seekbar_builder.dart';
 import 'package:playboy/widgets/basic_video.dart';
@@ -13,6 +14,7 @@ import 'package:playboy/pages/media/player_menu.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/time_utils.dart';
+import 'package:playboy/widgets/empty_holder.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
 import 'package:playboy/widgets/menu/menu_item.dart';
 import 'package:playboy/widgets/player_list.dart';
@@ -318,15 +320,23 @@ class PlayerPageState extends State<PlayerPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                const IconButton(
-                  onPressed: null,
-                  icon: Icon(Icons.alarm),
+                IconButton(
+                  onPressed: () {
+                    _handlePanelSelection(2);
+                  },
+                  icon: const Icon(Icons.auto_awesome_outlined),
+                ),
+                IconButton(
+                  onPressed: () {
+                    App().executeAction('togglePlayer');
+                  },
+                  icon: const Icon(Icons.video_library_outlined),
                 ),
                 IconButton(
                   onPressed: () {
                     App().executeAction('toggleFullscreen');
                   },
-                  icon: const Icon(Icons.open_in_full_rounded),
+                  icon: const Icon(Icons.open_in_full_outlined),
                 ),
                 const SizedBox(width: 6),
               ],
@@ -361,15 +371,6 @@ class PlayerPageState extends State<PlayerPage> {
               child: StreamBuilder(
                 stream: App().player.stream.duration,
                 builder: (context, snapshot) {
-                  // if (snapshot.hasData) {
-                  //   return Text(
-                  //     getProgressString(snapshot.data!),
-                  //   );
-                  // } else {
-                  //   return Text(
-                  //     getProgressString(App().duration),
-                  //   );
-                  // }
                   return Text(
                     getProgressString(App().player.state.duration),
                   );
@@ -508,6 +509,7 @@ class PlayerPageState extends State<PlayerPage> {
         : const SizedBox();
   }
 
+  // TODO: show chapter-list
   Widget _buildPlaylistPanel(ColorScheme colorScheme, Color backgroundColor) {
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -543,6 +545,9 @@ class PlayerPageState extends State<PlayerPage> {
       body: StreamBuilder(
         stream: App().player.stream.playlist,
         builder: (context, snapshot) {
+          if (App().player.state.playlist.medias.isEmpty) {
+            return const MEmptyHolder();
+          }
           return ListView.builder(
             itemBuilder: (BuildContext context, int index) {
               var src = App().player.state.playlist.medias[index].uri;
@@ -669,8 +674,11 @@ class PlayerPageState extends State<PlayerPage> {
                   const SizedBox(width: 10),
                   Container(
                     alignment: Alignment.center,
-                    child: Text(
-                      '${(speed >= 0 ? '+' : '')}${speed.toStringAsFixed(2)}x',
+                    width: 40,
+                    child: FittedBox(
+                      child: Text(
+                        '${(speed >= 0 ? '+' : '')}${speed.toStringAsFixed(2)}x',
+                      ),
                     ),
                   ),
                 ],
@@ -706,8 +714,11 @@ class PlayerPageState extends State<PlayerPage> {
                   const SizedBox(width: 10),
                   Container(
                     alignment: Alignment.center,
-                    child: Text(
-                      '${(audioDelay >= 0 ? '+' : '')}${audioDelay.toStringAsFixed(2)}s',
+                    width: 40,
+                    child: FittedBox(
+                      child: Text(
+                        '${(audioDelay >= 0 ? '+' : '')}${audioDelay.toStringAsFixed(2)}s',
+                      ),
                     ),
                   ),
                 ],
@@ -751,8 +762,11 @@ class PlayerPageState extends State<PlayerPage> {
                   Container(
                     alignment: Alignment.center,
                     width: 30,
-                    child: Text(
-                        (brightness >= 0 ? '+' : '') + brightness.toString()),
+                    child: FittedBox(
+                      child: Text(
+                        (brightness >= 0 ? '+' : '') + brightness.toString(),
+                      ),
+                    ),
                   ),
                 ],
               );
@@ -786,8 +800,11 @@ class PlayerPageState extends State<PlayerPage> {
                   Container(
                     alignment: Alignment.center,
                     width: 30,
-                    child:
-                        Text((contrast >= 0 ? '+' : '') + contrast.toString()),
+                    child: FittedBox(
+                      child: Text(
+                        (contrast >= 0 ? '+' : '') + contrast.toString(),
+                      ),
+                    ),
                   ),
                 ],
               );
@@ -813,9 +830,10 @@ class PlayerPageState extends State<PlayerPage> {
                       max: 100,
                       value: bounded(-100, saturation * 1.0, 100),
                       onChanged: (value) {
-                        App()
-                            .player
-                            .setProperty('saturation', value.toString());
+                        App().player.setProperty(
+                              'saturation',
+                              value.toString(),
+                            );
                       },
                     ),
                   ),
@@ -823,8 +841,11 @@ class PlayerPageState extends State<PlayerPage> {
                   Container(
                     alignment: Alignment.center,
                     width: 30,
-                    child: Text(
-                        (saturation >= 0 ? '+' : '') + saturation.toString()),
+                    child: FittedBox(
+                      child: Text(
+                        (saturation >= 0 ? '+' : '') + saturation.toString(),
+                      ),
+                    ),
                   ),
                 ],
               );
@@ -858,7 +879,9 @@ class PlayerPageState extends State<PlayerPage> {
                   Container(
                     alignment: Alignment.center,
                     width: 30,
-                    child: Text((gamma >= 0 ? '+' : '') + gamma.toString()),
+                    child: FittedBox(
+                      child: Text((gamma >= 0 ? '+' : '') + gamma.toString()),
+                    ),
                   ),
                 ],
               );
@@ -892,7 +915,9 @@ class PlayerPageState extends State<PlayerPage> {
                   Container(
                     alignment: Alignment.center,
                     width: 30,
-                    child: Text((hue >= 0 ? '+' : '') + hue.toString()),
+                    child: FittedBox(
+                      child: Text((hue >= 0 ? '+' : '') + hue.toString()),
+                    ),
                   ),
                 ],
               );
@@ -912,7 +937,7 @@ class PlayerPageState extends State<PlayerPage> {
               App().refreshVO();
             },
             icon: const Icon(Icons.high_quality_outlined),
-            label: const Text('以 UI 显示尺寸输出'),
+            label: Text('以 UI 显示尺寸输出'.l10n),
           ),
           const SizedBox(height: 10),
           OutlinedButton.icon(
@@ -920,7 +945,7 @@ class PlayerPageState extends State<PlayerPage> {
               App().restoreVO();
             },
             icon: const Icon(Icons.settings_backup_restore),
-            label: const Text('以原始视频尺寸输出'),
+            label: Text('以原始视频尺寸输出'.l10n),
           ),
         ],
       ),
@@ -947,7 +972,7 @@ class PlayerPageState extends State<PlayerPage> {
         toolbarHeight: 46,
         scrolledUnderElevation: 0,
         title: Text(
-          '统计信息',
+          '统计信息'.l10n,
           style: TextStyle(
             color: colorScheme.primary,
             fontSize: 18,
@@ -974,7 +999,27 @@ class PlayerPageState extends State<PlayerPage> {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
           Text(
-            '音频',
+            '文件'.l10n,
+            style: TextStyle(
+              color: colorScheme.primary,
+              fontSize: 14,
+            ),
+          ),
+          StreamBuilder(
+            stream: App().player.stream.playlist,
+            builder: (context, _) {
+              if (App().player.state.playlist.medias.isEmpty) {
+                return Text(
+                  '未在播放'.l10n,
+                  style:
+                      TextStyle(backgroundColor: colorScheme.primaryContainer),
+                );
+              }
+              return Text(App().player.state.playlist.current.uri);
+            },
+          ),
+          Text(
+            '音频'.l10n,
             style: TextStyle(
               color: colorScheme.primary,
               fontSize: 14,
@@ -987,7 +1032,7 @@ class PlayerPageState extends State<PlayerPage> {
             },
           ),
           Text(
-            '视频',
+            '视频'.l10n,
             style: TextStyle(
               color: colorScheme.primary,
               fontSize: 14,
@@ -1026,7 +1071,7 @@ class PlayerPageState extends State<PlayerPage> {
         toolbarHeight: 46,
         scrolledUnderElevation: 0,
         title: Text(
-          'Whisper'.l10n,
+          'Whisper',
           style: TextStyle(
             color: colorScheme.primary,
             fontSize: 18,
@@ -1058,7 +1103,7 @@ class PlayerPageState extends State<PlayerPage> {
                 child: FilledButton.icon(
                   onPressed: () {},
                   icon: const Icon(Icons.auto_awesome_outlined),
-                  label: const Text('开始'),
+                  label: Text('开始'.l10n),
                 ),
               ),
               const SizedBox(width: 8),
@@ -1066,7 +1111,7 @@ class PlayerPageState extends State<PlayerPage> {
                 child: OutlinedButton.icon(
                   onPressed: null,
                   icon: const Icon(Icons.stop_circle_outlined),
-                  label: const Text('停止'),
+                  label: Text('停止'.l10n),
                 ),
               ),
             ],
@@ -1078,7 +1123,7 @@ class PlayerPageState extends State<PlayerPage> {
                 width: 30,
                 child: Checkbox(value: true, onChanged: (value) {}),
               ),
-              const Expanded(child: Text('自动应用字幕到播放器')),
+              Expanded(child: Text('自动应用字幕到播放器'.l10n)),
             ],
           ),
           const SizedBox(height: 10),
@@ -1103,7 +1148,7 @@ class PlayerPageState extends State<PlayerPage> {
           OutlinedButton.icon(
             onPressed: () {},
             icon: const Icon(Icons.file_download_outlined),
-            label: const Text('导出 srt 文件'),
+            label: Text('导出 srt 文件'.l10n),
           ),
         ],
       ),
@@ -1147,7 +1192,140 @@ class PlayerPageState extends State<PlayerPage> {
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        children: [],
+        children: [
+          Text(
+            '样式'.l10n,
+            style: TextStyle(
+              color: colorScheme.primary,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              SizedBox(
+                width: 30,
+                child: Checkbox(value: true, onChanged: (value) {}),
+              ),
+              Expanded(child: Text('显示字幕'.l10n)),
+            ],
+          ),
+          Row(
+            children: [
+              SizedBox(
+                width: 30,
+                child: Checkbox(value: true, onChanged: (value) {}),
+              ),
+              Expanded(child: Text('显示第二字幕'.l10n)),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            '字幕延迟'.l10n,
+            style: TextStyle(
+              color: colorScheme.primary,
+              fontSize: 14,
+            ),
+          ),
+          ValueListenableBuilder(
+            valueListenable: App().player.subDelay,
+            builder: (context, subDelay, _) {
+              return Row(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        App().player.setProperty('sub-delay', '0');
+                      });
+                    },
+                    icon: const Icon(Icons.looks_one_outlined),
+                  ),
+                  Expanded(
+                    child: Slider(
+                      min: -30,
+                      max: 30,
+                      value: bounded(-30, subDelay, 30),
+                      onChanged: (value) {
+                        App().player.setProperty('sub-delay', value.toString());
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 40,
+                    child: FittedBox(
+                      child: Text(
+                        '${(subDelay >= 0 ? '+' : '')}${subDelay.toStringAsFixed(2)}s',
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+          ValueListenableBuilder(
+            valueListenable: App().player.secondarySubDelay,
+            builder: (context, subDelay, _) {
+              return Row(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        App().player.setProperty('secondary-sub-delay', '0');
+                      });
+                    },
+                    icon: const Icon(Icons.looks_two_outlined),
+                  ),
+                  Expanded(
+                    child: Slider(
+                      min: -30,
+                      max: 30,
+                      value: bounded(-30, subDelay, 30),
+                      onChanged: (value) {
+                        App().player.setProperty(
+                              'secondary-sub-delay',
+                              value.toString(),
+                            );
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 40,
+                    child: FittedBox(
+                      child: Text(
+                        '${(subDelay >= 0 ? '+' : '')}${subDelay.toStringAsFixed(2)}s',
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+          Text(
+            '轨道'.l10n,
+            style: TextStyle(
+              color: colorScheme.primary,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 10),
+          OutlinedButton.icon(
+            onPressed: () {},
+            icon: const Icon(Icons.file_open_outlined),
+            label: Text('加载 srt 文件'.l10n),
+          ),
+          const SizedBox(height: 10),
+          OutlinedButton.icon(
+            onPressed: () {
+              _handlePanelSelection(2);
+            },
+            icon: const Icon(Icons.auto_awesome_outlined),
+            label: Text('使用 Whisper 生成字幕'.l10n),
+          ),
+        ],
       ),
     );
   }

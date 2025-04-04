@@ -130,7 +130,7 @@ class App {
   int voHeight = 0;
   void refreshVO() {
     var voInfo = player.state.videoParams;
-    int w = voInfo.dw ?? 0, h = voInfo.dh ?? 0;
+    int w = voInfo.dw ?? 1, h = voInfo.dh ?? 1;
     double fac = min(voWidth / w, voHeight / h);
     controller.setSize(width: (w * fac) ~/ 1, height: (h * fac) ~/ 1);
     player.command(['show-text', '已更新显示区域']);
@@ -172,11 +172,5 @@ class App {
   void _resetPlayerStatus() {
     player.setVolume(settings.defaultVolume);
     player.setRate(settings.defaultSpeed);
-  }
-
-  void appendPlaylist(PlaylistItem pl) {
-    for (var item in pl.items) {
-      player.add(Media(item.source));
-    }
   }
 }

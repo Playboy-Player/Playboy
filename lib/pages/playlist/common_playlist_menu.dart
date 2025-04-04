@@ -31,16 +31,6 @@ List<Widget> buildCommonPlaylistMenuItems(
       },
     ),
     MMenuItem(
-      icon: Icons.add_circle_outline,
-      label: '追加到播放列表'.l10n,
-      onPressed: null,
-      // () {
-      //   AppStorage().appendPlaylist(
-      //     item,
-      //   );
-      // },
-    ),
-    MMenuItem(
       icon: Icons.share,
       label: '导出'.l10n,
       onPressed: () async {

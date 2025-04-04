@@ -991,7 +991,20 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.symmetric(horizontal: 2),
               constraints: const BoxConstraints(),
               color: colorScheme.primaryContainer,
-              // iconSize: 30,
+              onPressed: () {
+                App().executeAction('togglePlayer');
+              },
+              icon: StreamBuilder(
+                stream: App().player.stream.playing,
+                builder: (context, _) {
+                  return const Icon(Icons.open_in_browser_rounded);
+                },
+              ),
+            ),
+            IconButton(
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              constraints: const BoxConstraints(),
+              color: colorScheme.primaryContainer,
               onPressed: () {
                 setState(() {
                   App().player.playOrPause();

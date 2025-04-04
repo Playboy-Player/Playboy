@@ -21,7 +21,6 @@ void main(List<String> arguments) async {
     await windowManager.ensureInitialized();
     WindowOptions windowOptions = const WindowOptions(
       minimumSize: Size(700, 500),
-      // center: true,
       backgroundColor: Colors.transparent,
       titleBarStyle: TitleBarStyle.hidden,
     );
