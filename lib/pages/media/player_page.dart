@@ -14,6 +14,7 @@ import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/time_utils.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
+import 'package:playboy/widgets/menu/menu_item.dart';
 import 'package:playboy/widgets/player_list.dart';
 
 class PlayerPage extends StatefulWidget {
@@ -309,7 +310,7 @@ class PlayerPageState extends State<PlayerPage> {
           ),
           IconButton(
             onPressed: () {
-              _handlePanelSelection(2);
+              _handlePanelSelection(4);
             },
             icon: const Icon(Icons.subtitles_outlined),
           ),
@@ -388,7 +389,47 @@ class PlayerPageState extends State<PlayerPage> {
   Widget _buildPlayer(ColorScheme colorScheme) {
     return MInteractiveWrapper(
       menuController: MenuController(),
-      menuChildren: buildPlayerMenu(context),
+      menuChildren: [
+        const SizedBox(height: 10),
+        ...buildPlayerMenu(context),
+        const Divider(),
+        MMenuItem(
+          icon: Icons.menu,
+          label: '播放列表'.l10n,
+          onPressed: () {
+            _handlePanelSelection(1);
+          },
+        ),
+        MMenuItem(
+          icon: Icons.slow_motion_video,
+          label: '视频选项'.l10n,
+          onPressed: () {
+            _handlePanelSelection(0);
+          },
+        ),
+        MMenuItem(
+          icon: Icons.subtitles_outlined,
+          label: '字幕选项'.l10n,
+          onPressed: () {
+            _handlePanelSelection(4);
+          },
+        ),
+        MMenuItem(
+          icon: Icons.info_outline,
+          label: '统计信息'.l10n,
+          onPressed: () {
+            _handlePanelSelection(3);
+          },
+        ),
+        MMenuItem(
+          icon: Icons.auto_awesome_outlined,
+          label: 'Whisper',
+          onPressed: () {
+            _handlePanelSelection(2);
+          },
+        ),
+        const SizedBox(height: 10),
+      ],
       onTap: null,
       borderRadius: 18,
       child: ClipRRect(
@@ -448,6 +489,8 @@ class PlayerPageState extends State<PlayerPage> {
         child: [
           _buildConfigurationsPanel(colorScheme, backgroundColor),
           _buildPlaylistPanel(colorScheme, backgroundColor),
+          _buildWhisperPanel(colorScheme, backgroundColor),
+          _buildStatisticPanel(colorScheme, backgroundColor),
           _buildSubtitlePanel(colorScheme, backgroundColor),
         ][_curPanel],
       );
@@ -475,7 +518,10 @@ class PlayerPageState extends State<PlayerPage> {
         scrolledUnderElevation: 0,
         title: Text(
           '播放列表'.l10n,
-          style: TextStyle(color: colorScheme.primary),
+          style: TextStyle(
+            color: colorScheme.primary,
+            fontSize: 18,
+          ),
         ),
         actions: [
           IconButton(
@@ -564,7 +610,10 @@ class PlayerPageState extends State<PlayerPage> {
         scrolledUnderElevation: 0,
         title: Text(
           '视频选项',
-          style: TextStyle(color: colorScheme.primary),
+          style: TextStyle(
+            color: colorScheme.primary,
+            fontSize: 18,
+          ),
         ),
         actions: [
           IconButton(
@@ -584,39 +633,477 @@ class PlayerPageState extends State<PlayerPage> {
         ],
       ),
       body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6),
-            child: Row(
-              children: [
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      App().player.setRate(1);
-                    });
-                  },
-                  icon: const Icon(Icons.flash_on_rounded),
-                ),
-                Expanded(
-                  child: Slider(
-                    min: 0.25,
-                    max: 8,
-                    divisions: 31,
-                    label: App().player.state.rate.toString(),
-                    value: bounded(0.25, App().player.state.rate, 8),
-                    onChanged: (value) {
+          Text(
+            '速度和延迟'.l10n,
+            style: TextStyle(
+              color: colorScheme.primary,
+              fontSize: 14,
+            ),
+          ),
+          ValueListenableBuilder(
+            valueListenable: App().player.speed,
+            builder: (context, speed, _) {
+              return Row(
+                children: [
+                  IconButton(
+                    // tooltip: '恢复默认速度'.l10n,
+                    onPressed: () {
                       setState(() {
-                        App().player.setRate(value);
+                        App().player.setRate(1);
                       });
                     },
+                    icon: const Icon(Icons.flash_on_rounded),
                   ),
-                ),
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.more_vert),
-                ),
-              ],
+                  Expanded(
+                    child: Slider(
+                      value: _toSliderValue(bounded(0, speed, 16)),
+                      onChanged: (value) {
+                        App()
+                            .player
+                            .setRate(bounded(0.01, _toSpeedValue(value), 16));
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Container(
+                    alignment: Alignment.center,
+                    child: Text(
+                      '${(speed >= 0 ? '+' : '')}${speed.toStringAsFixed(2)}x',
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+          ValueListenableBuilder(
+            valueListenable: App().player.audioDelay,
+            builder: (context, audioDelay, _) {
+              return Row(
+                children: [
+                  IconButton(
+                    // tooltip: '重置音频延迟'.l10n,
+                    onPressed: () {
+                      setState(() {
+                        App().player.setProperty('audio-delay', '0');
+                      });
+                    },
+                    icon: const Icon(Icons.music_note_outlined),
+                  ),
+                  Expanded(
+                    child: Slider(
+                      min: -30,
+                      max: 30,
+                      value: bounded(-30, audioDelay, 30),
+                      onChanged: (value) {
+                        App()
+                            .player
+                            .setProperty('audio-delay', value.toString());
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Container(
+                    alignment: Alignment.center,
+                    child: Text(
+                      '${(audioDelay >= 0 ? '+' : '')}${audioDelay.toStringAsFixed(2)}s',
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+          Text(
+            '均衡器'.l10n,
+            style: TextStyle(
+              color: colorScheme.primary,
+              fontSize: 14,
             ),
+          ),
+          ValueListenableBuilder(
+            valueListenable: App().player.brightness,
+            builder: (context, brightness, _) {
+              return Row(
+                children: [
+                  IconButton(
+                    // tooltip: '恢复默认亮度'.l10n,
+                    onPressed: () {
+                      setState(() {
+                        App().player.setProperty('brightness', '0');
+                      });
+                    },
+                    icon: const Icon(Icons.brightness_6_outlined),
+                  ),
+                  Expanded(
+                    child: Slider(
+                      min: -100,
+                      max: 100,
+                      value: bounded(-100, brightness * 1.0, 100),
+                      onChanged: (value) {
+                        App()
+                            .player
+                            .setProperty('brightness', value.toString());
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 30,
+                    child: Text(
+                        (brightness >= 0 ? '+' : '') + brightness.toString()),
+                  ),
+                ],
+              );
+            },
+          ),
+          ValueListenableBuilder(
+            valueListenable: App().player.contrast,
+            builder: (context, contrast, _) {
+              return Row(
+                children: [
+                  IconButton(
+                    // tooltip: '恢复默认对比度'.l10n,
+                    onPressed: () {
+                      setState(() {
+                        App().player.setProperty('contrast', '0');
+                      });
+                    },
+                    icon: const Icon(Icons.contrast),
+                  ),
+                  Expanded(
+                    child: Slider(
+                      min: -100,
+                      max: 100,
+                      value: bounded(-100, contrast * 1.0, 100),
+                      onChanged: (value) {
+                        App().player.setProperty('contrast', value.toString());
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 30,
+                    child:
+                        Text((contrast >= 0 ? '+' : '') + contrast.toString()),
+                  ),
+                ],
+              );
+            },
+          ),
+          ValueListenableBuilder(
+            valueListenable: App().player.saturation,
+            builder: (context, saturation, _) {
+              return Row(
+                children: [
+                  IconButton(
+                    // tooltip: '恢复默认饱和度'.l10n,
+                    onPressed: () {
+                      setState(() {
+                        App().player.setProperty('saturation', '0');
+                      });
+                    },
+                    icon: const Icon(Icons.color_lens),
+                  ),
+                  Expanded(
+                    child: Slider(
+                      min: -100,
+                      max: 100,
+                      value: bounded(-100, saturation * 1.0, 100),
+                      onChanged: (value) {
+                        App()
+                            .player
+                            .setProperty('saturation', value.toString());
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 30,
+                    child: Text(
+                        (saturation >= 0 ? '+' : '') + saturation.toString()),
+                  ),
+                ],
+              );
+            },
+          ),
+          ValueListenableBuilder(
+            valueListenable: App().player.gamma,
+            builder: (context, gamma, _) {
+              return Row(
+                children: [
+                  IconButton(
+                    // tooltip: '恢复默认 gamma'.l10n,
+                    onPressed: () {
+                      setState(() {
+                        App().player.setProperty('gamma', '0');
+                      });
+                    },
+                    icon: const Icon(Icons.blur_circular_outlined),
+                  ),
+                  Expanded(
+                    child: Slider(
+                      min: -100,
+                      max: 100,
+                      value: bounded(-100, gamma * 1.0, 100),
+                      onChanged: (value) {
+                        App().player.setProperty('gamma', value.toString());
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 30,
+                    child: Text((gamma >= 0 ? '+' : '') + gamma.toString()),
+                  ),
+                ],
+              );
+            },
+          ),
+          ValueListenableBuilder(
+            valueListenable: App().player.hue,
+            builder: (context, hue, _) {
+              return Row(
+                children: [
+                  IconButton(
+                    // tooltip: '恢复默认色调'.l10n,
+                    onPressed: () {
+                      setState(() {
+                        App().player.setProperty('hue', '0');
+                      });
+                    },
+                    icon: const Icon(Icons.invert_colors),
+                  ),
+                  Expanded(
+                    child: Slider(
+                      min: -100,
+                      max: 100,
+                      value: bounded(-100, hue * 1.0, 100),
+                      onChanged: (value) {
+                        App().player.setProperty('hue', value.toString());
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 30,
+                    child: Text((hue >= 0 ? '+' : '') + hue.toString()),
+                  ),
+                ],
+              );
+            },
+          ),
+          Text(
+            '视频输出'.l10n,
+            style: TextStyle(
+              color: colorScheme.primary,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 10),
+          // FIXME: UI size not correct
+          OutlinedButton.icon(
+            onPressed: () {
+              App().refreshVO();
+            },
+            icon: const Icon(Icons.high_quality_outlined),
+            label: const Text('以 UI 显示尺寸输出'),
+          ),
+          const SizedBox(height: 10),
+          OutlinedButton.icon(
+            onPressed: () {
+              App().restoreVO();
+            },
+            icon: const Icon(Icons.settings_backup_restore),
+            label: const Text('以原始视频尺寸输出'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  double _toSliderValue(double speed) {
+    return speed < 1 ? (speed / 2) : (0.5 + (speed - 1) / 30);
+  }
+
+  double _toSpeedValue(double t) {
+    return t < 0.5 ? (2 * t) : (1 + 30 * (t - 0.5));
+  }
+
+  Widget _buildStatisticPanel(
+    ColorScheme colorScheme,
+    Color backgroundColor,
+  ) {
+    return Scaffold(
+      backgroundColor: colorScheme.surface,
+      appBar: AppBar(
+        backgroundColor: colorScheme.surface,
+        automaticallyImplyLeading: false,
+        toolbarHeight: 46,
+        scrolledUnderElevation: 0,
+        title: Text(
+          '统计信息',
+          style: TextStyle(
+            color: colorScheme.primary,
+            fontSize: 18,
+          ),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _menuExpanded = false;
+              });
+            },
+            icon: Icon(
+              Icons.close,
+              color: colorScheme.primary,
+            ),
+          ),
+          const SizedBox(
+            width: 4,
+          ),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        children: [
+          Text(
+            '音频',
+            style: TextStyle(
+              color: colorScheme.primary,
+              fontSize: 14,
+            ),
+          ),
+          StreamBuilder(
+            stream: App().player.stream.audioParams,
+            builder: (context, _) {
+              return Text(App().player.state.audioParams.toString());
+            },
+          ),
+          Text(
+            '视频',
+            style: TextStyle(
+              color: colorScheme.primary,
+              fontSize: 14,
+            ),
+          ),
+          StreamBuilder(
+            stream: App().player.stream.videoParams,
+            builder: (context, _) {
+              return Text(App().player.state.videoParams.toString());
+            },
+          ),
+          const SizedBox(height: 10),
+          OutlinedButton.icon(
+            icon: const Icon(Icons.info_outline),
+            label: Text('切换 mpv-stat 统计信息'.l10n),
+            onPressed: () {
+              App().player.command(['script-binding', 'display-stats-toggle']);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  final TextEditingController _whisperData = TextEditingController();
+
+  Widget _buildWhisperPanel(
+    ColorScheme colorScheme,
+    Color backgroundColor,
+  ) {
+    return Scaffold(
+      backgroundColor: colorScheme.surface,
+      appBar: AppBar(
+        backgroundColor: colorScheme.surface,
+        automaticallyImplyLeading: false,
+        toolbarHeight: 46,
+        scrolledUnderElevation: 0,
+        title: Text(
+          'Whisper'.l10n,
+          style: TextStyle(
+            color: colorScheme.primary,
+            fontSize: 18,
+          ),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _menuExpanded = false;
+              });
+            },
+            icon: Icon(
+              Icons.close,
+              color: colorScheme.primary,
+            ),
+          ),
+          const SizedBox(
+            width: 4,
+          ),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.auto_awesome_outlined),
+                  label: const Text('开始'),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: null,
+                  icon: const Icon(Icons.stop_circle_outlined),
+                  label: const Text('停止'),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              SizedBox(
+                width: 30,
+                child: Checkbox(value: true, onChanged: (value) {}),
+              ),
+              const Expanded(child: Text('自动应用字幕到播放器')),
+            ],
+          ),
+          const SizedBox(height: 10),
+          const LinearProgressIndicator(
+            value: 0.4,
+            year2023: false,
+          ),
+          const SizedBox(height: 10),
+          TextField(
+            maxLines: 20,
+            controller: _whisperData,
+            readOnly: true,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          OutlinedButton.icon(
+            onPressed: () {},
+            icon: const Icon(Icons.file_download_outlined),
+            label: const Text('导出 srt 文件'),
           ),
         ],
       ),
@@ -636,7 +1123,10 @@ class PlayerPageState extends State<PlayerPage> {
         scrolledUnderElevation: 0,
         title: Text(
           '字幕'.l10n,
-          style: TextStyle(color: colorScheme.primary),
+          style: TextStyle(
+            color: colorScheme.primary,
+            fontSize: 18,
+          ),
         ),
         actions: [
           IconButton(
@@ -656,22 +1146,8 @@ class PlayerPageState extends State<PlayerPage> {
         ],
       ),
       body: ListView(
-        children: [
-          ListTile(
-            title: Text('生成字幕'.l10n),
-            onTap: () async {
-              // SubtitleGenerator subGenerator = SubtitleGenerator("medium-q5_0");
-              // subGenerator.ensureInitialized();
-              // if (App().mediaPath != null) {
-              //   var subtitle = await subGenerator.genSubtitle(App().mediaPath!);
-              //   debugPrint("Generated subtitle: $subtitle");
-              //   App().playboy.setSubtitleTrack(SubtitleTrack.data(subtitle));
-              // } else {
-              //   debugPrint("No media is playing");
-              // }
-            },
-          ),
-        ],
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        children: [],
       ),
     );
   }

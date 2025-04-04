@@ -11,7 +11,6 @@ import 'package:playboy/widgets/menu/menu_item.dart';
 
 List<Widget> buildPlayerMenu(BuildContext context) {
   return [
-    const SizedBox(height: 10),
     MMenuItem(
       icon: Icons.cut,
       label: '截图'.l10n,
@@ -41,8 +40,6 @@ List<Widget> buildPlayerMenu(BuildContext context) {
         App().updateStatus();
       },
     ),
-    MMenuItem(icon: Icons.terminal, label: '自定义命令'.l10n, onPressed: null),
-    MMenuItem(icon: Icons.alarm, label: '定时命令'.l10n, onPressed: null),
     const Divider(),
     MMenuItem(
       icon: Icons.file_open_outlined,
@@ -108,15 +105,6 @@ List<Widget> buildPlayerMenu(BuildContext context) {
         );
       },
     ),
-    const Divider(),
-    MMenuItem(
-      icon: Icons.info_outline,
-      label: '统计信息'.l10n,
-      onPressed: () {
-        App().player.command(['script-binding', 'display-stats-toggle']);
-      },
-    ),
-    const SizedBox(height: 10),
   ];
 }
 
