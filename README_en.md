@@ -18,26 +18,18 @@ A `libmpv` based media player with Material 3 design.
 <table>
   <tr>
     <td>
-      <img src='./screenshots/screenshot4.png' alt="playing">
+      <img src='./screenshots/screenshot1.png' alt="equalizer">
     </td>
     <td>
-      <img src='./screenshots/screenshot1.png' alt="playing dark">
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <img src='./screenshots/screenshot5.png' alt="video page">
-    </td>
-    <td>
-      <img src='./screenshots/screenshot2.png' alt="video page dark">
+      <img src='./screenshots/screenshot2.png' alt="theme">
     </td>
   </tr>
   <tr>
     <td>
-      <img src='./screenshots/screenshot6.png' alt="music page">
+      <img src='./screenshots/screenshot3.png' alt="shaders">
     </td>
     <td>
-      <img src='./screenshots/screenshot3.png' alt="music page dark">
+      <img src='./screenshots/screenshot4.png' alt="library">
     </td>
   </tr>
 </table>
