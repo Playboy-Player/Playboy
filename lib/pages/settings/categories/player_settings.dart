@@ -14,8 +14,8 @@ class PlayerSettingsPage extends StatefulWidget {
 }
 
 class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
-  TextEditingController _volumeEditor = TextEditingController();
-  TextEditingController _speedEditor = TextEditingController();
+  final TextEditingController _volumeEditor = TextEditingController();
+  final TextEditingController _speedEditor = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +64,10 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
               height: 40,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                color: Theme.of(context).colorScheme.secondaryContainer,
+                color: Theme.of(context)
+                    .colorScheme
+                    .primaryContainer
+                    .withValues(alpha: 0.4),
               ),
               child: TextField(
                 textAlign: TextAlign.center,
@@ -96,7 +99,10 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
               height: 40,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                color: Theme.of(context).colorScheme.secondaryContainer,
+                color: Theme.of(context)
+                    .colorScheme
+                    .primaryContainer
+                    .withValues(alpha: 0.4),
               ),
               child: TextField(
                 textAlign: TextAlign.center,

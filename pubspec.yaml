@@ -29,17 +29,17 @@ dependencies:
     git:
       url: https://github.com/Playboy-Player/media_cat.git
       path: media_kit
-      ref: 6961be94de8ecf2c4e1eab7f64382e526e6393b0
+      ref: 445c94d0a6a8076fef8f424fabcfd53709bb2d5e
   media_kit_video:
     git:
       url: https://github.com/Playboy-Player/media_cat.git
       path: media_kit_video
-      ref: 6961be94de8ecf2c4e1eab7f64382e526e6393b0
+      ref: 445c94d0a6a8076fef8f424fabcfd53709bb2d5e
   media_kit_libs_video:
     git:
       url: https://github.com/Playboy-Player/media_cat.git
       path: libs/universal/media_kit_libs_video
-      ref: 6961be94de8ecf2c4e1eab7f64382e526e6393b0
+      ref: 445c94d0a6a8076fef8f424fabcfd53709bb2d5e
 
 dev_dependencies:
   flutter_test:

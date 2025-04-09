@@ -442,35 +442,6 @@ class _HomePageState extends State<HomePage> {
           );
         },
       ),
-      const Divider(),
-      SubmenuButton(
-        leadingIcon: const Icon(
-          Icons.bug_report_outlined,
-          size: 18,
-        ),
-        menuChildren: [
-          const SizedBox(height: 10),
-          MMenuItem(
-            icon: Icons.bug_report_outlined,
-            label: '填充显示区域'.l10n,
-            onPressed: () {
-              App().refreshVO();
-            },
-          ),
-          MMenuItem(
-            icon: Icons.bug_report_outlined,
-            label: '使用默认显示大小'.l10n,
-            onPressed: () {
-              App().restoreVO();
-            },
-          ),
-          const SizedBox(height: 10)
-        ],
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6),
-          child: Text('调试'.l10n),
-        ),
-      ),
       const SizedBox(height: 10),
     ];
   }
