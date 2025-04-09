@@ -15,7 +15,6 @@ import 'package:playboy/pages/media/player_menu.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/time_utils.dart';
-import 'package:playboy/widgets/empty_holder.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
 import 'package:playboy/widgets/menu/menu_item.dart';
 import 'package:playboy/widgets/player_list.dart';

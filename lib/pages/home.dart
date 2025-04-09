@@ -159,6 +159,7 @@ class _HomePageState extends State<HomePage> {
                       if (_fullScreen)
                         SizedBox(
                           height: 40,
+                          width: 100,
                           child: AnimatedOpacity(
                             opacity: _showTitleBarFullscreen ? 1 : 0,
                             duration: const Duration(milliseconds: 100),
@@ -175,7 +176,8 @@ class _HomePageState extends State<HomePage> {
                               },
                               child: Align(
                                 alignment: Alignment.topCenter,
-                                child: _buildTitleBar(context),
+                                // child: _buildTitleBar(context),
+                                child: _buildAppMenuButton(context),
                               ),
                             ),
                           ),
@@ -273,18 +275,21 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildAppMenuButton(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
-    const double borderRadius = 6;
+    double borderRadius = _fullScreen ? 0 : 6;
     return Row(
       children: [
         IconButton(
           style: ButtonStyle(
             backgroundColor: WidgetStatePropertyAll(
-              colorScheme.primaryContainer.withValues(alpha: 0.4),
+              Color.alphaBlend(
+                colorScheme.primaryContainer.withValues(alpha: 0.4),
+                colorScheme.surface,
+              ),
             ),
             foregroundColor: WidgetStatePropertyAll(
               colorScheme.primary,
             ),
-            shape: const WidgetStatePropertyAll(
+            shape: WidgetStatePropertyAll(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(borderRadius),
@@ -306,12 +311,16 @@ class _HomePageState extends State<HomePage> {
         MenuButton(
           style: ButtonStyle(
             backgroundColor: WidgetStatePropertyAll(
-              colorScheme.primaryContainer.withValues(alpha: 0.6),
+              // colorScheme.primaryContainer.withValues(alpha: 0.6),
+              Color.alphaBlend(
+                colorScheme.primaryContainer.withValues(alpha: 0.6),
+                colorScheme.surface,
+              ),
             ),
             foregroundColor: WidgetStatePropertyAll(
               colorScheme.primary,
             ),
-            shape: const WidgetStatePropertyAll(
+            shape: WidgetStatePropertyAll(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.only(
                   topRight: Radius.circular(borderRadius),
@@ -821,6 +830,7 @@ class _HomePageState extends State<HomePage> {
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: ListView(
         children: [
+          if (_fullScreen) const SizedBox(height: 16),
           buildItem(
             '播放列表'.l10n,
             Icons.playlist_play,
