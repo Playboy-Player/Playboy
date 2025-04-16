@@ -7,6 +7,7 @@ import 'package:path/path.dart';
 import 'package:playboy/backend/utils/theme_utils.dart';
 import 'package:playboy/pages/media/seekbar_builder.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'package:playboy/pages/file/file_explorer.dart';
@@ -86,8 +87,10 @@ class _HomePageState extends State<HomePage> {
     };
     App().actions['toggleFullscreen'] = () async {
       if (_fullScreen) {
+        WakelockPlus.toggle(enable: false);
         windowManager.setFullScreen(false);
       } else {
+        WakelockPlus.toggle(enable: true);
         windowManager.setFullScreen(true);
       }
       setState(() {

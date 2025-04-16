@@ -11,14 +11,12 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # General
   path: ^1.8.3
   path_provider: ^2.1.1
   file_picker: ^8.3.1
   json_annotation: ^4.8.1
   url_launcher: ^6.2.5
-
-  # Window Control
+  wakelock_plus: ^1.2.11
   window_manager:
     git:
       url: https://github.com/YuiHrsw/window_manager.git
