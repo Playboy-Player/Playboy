@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:media_kit_video/basic/video_controller.dart';
 import 'package:path/path.dart' as p;
@@ -322,15 +323,15 @@ class PlayerPageState extends State<PlayerPage> {
               children: [
                 IconButton(
                   onPressed: () {
-                    _handlePanelSelection(2);
-                  },
-                  icon: const Icon(Icons.auto_awesome_outlined),
-                ),
-                IconButton(
-                  onPressed: () {
                     App().executeAction('togglePlayer');
                   },
                   icon: const Icon(Icons.video_library_outlined),
+                ),
+                IconButton(
+                  onPressed: () {
+                    _handlePanelSelection(3);
+                  },
+                  icon: const Icon(Icons.info_outline),
                 ),
                 IconButton(
                   onPressed: () {
@@ -516,13 +517,20 @@ class PlayerPageState extends State<PlayerPage> {
         borderRadius: BorderRadius.all(
           Radius.circular(widget.fullscreen ? 0 : 18),
         ),
-        child: [
-          _buildConfigurationsPanel(colorScheme, backgroundColor),
-          _buildPlaylistPanel(colorScheme, backgroundColor),
-          _buildWhisperPanel(colorScheme, backgroundColor),
-          _buildStatisticPanel(colorScheme, backgroundColor),
-          _buildSubtitlePanel(colorScheme, backgroundColor),
-        ][_curPanel],
+        child: TooltipTheme(
+          data: Theme.of(context).tooltipTheme.copyWith(
+                height: 4,
+                verticalOffset: 8,
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+              ),
+          child: [
+            _buildConfigurationsPanel(colorScheme, backgroundColor),
+            _buildPlaylistPanel(colorScheme, backgroundColor),
+            _buildWhisperPanel(colorScheme, backgroundColor),
+            _buildStatisticPanel(colorScheme, backgroundColor),
+            _buildSubtitlePanel(colorScheme, backgroundColor),
+          ][_curPanel],
+        ),
       );
     }
 
@@ -773,6 +781,14 @@ class PlayerPageState extends State<PlayerPage> {
             ),
           ).toSliver(),
           const SizedBox(height: 10).toSliver(),
+          Text(
+            '轨道'.l10n,
+            style: TextStyle(
+              color: colorScheme.primary,
+              fontSize: 14,
+            ),
+          ).toSliver(),
+          const SizedBox(height: 10).toSliver(),
           ValueListenableBuilder(
             valueListenable:
                 _videoTrackConfig ? App().player.vid : App().player.aid,
@@ -832,7 +848,7 @@ class PlayerPageState extends State<PlayerPage> {
               return Row(
                 children: [
                   IconButton(
-                    // tooltip: '恢复默认速度'.l10n,
+                    tooltip: '速度'.l10n,
                     onPressed: () {
                       setState(() {
                         App().player.setRate(1);
@@ -870,7 +886,7 @@ class PlayerPageState extends State<PlayerPage> {
               return Row(
                 children: [
                   IconButton(
-                    // tooltip: '重置音频延迟'.l10n,
+                    tooltip: '音频延迟'.l10n,
                     onPressed: () {
                       setState(() {
                         App().player.setProperty('audio-delay', '0');
@@ -917,7 +933,7 @@ class PlayerPageState extends State<PlayerPage> {
               return Row(
                 children: [
                   IconButton(
-                    // tooltip: '恢复默认亮度'.l10n,
+                    tooltip: '亮度'.l10n,
                     onPressed: () {
                       setState(() {
                         App().player.setProperty('brightness', '0');
@@ -957,7 +973,7 @@ class PlayerPageState extends State<PlayerPage> {
               return Row(
                 children: [
                   IconButton(
-                    // tooltip: '恢复默认对比度'.l10n,
+                    tooltip: '对比度'.l10n,
                     onPressed: () {
                       setState(() {
                         App().player.setProperty('contrast', '0');
@@ -995,7 +1011,7 @@ class PlayerPageState extends State<PlayerPage> {
               return Row(
                 children: [
                   IconButton(
-                    // tooltip: '恢复默认饱和度'.l10n,
+                    tooltip: '饱和度'.l10n,
                     onPressed: () {
                       setState(() {
                         App().player.setProperty('saturation', '0');
@@ -1036,7 +1052,7 @@ class PlayerPageState extends State<PlayerPage> {
               return Row(
                 children: [
                   IconButton(
-                    // tooltip: '恢复默认 gamma'.l10n,
+                    tooltip: '伽马'.l10n,
                     onPressed: () {
                       setState(() {
                         App().player.setProperty('gamma', '0');
@@ -1072,7 +1088,7 @@ class PlayerPageState extends State<PlayerPage> {
               return Row(
                 children: [
                   IconButton(
-                    // tooltip: '恢复默认色调'.l10n,
+                    tooltip: '色调'.l10n,
                     onPressed: () {
                       setState(() {
                         App().player.setProperty('hue', '0');
@@ -1185,6 +1201,14 @@ class PlayerPageState extends State<PlayerPage> {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
+          OutlinedButton.icon(
+            icon: const Icon(Icons.info_outline),
+            label: Text('切换 mpv-stat 统计信息'.l10n),
+            onPressed: () {
+              App().player.command(['script-binding', 'display-stats-toggle']);
+            },
+          ),
+          const SizedBox(height: 10),
           Text(
             '文件'.l10n,
             style: TextStyle(
@@ -1196,13 +1220,20 @@ class PlayerPageState extends State<PlayerPage> {
             stream: App().player.stream.playlist,
             builder: (context, _) {
               if (App().player.state.playlist.medias.isEmpty) {
-                return Text(
-                  '未在播放'.l10n,
-                  style:
-                      TextStyle(backgroundColor: colorScheme.primaryContainer),
+                return Container(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: Text(
+                    '未在播放'.l10n,
+                    style: TextStyle(
+                      backgroundColor: colorScheme.primaryContainer,
+                    ),
+                  ),
                 );
               }
-              return Text(App().player.state.playlist.current.uri);
+              return Container(
+                padding: const EdgeInsets.symmetric(vertical: 6),
+                child: SelectableText(App().player.state.playlist.current.uri),
+              );
             },
           ),
           Text(
@@ -1215,7 +1246,15 @@ class PlayerPageState extends State<PlayerPage> {
           StreamBuilder(
             stream: App().player.stream.audioParams,
             builder: (context, _) {
-              return Text(App().player.state.audioParams.toString());
+              var info = App().player.state.audioParams;
+              return Container(
+                padding: const EdgeInsets.symmetric(vertical: 6),
+                child: SelectableText('Format: ${info.format}\n'
+                    'Sample Rate: ${info.sampleRate}\n'
+                    'Channel Count: ${info.channelCount}\n'
+                    'Channels: ${info.channels}\n'
+                    'HR Channels: ${info.hrChannels}'),
+              );
             },
           ),
           Text(
@@ -1228,17 +1267,31 @@ class PlayerPageState extends State<PlayerPage> {
           StreamBuilder(
             stream: App().player.stream.videoParams,
             builder: (context, _) {
-              return Text(App().player.state.videoParams.toString());
+              // return Text(App().player.state.videoParams.toString());
+              var info = App().player.state.videoParams;
+              return Container(
+                padding: const EdgeInsets.symmetric(vertical: 6),
+                child: SelectableText('Pixel Format: ${info.pixelformat}\n'
+                    'HW Pixel Format: ${info.hwPixelformat}\n'
+                    'w: ${info.w} h: ${info.h}\n'
+                    'dw: ${info.dw} dh: ${info.dh}\n'
+                    'Aspect: ${info.aspect}\n'
+                    'Par: ${info.par}\n'
+                    'Color Matrix: ${info.colormatrix}\n'
+                    'Color Levels: ${info.colorlevels}\n'
+                    'Primaries: ${info.primaries}\n'
+                    'Gamma: ${info.gamma}\n'
+                    'Sig Peak: ${info.sigPeak}\n'
+                    'Light: ${info.light}\n'
+                    'ChromaLocation: ${info.chromaLocation}\n'
+                    'Rotate: ${info.rotate}\n'
+                    'Stereo In: ${info.stereoIn}\n'
+                    'Average Bpp: ${info.averageBpp}\n'
+                    'Alpha: ${info.alpha}'),
+              );
             },
           ),
           const SizedBox(height: 10),
-          OutlinedButton.icon(
-            icon: const Icon(Icons.info_outline),
-            label: Text('切换 mpv-stat 统计信息'.l10n),
-            onPressed: () {
-              App().player.command(['script-binding', 'display-stats-toggle']);
-            },
-          ),
         ],
       ),
     );
@@ -1288,7 +1341,7 @@ class PlayerPageState extends State<PlayerPage> {
             children: [
               Expanded(
                 child: FilledButton.icon(
-                  onPressed: () {},
+                  onPressed: null,
                   icon: const Icon(Icons.auto_awesome_outlined),
                   label: Text('开始'.l10n),
                 ),
@@ -1306,9 +1359,9 @@ class PlayerPageState extends State<PlayerPage> {
           const SizedBox(height: 10),
           Row(
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 30,
-                child: Checkbox(value: true, onChanged: (value) {}),
+                child: Checkbox(value: true, onChanged: null),
               ),
               Expanded(child: Text('自动应用字幕到播放器'.l10n)),
             ],
@@ -1335,9 +1388,17 @@ class PlayerPageState extends State<PlayerPage> {
           ),
           const SizedBox(height: 10),
           OutlinedButton.icon(
-            onPressed: () {},
+            onPressed: null,
             icon: const Icon(Icons.file_download_outlined),
             label: Text('导出 srt 文件'.l10n),
+          ),
+          const SizedBox(height: 10),
+          OutlinedButton.icon(
+            onPressed: () {
+              _handlePanelSelection(4);
+            },
+            icon: const Icon(Icons.subtitles_outlined),
+            label: Text('字幕设置'.l10n),
           ),
         ],
       ),
@@ -1572,6 +1633,7 @@ class PlayerPageState extends State<PlayerPage> {
               return Row(
                 children: [
                   IconButton(
+                    tooltip: '字幕延迟'.l10n,
                     onPressed: () {
                       setState(() {
                         App().player.setProperty('sub-delay', '0');
@@ -1613,9 +1675,19 @@ class PlayerPageState extends State<PlayerPage> {
           ).toSliver(),
           const SizedBox(height: 10).toSliver(),
           OutlinedButton.icon(
-            onPressed: null,
+            onPressed: () async {
+              String? subTrack =
+                  await FilePicker.platform.pickFiles(type: FileType.any).then(
+                (result) {
+                  return result?.files.single.path;
+                },
+              );
+              if (subTrack != null) {
+                App().player.setSubtitleTrack(SubtitleTrack.uri(subTrack));
+              }
+            },
             icon: const Icon(Icons.file_open_outlined),
-            label: Text('加载 srt 文件'.l10n),
+            label: Text('加载外部字幕文件'.l10n),
           ).toSliver(),
           const SizedBox(height: 10).toSliver(),
           // OutlinedButton.icon(
