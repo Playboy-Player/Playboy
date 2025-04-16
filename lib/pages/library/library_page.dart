@@ -9,7 +9,6 @@ import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/sliver_utils.dart';
 import 'package:playboy/backend/utils/string_utils.dart';
 import 'package:playboy/backend/utils/theme_utils.dart';
-import 'package:playboy/pages/library/library_loader.dart';
 import 'package:playboy/pages/library/media_menu.dart';
 import 'package:playboy/widgets/empty_holder.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
@@ -31,7 +30,7 @@ class _LibraryPageState extends State<LibraryPage> {
   bool _gridview = true;
 
   String _filter = '';
-  List<PlayItem> _contents = [];
+  List<PlayItem> _contents = App().mediaLibrary;
 
   @override
   void initState() {
@@ -51,12 +50,9 @@ class _LibraryPageState extends State<LibraryPage> {
         App().mediaLibraryLoaded = true;
       });
     };
-    loadMediaLibrary(() {
-      if (!mounted) return;
-      setState(() {
-        _contents = App().mediaLibrary;
-      });
-    });
+    if (!App().mediaLibraryLoaded) {
+      App().executeAction('rescanLibrary');
+    }
   }
 
   @override
