@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/app.dart';
+import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/sliver_utils.dart';
 import 'package:playboy/backend/utils/string_utils.dart';
@@ -123,7 +124,12 @@ class _LibraryPageState extends State<LibraryPage> {
       IconButton(
         tooltip: '播放'.l10n,
         hoverColor: colorScheme.actionHoverColor,
-        onPressed: null,
+        onPressed: () {
+          App().openPlaylist(
+            PlaylistItem(title: 'all', items: _contents),
+            false,
+          );
+        },
         icon: Icon(
           Icons.play_arrow_rounded,
           color: colorScheme.onPrimaryContainer,
@@ -132,7 +138,12 @@ class _LibraryPageState extends State<LibraryPage> {
       IconButton(
         tooltip: '随机播放'.l10n,
         hoverColor: colorScheme.actionHoverColor,
-        onPressed: null,
+        onPressed: () {
+          App().openPlaylist(
+            PlaylistItem(title: 'all', items: _contents),
+            true,
+          );
+        },
         icon: Icon(
           Icons.shuffle_rounded,
           color: colorScheme.onPrimaryContainer,
