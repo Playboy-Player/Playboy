@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/keymap_helper.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:media_kit/media_kit.dart';
 
@@ -13,6 +14,7 @@ import 'package:playboy/pages/home.dart';
 void main(List<String> arguments) async {
   WidgetsFlutterBinding.ensureInitialized();
   MediaKit.ensureInitialized();
+  WakelockPlus.enable();
 
   await App().init();
   await L10n.init();
@@ -21,7 +23,6 @@ void main(List<String> arguments) async {
     await windowManager.ensureInitialized();
     WindowOptions windowOptions = const WindowOptions(
       minimumSize: Size(700, 500),
-      // center: true,
       backgroundColor: Colors.transparent,
       titleBarStyle: TitleBarStyle.hidden,
     );

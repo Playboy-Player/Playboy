@@ -7,6 +7,7 @@ import 'package:path/path.dart';
 import 'package:playboy/backend/utils/theme_utils.dart';
 import 'package:playboy/pages/media/seekbar_builder.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'package:playboy/pages/file/file_explorer.dart';
@@ -86,8 +87,10 @@ class _HomePageState extends State<HomePage> {
     };
     App().actions['toggleFullscreen'] = () async {
       if (_fullScreen) {
+        WakelockPlus.toggle(enable: false);
         windowManager.setFullScreen(false);
       } else {
+        WakelockPlus.toggle(enable: true);
         windowManager.setFullScreen(true);
       }
       setState(() {
@@ -159,6 +162,7 @@ class _HomePageState extends State<HomePage> {
                       if (_fullScreen)
                         SizedBox(
                           height: 40,
+                          width: 100,
                           child: AnimatedOpacity(
                             opacity: _showTitleBarFullscreen ? 1 : 0,
                             duration: const Duration(milliseconds: 100),
@@ -175,7 +179,8 @@ class _HomePageState extends State<HomePage> {
                               },
                               child: Align(
                                 alignment: Alignment.topCenter,
-                                child: _buildTitleBar(context),
+                                // child: _buildTitleBar(context),
+                                child: _buildAppMenuButton(context),
                               ),
                             ),
                           ),
@@ -254,6 +259,13 @@ class _HomePageState extends State<HomePage> {
             windowManager.startDragging();
           }
         },
+        onDoubleTap: () async {
+          if (await windowManager.isMaximized()) {
+            windowManager.unmaximize();
+          } else {
+            windowManager.maximize();
+          }
+        },
         child: Row(
           children: Platform.isMacOS
               ? titlebarContent.reversed.toList()
@@ -266,18 +278,21 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildAppMenuButton(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
-    const double borderRadius = 6;
+    double borderRadius = _fullScreen ? 0 : 6;
     return Row(
       children: [
         IconButton(
           style: ButtonStyle(
             backgroundColor: WidgetStatePropertyAll(
-              colorScheme.primaryContainer.withValues(alpha: 0.4),
+              Color.alphaBlend(
+                colorScheme.primaryContainer.withValues(alpha: 0.4),
+                colorScheme.surface,
+              ),
             ),
             foregroundColor: WidgetStatePropertyAll(
               colorScheme.primary,
             ),
-            shape: const WidgetStatePropertyAll(
+            shape: WidgetStatePropertyAll(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(borderRadius),
@@ -299,12 +314,16 @@ class _HomePageState extends State<HomePage> {
         MenuButton(
           style: ButtonStyle(
             backgroundColor: WidgetStatePropertyAll(
-              colorScheme.primaryContainer.withValues(alpha: 0.6),
+              // colorScheme.primaryContainer.withValues(alpha: 0.6),
+              Color.alphaBlend(
+                colorScheme.primaryContainer.withValues(alpha: 0.6),
+                colorScheme.surface,
+              ),
             ),
             foregroundColor: WidgetStatePropertyAll(
               colorScheme.primary,
             ),
-            shape: const WidgetStatePropertyAll(
+            shape: WidgetStatePropertyAll(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.only(
                   topRight: Radius.circular(borderRadius),
@@ -434,35 +453,6 @@ class _HomePageState extends State<HomePage> {
             Uri.parse('https://github.com/Playboy-Player/Playboy/releases'),
           );
         },
-      ),
-      const Divider(),
-      SubmenuButton(
-        leadingIcon: const Icon(
-          Icons.bug_report_outlined,
-          size: 18,
-        ),
-        menuChildren: [
-          const SizedBox(height: 10),
-          MMenuItem(
-            icon: Icons.bug_report_outlined,
-            label: '填充显示区域'.l10n,
-            onPressed: () {
-              App().refreshVO();
-            },
-          ),
-          MMenuItem(
-            icon: Icons.bug_report_outlined,
-            label: '使用默认显示大小'.l10n,
-            onPressed: () {
-              App().restoreVO();
-            },
-          ),
-          const SizedBox(height: 10)
-        ],
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6),
-          child: Text('调试'.l10n),
-        ),
       ),
       const SizedBox(height: 10),
     ];
@@ -843,6 +833,7 @@ class _HomePageState extends State<HomePage> {
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: ListView(
         children: [
+          if (_fullScreen) const SizedBox(height: 16),
           buildItem(
             '播放列表'.l10n,
             Icons.playlist_play,
@@ -984,7 +975,20 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.symmetric(horizontal: 2),
               constraints: const BoxConstraints(),
               color: colorScheme.primaryContainer,
-              // iconSize: 30,
+              onPressed: () {
+                App().executeAction('togglePlayer');
+              },
+              icon: StreamBuilder(
+                stream: App().player.stream.playing,
+                builder: (context, _) {
+                  return const Icon(Icons.open_in_browser_rounded);
+                },
+              ),
+            ),
+            IconButton(
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              constraints: const BoxConstraints(),
+              color: colorScheme.primaryContainer,
               onPressed: () {
                 setState(() {
                   App().player.playOrPause();

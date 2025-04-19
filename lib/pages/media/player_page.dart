@@ -1,11 +1,14 @@
 import 'dart:async';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:media_kit_video/basic/basic_video_controller.dart';
+import 'package:media_kit_video/basic/video_controller.dart';
 import 'package:path/path.dart' as p;
 import 'package:media_kit/media_kit.dart';
 
 import 'package:playboy/backend/utils/l10n_utils.dart';
+import 'package:playboy/backend/utils/media_utils.dart';
+import 'package:playboy/backend/utils/sliver_utils.dart';
 import 'package:playboy/backend/utils/theme_utils.dart';
 import 'package:playboy/backend/utils/media_utils.dart';
 import 'package:playboy/pages/media/seekbar_builder.dart';
@@ -15,6 +18,7 @@ import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/time_utils.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
+import 'package:playboy/widgets/menu/menu_item.dart';
 import 'package:playboy/widgets/player_list.dart';
 import 'package:playboy/backend/ml/subtitle_generator.dart';
 
@@ -311,7 +315,7 @@ class PlayerPageState extends State<PlayerPage> {
           ),
           IconButton(
             onPressed: () {
-              _handlePanelSelection(2);
+              _handlePanelSelection(4);
             },
             icon: const Icon(Icons.subtitles_outlined),
           ),
@@ -319,15 +323,23 @@ class PlayerPageState extends State<PlayerPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                const IconButton(
-                  onPressed: null,
-                  icon: Icon(Icons.alarm),
+                IconButton(
+                  onPressed: () {
+                    App().executeAction('togglePlayer');
+                  },
+                  icon: const Icon(Icons.video_library_outlined),
+                ),
+                IconButton(
+                  onPressed: () {
+                    _handlePanelSelection(3);
+                  },
+                  icon: const Icon(Icons.info_outline),
                 ),
                 IconButton(
                   onPressed: () {
                     App().executeAction('toggleFullscreen');
                   },
-                  icon: const Icon(Icons.open_in_full_rounded),
+                  icon: const Icon(Icons.open_in_full_outlined),
                 ),
                 const SizedBox(width: 6),
               ],
@@ -362,15 +374,6 @@ class PlayerPageState extends State<PlayerPage> {
               child: StreamBuilder(
                 stream: App().player.stream.duration,
                 builder: (context, snapshot) {
-                  // if (snapshot.hasData) {
-                  //   return Text(
-                  //     getProgressString(snapshot.data!),
-                  //   );
-                  // } else {
-                  //   return Text(
-                  //     getProgressString(App().duration),
-                  //   );
-                  // }
                   return Text(
                     getProgressString(App().player.state.duration),
                   );
@@ -390,7 +393,76 @@ class PlayerPageState extends State<PlayerPage> {
   Widget _buildPlayer(ColorScheme colorScheme) {
     return MInteractiveWrapper(
       menuController: MenuController(),
-      menuChildren: buildPlayerMenu(context),
+      menuChildren: [
+        const SizedBox(height: 10),
+        ...buildPlayerMenu(context),
+        const Divider(),
+        MMenuItem(
+          icon: Icons.menu,
+          label: '播放列表'.l10n,
+          onPressed: () {
+            _handlePanelSelection(1);
+          },
+        ),
+        MMenuItem(
+          icon: Icons.slow_motion_video,
+          label: '视频选项'.l10n,
+          onPressed: () {
+            _handlePanelSelection(0);
+          },
+        ),
+        MMenuItem(
+          icon: Icons.subtitles_outlined,
+          label: '字幕选项'.l10n,
+          onPressed: () {
+            _handlePanelSelection(4);
+          },
+        ),
+        MMenuItem(
+          icon: Icons.info_outline,
+          label: '统计信息'.l10n,
+          onPressed: () {
+            _handlePanelSelection(3);
+          },
+        ),
+        MMenuItem(
+          icon: Icons.auto_awesome_outlined,
+          label: 'Whisper',
+          onPressed: () {
+            _handlePanelSelection(2);
+          },
+        ),
+        const Divider(),
+        SubmenuButton(
+          leadingIcon: const Icon(
+            Icons.bug_report_outlined,
+            size: 18,
+          ),
+          menuChildren: [
+            const SizedBox(height: 10),
+            MMenuItem(
+              icon: Icons.bug_report_outlined,
+              label: '以 UI 显示尺寸输出'.l10n,
+              onPressed: () {
+                App().refreshVO();
+              },
+            ),
+            MMenuItem(
+              icon: Icons.bug_report_outlined,
+              label: '以原始视频显示输出'.l10n,
+              onPressed: () {
+                App().restoreVO();
+              },
+            ),
+            const SizedBox(height: 10)
+          ],
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: Text('调试'.l10n),
+          ),
+        ),
+        const SizedBox(height: 10),
+      ],
       onTap: null,
       borderRadius: 18,
       child: ClipRRect(
@@ -447,11 +519,20 @@ class PlayerPageState extends State<PlayerPage> {
         borderRadius: BorderRadius.all(
           Radius.circular(widget.fullscreen ? 0 : 18),
         ),
-        child: [
-          _buildConfigurationsPanel(colorScheme, backgroundColor),
-          _buildPlaylistPanel(colorScheme, backgroundColor),
-          _buildSubtitlePanel(colorScheme, backgroundColor),
-        ][_curPanel],
+        child: TooltipTheme(
+          data: Theme.of(context).tooltipTheme.copyWith(
+                height: 4,
+                verticalOffset: 8,
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+              ),
+          child: [
+            _buildConfigurationsPanel(colorScheme, backgroundColor),
+            _buildPlaylistPanel(colorScheme, backgroundColor),
+            _buildWhisperPanel(colorScheme, backgroundColor),
+            _buildStatisticPanel(colorScheme, backgroundColor),
+            _buildSubtitlePanel(colorScheme, backgroundColor),
+          ][_curPanel],
+        ),
       );
     }
 
@@ -467,6 +548,7 @@ class PlayerPageState extends State<PlayerPage> {
         : const SizedBox();
   }
 
+  // TODO: show chapter-list
   Widget _buildPlaylistPanel(ColorScheme colorScheme, Color backgroundColor) {
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -477,7 +559,10 @@ class PlayerPageState extends State<PlayerPage> {
         scrolledUnderElevation: 0,
         title: Text(
           '播放列表'.l10n,
-          style: TextStyle(color: colorScheme.primary),
+          style: TextStyle(
+            color: colorScheme.primary,
+            fontSize: 18,
+          ),
         ),
         actions: [
           IconButton(
@@ -499,6 +584,13 @@ class PlayerPageState extends State<PlayerPage> {
       body: StreamBuilder(
         stream: App().player.stream.playlist,
         builder: (context, snapshot) {
+          if (App().player.state.playlist.medias.isEmpty) {
+            return Center(
+              child: Text(
+                '未在播放'.l10n,
+              ),
+            );
+          }
           return ListView.builder(
             itemBuilder: (BuildContext context, int index) {
               var src = App().player.state.playlist.medias[index].uri;
@@ -553,6 +645,7 @@ class PlayerPageState extends State<PlayerPage> {
     );
   }
 
+  bool _videoTrackConfig = false;
   Widget _buildConfigurationsPanel(
     ColorScheme colorScheme,
     Color backgroundColor,
@@ -566,7 +659,529 @@ class PlayerPageState extends State<PlayerPage> {
         scrolledUnderElevation: 0,
         title: Text(
           '视频选项',
-          style: TextStyle(color: colorScheme.primary),
+          style: TextStyle(
+            color: colorScheme.primary,
+            fontSize: 18,
+          ),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _menuExpanded = false;
+              });
+            },
+            icon: Icon(
+              Icons.close,
+              color: colorScheme.primary,
+            ),
+          ),
+          const SizedBox(
+            width: 4,
+          ),
+        ],
+      ),
+      body: CustomScrollView(
+        slivers: [
+          Container(
+            padding: const EdgeInsets.all(0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: colorScheme.primaryContainer.withValues(alpha: 0.4),
+            ),
+            child: Row(
+              // mainAxisSize: MainAxisSize.min,
+              children: [
+                Expanded(
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(30),
+                    onTap: () {
+                      setState(() {
+                        _videoTrackConfig = false;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _videoTrackConfig
+                            ? null
+                            : colorScheme.primaryContainer,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.music_note_outlined,
+                            size: 20,
+                            color: _videoTrackConfig
+                                ? null
+                                : colorScheme.onPrimaryContainer,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            '音频'.l10n,
+                            style: TextStyle(
+                              color: _videoTrackConfig
+                                  ? null
+                                  : colorScheme.onPrimaryContainer,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(30),
+                    onTap: () {
+                      setState(() {
+                        _videoTrackConfig = true;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _videoTrackConfig
+                            ? colorScheme.primaryContainer
+                            : null,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.movie_creation_outlined,
+                            size: 20,
+                            color: _videoTrackConfig
+                                ? colorScheme.onPrimaryContainer
+                                : null,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            '视频'.l10n,
+                            style: TextStyle(
+                              color: _videoTrackConfig
+                                  ? colorScheme.onPrimaryContainer
+                                  : null,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ).toSliver(),
+          const SizedBox(height: 10).toSliver(),
+          Text(
+            '轨道'.l10n,
+            style: TextStyle(
+              color: colorScheme.primary,
+              fontSize: 14,
+            ),
+          ).toSliver(),
+          const SizedBox(height: 10).toSliver(),
+          ValueListenableBuilder(
+            valueListenable:
+                _videoTrackConfig ? App().player.vid : App().player.aid,
+            builder: (context, id, _) {
+              return SliverList.separated(
+                separatorBuilder: (context, index) => const SizedBox(height: 4),
+                itemBuilder: (context, index) {
+                  var info = _videoTrackConfig
+                      ? App().player.state.tracks.video[index]
+                      : App().player.state.tracks.audio[index];
+                  var title =
+                      '${info.id}. ${info.language ?? ''}_${info.title ?? ''}';
+                  if (info.id == 'auto') title = '自动选择'.l10n;
+                  if (info.id == 'no') title = '停止输出'.l10n;
+                  return SizedBox(
+                    height: 30,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () {
+                        App().player.setProperty(
+                            _videoTrackConfig ? 'vid' : 'aid', info.id);
+                      },
+                      child: Row(
+                        children: [
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(title),
+                          ),
+                          if (info.id == id.toString())
+                            const Icon(
+                              Icons.check_circle_outline,
+                              size: 18,
+                            ),
+                          const SizedBox(width: 4),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+                itemCount: _videoTrackConfig
+                    ? App().player.state.tracks.video.length
+                    : App().player.state.tracks.audio.length,
+              );
+            },
+          ),
+          const SizedBox(height: 10).toSliver(),
+          Text(
+            '速度和延迟'.l10n,
+            style: TextStyle(
+              color: colorScheme.primary,
+              fontSize: 14,
+            ),
+          ).toSliver(),
+          ValueListenableBuilder(
+            valueListenable: App().player.speed,
+            builder: (context, speed, _) {
+              return Row(
+                children: [
+                  IconButton(
+                    tooltip: '速度'.l10n,
+                    onPressed: () {
+                      setState(() {
+                        App().player.setRate(1);
+                      });
+                    },
+                    icon: const Icon(Icons.flash_on_rounded),
+                  ),
+                  Expanded(
+                    child: Slider(
+                      value: _toSliderValue(bounded(0, speed, 16)),
+                      onChanged: (value) {
+                        App()
+                            .player
+                            .setRate(bounded(0.01, _toSpeedValue(value), 16));
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 40,
+                    child: FittedBox(
+                      child: Text(
+                        '${(speed >= 0 ? '+' : '')}${speed.toStringAsFixed(2)}x',
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ).toSliver(),
+          ValueListenableBuilder(
+            valueListenable: App().player.audioDelay,
+            builder: (context, audioDelay, _) {
+              return Row(
+                children: [
+                  IconButton(
+                    tooltip: '音频延迟'.l10n,
+                    onPressed: () {
+                      setState(() {
+                        App().player.setProperty('audio-delay', '0');
+                      });
+                    },
+                    icon: const Icon(Icons.music_note_outlined),
+                  ),
+                  Expanded(
+                    child: Slider(
+                      min: -30,
+                      max: 30,
+                      value: bounded(-30, audioDelay, 30),
+                      onChanged: (value) {
+                        App()
+                            .player
+                            .setProperty('audio-delay', value.toString());
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 40,
+                    child: FittedBox(
+                      child: Text(
+                        '${(audioDelay >= 0 ? '+' : '')}${audioDelay.toStringAsFixed(2)}s',
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ).toSliver(),
+          Text(
+            '均衡器'.l10n,
+            style: TextStyle(
+              color: colorScheme.primary,
+              fontSize: 14,
+            ),
+          ).toSliver(),
+          ValueListenableBuilder(
+            valueListenable: App().player.brightness,
+            builder: (context, brightness, _) {
+              return Row(
+                children: [
+                  IconButton(
+                    tooltip: '亮度'.l10n,
+                    onPressed: () {
+                      setState(() {
+                        App().player.setProperty('brightness', '0');
+                      });
+                    },
+                    icon: const Icon(Icons.brightness_6_outlined),
+                  ),
+                  Expanded(
+                    child: Slider(
+                      min: -100,
+                      max: 100,
+                      value: bounded(-100, brightness * 1.0, 100),
+                      onChanged: (value) {
+                        App()
+                            .player
+                            .setProperty('brightness', value.toString());
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 30,
+                    child: FittedBox(
+                      child: Text(
+                        (brightness >= 0 ? '+' : '') + brightness.toString(),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ).toSliver(),
+          ValueListenableBuilder(
+            valueListenable: App().player.contrast,
+            builder: (context, contrast, _) {
+              return Row(
+                children: [
+                  IconButton(
+                    tooltip: '对比度'.l10n,
+                    onPressed: () {
+                      setState(() {
+                        App().player.setProperty('contrast', '0');
+                      });
+                    },
+                    icon: const Icon(Icons.contrast),
+                  ),
+                  Expanded(
+                    child: Slider(
+                      min: -100,
+                      max: 100,
+                      value: bounded(-100, contrast * 1.0, 100),
+                      onChanged: (value) {
+                        App().player.setProperty('contrast', value.toString());
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 30,
+                    child: FittedBox(
+                      child: Text(
+                        (contrast >= 0 ? '+' : '') + contrast.toString(),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ).toSliver(),
+          ValueListenableBuilder(
+            valueListenable: App().player.saturation,
+            builder: (context, saturation, _) {
+              return Row(
+                children: [
+                  IconButton(
+                    tooltip: '饱和度'.l10n,
+                    onPressed: () {
+                      setState(() {
+                        App().player.setProperty('saturation', '0');
+                      });
+                    },
+                    icon: const Icon(Icons.color_lens),
+                  ),
+                  Expanded(
+                    child: Slider(
+                      min: -100,
+                      max: 100,
+                      value: bounded(-100, saturation * 1.0, 100),
+                      onChanged: (value) {
+                        App().player.setProperty(
+                              'saturation',
+                              value.toString(),
+                            );
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 30,
+                    child: FittedBox(
+                      child: Text(
+                        (saturation >= 0 ? '+' : '') + saturation.toString(),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ).toSliver(),
+          ValueListenableBuilder(
+            valueListenable: App().player.gamma,
+            builder: (context, gamma, _) {
+              return Row(
+                children: [
+                  IconButton(
+                    tooltip: '伽马'.l10n,
+                    onPressed: () {
+                      setState(() {
+                        App().player.setProperty('gamma', '0');
+                      });
+                    },
+                    icon: const Icon(Icons.blur_circular_outlined),
+                  ),
+                  Expanded(
+                    child: Slider(
+                      min: -100,
+                      max: 100,
+                      value: bounded(-100, gamma * 1.0, 100),
+                      onChanged: (value) {
+                        App().player.setProperty('gamma', value.toString());
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 30,
+                    child: FittedBox(
+                      child: Text((gamma >= 0 ? '+' : '') + gamma.toString()),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ).toSliver(),
+          ValueListenableBuilder(
+            valueListenable: App().player.hue,
+            builder: (context, hue, _) {
+              return Row(
+                children: [
+                  IconButton(
+                    tooltip: '色调'.l10n,
+                    onPressed: () {
+                      setState(() {
+                        App().player.setProperty('hue', '0');
+                      });
+                    },
+                    icon: const Icon(Icons.invert_colors),
+                  ),
+                  Expanded(
+                    child: Slider(
+                      min: -100,
+                      max: 100,
+                      value: bounded(-100, hue * 1.0, 100),
+                      onChanged: (value) {
+                        App().player.setProperty('hue', value.toString());
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 30,
+                    child: FittedBox(
+                      child: Text((hue >= 0 ? '+' : '') + hue.toString()),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ).toSliver(),
+          Text(
+            '视频输出'.l10n,
+            style: TextStyle(
+              color: colorScheme.primary,
+              fontSize: 14,
+            ),
+          ).toSliver(),
+          const SizedBox(height: 10).toSliver(),
+          // FIXME: UI size not correct
+          OutlinedButton.icon(
+            onPressed: () {
+              App().refreshVO();
+            },
+            icon: const Icon(Icons.high_quality_outlined),
+            label: Text('以 UI 显示尺寸输出'.l10n),
+          ).toSliver(),
+          const SizedBox(height: 10).toSliver(),
+          OutlinedButton.icon(
+            onPressed: () {
+              App().restoreVO();
+            },
+            icon: const Icon(Icons.settings_backup_restore),
+            label: Text('以原始视频尺寸输出'.l10n),
+          ).toSliver(),
+          const SizedBox(height: 10).toSliver(),
+        ]
+            .map(
+              (v) => SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                sliver: v,
+              ),
+            )
+            .toList(),
+      ),
+    );
+  }
+
+  double _toSliderValue(double speed) {
+    return speed < 1 ? (speed / 2) : (0.5 + (speed - 1) / 30);
+  }
+
+  double _toSpeedValue(double t) {
+    return t < 0.5 ? (2 * t) : (1 + 30 * (t - 0.5));
+  }
+
+  Widget _buildStatisticPanel(
+    ColorScheme colorScheme,
+    Color backgroundColor,
+  ) {
+    return Scaffold(
+      backgroundColor: colorScheme.surface,
+      appBar: AppBar(
+        backgroundColor: colorScheme.surface,
+        automaticallyImplyLeading: false,
+        toolbarHeight: 46,
+        scrolledUnderElevation: 0,
+        title: Text(
+          '统计信息'.l10n,
+          style: TextStyle(
+            color: colorScheme.primary,
+            fontSize: 18,
+          ),
         ),
         actions: [
           IconButton(
@@ -586,45 +1201,215 @@ class PlayerPageState extends State<PlayerPage> {
         ],
       ),
       body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6),
-            child: Row(
-              children: [
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      App().player.setRate(1);
-                    });
-                  },
-                  icon: const Icon(Icons.flash_on_rounded),
-                ),
-                Expanded(
-                  child: Slider(
-                    min: 0.25,
-                    max: 8,
-                    divisions: 31,
-                    label: App().player.state.rate.toString(),
-                    value: bounded(0.25, App().player.state.rate, 8),
-                    onChanged: (value) {
-                      setState(() {
-                        App().player.setRate(value);
-                      });
-                    },
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.more_vert),
-                ),
-              ],
+          OutlinedButton.icon(
+            icon: const Icon(Icons.info_outline),
+            label: Text('切换 mpv-stat 统计信息'.l10n),
+            onPressed: () {
+              App().player.command(['script-binding', 'display-stats-toggle']);
+            },
+          ),
+          const SizedBox(height: 10),
+          Text(
+            '文件'.l10n,
+            style: TextStyle(
+              color: colorScheme.primary,
+              fontSize: 14,
             ),
+          ),
+          StreamBuilder(
+            stream: App().player.stream.playlist,
+            builder: (context, _) {
+              if (App().player.state.playlist.medias.isEmpty) {
+                return Container(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: Text(
+                    '未在播放'.l10n,
+                    style: TextStyle(
+                      backgroundColor: colorScheme.primaryContainer,
+                    ),
+                  ),
+                );
+              }
+              return Container(
+                padding: const EdgeInsets.symmetric(vertical: 6),
+                child: SelectableText(App().player.state.playlist.current.uri),
+              );
+            },
+          ),
+          Text(
+            '音频'.l10n,
+            style: TextStyle(
+              color: colorScheme.primary,
+              fontSize: 14,
+            ),
+          ),
+          StreamBuilder(
+            stream: App().player.stream.audioParams,
+            builder: (context, _) {
+              var info = App().player.state.audioParams;
+              return Container(
+                padding: const EdgeInsets.symmetric(vertical: 6),
+                child: SelectableText('Format: ${info.format}\n'
+                    'Sample Rate: ${info.sampleRate}\n'
+                    'Channel Count: ${info.channelCount}\n'
+                    'Channels: ${info.channels}\n'
+                    'HR Channels: ${info.hrChannels}'),
+              );
+            },
+          ),
+          Text(
+            '视频'.l10n,
+            style: TextStyle(
+              color: colorScheme.primary,
+              fontSize: 14,
+            ),
+          ),
+          StreamBuilder(
+            stream: App().player.stream.videoParams,
+            builder: (context, _) {
+              // return Text(App().player.state.videoParams.toString());
+              var info = App().player.state.videoParams;
+              return Container(
+                padding: const EdgeInsets.symmetric(vertical: 6),
+                child: SelectableText('Pixel Format: ${info.pixelformat}\n'
+                    'HW Pixel Format: ${info.hwPixelformat}\n'
+                    'w: ${info.w} h: ${info.h}\n'
+                    'dw: ${info.dw} dh: ${info.dh}\n'
+                    'Aspect: ${info.aspect}\n'
+                    'Par: ${info.par}\n'
+                    'Color Matrix: ${info.colormatrix}\n'
+                    'Color Levels: ${info.colorlevels}\n'
+                    'Primaries: ${info.primaries}\n'
+                    'Gamma: ${info.gamma}\n'
+                    'Sig Peak: ${info.sigPeak}\n'
+                    'Light: ${info.light}\n'
+                    'ChromaLocation: ${info.chromaLocation}\n'
+                    'Rotate: ${info.rotate}\n'
+                    'Stereo In: ${info.stereoIn}\n'
+                    'Average Bpp: ${info.averageBpp}\n'
+                    'Alpha: ${info.alpha}'),
+              );
+            },
+          ),
+          const SizedBox(height: 10),
+        ],
+      ),
+    );
+  }
+
+  final TextEditingController _whisperData = TextEditingController();
+
+  Widget _buildWhisperPanel(
+    ColorScheme colorScheme,
+    Color backgroundColor,
+  ) {
+    return Scaffold(
+      backgroundColor: colorScheme.surface,
+      appBar: AppBar(
+        backgroundColor: colorScheme.surface,
+        automaticallyImplyLeading: false,
+        toolbarHeight: 46,
+        scrolledUnderElevation: 0,
+        title: Text(
+          'Whisper',
+          style: TextStyle(
+            color: colorScheme.primary,
+            fontSize: 18,
+          ),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _menuExpanded = false;
+              });
+            },
+            icon: Icon(
+              Icons.close,
+              color: colorScheme.primary,
+            ),
+          ),
+          const SizedBox(
+            width: 4,
+          ),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        children: [
+
+          Row(
+            children: [
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: null,
+                  icon: const Icon(Icons.auto_awesome_outlined),
+                  label: Text('开始'.l10n),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: null,
+                  icon: const Icon(Icons.stop_circle_outlined),
+                  label: Text('停止'.l10n),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              const SizedBox(
+                width: 30,
+                child: Checkbox(value: true, onChanged: null),
+              ),
+              Expanded(child: Text('自动应用字幕到播放器'.l10n)),
+            ],
+          ),
+          const SizedBox(height: 10),
+          // progress from 0 to 1
+          const LinearProgressIndicator(
+            value: 0,
+            // ignore: deprecated_member_use
+            year2023: false,
+          ),
+          const SizedBox(height: 10),
+          TextField(
+            maxLines: 20,
+            controller: _whisperData,
+            readOnly: true,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          OutlinedButton.icon(
+            onPressed: null,
+            icon: const Icon(Icons.file_download_outlined),
+            label: Text('导出 srt 文件'.l10n),
+          ),
+          const SizedBox(height: 10),
+          OutlinedButton.icon(
+            onPressed: () {
+              _handlePanelSelection(4);
+
+            },
+            icon: const Icon(Icons.subtitles_outlined),
+            label: Text('字幕设置'.l10n),
           ),
         ],
       ),
     );
   }
 
+  bool _secondarySubConfig = false;
   Widget _buildSubtitlePanel(
     ColorScheme colorScheme,
     Color backgroundColor,
@@ -638,7 +1423,10 @@ class PlayerPageState extends State<PlayerPage> {
         scrolledUnderElevation: 0,
         title: Text(
           '字幕'.l10n,
-          style: TextStyle(color: colorScheme.primary),
+          style: TextStyle(
+            color: colorScheme.primary,
+            fontSize: 18,
+          ),
         ),
         actions: [
           IconButton(
@@ -657,28 +1445,276 @@ class PlayerPageState extends State<PlayerPage> {
           ),
         ],
       ),
-      body: ListView(
-        children: [
-          ListTile(
-            title: Text('生成字幕'.l10n),
-            onTap: () async {
-              SubtitleGenerator subGenerator = SubtitleGenerator("medium-q5_0");
-              var mediaPath =
-                  App().player.state.playlist.current.uri.toString();
-
-              var subtitle = await subGenerator.genSubtitle(
-                  mediaPath, App().player.state.position.inMilliseconds);
-              debugPrint(App().player.state.position.inMilliseconds.toString());
-              subtitle.addListener(
-                () {
-                  App()
-                      .player
-                      .setSubtitleTrack(SubtitleTrack.data(subtitle.value));
+      body: CustomScrollView(
+        slivers: [
+          Container(
+            padding: const EdgeInsets.all(0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: colorScheme.primaryContainer.withValues(alpha: 0.4),
+            ),
+            child: Row(
+              // mainAxisSize: MainAxisSize.min,
+              children: [
+                Expanded(
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(30),
+                    onTap: () {
+                      setState(() {
+                        _secondarySubConfig = false;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _secondarySubConfig
+                            ? null
+                            : colorScheme.primaryContainer,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.looks_one_outlined,
+                            size: 20,
+                            color: _secondarySubConfig
+                                ? null
+                                : colorScheme.onPrimaryContainer,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            '字幕 1',
+                            style: TextStyle(
+                              color: _secondarySubConfig
+                                  ? null
+                                  : colorScheme.onPrimaryContainer,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(30),
+                    onTap: () {
+                      setState(() {
+                        _secondarySubConfig = true;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _secondarySubConfig
+                            ? colorScheme.primaryContainer
+                            : null,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.looks_two_outlined,
+                            size: 20,
+                            color: _secondarySubConfig
+                                ? colorScheme.onPrimaryContainer
+                                : null,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            '字幕 2',
+                            style: TextStyle(
+                              color: _secondarySubConfig
+                                  ? colorScheme.onPrimaryContainer
+                                  : null,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ).toSliver(),
+          const SizedBox(height: 10).toSliver(),
+          Text(
+            '轨道'.l10n,
+            style: TextStyle(
+              color: colorScheme.primary,
+              fontSize: 14,
+            ),
+          ).toSliver(),
+          const SizedBox(height: 10).toSliver(),
+          ValueListenableBuilder(
+            valueListenable: _secondarySubConfig
+                ? App().player.secondarySid
+                : App().player.sid,
+            builder: (context, id, _) {
+              return SliverList.separated(
+                separatorBuilder: (context, index) => const SizedBox(height: 4),
+                itemBuilder: (context, index) {
+                  var info = App().player.state.tracks.subtitle[index];
+                  var title =
+                      '${info.id}. ${info.language ?? ''}_${info.title ?? ''}';
+                  if (info.id == 'auto') title = '自动选择'.l10n;
+                  if (info.id == 'no') title = '空白字幕'.l10n;
+                  return SizedBox(
+                    height: 30,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () {
+                        App().player.setProperty(
+                            _secondarySubConfig ? 'secondary-sid' : 'sid',
+                            info.id);
+                      },
+                      child: Row(
+                        children: [
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(title),
+                          ),
+                          if (info.id == id.toString())
+                            const Icon(
+                              Icons.check_circle_outline,
+                              size: 18,
+                            ),
+                          const SizedBox(width: 4),
+                        ],
+                      ),
+                    ),
+                  );
                 },
+                itemCount: App().player.state.tracks.subtitle.length,
               );
             },
           ),
-        ],
+          const SizedBox(height: 10).toSliver(),
+          Text(
+            '样式与延迟'.l10n,
+            style: TextStyle(
+              color: colorScheme.primary,
+              fontSize: 14,
+            ),
+          ).toSliver(),
+          const SizedBox(height: 10).toSliver(),
+          Row(
+            children: [
+              SizedBox(
+                width: 40,
+                child: ValueListenableBuilder(
+                  valueListenable: App().player.subVisibility,
+                  builder: (context, v, _) {
+                    return Checkbox(
+                      value: v,
+                      onChanged: (value) {
+                        if (value == null) return;
+                        if (value) {
+                          App().player.setProperty('sub-visibility', 'yes');
+                        } else {
+                          App().player.setProperty('sub-visibility', 'no');
+                        }
+                      },
+                    );
+                  },
+                ),
+              ),
+              Expanded(child: Text('显示字幕'.l10n)),
+            ],
+          ).toSliver(),
+          ValueListenableBuilder(
+            valueListenable: App().player.subDelay,
+            builder: (context, subDelay, _) {
+              return Row(
+                children: [
+                  IconButton(
+                    tooltip: '字幕延迟'.l10n,
+                    onPressed: () {
+                      setState(() {
+                        App().player.setProperty('sub-delay', '0');
+                      });
+                    },
+                    icon: const Icon(Icons.timer_outlined),
+                  ),
+                  Expanded(
+                    child: Slider(
+                      min: -30,
+                      max: 30,
+                      value: bounded(-30, subDelay, 30),
+                      onChanged: (value) {
+                        App().player.setProperty('sub-delay', value.toString());
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Container(
+                    alignment: Alignment.center,
+                    width: 40,
+                    child: FittedBox(
+                      child: Text(
+                        '${(subDelay >= 0 ? '+' : '')}${subDelay.toStringAsFixed(2)}s',
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ).toSliver(),
+          const SizedBox(height: 10).toSliver(),
+          Text(
+            '获取字幕'.l10n,
+            style: TextStyle(
+              color: colorScheme.primary,
+              fontSize: 14,
+            ),
+          ).toSliver(),
+          const SizedBox(height: 10).toSliver(),
+          OutlinedButton.icon(
+            onPressed: () async {
+              String? subTrack =
+                  await FilePicker.platform.pickFiles(type: FileType.any).then(
+                (result) {
+                  return result?.files.single.path;
+                },
+              );
+              if (subTrack != null) {
+                App().player.setSubtitleTrack(SubtitleTrack.uri(subTrack));
+              }
+            },
+            icon: const Icon(Icons.file_open_outlined),
+            label: Text('加载外部字幕文件'.l10n),
+          ).toSliver(),
+          const SizedBox(height: 10).toSliver(),
+          // OutlinedButton.icon(
+          //   onPressed: null,
+          //   icon: const Icon(Icons.wb_cloudy_outlined),
+          //   label: Text('在线查找字幕'.l10n),
+          // ).toSliver(),
+          // const SizedBox(height: 10).toSliver(),
+          OutlinedButton.icon(
+            onPressed: () {
+              _handlePanelSelection(2);
+            },
+            icon: const Icon(Icons.auto_awesome_outlined),
+            label: Text('使用 Whisper 生成'.l10n),
+          ).toSliver(),
+        ]
+            .map(
+              (v) => SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                sliver: v,
+              ),
+            )
+            .toList(),
       ),
     );
   }

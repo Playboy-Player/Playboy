@@ -11,39 +11,38 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # General
   path: ^1.8.3
   path_provider: ^2.1.1
   file_picker: ^8.3.1
   json_annotation: ^4.8.1
   url_launcher: ^6.2.5
-
-  # Window Control
+  wakelock_plus: ^1.2.11
   window_manager:
     git:
       url: https://github.com/YuiHrsw/window_manager.git
       path: packages/window_manager
       ref: windows_fullscreen_fix
   
+
   # Media
   whisper4dart: ^0.1.0
   # libmpv_dart: ^0.0.4
 
   media_kit:
     git:
-      url: https://github.com/YuiHrsw/media-kit.git
+      url: https://github.com/Playboy-Player/media_cat.git
       path: media_kit
-      ref: 582dc080806cb9e369d1305ea1ea218416985c33
+      ref: 445c94d0a6a8076fef8f424fabcfd53709bb2d5e
   media_kit_video:
     git:
-      url: https://github.com/YuiHrsw/media-kit.git
+      url: https://github.com/Playboy-Player/media_cat.git
       path: media_kit_video
-      ref: 582dc080806cb9e369d1305ea1ea218416985c33
+      ref: 445c94d0a6a8076fef8f424fabcfd53709bb2d5e
   media_kit_libs_video:
     git:
-      url: https://github.com/YuiHrsw/media-kit.git
+      url: https://github.com/Playboy-Player/media_cat.git
       path: libs/universal/media_kit_libs_video
-      ref: 582dc080806cb9e369d1305ea1ea218416985c33
+      ref: 445c94d0a6a8076fef8f424fabcfd53709bb2d5e
 
 dev_dependencies:
   flutter_test:

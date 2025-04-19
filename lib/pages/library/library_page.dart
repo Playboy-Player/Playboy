@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:playboy/backend/library_helper.dart';
 import 'package:playboy/backend/models/playitem.dart';
 import 'package:playboy/backend/app.dart';
+import 'package:playboy/backend/models/playlist_item.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/sliver_utils.dart';
 import 'package:playboy/backend/utils/string_utils.dart';
 import 'package:playboy/backend/utils/theme_utils.dart';
-import 'package:playboy/pages/library/library_loader.dart';
 import 'package:playboy/pages/library/media_menu.dart';
 import 'package:playboy/widgets/empty_holder.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
@@ -31,7 +31,7 @@ class _LibraryPageState extends State<LibraryPage> {
   bool _gridview = true;
 
   String _filter = '';
-  List<PlayItem> _contents = [];
+  List<PlayItem> _contents = App().mediaLibrary;
 
   @override
   void initState() {
@@ -51,12 +51,9 @@ class _LibraryPageState extends State<LibraryPage> {
         App().mediaLibraryLoaded = true;
       });
     };
-    loadMediaLibrary(() {
-      if (!mounted) return;
-      setState(() {
-        _contents = App().mediaLibrary;
-      });
-    });
+    if (!App().mediaLibraryLoaded) {
+      App().executeAction('rescanLibrary');
+    }
   }
 
   @override
@@ -127,7 +124,12 @@ class _LibraryPageState extends State<LibraryPage> {
       IconButton(
         tooltip: '播放'.l10n,
         hoverColor: colorScheme.actionHoverColor,
-        onPressed: null,
+        onPressed: () {
+          App().openPlaylist(
+            PlaylistItem(title: 'all', items: _contents),
+            false,
+          );
+        },
         icon: Icon(
           Icons.play_arrow_rounded,
           color: colorScheme.onPrimaryContainer,
@@ -136,7 +138,12 @@ class _LibraryPageState extends State<LibraryPage> {
       IconButton(
         tooltip: '随机播放'.l10n,
         hoverColor: colorScheme.actionHoverColor,
-        onPressed: null,
+        onPressed: () {
+          App().openPlaylist(
+            PlaylistItem(title: 'all', items: _contents),
+            true,
+          );
+        },
         icon: Icon(
           Icons.shuffle_rounded,
           color: colorScheme.onPrimaryContainer,

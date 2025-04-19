@@ -38,7 +38,10 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
               height: 40,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                color: Theme.of(context).colorScheme.secondaryContainer,
+                color: Theme.of(context)
+                    .colorScheme
+                    .primaryContainer
+                    .withValues(alpha: 0.4),
               ),
               child: TextField(
                 textAlign: TextAlign.center,
@@ -77,6 +80,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
               height: 44,
               width: 150,
               child: DropdownButtonFormField(
+                elevation: 1,
                 borderRadius: BorderRadius.circular(16),
                 decoration: InputDecoration(
                   isDense: true,
@@ -88,7 +92,10 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                     ),
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  fillColor: Theme.of(context).colorScheme.secondaryContainer,
+                  fillColor: Theme.of(context)
+                      .colorScheme
+                      .primaryContainer
+                      .withValues(alpha: 0.4),
                 ),
                 value: App().settings.initPage,
                 items: [
@@ -157,6 +164,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
               height: 44,
               width: 150,
               child: DropdownButtonFormField(
+                elevation: 1,
                 borderRadius: BorderRadius.circular(16),
                 decoration: InputDecoration(
                   isDense: true,
@@ -168,7 +176,10 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                     ),
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  fillColor: Theme.of(context).colorScheme.secondaryContainer,
+                  fillColor: Theme.of(context)
+                      .colorScheme
+                      .primaryContainer
+                      .withValues(alpha: 0.4),
                 ),
                 value: App().settings.playlistListview,
                 items: [
@@ -213,6 +224,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
               height: 44,
               width: 150,
               child: DropdownButtonFormField(
+                elevation: 1,
                 borderRadius: BorderRadius.circular(16),
                 decoration: InputDecoration(
                   isDense: true,
@@ -224,7 +236,10 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                     ),
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  fillColor: Theme.of(context).colorScheme.secondaryContainer,
+                  fillColor: Theme.of(context)
+                      .colorScheme
+                      .primaryContainer
+                      .withValues(alpha: 0.4),
                 ),
                 value: App().settings.videoLibListview,
                 items: [

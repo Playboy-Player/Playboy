@@ -55,20 +55,6 @@ List<Widget> buildMediaMenuItems(
         callback();
       },
     ),
-    MMenuItem(
-      icon: Icons.auto_awesome_outlined,
-      label: '生成字幕',
-      onPressed: () async {
-        // if (App().settings.model != '') {
-        //   SubtitleGenerator subGenerator = SubtitleGenerator(
-        //     App().settings.model,
-        //   );
-        //   var subtitle = await subGenerator.genSubtitle(item.source);
-        //   debugPrint("Generated subtitle: $subtitle");
-        //   App().playboy.setSubtitleTrack(SubtitleTrack.data(subtitle));
-        // }
-      },
-    ),
     const Divider(),
     MMenuItem(
       icon: Icons.info_outline,

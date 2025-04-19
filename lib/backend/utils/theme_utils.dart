@@ -22,11 +22,12 @@ ThemeData getThemeData(App value, ColorScheme colorScheme) {
     tooltipTheme: TooltipThemeData(
       decoration: BoxDecoration(
         color: colorScheme.secondary,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(6),
       ),
       textStyle: TextStyle(
         color: colorScheme.onSecondary,
         fontWeight: FontWeight.w500,
+        fontSize: 12,
       ),
     ),
     dialogTheme: DialogTheme(
