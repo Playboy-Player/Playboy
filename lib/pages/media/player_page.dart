@@ -10,6 +10,7 @@ import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/media_utils.dart';
 import 'package:playboy/backend/utils/sliver_utils.dart';
 import 'package:playboy/backend/utils/theme_utils.dart';
+import 'package:playboy/backend/utils/media_utils.dart';
 import 'package:playboy/pages/media/seekbar_builder.dart';
 import 'package:playboy/widgets/basic_video.dart';
 import 'package:playboy/pages/media/player_menu.dart';
@@ -19,6 +20,7 @@ import 'package:playboy/backend/utils/time_utils.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
 import 'package:playboy/widgets/menu/menu_item.dart';
 import 'package:playboy/widgets/player_list.dart';
+import 'package:playboy/backend/ml/subtitle_generator.dart';
 
 class PlayerPage extends StatefulWidget {
   const PlayerPage({
@@ -1337,6 +1339,7 @@ class PlayerPageState extends State<PlayerPage> {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
+
           Row(
             children: [
               Expanded(
@@ -1396,6 +1399,7 @@ class PlayerPageState extends State<PlayerPage> {
           OutlinedButton.icon(
             onPressed: () {
               _handlePanelSelection(4);
+
             },
             icon: const Icon(Icons.subtitles_outlined),
             label: Text('字幕设置'.l10n),

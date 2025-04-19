@@ -23,6 +23,11 @@ dependencies:
       path: packages/window_manager
       ref: windows_fullscreen_fix
   
+
+  # Media
+  whisper4dart: ^0.1.0
+  # libmpv_dart: ^0.0.4
+
   media_kit:
     git:
       url: https://github.com/Playboy-Player/media_cat.git
