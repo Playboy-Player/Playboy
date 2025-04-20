@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:media_kit_video/basic/video_controller.dart';
@@ -12,6 +12,7 @@ import 'package:playboy/backend/utils/sliver_utils.dart';
 import 'package:playboy/backend/utils/theme_utils.dart';
 import 'package:playboy/backend/utils/media_utils.dart';
 import 'package:playboy/pages/media/seekbar_builder.dart';
+import 'package:playboy/pages/settings/categories/whisper_settings.dart';
 import 'package:playboy/widgets/basic_video.dart';
 import 'package:playboy/pages/media/player_menu.dart';
 import 'package:playboy/backend/models/playitem.dart';
@@ -43,6 +44,7 @@ class PlayerPageState extends State<PlayerPage> {
   bool _showControlBar = false;
   bool _isMouseHidden = false;
   Timer? _timer;
+  ValueNotifier<String> subtitleNotifier = ValueNotifier<String>('');
 
   void _resetCursorHideTimer() {
     _timer?.cancel();
@@ -1339,12 +1341,39 @@ class PlayerPageState extends State<PlayerPage> {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
-
           Row(
             children: [
               Expanded(
                 child: FilledButton.icon(
-                  onPressed: null,
+                  onPressed: () {
+                    var _modelFiles = [];
+                    var dir = Directory('${App().dataPath}/models');
+                    if (!dir.existsSync()) {
+                      throw Exception('models folder not found');
+                    }
+                    for (var item in dir.listSync()) {
+                      if (item is File && p.extension(item.path) == '.bin') {
+                        _modelFiles.add(p.basename(item.path));
+                        break;
+                      }
+                    }
+                    if (_modelFiles.isNotEmpty) {
+                      App().settings.model = _modelFiles.first;
+                    }
+
+                    SubtitleGenerator subtitleGenerator =
+                        SubtitleGenerator(App().settings.model);
+
+                    subtitleNotifier = ValueNotifier("");
+                    subtitleGenerator.genSubtitle(
+                        App().player.state.playlist.current.uri.toString(),
+                        App().player.state.position.inMilliseconds,
+                        subtitleNotifier);
+                    subtitleNotifier.addListener(() {
+                      App().player.setSubtitleTrack(
+                          SubtitleTrack.data(subtitleNotifier.value));
+                    });
+                  },
                   icon: const Icon(Icons.auto_awesome_outlined),
                   label: Text('开始'.l10n),
                 ),
@@ -1399,7 +1428,6 @@ class PlayerPageState extends State<PlayerPage> {
           OutlinedButton.icon(
             onPressed: () {
               _handlePanelSelection(4);
-
             },
             icon: const Icon(Icons.subtitles_outlined),
             label: Text('字幕设置'.l10n),

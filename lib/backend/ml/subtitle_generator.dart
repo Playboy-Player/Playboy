@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
@@ -20,7 +21,7 @@ class SubtitleGenerator {
   }
 
   void init() {
-    modelnameString = "ggml-$modelType.bin";
+    modelnameString = modelType;
     modelDirectory = '${App().dataPath}/models';
     modelFile = File(path.join(modelDirectory, modelnameString));
     Directory(modelDirectory).createSync(recursive: true);
@@ -58,12 +59,15 @@ class SubtitleGenerator {
     // });
   }
 
-  Future<ValueNotifier<String>> genSubtitle(
-      String mediaPath, int currentTime) async {
+  void genSubtitle(
+      String mediaPath, int currentTime, ValueNotifier<String> notifier) {
     var cparams = whisper.createContextDefaultParams();
-    var whisperModel =
-        whisper.Whisper(modelFile.path, cparams, outputMode: "srt");
-    return whisperModel.inferStream(mediaPath,
-        startTime: currentTime, useOriginalTime: true);
+    var whisperModel = whisper.Whisper(modelFile.path, cparams,
+        outputMode: "srt", externalNotifier: notifier);
+    whisperModel.inferIsolate(mediaPath,
+        startTime: currentTime,
+        useOriginalTime: true,
+        newSegmentCallback: whisperModel.getSegmentCallback);
+    whisperModel.free();
   }
 }
