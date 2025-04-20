@@ -43,7 +43,6 @@ class App {
   bool mediaLibraryLoaded = false;
   List<PlaylistItem> playlists = [];
   List<PlayItem> mediaLibrary = [];
-
   static final App _instance = App._internal();
   factory App() => _instance;
   App._internal() {
@@ -88,6 +87,7 @@ class App {
     );
     controller = await BasicVideoController.create(player);
     player.setVolume(settings.volume);
+    settings.tempPath = (await getTemporaryDirectory()).path;
   }
 
   Future<void> loadSettings() async {

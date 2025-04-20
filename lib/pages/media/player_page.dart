@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:media_kit_video/basic/video_controller.dart';
 import 'package:path/path.dart' as p;
 import 'package:media_kit/media_kit.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/media_utils.dart';
@@ -1369,9 +1370,26 @@ class PlayerPageState extends State<PlayerPage> {
                         App().player.state.playlist.current.uri.toString(),
                         App().player.state.position.inMilliseconds,
                         subtitleNotifier);
-                    subtitleNotifier.addListener(() {
-                      App().player.setSubtitleTrack(
-                          SubtitleTrack.data(subtitleNotifier.value));
+
+                    String tempSubtitlePath =
+                        p.join(App().settings.tempPath, 'subtitle.srt');
+                    File file = File(tempSubtitlePath);
+
+                    subtitleNotifier.addListener(() async {
+                      file.writeAsStringSync(subtitleNotifier.value);
+
+                      App().player.command(
+                        ['sub-remove'],
+                      );
+                      App().player.command(
+                        [
+                          'sub-add',
+                          tempSubtitlePath,
+                          'select',
+                          'external',
+                          'auto',
+                        ],
+                      );
                     });
                   },
                   icon: const Icon(Icons.auto_awesome_outlined),
