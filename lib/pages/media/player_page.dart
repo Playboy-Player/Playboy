@@ -1,16 +1,19 @@
 import 'dart:async';
-
+import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:media_kit_video/basic/video_controller.dart';
 import 'package:path/path.dart' as p;
 import 'package:media_kit/media_kit.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/media_utils.dart';
 import 'package:playboy/backend/utils/sliver_utils.dart';
 import 'package:playboy/backend/utils/theme_utils.dart';
+import 'package:playboy/backend/utils/media_utils.dart';
 import 'package:playboy/pages/media/seekbar_builder.dart';
+import 'package:playboy/pages/settings/categories/whisper_settings.dart';
 import 'package:playboy/widgets/basic_video.dart';
 import 'package:playboy/pages/media/player_menu.dart';
 import 'package:playboy/backend/models/playitem.dart';
@@ -19,6 +22,7 @@ import 'package:playboy/backend/utils/time_utils.dart';
 import 'package:playboy/widgets/interactive_wrapper.dart';
 import 'package:playboy/widgets/menu/menu_item.dart';
 import 'package:playboy/widgets/player_list.dart';
+import 'package:playboy/backend/ml/subtitle_generator.dart';
 
 class PlayerPage extends StatefulWidget {
   const PlayerPage({
@@ -41,7 +45,8 @@ class PlayerPageState extends State<PlayerPage> {
   bool _showControlBar = false;
   bool _isMouseHidden = false;
   Timer? _timer;
-
+  ValueNotifier<String> subtitleNotifier = ValueNotifier<String>('');
+  ValueNotifier<bool> _autoApplySubtitlesNotifier = ValueNotifier<bool>(false);
   void _resetCursorHideTimer() {
     _timer?.cancel();
     setState(() {
@@ -1298,6 +1303,11 @@ class PlayerPageState extends State<PlayerPage> {
   }
 
   final TextEditingController _whisperData = TextEditingController();
+  void _autoApplySubtitle(bool? value) {
+    setState(() {
+      _autoApplySubtitlesNotifier.value = value ?? false; // 更新变量的值
+    });
+  }
 
   Widget _buildWhisperPanel(
     ColorScheme colorScheme,
@@ -1341,7 +1351,58 @@ class PlayerPageState extends State<PlayerPage> {
             children: [
               Expanded(
                 child: FilledButton.icon(
-                  onPressed: null,
+                  onPressed: () {
+                    var _modelFiles = [];
+                    var dir = Directory('${App().dataPath}/models');
+                    if (!dir.existsSync()) {
+                      throw Exception('models folder not found');
+                    }
+                    for (var item in dir.listSync()) {
+                      if (item is File && p.extension(item.path) == '.bin') {
+                        _modelFiles.add(p.basename(item.path));
+                        break;
+                      }
+                    }
+                    if (_modelFiles.isNotEmpty) {
+                      App().settings.model = _modelFiles.first;
+                    }
+
+                    SubtitleGenerator subtitleGenerator =
+                        SubtitleGenerator(App().settings.model);
+
+                    subtitleNotifier = ValueNotifier("");
+                    subtitleGenerator.genSubtitle(
+                        App().player.state.playlist.current.uri.toString(),
+                        App().player.state.position.inMilliseconds,
+                        subtitleNotifier);
+
+                    subtitleNotifier.addListener(() async {
+                      _whisperData.text = subtitleNotifier.value;
+                    });
+                    _autoApplySubtitlesNotifier.addListener(() {
+                      if (_autoApplySubtitlesNotifier.value) {
+                        String tempSubtitlePath =
+                            p.join(App().settings.tempPath, 'subtitle.srt');
+
+                        File file = File(tempSubtitlePath);
+
+                        file.writeAsStringSync(_whisperData.text);
+
+                        App().player.command(
+                          ['sub-remove'],
+                        );
+                        App().player.command(
+                          [
+                            'sub-add',
+                            tempSubtitlePath,
+                            'select',
+                            'external',
+                            'auto',
+                          ],
+                        );
+                      }
+                    });
+                  },
                   icon: const Icon(Icons.auto_awesome_outlined),
                   label: Text('开始'.l10n),
                 ),
@@ -1359,9 +1420,11 @@ class PlayerPageState extends State<PlayerPage> {
           const SizedBox(height: 10),
           Row(
             children: [
-              const SizedBox(
+              SizedBox(
                 width: 30,
-                child: Checkbox(value: true, onChanged: null),
+                child: Checkbox(
+                    value: _autoApplySubtitlesNotifier.value,
+                    onChanged: _autoApplySubtitle),
               ),
               Expanded(child: Text('自动应用字幕到播放器'.l10n)),
             ],

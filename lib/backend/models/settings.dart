@@ -46,6 +46,7 @@ class AppSettings {
   List<String> favouritePaths;
   String screenshotPath;
   String downloadPath;
+  String tempPath;
 
   bool recordRecentSearched;
   List<String> recentSearched;
@@ -106,6 +107,7 @@ class AppSettings {
     this.recentSearched = const [],
     this.recordRecentPlayed = false,
     this.recentPlayed = const [],
+    this.tempPath = '',
 
     // Language Settings
     this.language = 'zh_hans',

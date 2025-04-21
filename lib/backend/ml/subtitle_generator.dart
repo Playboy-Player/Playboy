@@ -1,16 +1,15 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'dart:io';
-// import 'package:flutter/material.dart';
-// import 'package:path/path.dart' as path;
-// import 'package:http/http.dart' as http;
-// import 'package:playboy/backend/app.dart';
-// import 'package:whisper4dart/whisper4dart.dart' as whisper;
-// import 'package:synchronized/synchronized.dart';
+import 'package:flutter/material.dart';
+import 'package:path/path.dart' as path;
+
+import 'package:playboy/backend/app.dart';
+import 'package:whisper4dart/whisper4dart.dart' as whisper;
+import 'package:synchronized/synchronized.dart';
 
 class SubtitleGenerator {
-  // bool _isInitialized = false;
   bool initializing = false;
-  final Completer<void> _initializerCompleter = Completer<void>.sync();
   late String modelnameString;
   late String modelDirectory;
   bool modelExists = false;
@@ -21,42 +20,18 @@ class SubtitleGenerator {
     init();
   }
 
-  void ensureInitialized() async {
-    await _initializerCompleter.future;
-    return;
-  }
+  void init() {
+    modelnameString = modelType;
+    modelDirectory = '${App().dataPath}/models';
+    modelFile = File(path.join(modelDirectory, modelnameString));
+    Directory(modelDirectory).createSync(recursive: true);
+    debugPrint("Model path: ${modelFile.path}");
+    modelExists = modelFile.existsSync();
 
-  Future<void> init() async {
-    // if (initializing) {
-    //   await _initializerCompleter.future;
-    // }
-    // initializing = true;
-
-    // var lock = Lock();
-    // try {
-    //   await lock.synchronized(() async {
-    //     modelnameString = "ggml-$modelType.bin";
-    //     modelDirectory = '${App().dataPath}/models';
-    //     modelFile = File(path.join(modelDirectory, modelnameString));
-    //     Directory(modelDirectory).createSync(recursive: true);
-    //     debugPrint("Model path: ${modelFile.path}");
-    //     modelExists = modelFile.existsSync();
-    //     _isInitialized = modelExists;
-    //     if (modelExists) {
-    //       _initializerCompleter.complete();
-    //     }
-    //     if (!modelExists) {
-    //       var lock = Lock();
-    //       await lock.synchronized(() async {
-    //         await downloadModel();
-    //       });
-    //     }
-    //   });
-    // } catch (e) {
-    //   rethrow;
-    // } finally {
-    //   initializing = false;
-    // }
+    if (modelExists) {}
+    if (!modelExists) {
+      throw Exception("Model does not exist.");
+    }
   }
 
   Future<void> downloadModel({int failCount = 0}) async {
@@ -84,18 +59,15 @@ class SubtitleGenerator {
     // });
   }
 
-  Future<String> genSubtitle(String mediaPath) async {
-    // if (!_isInitialized) {
-    //   if (initializing) {
-    //     await _initializerCompleter.future;
-    //   } else {
-    //     throw StateError("SubtitleGenerator is not initialized yet.");
-    //   }
-    // }
-    // var cparams = whisper.createContextDefaultParams();
-    // var whisperModel = whisper.Whisper(modelFile.path, cparams);
-    // return whisperModel.inferIsolate(mediaPath, outputMode: "srt");
-
-    return '';
+  void genSubtitle(
+      String mediaPath, int currentTime, ValueNotifier<String> notifier) {
+    var cparams = whisper.createContextDefaultParams();
+    var whisperModel = whisper.Whisper(modelFile.path, cparams,
+        outputMode: "srt", externalNotifier: notifier);
+    whisperModel.inferIsolate(mediaPath,
+        startTime: currentTime,
+        useOriginalTime: true,
+        newSegmentCallback: whisperModel.getSegmentCallback);
+    whisperModel.free();
   }
 }
