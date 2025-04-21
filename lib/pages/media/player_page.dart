@@ -46,7 +46,7 @@ class PlayerPageState extends State<PlayerPage> {
   bool _isMouseHidden = false;
   Timer? _timer;
   ValueNotifier<String> subtitleNotifier = ValueNotifier<String>('');
-
+  ValueNotifier<bool> _autoApplySubtitlesNotifier = ValueNotifier<bool>(false);
   void _resetCursorHideTimer() {
     _timer?.cancel();
     setState(() {
@@ -1303,6 +1303,11 @@ class PlayerPageState extends State<PlayerPage> {
   }
 
   final TextEditingController _whisperData = TextEditingController();
+  void _autoApplySubtitle(bool? value) {
+    setState(() {
+      _autoApplySubtitlesNotifier.value = value ?? false; // 更新变量的值
+    });
+  }
 
   Widget _buildWhisperPanel(
     ColorScheme colorScheme,
@@ -1371,26 +1376,31 @@ class PlayerPageState extends State<PlayerPage> {
                         App().player.state.position.inMilliseconds,
                         subtitleNotifier);
 
-                    // String tempSubtitlePath =
-                    //     p.join(App().settings.tempPath, 'subtitle.srt');
-                    // File file = File(tempSubtitlePath);
-
                     subtitleNotifier.addListener(() async {
                       _whisperData.text = subtitleNotifier.value;
-                      // file.writeAsStringSync(subtitleNotifier.value);
+                    });
+                    _autoApplySubtitlesNotifier.addListener(() {
+                      if (_autoApplySubtitlesNotifier.value) {
+                        String tempSubtitlePath =
+                            p.join(App().settings.tempPath, 'subtitle.srt');
 
-                      // App().player.command(
-                      //   ['sub-remove'],
-                      // );
-                      // App().player.command(
-                      //   [
-                      //     'sub-add',
-                      //     tempSubtitlePath,
-                      //     'select',
-                      //     'external',
-                      //     'auto',
-                      //   ],
-                      // );
+                        File file = File(tempSubtitlePath);
+
+                        file.writeAsStringSync(_whisperData.text);
+
+                        App().player.command(
+                          ['sub-remove'],
+                        );
+                        App().player.command(
+                          [
+                            'sub-add',
+                            tempSubtitlePath,
+                            'select',
+                            'external',
+                            'auto',
+                          ],
+                        );
+                      }
                     });
                   },
                   icon: const Icon(Icons.auto_awesome_outlined),
@@ -1410,9 +1420,11 @@ class PlayerPageState extends State<PlayerPage> {
           const SizedBox(height: 10),
           Row(
             children: [
-              const SizedBox(
+              SizedBox(
                 width: 30,
-                child: Checkbox(value: true, onChanged: null),
+                child: Checkbox(
+                    value: _autoApplySubtitlesNotifier.value,
+                    onChanged: _autoApplySubtitle),
               ),
               Expanded(child: Text('自动应用字幕到播放器'.l10n)),
             ],
