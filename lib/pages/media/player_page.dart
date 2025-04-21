@@ -1371,25 +1371,26 @@ class PlayerPageState extends State<PlayerPage> {
                         App().player.state.position.inMilliseconds,
                         subtitleNotifier);
 
-                    String tempSubtitlePath =
-                        p.join(App().settings.tempPath, 'subtitle.srt');
-                    File file = File(tempSubtitlePath);
+                    // String tempSubtitlePath =
+                    //     p.join(App().settings.tempPath, 'subtitle.srt');
+                    // File file = File(tempSubtitlePath);
 
                     subtitleNotifier.addListener(() async {
-                      file.writeAsStringSync(subtitleNotifier.value);
+                      _whisperData.text = subtitleNotifier.value;
+                      // file.writeAsStringSync(subtitleNotifier.value);
 
-                      App().player.command(
-                        ['sub-remove'],
-                      );
-                      App().player.command(
-                        [
-                          'sub-add',
-                          tempSubtitlePath,
-                          'select',
-                          'external',
-                          'auto',
-                        ],
-                      );
+                      // App().player.command(
+                      //   ['sub-remove'],
+                      // );
+                      // App().player.command(
+                      //   [
+                      //     'sub-add',
+                      //     tempSubtitlePath,
+                      //     'select',
+                      //     'external',
+                      //     'auto',
+                      //   ],
+                      // );
                     });
                   },
                   icon: const Icon(Icons.auto_awesome_outlined),
