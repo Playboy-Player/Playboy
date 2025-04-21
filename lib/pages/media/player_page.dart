@@ -5,15 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:media_kit_video/basic/video_controller.dart';
 import 'package:path/path.dart' as p;
 import 'package:media_kit/media_kit.dart';
-import 'package:path_provider/path_provider.dart';
 
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/media_utils.dart';
 import 'package:playboy/backend/utils/sliver_utils.dart';
 import 'package:playboy/backend/utils/theme_utils.dart';
-import 'package:playboy/backend/utils/media_utils.dart';
 import 'package:playboy/pages/media/seekbar_builder.dart';
-import 'package:playboy/pages/settings/categories/whisper_settings.dart';
 import 'package:playboy/widgets/basic_video.dart';
 import 'package:playboy/pages/media/player_menu.dart';
 import 'package:playboy/backend/models/playitem.dart';
@@ -407,51 +404,29 @@ class PlayerPageState extends State<PlayerPage> {
             _handlePanelSelection(1);
           },
         ),
-        MMenuItem(
-          icon: Icons.slow_motion_video,
-          label: '视频选项'.l10n,
-          onPressed: () {
-            _handlePanelSelection(0);
-          },
-        ),
-        MMenuItem(
-          icon: Icons.subtitles_outlined,
-          label: '字幕选项'.l10n,
-          onPressed: () {
-            _handlePanelSelection(4);
-          },
-        ),
-        MMenuItem(
-          icon: Icons.info_outline,
-          label: '统计信息'.l10n,
-          onPressed: () {
-            _handlePanelSelection(3);
-          },
-        ),
-        MMenuItem(
-          icon: Icons.auto_awesome_outlined,
-          label: 'Whisper',
-          onPressed: () {
-            _handlePanelSelection(2);
-          },
-        ),
-        const Divider(),
         SubmenuButton(
           leadingIcon: const Icon(
-            Icons.bug_report_outlined,
+            Icons.video_settings,
             size: 18,
           ),
           menuChildren: [
             const SizedBox(height: 10),
             MMenuItem(
-              icon: Icons.bug_report_outlined,
+              icon: Icons.slow_motion_video,
+              label: '视频选项'.l10n,
+              onPressed: () {
+                _handlePanelSelection(0);
+              },
+            ),
+            MMenuItem(
+              icon: Icons.high_quality_outlined,
               label: '以 UI 显示尺寸输出'.l10n,
               onPressed: () {
                 App().refreshVO();
               },
             ),
             MMenuItem(
-              icon: Icons.bug_report_outlined,
+              icon: Icons.settings_backup_restore,
               label: '以原始视频显示输出'.l10n,
               onPressed: () {
                 App().restoreVO();
@@ -461,8 +436,57 @@ class PlayerPageState extends State<PlayerPage> {
           ],
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6),
-            child: Text('调试'.l10n),
+            child: Text('视频'.l10n),
           ),
+        ),
+        SubmenuButton(
+          leadingIcon: const Icon(
+            Icons.subtitles_outlined,
+            size: 18,
+          ),
+          menuChildren: [
+            const SizedBox(height: 10),
+            MMenuItem(
+              icon: Icons.subtitles_outlined,
+              label: '字幕选项'.l10n,
+              onPressed: () {
+                _handlePanelSelection(4);
+              },
+            ),
+            MMenuItem(
+              icon: Icons.auto_awesome_outlined,
+              label: 'Whisper',
+              onPressed: () {
+                _handlePanelSelection(2);
+              },
+            ),
+            MMenuItem(
+              icon: Icons.translate,
+              label: '翻译'.l10n,
+              onPressed: () {
+                _handlePanelSelection(5);
+              },
+            ),
+            const SizedBox(height: 10)
+          ],
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: Text('字幕'.l10n),
+          ),
+        ),
+        MMenuItem(
+          icon: Icons.auto_awesome_outlined,
+          label: '智能总结'.l10n,
+          onPressed: () {
+            _handlePanelSelection(6);
+          },
+        ),
+        MMenuItem(
+          icon: Icons.info_outline,
+          label: '统计信息'.l10n,
+          onPressed: () {
+            _handlePanelSelection(3);
+          },
         ),
         const SizedBox(height: 10),
       ],
@@ -534,6 +558,8 @@ class PlayerPageState extends State<PlayerPage> {
             _buildWhisperPanel(colorScheme, backgroundColor),
             _buildStatisticPanel(colorScheme, backgroundColor),
             _buildSubtitlePanel(colorScheme, backgroundColor),
+            _buildTranslationPanel(colorScheme, backgroundColor),
+            _buildSummaryPanel(colorScheme, backgroundColor),
           ][_curPanel],
         ),
       );
@@ -1463,6 +1489,7 @@ class PlayerPageState extends State<PlayerPage> {
             icon: const Icon(Icons.subtitles_outlined),
             label: Text('字幕设置'.l10n),
           ),
+          const SizedBox(height: 10),
         ],
       ),
     );
@@ -1774,6 +1801,148 @@ class PlayerPageState extends State<PlayerPage> {
               ),
             )
             .toList(),
+      ),
+    );
+  }
+
+  Widget _buildTranslationPanel(
+    ColorScheme colorScheme,
+    Color backgroundColor,
+  ) {
+    return Scaffold(
+      backgroundColor: colorScheme.surface,
+      appBar: AppBar(
+        backgroundColor: colorScheme.surface,
+        automaticallyImplyLeading: false,
+        toolbarHeight: 46,
+        scrolledUnderElevation: 0,
+        title: Text(
+          '翻译'.l10n,
+          style: TextStyle(
+            color: colorScheme.primary,
+            fontSize: 18,
+          ),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _menuExpanded = false;
+              });
+            },
+            icon: Icon(
+              Icons.close,
+              color: colorScheme.primary,
+            ),
+          ),
+          const SizedBox(
+            width: 4,
+          ),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.auto_awesome_outlined),
+                  label: Text('开始'.l10n),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: null,
+                  icon: const Icon(Icons.stop_circle_outlined),
+                  label: Text('停止'.l10n),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          // progress from 0 to 1
+          const LinearProgressIndicator(
+            value: 0,
+            // ignore: deprecated_member_use
+            year2023: false,
+          ),
+          const SizedBox(height: 10),
+          TextField(
+            maxLines: 20,
+            controller: _whisperData,
+            readOnly: true,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          OutlinedButton.icon(
+            onPressed: () {
+              _handlePanelSelection(4);
+            },
+            icon: const Icon(Icons.subtitles_outlined),
+            label: Text('字幕设置'.l10n),
+          ),
+          const SizedBox(height: 10),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSummaryPanel(
+    ColorScheme colorScheme,
+    Color backgroundColor,
+  ) {
+    return Scaffold(
+      backgroundColor: colorScheme.surface,
+      appBar: AppBar(
+        backgroundColor: colorScheme.surface,
+        automaticallyImplyLeading: false,
+        toolbarHeight: 46,
+        scrolledUnderElevation: 0,
+        title: Text(
+          '智能总结'.l10n,
+          style: TextStyle(
+            color: colorScheme.primary,
+            fontSize: 18,
+          ),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _menuExpanded = false;
+              });
+            },
+            icon: Icon(
+              Icons.close,
+              color: colorScheme.primary,
+            ),
+          ),
+          const SizedBox(
+            width: 4,
+          ),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        children: [
+          OutlinedButton.icon(
+            icon: const Icon(Icons.info_outline),
+            label: Text('按钮 1'.l10n),
+            onPressed: () {
+              App().player.command(['show-text', 'hell world?']);
+            },
+          ),
+          const SizedBox(height: 10),
+        ],
       ),
     );
   }
