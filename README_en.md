@@ -51,7 +51,6 @@ You can access all mpv functions using [keyboard shortcuts](https://github.com/m
 - [x] Shader support, such as [Anime4K](https://github.com/bloc97/Anime4K)  
 - [x] Custom key mapping (input.conf support)  
 - [x] Compatible with `mpv.conf` configuration files  
-- [ ] Custom mpv initialization parameters  
 - [ ] Subtitle generation using Whisper
 
 ## For Developers
