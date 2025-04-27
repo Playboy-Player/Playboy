@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:playboy/backend/app.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:playboy/backend/constants.dart' as constants;
@@ -12,6 +13,26 @@ class AboutPage extends StatefulWidget {
 }
 
 class _AboutPageState extends State<AboutPage> {
+  String libmpvVersion = 'unknown';
+  String ffmpegVersion = 'unknown';
+  String libassVersion = 'unknown';
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
+
+  void _init() async {
+    var libmpvVer = await App().player.getProperty('mpv-version');
+    var ffmpegVer = await App().player.getProperty('ffmpeg-version');
+    var libassVer = await App().player.getProperty('libass-version');
+    setState(() {
+      libmpvVersion = libmpvVer;
+      ffmpegVersion = ffmpegVer;
+      libassVersion = libassVer;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
@@ -146,6 +167,24 @@ class _AboutPageState extends State<AboutPage> {
                 color: Theme.of(context).colorScheme.secondary,
               ),
             ),
+          ),
+          ListTile(
+            leading: const Icon(
+              Icons.info_outline,
+            ),
+            title: Text('依赖库版本'.l10n),
+            trailing: const Icon(Icons.open_in_new),
+            onTap: () {
+              App().dialog(
+                (context) => AlertDialog(
+                  content: SelectableText(
+                    'libmpv: $libmpvVersion\n'
+                    'ffmpeg: $ffmpegVersion\n'
+                    'libass: $libassVersion',
+                  ),
+                ),
+              );
+            },
           ),
           ListTile(
             leading: const Icon(

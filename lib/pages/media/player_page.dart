@@ -454,7 +454,7 @@ class PlayerPageState extends State<PlayerPage> {
             ),
             MMenuItem(
               icon: Icons.auto_awesome_outlined,
-              label: 'Whisper',
+              label: 'Whisper (测试版)',
               onPressed: () {
                 _handlePanelSelection(2);
               },

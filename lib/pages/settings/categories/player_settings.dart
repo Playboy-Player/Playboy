@@ -204,36 +204,6 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
               ),
             ],
           ),
-          // Container(
-          //   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          //   child: Text(
-          //     'mpv 动态库路径'.l10n,
-          //     style: const TextStyle(
-          //       fontSize: 16,
-          //       fontWeight: FontWeight.w500,
-          //     ),
-          //   ),
-          // ),
-          // PathSettingCard(
-          //   path: App().settings.libmpvPath,
-          //   actions: [
-          //     SizedBox(
-          //       width: 40,
-          //       child: IconButton(
-          //         onPressed: () async {
-          //           var res = await FilePicker.platform
-          //               .getDirectoryPath(lockParentWindow: true);
-          //           if (res != null) {
-          //             App().settings.libmpvPath = res;
-          //             App().saveSettings();
-          //             setState(() {});
-          //           }
-          //         },
-          //         icon: const Icon(Icons.edit_outlined),
-          //       ),
-          //     ),
-          //   ],
-          // ),
         ],
       ),
     );
