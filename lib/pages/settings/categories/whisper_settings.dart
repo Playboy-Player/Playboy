@@ -38,9 +38,6 @@ class _WhisperSettingsPageState extends State<WhisperSettingsPage> {
           _modelFiles.add(basename(item.path));
         }
       }
-      if (_modelFiles.isNotEmpty) {
-        App().settings.model = _modelFiles.first;
-      }
       setState(() {});
     } catch (e) {
       setState(() {
@@ -107,6 +104,7 @@ class _WhisperSettingsPageState extends State<WhisperSettingsPage> {
                                 onPressed: () {
                                   setState(() {
                                     App().settings.model = _modelFiles[index];
+                                    App().saveSettings();
                                   });
                                 },
                                 child: Text(
