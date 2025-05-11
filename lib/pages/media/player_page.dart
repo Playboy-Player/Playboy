@@ -1328,6 +1328,7 @@ class PlayerPageState extends State<PlayerPage> {
   }
 
   final ValueNotifier<String> _subtitleNotifier = ValueNotifier<String>('');
+  final ValueNotifier<int> _subtitleProgressNotifier = ValueNotifier<int>(0);
   bool _autoApplySubtitlesNotifier = false;
 
   final TextEditingController _whisperSubController = TextEditingController();
@@ -1391,10 +1392,10 @@ class PlayerPageState extends State<PlayerPage> {
 
                     _subtitleNotifier.value = '';
                     subtitleGenerator.genSubtitle(
-                      App().player.state.playlist.current.uri.toString(),
-                      App().player.state.position.inMilliseconds,
-                      _subtitleNotifier,
-                    );
+                        App().player.state.playlist.current.uri.toString(),
+                        App().player.state.position.inMilliseconds,
+                        _subtitleNotifier,
+                        _subtitleProgressNotifier);
 
                     _subtitleNotifier.addListener(() async {
                       setState(() {

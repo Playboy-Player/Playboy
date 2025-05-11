@@ -52,10 +52,15 @@ class SubtitleGenerator {
   }
 
   void genSubtitle(
-      String mediaPath, int currentTime, ValueNotifier<String> notifier) {
+      String mediaPath,
+      int currentTime,
+      ValueNotifier<String> resultNotifier,
+      ValueNotifier<int> progressNotifier) {
     var cparams = whisper.createContextDefaultParams();
     var whisperModel = whisper.Whisper(modelFile.path, cparams,
-        outputMode: "srt", externalNotifier: notifier);
+        outputMode: "srt",
+        externalResultNotifier: resultNotifier,
+        externalProgressNotifier: progressNotifier);
     whisperModel.inferIsolate(mediaPath,
         startTime: currentTime,
         useOriginalTime: true,
