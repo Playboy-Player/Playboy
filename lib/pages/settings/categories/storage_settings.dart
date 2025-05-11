@@ -256,10 +256,34 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
             SliverToBoxAdapter(
               child: ListTile(
                 onTap: () {
-                  var f = File('${App().dataPath}/config/settings.json');
-                  if (f.existsSync()) {
-                    f.deleteSync();
-                  }
+                  App().dialog(
+                    (context) => AlertDialog(
+                      title: const Text('恢复默认设置'),
+                      content: Text(
+                        '重置所有设置并清除收藏夹列表, 但不会删除播放列表和本地文件, 是否继续?\n执行此操作后, 请手动重启应用'
+                            .l10n,
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text('取消'.l10n),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            var f =
+                                File('${App().dataPath}/config/settings.json');
+                            if (f.existsSync()) {
+                              f.deleteSync();
+                            }
+                            Navigator.pop(context);
+                          },
+                          child: Text('确定'.l10n),
+                        ),
+                      ],
+                    ),
+                  );
                 },
                 leading: const Icon(Icons.cleaning_services),
                 title: Text('恢复默认设置'.l10n),

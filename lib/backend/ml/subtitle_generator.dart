@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 
 import 'package:playboy/backend/app.dart';
 import 'package:whisper4dart/whisper4dart.dart' as whisper;
-import 'package:synchronized/synchronized.dart';
 
 class SubtitleGenerator {
   bool initializing = false;
@@ -26,12 +24,6 @@ class SubtitleGenerator {
     modelFile = File(path.join(modelDirectory, modelnameString));
     Directory(modelDirectory).createSync(recursive: true);
     debugPrint("Model path: ${modelFile.path}");
-    modelExists = modelFile.existsSync();
-
-    if (modelExists) {}
-    if (!modelExists) {
-      throw Exception("Model does not exist.");
-    }
   }
 
   Future<void> downloadModel({int failCount = 0}) async {

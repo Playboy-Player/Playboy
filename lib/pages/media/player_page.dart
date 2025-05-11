@@ -42,8 +42,7 @@ class PlayerPageState extends State<PlayerPage> {
   bool _showControlBar = false;
   bool _isMouseHidden = false;
   Timer? _timer;
-  ValueNotifier<String> subtitleNotifier = ValueNotifier<String>('');
-  ValueNotifier<bool> _autoApplySubtitlesNotifier = ValueNotifier<bool>(false);
+
   void _resetCursorHideTimer() {
     _timer?.cancel();
     setState(() {
@@ -455,18 +454,18 @@ class PlayerPageState extends State<PlayerPage> {
             ),
             MMenuItem(
               icon: Icons.auto_awesome_outlined,
-              label: 'Whisper',
+              label: 'Whisper (测试版)',
               onPressed: () {
                 _handlePanelSelection(2);
               },
             ),
-            MMenuItem(
-              icon: Icons.translate,
-              label: '翻译'.l10n,
-              onPressed: () {
-                _handlePanelSelection(5);
-              },
-            ),
+            // MMenuItem(
+            //   icon: Icons.translate,
+            //   label: '翻译'.l10n,
+            //   onPressed: () {
+            //     _handlePanelSelection(5);
+            //   },
+            // ),
             const SizedBox(height: 10)
           ],
           child: Padding(
@@ -474,13 +473,13 @@ class PlayerPageState extends State<PlayerPage> {
             child: Text('字幕'.l10n),
           ),
         ),
-        MMenuItem(
-          icon: Icons.auto_awesome_outlined,
-          label: '智能总结'.l10n,
-          onPressed: () {
-            _handlePanelSelection(6);
-          },
-        ),
+        // MMenuItem(
+        //   icon: Icons.auto_awesome_outlined,
+        //   label: '智能总结'.l10n,
+        //   onPressed: () {
+        //     _handlePanelSelection(6);
+        //   },
+        // ),
         MMenuItem(
           icon: Icons.info_outline,
           label: '统计信息'.l10n,
@@ -1328,13 +1327,11 @@ class PlayerPageState extends State<PlayerPage> {
     );
   }
 
-  final TextEditingController _whisperData = TextEditingController();
-  void _autoApplySubtitle(bool? value) {
-    setState(() {
-      _autoApplySubtitlesNotifier.value = value ?? false; // 更新变量的值
-    });
-  }
+  final ValueNotifier<String> _subtitleNotifier = ValueNotifier<String>('');
+  bool _autoApplySubtitlesNotifier = false;
 
+  final TextEditingController _whisperSubController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   Widget _buildWhisperPanel(
     ColorScheme colorScheme,
     Color backgroundColor,
@@ -1378,41 +1375,44 @@ class PlayerPageState extends State<PlayerPage> {
               Expanded(
                 child: FilledButton.icon(
                   onPressed: () {
-                    var _modelFiles = [];
-                    var dir = Directory('${App().dataPath}/models');
-                    if (!dir.existsSync()) {
-                      throw Exception('models folder not found');
+                    var file = File(
+                      '${App().dataPath}/models/${App().settings.model}',
+                    );
+                    if (!file.existsSync()) {
+                      setState(() {
+                        _whisperSubController.text =
+                            'whisper 模型未设置或文件不存在, 请在偏好设置中检查 whisper 模型.'.l10n;
+                      });
+                      return;
                     }
-                    for (var item in dir.listSync()) {
-                      if (item is File && p.extension(item.path) == '.bin') {
-                        _modelFiles.add(p.basename(item.path));
-                        break;
-                      }
-                    }
-                    if (_modelFiles.isNotEmpty) {
-                      App().settings.model = _modelFiles.first;
-                    }
+                    SubtitleGenerator subtitleGenerator = SubtitleGenerator(
+                      App().settings.model,
+                    );
 
-                    SubtitleGenerator subtitleGenerator =
-                        SubtitleGenerator(App().settings.model);
-
-                    subtitleNotifier = ValueNotifier("");
+                    _subtitleNotifier.value = '';
                     subtitleGenerator.genSubtitle(
-                        App().player.state.playlist.current.uri.toString(),
-                        App().player.state.position.inMilliseconds,
-                        subtitleNotifier);
+                      App().player.state.playlist.current.uri.toString(),
+                      App().player.state.position.inMilliseconds,
+                      _subtitleNotifier,
+                    );
 
-                    subtitleNotifier.addListener(() async {
-                      _whisperData.text = subtitleNotifier.value;
-                    });
-                    _autoApplySubtitlesNotifier.addListener(() {
-                      if (_autoApplySubtitlesNotifier.value) {
-                        String tempSubtitlePath =
-                            p.join(App().settings.tempPath, 'subtitle.srt');
+                    _subtitleNotifier.addListener(() async {
+                      setState(() {
+                        _whisperSubController.text = _subtitleNotifier.value;
+                      });
+                      _scrollController.jumpTo(
+                        _scrollController.position.maxScrollExtent,
+                      );
+
+                      if (_autoApplySubtitlesNotifier) {
+                        String tempSubtitlePath = p.join(
+                          App().settings.tempPath,
+                          'subtitle.srt',
+                        );
 
                         File file = File(tempSubtitlePath);
 
-                        file.writeAsStringSync(_whisperData.text);
+                        file.writeAsString(_subtitleNotifier.value);
 
                         App().player.command(
                           ['sub-remove'],
@@ -1449,8 +1449,17 @@ class PlayerPageState extends State<PlayerPage> {
               SizedBox(
                 width: 30,
                 child: Checkbox(
-                    value: _autoApplySubtitlesNotifier.value,
-                    onChanged: _autoApplySubtitle),
+                  value: _autoApplySubtitlesNotifier,
+                  onChanged: (value) {
+                    setState(
+                      () {
+                        if (value != null) {
+                          _autoApplySubtitlesNotifier = value;
+                        }
+                      },
+                    );
+                  },
+                ),
               ),
               Expanded(child: Text('自动应用字幕到播放器'.l10n)),
             ],
@@ -1465,7 +1474,8 @@ class PlayerPageState extends State<PlayerPage> {
           const SizedBox(height: 10),
           TextField(
             maxLines: 20,
-            controller: _whisperData,
+            scrollController: _scrollController,
+            controller: _whisperSubController,
             readOnly: true,
             decoration: const InputDecoration(
               border: OutlineInputBorder(
@@ -1805,6 +1815,7 @@ class PlayerPageState extends State<PlayerPage> {
     );
   }
 
+  final TextEditingController _translationData = TextEditingController();
   Widget _buildTranslationPanel(
     ColorScheme colorScheme,
     Color backgroundColor,
@@ -1872,7 +1883,7 @@ class PlayerPageState extends State<PlayerPage> {
           const SizedBox(height: 10),
           TextField(
             maxLines: 20,
-            controller: _whisperData,
+            controller: _translationData,
             readOnly: true,
             decoration: const InputDecoration(
               border: OutlineInputBorder(
