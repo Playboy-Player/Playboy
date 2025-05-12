@@ -51,7 +51,7 @@
 - [x] 着色器支持
 - [x] 自定义快捷键映射 (input.conf 支持)
 - [x] 兼容 mpv.conf 配置文件
-- [ ] 自动生成字幕 (Whisper)
+- [x] 自动生成字幕 (Whisper)
 
 ### 使用 Anime4K 着色器
 
