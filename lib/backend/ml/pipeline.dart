@@ -178,8 +178,13 @@ Use this JSON schema as a reference:
 }
 
 class OCRPipeline extends Pipeline<Uri, String> {
-  OCRPipeline({required ApiConfig apiConfig, required String modelName})
-      : super(steps: [OCRStep(apiConfig: apiConfig, modelName: modelName)]);
+  OCRPipeline(
+      {required ApiConfig apiConfig,
+      required String modelName,
+      String? tarLang})
+      : super(steps: [
+          OCRStep(apiConfig: apiConfig, modelName: modelName, tarLang: tarLang)
+        ]);
 }
 
 class SRTtranslationStep implements Step<(String, String, String), String> {
