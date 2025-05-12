@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:media_kit_video/basic/video_controller.dart';
 import 'package:path/path.dart' as p;
 import 'package:media_kit/media_kit.dart';
 
@@ -34,8 +33,6 @@ class PlayerPage extends StatefulWidget {
 }
 
 class PlayerPageState extends State<PlayerPage> {
-  BasicVideoController controller = App().controller;
-
   bool _menuExpanded = false;
   int _curPanel = 0;
 
@@ -507,7 +504,7 @@ class PlayerPageState extends State<PlayerPage> {
                 child: SizedBox.expand(),
               ),
               SizedBox.expand(
-                child: BasicVideo(controller: controller),
+                child: BasicVideo(controller: App().controller),
               ),
             ],
           ),
@@ -1327,7 +1324,10 @@ class PlayerPageState extends State<PlayerPage> {
     );
   }
 
+  bool _allowStart = true;
+
   final ValueNotifier<String> _subtitleNotifier = ValueNotifier<String>('');
+  final ValueNotifier<int> _subtitleProgressNotifier = ValueNotifier<int>(0);
   bool _autoApplySubtitlesNotifier = false;
 
   final TextEditingController _whisperSubController = TextEditingController();
@@ -1374,73 +1374,106 @@ class PlayerPageState extends State<PlayerPage> {
             children: [
               Expanded(
                 child: FilledButton.icon(
-                  onPressed: () {
-                    var file = File(
-                      '${App().dataPath}/models/${App().settings.model}',
-                    );
-                    if (!file.existsSync()) {
-                      setState(() {
-                        _whisperSubController.text =
-                            'whisper 模型未设置或文件不存在, 请在偏好设置中检查 whisper 模型.'.l10n;
-                      });
-                      return;
-                    }
-                    SubtitleGenerator subtitleGenerator = SubtitleGenerator(
-                      App().settings.model,
-                    );
+                  onPressed: _allowStart
+                      ? () {
+                          var file = File(
+                            '${App().dataPath}/models/${App().settings.model}',
+                          );
+                          if (!file.existsSync()) {
+                            setState(() {
+                              _whisperSubController.text =
+                                  'whisper 模型未设置或文件不存在, 请在偏好设置中检查 whisper 模型.'
+                                      .l10n;
+                            });
+                            return;
+                          }
+                          if (App().player.state.playlist.medias.isEmpty) {
+                            setState(() {
+                              _whisperSubController.text = '没有正在播放的视频/音频.'.l10n;
+                            });
+                            return;
+                          }
 
-                    _subtitleNotifier.value = '';
-                    subtitleGenerator.genSubtitle(
-                      App().player.state.playlist.current.uri.toString(),
-                      App().player.state.position.inMilliseconds,
-                      _subtitleNotifier,
-                    );
+                          setState(() {
+                            _allowStart = false;
+                            _whisperSubController.text = '正在提取音频并初始化模型...'.l10n;
+                          });
 
-                    _subtitleNotifier.addListener(() async {
-                      setState(() {
-                        _whisperSubController.text = _subtitleNotifier.value;
-                      });
-                      _scrollController.jumpTo(
-                        _scrollController.position.maxScrollExtent,
-                      );
+                          SubtitleGenerator subtitleGenerator =
+                              SubtitleGenerator(
+                            App().settings.model,
+                          );
 
-                      if (_autoApplySubtitlesNotifier) {
-                        String tempSubtitlePath = p.join(
-                          App().settings.tempPath,
-                          'subtitle.srt',
-                        );
+                          _subtitleNotifier.value = '';
+                          _subtitleProgressNotifier.value = 0;
+                          subtitleGenerator.genSubtitle(
+                            App().player.state.playlist.current.uri.toString(),
+                            0,
+                            _subtitleNotifier,
+                            _subtitleProgressNotifier,
+                          );
 
-                        File file = File(tempSubtitlePath);
+                          _subtitleProgressNotifier.addListener(() async {
+                            // debugPrint(
+                            //   "prog: ${_subtitleProgressNotifier.value}",
+                            // );
+                            if (_subtitleProgressNotifier.value == 100) {
+                              setState(() {
+                                _allowStart = true;
+                              });
+                            }
+                            // _scrollController.jumpTo(
+                            //   _scrollController.position.maxScrollExtent,
+                            // );
+                          });
 
-                        file.writeAsString(_subtitleNotifier.value);
+                          _subtitleNotifier.addListener(() async {
+                            setState(() {
+                              _whisperSubController.text =
+                                  _subtitleNotifier.value;
+                            });
+                            _scrollController.jumpTo(
+                              _scrollController.position.maxScrollExtent,
+                            );
 
-                        App().player.command(
-                          ['sub-remove'],
-                        );
-                        App().player.command(
-                          [
-                            'sub-add',
-                            tempSubtitlePath,
-                            'select',
-                            'external',
-                            'auto',
-                          ],
-                        );
-                      }
-                    });
-                  },
+                            if (_autoApplySubtitlesNotifier) {
+                              String tempSubtitlePath = p.join(
+                                App().settings.tempPath,
+                                'subtitle.srt',
+                              );
+
+                              File file = File(tempSubtitlePath);
+
+                              file.writeAsString(_subtitleNotifier.value);
+
+                              App().player.command(
+                                ['sub-remove'],
+                              );
+                              App().player.command(
+                                [
+                                  'sub-add',
+                                  tempSubtitlePath,
+                                  'select',
+                                  'external',
+                                  'auto',
+                                ],
+                              );
+                            }
+                          });
+                        }
+                      : null,
                   icon: const Icon(Icons.auto_awesome_outlined),
                   label: Text('开始'.l10n),
                 ),
               ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: null,
-                  icon: const Icon(Icons.stop_circle_outlined),
-                  label: Text('停止'.l10n),
-                ),
-              ),
+              // const SizedBox(width: 8),
+              // Expanded(
+              //   child: OutlinedButton.icon(
+              //     onPressed: null,
+              //     icon: const Icon(Icons.stop_circle_outlined),
+              //     label: Text('停止'.l10n),
+              //   ),
+              // ),
             ],
           ),
           const SizedBox(height: 10),
@@ -1466,10 +1499,32 @@ class PlayerPageState extends State<PlayerPage> {
           ),
           const SizedBox(height: 10),
           // progress from 0 to 1
-          const LinearProgressIndicator(
-            value: 0,
-            // ignore: deprecated_member_use
-            year2023: false,
+          ValueListenableBuilder(
+            valueListenable: _subtitleProgressNotifier,
+            builder: (context, progress, _) {
+              return Row(
+                children: [
+                  const SizedBox(
+                    width: 30,
+                    child: Icon(Icons.hearing),
+                  ),
+                  Expanded(
+                    child: LinearProgressIndicator(
+                      value: progress.toDouble() / 100,
+                      // ignore: deprecated_member_use
+                      year2023: false,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 50,
+                    child: Text(
+                      '$progress %',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
           const SizedBox(height: 10),
           TextField(
@@ -1487,7 +1542,26 @@ class PlayerPageState extends State<PlayerPage> {
           ),
           const SizedBox(height: 10),
           OutlinedButton.icon(
-            onPressed: null,
+            onPressed: () async {
+              String? newFilePath = await FilePicker.platform.saveFile(
+                dialogTitle: '另存为',
+                fileName: 'subtitle.srt',
+              );
+
+              if (newFilePath != null) {
+                final newFile = File(newFilePath);
+
+                await newFile.writeAsString(_whisperSubController.text);
+                if (!mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'srt 文件已导出到: $newFilePath',
+                    ),
+                  ),
+                );
+              }
+            },
             icon: const Icon(Icons.file_download_outlined),
             label: Text('导出 srt 文件'.l10n),
           ),
