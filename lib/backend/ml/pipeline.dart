@@ -123,12 +123,19 @@ class OCRStep implements Step<Uri, String> {
   final ApiConfig apiConfig;
   final String modelName;
   final OpenAICompatibleLLM llm;
+  String translationPrompt = "";
 
-  OCRStep({required this.apiConfig, required this.modelName})
+  final String? tarLang;
+
+  OCRStep({required this.apiConfig, required this.modelName, this.tarLang})
       : llm = OpenAICompatibleLLM(config: apiConfig);
 
   @override
   Future<String> execute(Uri input) async {
+    if (tarLang != null) {
+      translationPrompt = "-Translate all the text to $tarLang:\n";
+    }
+
     final multimodalInput = MultimodalInput(
       text:
           """You are an AI assistant proficient in image recognition and data extraction. Your task is to analyze the provided image, identify all text and table structures within it, and output the recognition results in JSON format.
@@ -138,6 +145,7 @@ Please follow these rules:
 - For tables:
   - Always include "type", "bbox", and "markdown_table".
 - Keep the structure clean and consistent.
+$translationPrompt
 
 Use this JSON schema as a reference:
 
