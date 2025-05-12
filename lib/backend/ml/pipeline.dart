@@ -214,7 +214,7 @@ You will receive a string containing SRT subtitle content. The format for each e
 *   Target Language: $TarLang
 
 # SRT Subtitle Content
-```srt
+
 $text
 """,
     );
