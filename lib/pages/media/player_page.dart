@@ -459,13 +459,13 @@ class PlayerPageState extends State<PlayerPage> {
                 _handlePanelSelection(2);
               },
             ),
-            // MMenuItem(
-            //   icon: Icons.translate,
-            //   label: '翻译'.l10n,
-            //   onPressed: () {
-            //     _handlePanelSelection(5);
-            //   },
-            // ),
+            MMenuItem(
+              icon: Icons.translate,
+              label: '翻译'.l10n,
+              onPressed: () {
+                _handlePanelSelection(5);
+              },
+            ),
             const SizedBox(height: 10)
           ],
           child: Padding(
@@ -473,13 +473,13 @@ class PlayerPageState extends State<PlayerPage> {
             child: Text('字幕'.l10n),
           ),
         ),
-        // MMenuItem(
-        //   icon: Icons.auto_awesome_outlined,
-        //   label: '智能总结'.l10n,
-        //   onPressed: () {
-        //     _handlePanelSelection(6);
-        //   },
-        // ),
+        MMenuItem(
+          icon: Icons.auto_awesome_outlined,
+          label: '智能总结'.l10n,
+          onPressed: () {
+            _handlePanelSelection(6);
+          },
+        ),
         MMenuItem(
           icon: Icons.info_outline,
           label: '统计信息'.l10n,
