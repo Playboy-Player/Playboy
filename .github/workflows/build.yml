@@ -18,11 +18,11 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      # - name: Set up libmpv_dart
-      #   run: dart run libmpv_dart:setup --platform windows
+      - name: Set up libmpv_dart
+        run: dart run libmpv_dart:setup --platform windows
 
-      # - name: Set up whisper4dart (using prebuilt library)
-      #   run: dart run whisper4dart:setup --prebuilt
+      - name: Set up whisper4dart (using prebuilt library)
+        run: dart run whisper4dart:setup --prebuilt
 
       - name: Build Windows App
         run: flutter build windows
@@ -47,10 +47,10 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Set up Flutter for Linux
-        run: flutter config --enable-linux-desktop
+      - name: Set up whisper4dart (using prebuilt library)
+        run: dart run whisper4dart:setup --prebuilt
 
-      - name: Patch for linux build
+      - name: Install necessary libraries
         run: |
           flutter doctor
           sudo apt-get update -y
@@ -66,31 +66,31 @@ jobs:
       #     name: linux-build
       #     path: build/linux/ 
 
-  build-macos:
-    runs-on: macos-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+  # build-macos:
+  #   runs-on: macos-latest
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
 
-      - name: Install Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.29.0'
+  #     - name: Install Flutter
+  #       uses: subosito/flutter-action@v2
+  #       with:
+  #         flutter-version: '3.29.0'
 
-      - name: Install dependencies
-        run: flutter pub get
+  #     - name: Install dependencies
+  #       run: flutter pub get
 
-      - name: Set up Flutter for macOS
-        run: flutter config --enable-macos-desktop
+  #     - name: Set up Flutter for macOS
+  #       run: flutter config --enable-macos-desktop
 
-      - name: Build macOS App
-        run: flutter build macos
+  #     - name: Build macOS App
+  #       run: flutter build macos
 
-      # - name: Upload macOS Build Artifacts
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: macos-build
-      #     path: build/macos/Build/Products/Release/
+  #     - name: Upload macOS Build Artifacts
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: macos-build
+  #         path: build/macos/Build/Products/Release/
 
   # build-android:
   #   runs-on: ubuntu-latest

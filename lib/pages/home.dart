@@ -61,6 +61,7 @@ class _HomePageState extends State<HomePage> {
   final _playlistPageKey = GlobalKey<NavigatorState>();
   final _libraryPageKey = GlobalKey<NavigatorState>();
   final _filePageKey = GlobalKey<NavigatorState>();
+  final _playerPageKey = GlobalKey<NavigatorState>();
 
   @override
   void initState() {
@@ -909,7 +910,13 @@ class _HomePageState extends State<HomePage> {
       return IndexedStack(
         index: _tabIndex,
         children: [
-          PlayerPage(fullscreen: _fullScreen),
+          Navigator(
+            key: _playerPageKey,
+            onGenerateRoute: (route) => MaterialPageRoute(
+              settings: route,
+              builder: (context) => PlayerPage(fullscreen: _fullScreen),
+            ),
+          ),
           Navigator(
             key: _playlistPageKey,
             onGenerateRoute: (route) => MaterialPageRoute(

@@ -57,14 +57,20 @@ class SubtitleGenerator {
       ValueNotifier<String> resultNotifier,
       ValueNotifier<int> progressNotifier) {
     var cparams = whisper.createContextDefaultParams();
-    var whisperModel = whisper.Whisper(modelFile.path, cparams,
-        outputMode: "srt",
-        externalResultNotifier: resultNotifier,
-        externalProgressNotifier: progressNotifier);
-    whisperModel.inferIsolate(mediaPath,
-        startTime: currentTime,
-        useOriginalTime: true,
-        newSegmentCallback: whisperModel.getSegmentCallback);
+    var whisperModel = whisper.Whisper(
+      modelFile.path,
+      cparams,
+      outputMode: "srt",
+      externalResultNotifier: resultNotifier,
+      externalProgressNotifier: progressNotifier,
+    );
+    whisperModel.inferIsolate(
+      mediaPath,
+      startTime: currentTime,
+      useOriginalTime: true,
+      newSegmentCallback: whisperModel.getSegmentCallback,
+      progressCallback: whisperModel.getProgressCallback,
+    );
     whisperModel.free();
   }
 }
