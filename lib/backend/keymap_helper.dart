@@ -85,7 +85,7 @@ class KeyMapHelper {
         }
       }
     }
-    return true;
+    return keyBindinglock == 0;
   }
 
   static int keyBindinglock = 0;

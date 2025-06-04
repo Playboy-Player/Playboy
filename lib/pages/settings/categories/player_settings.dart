@@ -2,7 +2,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
-import 'package:playboy/widgets/path_setting_card.dart';
+import 'package:playboy/widgets/settings_path_card.dart';
+import 'package:playboy/widgets/settings_label.dart';
 import 'package:playboy/widgets/settings_message_box.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -125,19 +126,6 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
               ),
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(12),
-            child: Text(
-              'libmpv 设置'.l10n,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-            ),
-          ),
-          SettingsMessageBox(message: '注意: libmpv 设置需要重启应用才能生效'.l10n),
-          const SizedBox(height: 6),
           // osd level 0123
           SwitchListTile(
             title: Text('允许 libmpv 使用配置文件'.l10n),
@@ -157,17 +145,8 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
               });
             },
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            child: Text(
-              'mpv 配置文件路径'.l10n,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          PathSettingCard(
+          SettingsLabel(label: 'mpv 配置文件路径'.l10n),
+          SettingsPath(
             path: App().settings.mpvConfigPath != ''
                 ? App().settings.mpvConfigPath
                 : App().dataPath,

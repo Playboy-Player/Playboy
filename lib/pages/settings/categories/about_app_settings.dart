@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/app.dart';
+import 'package:playboy/widgets/settings_label.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:playboy/backend/constants.dart' as constants;
@@ -157,17 +158,7 @@ class _AboutPageState extends State<AboutPage> {
               itemCount: constants.contributors.length,
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(12),
-            child: Text(
-              '帮助'.l10n,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-            ),
-          ),
+          SettingsLabel(label: '帮助'.l10n),
           ListTile(
             leading: const Icon(
               Icons.info_outline,

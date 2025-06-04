@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/keymap_helper.dart';
 import 'package:playboy/backend/utils/theme_utils.dart';
+import 'package:playboy/pages/settings/categories/llm_settings.dart';
 import 'package:playboy/pages/settings/categories/whisper_settings.dart';
 
 import 'package:playboy/backend/utils/l10n_utils.dart';
@@ -38,10 +39,15 @@ class SettingsPageState extends State<SettingsPage> {
     (
       Icons.keyboard_command_key,
       '快捷键'.l10n,
-      const KeymapSettings(),
+      const KeymapSettingsPage(),
     ),
     (
       Icons.auto_awesome_outlined,
+      'LLM'.l10n,
+      const LLMSettingsPage(),
+    ),
+    (
+      Icons.hearing,
       'Whisper'.l10n,
       const WhisperSettingsPage(),
     ),
@@ -63,7 +69,7 @@ class SettingsPageState extends State<SettingsPage> {
     (
       Icons.bug_report_outlined,
       '调试'.l10n,
-      const DeveloperSettings(),
+      const DeveloperSettingsPage(),
     ),
   ];
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class PathSettingCard extends StatelessWidget {
-  const PathSettingCard({
+class SettingsPath extends StatelessWidget {
+  const SettingsPath({
     super.key,
     required this.path,
     required this.actions,
@@ -14,7 +14,7 @@ class PathSettingCard extends StatelessWidget {
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 0),
+      padding: const EdgeInsets.symmetric(horizontal: 6),
       child: Card(
         elevation: 0,
         shape: RoundedRectangleBorder(
