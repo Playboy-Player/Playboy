@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:playboy/backend/utils/sliver_utils.dart';
-import 'package:playboy/widgets/path_setting_card.dart';
+import 'package:playboy/widgets/settings_label.dart';
+import 'package:playboy/widgets/settings_path_card.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:playboy/backend/app.dart';
@@ -28,7 +29,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
               child: Container(
                 padding: const EdgeInsets.all(12),
                 child: Text(
-                  '扫描选项'.l10n,
+                  '存储'.l10n,
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
@@ -84,7 +85,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
             SliverList.builder(
               itemBuilder: (context, index) {
                 String path = App().settings.videoPaths[index];
-                return PathSettingCard(
+                return SettingsPath(
                   path: path,
                   actions: [
                     SizedBox(
@@ -158,7 +159,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
             SliverList.builder(
               itemBuilder: (context, index) {
                 String path = App().settings.favouritePaths[index];
-                return PathSettingCard(
+                return SettingsPath(
                   path: path,
                   actions: [
                     SizedBox(
@@ -194,20 +195,8 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
               },
               itemCount: App().settings.favouritePaths.length,
             ),
-            SliverToBoxAdapter(
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                child: Text(
-                  '截图保存位置'.l10n,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ),
-            PathSettingCard(
+            SettingsLabel(label: '截图保存位置'.l10n).toSliver(),
+            SettingsPath(
               path: App().settings.screenshotPath,
               actions: [
                 SizedBox(
@@ -227,19 +216,7 @@ class _StorageSettingsPageState extends State<StorageSettingsPage> {
                 )
               ],
             ).toSliver(),
-            SliverToBoxAdapter(
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                child: Text(
-                  '应用数据'.l10n,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                ),
-              ),
-            ),
+            SettingsLabel(label: '应用数据'.l10n).toSliver(),
             SliverToBoxAdapter(
               child: ListTile(
                 onTap: () {

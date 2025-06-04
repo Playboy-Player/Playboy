@@ -13,30 +13,33 @@ class SettingsMessageBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     late final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    return Container(
-      decoration: ShapeDecoration(
-        color: colorScheme.primaryContainer.withValues(alpha: 0.2),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Container(
+        decoration: ShapeDecoration(
+          color: colorScheme.primaryContainer.withValues(alpha: 0.2),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
         ),
-      ),
-      child: SizedBox(
-        height: 50,
-        child: Row(
-          children: [
-            Expanded(
-              child: Container(
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  message,
-                  style: TextStyle(color: colorScheme.onPrimaryContainer),
+        child: SizedBox(
+          height: 50,
+          child: Row(
+            children: [
+              Expanded(
+                child: Container(
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    message,
+                    style: TextStyle(color: colorScheme.onPrimaryContainer),
+                  ),
                 ),
               ),
-            ),
-            trailing ?? const SizedBox(),
-            const SizedBox(width: 6),
-          ],
+              trailing ?? const SizedBox(),
+              const SizedBox(width: 6),
+            ],
+          ),
         ),
       ),
     );

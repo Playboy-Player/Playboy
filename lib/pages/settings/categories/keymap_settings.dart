@@ -5,14 +5,14 @@ import 'package:url_launcher/url_launcher.dart';
 // import 'package:playboy/backend/storage.dart';
 // import 'package:playboy/l10n/i10n.dart';
 
-class KeymapSettings extends StatefulWidget {
-  const KeymapSettings({super.key});
+class KeymapSettingsPage extends StatefulWidget {
+  const KeymapSettingsPage({super.key});
 
   @override
-  State<StatefulWidget> createState() => _KeymapSettingsState();
+  State<StatefulWidget> createState() => _KeymapSettingsPageState();
 }
 
-class _KeymapSettingsState extends State<KeymapSettings> {
+class _KeymapSettingsPageState extends State<KeymapSettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

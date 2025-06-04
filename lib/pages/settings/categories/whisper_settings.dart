@@ -6,7 +6,8 @@ import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/ml/whisper_model_list.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/sliver_utils.dart';
-import 'package:playboy/widgets/path_setting_card.dart';
+import 'package:playboy/widgets/settings_path_card.dart';
+import 'package:playboy/widgets/settings_label.dart';
 import 'package:playboy/widgets/settings_message_box.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -75,16 +76,7 @@ class _WhisperSettingsPageState extends State<WhisperSettingsPage> {
               ),
             ),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            child: Text(
-              '本地模型'.l10n,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ).toSliver(),
+          SettingsLabel(label: '本地模型'.l10n).toSliver(),
           SettingsMessageBox(message: '当前使用模型: ${App().settings.model}')
               .toSliver(),
           const SizedBox(height: 6).toSliver(),
@@ -92,7 +84,7 @@ class _WhisperSettingsPageState extends State<WhisperSettingsPage> {
               ? SettingsMessageBox(message: 'ERROR: $_errorMessage').toSliver()
               : SliverList.builder(
                   itemBuilder: (context, index) {
-                    return PathSettingCard(
+                    return SettingsPath(
                       path: _modelFiles[index],
                       actions: [
                         App().settings.model == _modelFiles[index]
@@ -116,16 +108,7 @@ class _WhisperSettingsPageState extends State<WhisperSettingsPage> {
                   },
                   itemCount: _modelFiles.length,
                 ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            child: Text(
-              '从 Hugging Face 下载'.l10n,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ).toSliver(),
+          SettingsLabel(label: '从 Hugging Face 下载'.l10n).toSliver(),
           SwitchListTile(
             title: Text('使用镜像链接'.l10n),
             value: App().settings.useMirrorLink,
@@ -137,7 +120,7 @@ class _WhisperSettingsPageState extends State<WhisperSettingsPage> {
           ).toSliver(),
           SliverList.builder(
             itemBuilder: (context, index) {
-              return PathSettingCard(
+              return SettingsPath(
                 path: models[index].name,
                 actions: [
                   SizedBox(

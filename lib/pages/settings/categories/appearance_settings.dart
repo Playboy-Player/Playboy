@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
+import 'package:playboy/widgets/settings_label.dart';
 
 class AppearanceSettingsPage extends StatefulWidget {
   const AppearanceSettingsPage({super.key});
@@ -20,7 +21,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
           Container(
             padding: const EdgeInsets.all(12),
             child: Text(
-              '字体'.l10n,
+              '外观'.l10n,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
@@ -60,17 +61,6 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
                   App().saveSettings();
                   App().updateStatus();
                 },
-              ),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(12),
-            child: Text(
-              '外观'.l10n,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.secondary,
               ),
             ),
           ),
@@ -275,17 +265,7 @@ class _AppearanceSettingsPageState extends State<AppearanceSettingsPage> {
               ),
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(12),
-            child: Text(
-              '主题'.l10n,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-            ),
-          ),
+          SettingsLabel(label: '主题'.l10n),
           SizedBox(
             height: 80,
             child: ListView.builder(

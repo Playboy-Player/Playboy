@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:playboy/backend/app.dart';
 import 'package:playboy/backend/utils/l10n_utils.dart';
 
-class DeveloperSettings extends StatefulWidget {
-  const DeveloperSettings({super.key});
+class DeveloperSettingsPage extends StatefulWidget {
+  const DeveloperSettingsPage({super.key});
 
   @override
-  State<DeveloperSettings> createState() => DeveloperSettingsState();
+  State<DeveloperSettingsPage> createState() => DeveloperSettingsPageState();
 }
 
-class DeveloperSettingsState extends State<DeveloperSettings> {
+class DeveloperSettingsPageState extends State<DeveloperSettingsPage> {
   // final TextEditingController _controller = TextEditingController();
 
   @override
