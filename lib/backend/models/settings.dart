@@ -65,6 +65,10 @@ class AppSettings {
   String model;
   bool useMirrorLink;
 
+  String baseUrl;
+  String llmName;
+  String apiKey;
+
   AppSettings({
     // Display Settings,
     this.font = '',
@@ -119,6 +123,11 @@ class AppSettings {
     this.libmpvPath = '',
     this.model = '',
     this.useMirrorLink = true,
+
+    //LLM-related settings
+    this.baseUrl = "",
+    this.llmName = "",
+    this.apiKey = "",
   });
 
   factory AppSettings.fromJson(Map<String, dynamic> json) =>

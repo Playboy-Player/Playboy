@@ -187,7 +187,7 @@ class OCRPipeline extends Pipeline<Uri, String> {
         ]);
 }
 
-class SRTtranslationStep implements Step<(String, String, String), String> {
+class SRTtranslationStep implements Step<(String, String), String> {
   final ApiConfig apiConfig;
   final String modelName;
   final OpenAICompatibleLLM llm;
@@ -196,8 +196,8 @@ class SRTtranslationStep implements Step<(String, String, String), String> {
       : llm = OpenAICompatibleLLM(config: apiConfig);
 
   @override
-  Future<String> execute((String, String, String) input) async {
-    final (String text, String SrcLang, String TarLang) = input;
+  Future<String> execute((String, String) input) async {
+    final (String text, String TarLang) = input;
     final multimodalInput = MultimodalInput(
       text: """
 # Task
@@ -223,7 +223,6 @@ You will receive a string containing SRT subtitle content. The format for each e
 4.  **Output Format**: Output a complete string that can be directly saved as an `.srt` file.
 
 # Translation Languages
-*   Source Language: $SrcLang
 *   Target Language: $TarLang
 
 # SRT Subtitle Content

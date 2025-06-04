@@ -61,6 +61,7 @@ AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) => AppSettings(
               ?.map((e) => PlayItem.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
+      tempPath: json['tempPath'] as String? ?? '',
       language: json['language'] as String? ?? 'zh_hans',
       enableDevSettings: json['enableDevSettings'] as bool? ?? false,
       tabletUI: json['tabletUI'] as bool? ?? true,
@@ -68,6 +69,9 @@ AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) => AppSettings(
       libmpvPath: json['libmpvPath'] as String? ?? '',
       model: json['model'] as String? ?? '',
       useMirrorLink: json['useMirrorLink'] as bool? ?? true,
+      baseUrl: json['baseUrl'] as String? ?? '',
+      llmName: json['llmName'] as String? ?? '',
+      apiKey: json['apiKey'] as String? ?? '',
     );
 
 Map<String, dynamic> _$AppSettingsToJson(AppSettings instance) =>
@@ -103,6 +107,7 @@ Map<String, dynamic> _$AppSettingsToJson(AppSettings instance) =>
       'favouritePaths': instance.favouritePaths,
       'screenshotPath': instance.screenshotPath,
       'downloadPath': instance.downloadPath,
+      'tempPath': instance.tempPath,
       'recordRecentSearched': instance.recordRecentSearched,
       'recentSearched': instance.recentSearched,
       'recordRecentPlayed': instance.recordRecentPlayed,
@@ -114,6 +119,9 @@ Map<String, dynamic> _$AppSettingsToJson(AppSettings instance) =>
       'libmpvPath': instance.libmpvPath,
       'model': instance.model,
       'useMirrorLink': instance.useMirrorLink,
+      'baseUrl': instance.baseUrl,
+      'llmName': instance.llmName,
+      'apiKey': instance.apiKey,
     };
 
 const _$ThemeModeEnumMap = {

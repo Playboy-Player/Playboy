@@ -4,6 +4,10 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:media_kit/media_kit.dart';
+import 'package:playboy/backend/ml/llm_services.dart';
+import 'dart:ui' as ui;
+import 'dart:typed_data';
+import 'dart:convert';
 
 import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/media_utils.dart';
@@ -19,6 +23,8 @@ import 'package:playboy/widgets/interactive_wrapper.dart';
 import 'package:playboy/widgets/menu/menu_item.dart';
 import 'package:playboy/widgets/player_list.dart';
 import 'package:playboy/backend/ml/subtitle_generator.dart';
+import 'package:playboy/backend/utils/ocr_utils.dart';
+import 'package:playboy/backend/ml/pipeline.dart';
 
 class PlayerPage extends StatefulWidget {
   const PlayerPage({
@@ -40,6 +46,14 @@ class PlayerPageState extends State<PlayerPage> {
   bool _isMouseHidden = false;
   Timer? _timer;
 
+  ui.Image? _decodedOcrScreenshot;
+  List<RecognizedElement>? _ocrResults;
+  bool _isOCRLoading = false;
+  String? _ocrErrorMessage;
+  Size _originalScreenshotDimensions = Size.zero;
+
+  bool get canShowClearOCR =>
+      _ocrResults != null || _decodedOcrScreenshot != null;
   void _resetCursorHideTimer() {
     _timer?.cancel();
     setState(() {
@@ -50,6 +64,128 @@ class PlayerPageState extends State<PlayerPage> {
         _isMouseHidden = true;
       });
     });
+  }
+
+  Future<void> performOCR() async {
+    // 改为 public，以便外部菜单调用
+    if (_isOCRLoading) return;
+    // 简单的检查视频是否在播放（您可能有更复杂的逻辑）
+    if (App().playingTitle == 'Not Playing' || App().playingTitle.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('OCR: No video playing.')), // 使用 .l10n
+        );
+      }
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        _isOCRLoading = true;
+        _ocrErrorMessage = null;
+        _decodedOcrScreenshot = null; // 清除旧的显示
+        _ocrResults = null;
+      });
+    }
+
+    try {
+      final Uint8List? imageBytes = await App().player.screenshot();
+      if (imageBytes == null || imageBytes.isEmpty) {
+        throw Exception("截图失败或截图为空.");
+      }
+
+      // 解码图像以传递给 Painter
+      final completerUiImage = Completer<ui.Image>();
+      ui.decodeImageFromList(imageBytes, (img) {
+        // 注意：img.width 和 img.height 是解码后的图像的像素尺寸
+        // 这可能与 player.state.videoParams.dw/dh 不同，如果截图过程有缩放
+        // 我们需要的是OCR分析的图像的原始像素尺寸。
+        // 通常，App().player.screenshot() 返回的图像的 img.width 和 img.height
+        // 就是OCR分析的图像的尺寸。
+        // _lastOcrScreenshotSize = Size(img.width.toDouble(), img.height.toDouble()); // 这是之前的方式
+        completerUiImage.complete(img);
+      });
+      final ui.Image decodedImageForPainter = await completerUiImage.future;
+
+      // --- 关键：获取截图的原始物理尺寸 (用于OCR分析的图像的尺寸) ---
+      // 假设 App().player.screenshot() 返回的图像就是视频的原始分辨率截图
+      // 或者，如果截图函数内部会进行缩放，那么 img.width/height 是最准确的
+      // 为了安全起见，我们优先使用解码后图像的尺寸，因为这是OCR实际看到的
+      _originalScreenshotDimensions = Size(
+          decodedImageForPainter.width.toDouble(),
+          decodedImageForPainter.height.toDouble());
+      // 如果您确定 player.state.videoParams.dw/dh 更准确地代表了截图的原始像素，
+      // 并且截图函数没有再次缩放，可以使用它们：
+      // var voInfo = App().player.state.videoParams; // 假设 App() 和 player 可访问
+      // int w = voInfo.dw ?? decodedImageForPainter.width;
+      // int h = voInfo.dh ?? decodedImageForPainter.height;
+      // _originalScreenshotDimensions = Size(w.toDouble(), h.toDouble());
+
+      final imageUri = Uri.dataFromBytes(imageBytes, mimeType: 'image/png');
+
+      final ocrPipeline = OCRPipeline(
+        apiConfig: ApiConfig(
+            apiKey: App().settings.apiKey, baseUrl: App().settings.baseUrl),
+        modelName: App().settings.llmName,
+      );
+
+      final String jsonResult = await ocrPipeline.execute(imageUri);
+
+      if (!isJsonValid(jsonResult)) {
+        // 您提供的 isJsonValid 函数
+        throw Exception("OCR returned invalid JSON: $jsonResult");
+      }
+      final decodedJson = json.decode(jsonResult);
+
+      if (decodedJson is Map<String, dynamic> &&
+          decodedJson.containsKey('recognized_elements')) {
+        final elementsData = decodedJson['recognized_elements'] as List;
+        if (mounted) {
+          setState(() {
+            _decodedOcrScreenshot = decodedImageForPainter; // 这个是用于绘制的 ui.Image
+            _ocrResults = elementsData
+                .map((e) =>
+                    RecognizedElement.fromJson(e as Map<String, dynamic>))
+                .toList();
+            // _lastOcrScreenshotSize = _originalScreenshotDimensions; // 将这个变量传递给Painter
+          });
+        }
+      } else {
+        throw Exception(
+            "OCR JSON does not have 'recognized_elements' or is not a map.");
+      }
+    } catch (e, s) {
+      print("Error during OCR: $e\n$s");
+      if (mounted) {
+        setState(() {
+          _ocrErrorMessage = "OCR Error: $e";
+          _decodedOcrScreenshot = null;
+          _ocrResults = null;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(_ocrErrorMessage!), backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isOCRLoading = false;
+        });
+      }
+    }
+  }
+
+  void clearOCR() {
+    // 改为 public
+    if (mounted) {
+      setState(() {
+        _decodedOcrScreenshot = null;
+        _ocrResults = null;
+        _ocrErrorMessage = null;
+        _isOCRLoading = false; // 确保加载状态也重置
+      });
+    }
   }
 
   @override
@@ -391,7 +527,12 @@ class PlayerPageState extends State<PlayerPage> {
       menuController: MenuController(),
       menuChildren: [
         const SizedBox(height: 10),
-        ...buildPlayerMenu(context),
+        ...buildPlayerMenu(
+          context: context,
+          onPerformOCR: performOCR,
+          onClearOCR: clearOCR,
+          canShowClearOCRButton: canShowClearOCR,
+        ),
         const Divider(),
         MMenuItem(
           icon: Icons.menu,
@@ -506,6 +647,41 @@ class PlayerPageState extends State<PlayerPage> {
               SizedBox.expand(
                 child: BasicVideo(controller: App().controller),
               ),
+              if (_decodedOcrScreenshot != null &&
+                  _ocrResults != null &&
+                  _ocrResults!.isNotEmpty)
+                Positioned.fill(
+                  child: CustomPaint(
+                    painter: OCRResultPainter(
+                      screenshotImage: _decodedOcrScreenshot!,
+                      ocrResults: _ocrResults!,
+                      originalImageSize: _originalScreenshotDimensions,
+                    ),
+                  ),
+                ),
+
+              // 3. OCR 加载指示器
+              if (_isOCRLoading)
+                const Center(
+                  child: CircularProgressIndicator(),
+                ),
+
+              // 4. OCR 错误消息 (可选，或者用 SnackBar)
+              if (_ocrErrorMessage != null && !_isOCRLoading) // 仅当不在加载时显示错误
+                Positioned(
+                  bottom: 10,
+                  left: 10,
+                  right: 10,
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    color: Colors.red.withOpacity(0.8),
+                    child: Text(
+                      _ocrErrorMessage!,
+                      style: const TextStyle(color: Colors.white),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
             ],
           ),
         ),

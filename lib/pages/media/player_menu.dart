@@ -9,7 +9,13 @@ import 'package:playboy/backend/utils/l10n_utils.dart';
 import 'package:playboy/backend/utils/time_utils.dart';
 import 'package:playboy/widgets/menu/menu_item.dart';
 
-List<Widget> buildPlayerMenu(BuildContext context) {
+List<Widget> buildPlayerMenu({
+  required BuildContext context, // Keep context if needed for dialogs, etc.
+  required Future<void> Function() onPerformOCR, // Callback for performing OCR
+  required void Function() onClearOCR, // Callback for clearing OCR
+  required bool canShowClearOCRButton, // Condition to show the clear button
+  // Keep other parameters if your _openLink needs them or if it's passed too
+}) {
   return [
     MMenuItem(
       icon: Icons.cut,
@@ -25,6 +31,17 @@ List<Widget> buildPlayerMenu(BuildContext context) {
         }
       },
     ),
+    MMenuItem(
+      icon: Icons.image_search,
+      label: '屏幕识图 (OCR)'.l10n,
+      onPressed: onPerformOCR, // Use the passed callback
+    ),
+    if (canShowClearOCRButton) // Use the passed condition
+      MMenuItem(
+        icon: Icons.layers_clear,
+        label: '清除识图结果'.l10n,
+        onPressed: onClearOCR, // Use the passed callback
+      ),
     MMenuItem(
       icon: Icons.cut,
       label: '将当前画面设为封面'.l10n,
